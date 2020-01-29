@@ -1,0 +1,85 @@
+deck:
+    type: texas.card_constructor.CartesianConstructor
+    kwargs:
+        rank: ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6']
+        suit: ['h', 's', 'd', 'c']
+    
+card_sampler:
+    dependence: [deck]
+    type: texas.card_sampler.RandomCardSampler
+    kwargs:
+        
+compairer:
+    dependence: [deck]
+    type: Dic5Compairer
+    kwargs:
+        dicfile: ./src/test/resources/compairer/card5_dic_sorted_shortdeck.txt
+        lines: 376993
+
+rule:
+    type: texas.rules_builder.FiveCardRulesBuilder
+    kwargs:
+        rule:
+            current_player: 1
+            current_round: 3
+            current_commit:
+                - 2
+                - 2
+            rounds: 4
+            rounds_cards:
+                - 0
+                - 3
+                - 1
+                - 1
+            deal_card_number: 2
+            players: 2
+            raise_limit: 1
+            check_limit: 2
+            amounts:
+                small_blind: 0.5
+                big_blind: 1
+                max_chip: 10
+            stack: 100
+            bet_sizes:
+                - 1_pot
+            actions:
+                - begin
+                - bet
+                - check
+                - call
+                - raise
+                - fold
+            legal_actions_after:
+                begin: 
+                    - call
+                    - raise
+                    - fold
+                roundbegin:
+                    - check 
+                    - bet 
+                bet:
+                    - call
+                    - raise
+                    - fold
+                raise:
+                    - call
+                    - raise
+                    - fold
+                check:
+                    - check
+                    - raise
+                    - bet
+                fold:
+                
+                call:
+                    - check
+                    - raise
+                
+tree_builder:
+    dependence: [rule]
+    type: texas.tree_builder.PartGameTreeBuilder
+    kwargs:
+        json_file: ./src/test/resources/gametree/part_tree_turn_depthinf.km
+
+solver:
+    type: cfrplus

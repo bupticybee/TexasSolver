@@ -1,0 +1,41 @@
+current_player: 1
+rounds: 4
+rounds_cards:
+    - 0
+    - 3
+    - 1
+    - 1
+deal_card_number: 2
+players: 2
+actions:
+    - begin
+    - bet
+    - check
+    - call
+    - raise
+    - fold
+legal_actions_after:
+    begin: 
+        - call
+        - raise
+        - fold
+    roundbegin:
+        - check 
+        - bet 
+    bet:
+        - call
+        - raise
+        - fold
+    raise:
+        - call
+        - raise
+        - fold
+    check:
+        - check
+        - raise
+        - bet
+    fold:
+
+    call:
+        - check
+        - raise

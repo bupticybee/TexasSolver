@@ -2,6 +2,7 @@
 // Created by Xuefeng Huang on 2020/1/28.
 //
 #include <iostream>
+#include <GameTree.h>
 #include "gtest/gtest.h"
 #include "Card.h"
 #include "fmt/format.h"
@@ -31,6 +32,55 @@ TEST(TestCase,test_card ){
     EXPECT_NE(Card::card2int(card8h),Card::card2int(cardJh));
 }
 
+TEST(TestCase,test_card_convert ) {
+    vector<Card> board = {
+            Card("6c"),
+            Card("6d"),
+            Card("7c"),
+            Card("7d"),
+            Card("8s"),
+            Card("6h"),
+            Card("7s")
+    };
+    long board_int = Card::boardCards2long(board);
+    vector<Card> board_cards = Card::long2boardCards(board_int);
+    long board_int_rev = Card::boardCards2long(board_cards);
+
+    for(Card i:board)
+        cout << (i.getCard()) << endl;
+    cout << endl;
+    for(Card i:board_cards)
+        cout << (i.getCard()) << endl;
+
+    cout << board_int << endl;
+    cout << board_int_rev << endl;
+    EXPECT_EQ(board_int,board_int_rev);
+}
+
+TEST(TestCase,test_card_convert_ne ) {
+    vector<Card> board1 = {
+            Card("6c"),
+            Card("6d"),
+            Card("7c"),
+            Card("7d"),
+            Card("8s"),
+            Card("6h"),
+            Card("7s")
+    };
+    vector<Card> board2 = {
+            Card("6c"),
+            Card("6d"),
+            Card("7c"),
+            Card("7d"),
+            Card("9s"),
+            Card("6h"),
+            Card("7s")
+    };
+    long board_int1 = Card::boardCards2long(board1);
+    long board_int2 = Card::boardCards2long(board2);
+    EXPECT_NE(board_int1,board_int2);
+}
+
 TEST(TestCase,test_comapirer_load ){
     compairer = Dic5Compairer("../resources/compairer/card5_dic_sorted_shortdeck.txt",376993);
 }
@@ -55,6 +105,38 @@ TEST(TestCase,test_compairer_lg){
     Compairer::CompairResult cr = compairer.compair(private1,private2,board);
 
     EXPECT_EQ(cr,Compairer::CompairResult::LARGER);
+}
+
+
+TEST(TestCase,test_compairer_equivlent){
+    vector<Card> board1_public = {
+            Card("6c"),
+            Card("6d"),
+            Card("7c"),
+            Card("7d"),
+            Card("8s")
+    };
+    vector<Card> board1_private = {
+            Card("6h"),
+            Card("7s")
+    };
+    vector<int> board2_public = {
+            (Card("6c").getCardInt()),
+            (Card("6d").getCardInt()),
+            (Card("7c").getCardInt()),
+            (Card("7d").getCardInt()),
+            (Card("8s").getCardInt()),
+    };
+    vector<int> board2_private = {
+            (Card("6h").getCardInt()),
+            (Card("7s").getCardInt())
+    };
+    long board_int1 = compairer.get_rank(board1_private,board1_public);
+    long board_int2 = compairer.get_rank(board2_private,board2_public);
+    cout << (board_int1) << endl;
+    cout << (board_int2) << endl;
+    EXPECT_EQ(board_int1,board_int2);
+
 }
 
 TEST(TestCase,test_compairer_eq){
@@ -119,9 +201,28 @@ TEST(TestCase,test_compairer_get_rank){
     EXPECT_EQ(rank,687);
 }
 
+TEST(TestCase,test_tree_print_simple){
+    vector<string> ranks = {"A", "K", "Q", "J", "T", "9", "8", "7", "6"};
+    vector<string> suits = {"h", "s", "d", "c"};
+    Deck deck = Deck(
+            ranks,suits
+    );
+    GameTree game_tree = GameTree("../resources/gametree/simple_part_tree_depthinf.km",deck);
+    game_tree.printTree(-1);
+}
+
+TEST(TestCase,test_tree_print_complex){
+    vector<string> ranks = {"A", "K", "Q", "J", "T", "9", "8", "7", "6"};
+    vector<string> suits = {"h", "s", "d", "c"};
+    Deck deck = Deck(
+            ranks,suits
+    );
+    GameTree game_tree = GameTree("../resources/gametree/part_tree_depthinf.km",deck);
+    game_tree.printTree(2);
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
-
     return RUN_ALL_TESTS();
 }

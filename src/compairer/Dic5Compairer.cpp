@@ -114,7 +114,7 @@ Dic5Compairer::compair(vector<int> private_former, vector<int> private_latter, v
 int Dic5Compairer::getRank(vector<Card> cards) {
     vector<int> cards_int(cards.size());
     for(int i = 0;i < cards.size();i++){
-        cards_int[i] = cards[i].getCardint();
+        cards_int[i] = cards[i].getCardInt();
     }
     return this->getRank(cards_int);
 }

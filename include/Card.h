@@ -19,7 +19,7 @@ class Card {
         Card();
         Card(string card);
         string getCard();
-        int getCardint();
+        int getCardInt();
         static int card2int(Card card);
         static int strCard2int(string card);
         static string intCard2Str(int card);

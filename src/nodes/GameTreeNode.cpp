@@ -8,7 +8,7 @@ GameTreeNode::GameTreeNode() {
 
 }
 
-GameTreeNode::GameTreeNode(GameTreeNode::GameRound round, double pot, GameTreeNode *parent) {
+GameTreeNode::GameTreeNode(GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode> parent) {
     this->round = round;
     this->pot = pot;
     this->parent = parent;
@@ -27,11 +27,11 @@ int GameTreeNode::gameRound2int(GameTreeNode::GameRound gameRound) {
     throw runtime_error("round not found");
 }
 
-GameTreeNode *GameTreeNode::getParent() {
+shared_ptr<GameTreeNode>GameTreeNode::getParent() {
     return this->parent;
 }
 
-void GameTreeNode::setParent(GameTreeNode *parent) {
+void GameTreeNode::setParent(shared_ptr<GameTreeNode>parent) {
     this->parent = parent;
 }
 
@@ -47,9 +47,9 @@ void GameTreeNode::printHistory() {
     GameTreeNode::printNodeHistory(this);
 }
 
-void GameTreeNode::printNodeHistory(GameTreeNode *node) {
+void GameTreeNode::printNodeHistory(GameTreeNode* node) {
     while(node != nullptr) {
-        GameTreeNode *parent_node = node->parent;
+        shared_ptr<GameTreeNode>parent_node = node->parent;
         if (parent_node == nullptr) break;
         /*
         if(parent_node instanceof ActionNode){

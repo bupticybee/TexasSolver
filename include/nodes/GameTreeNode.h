@@ -36,12 +36,12 @@ public:
         RIVER
     };
     GameTreeNode();
-    GameTreeNode(GameRound round, double pot, GameTreeNode* parent);
+    GameTreeNode(GameRound round, double pot, shared_ptr<GameTreeNode> parent);
     int depth;
     int subtree_size;
     static int gameRound2int(GameRound gameRound);
-    GameTreeNode* getParent();
-    void setParent(GameTreeNode* parent);
+    shared_ptr<GameTreeNode> getParent();
+    void setParent(shared_ptr<GameTreeNode> parent);
     GameRound getRound();
     double getPot();
     void printHistory();
@@ -51,7 +51,7 @@ public:
 private:
     GameRound round;
     double pot;
-    GameTreeNode* parent;
+    shared_ptr<GameTreeNode> parent;
 
 };
 

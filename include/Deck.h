@@ -1,0 +1,24 @@
+//
+// Created by Xuefeng Huang on 2020/1/30.
+//
+
+#ifndef TEXASSOLVER_DECK_H
+#define TEXASSOLVER_DECK_H
+
+#include "Card.h"
+
+class Deck {
+public:
+    Deck();
+    Deck(vector<string> ranks, vector<string> suits);
+    vector<Card> getCards();
+private:
+    vector<string> ranks;
+    vector<string> suits;
+    vector<string> cards_str;
+    vector<Card> cards;
+
+};
+
+
+#endif //TEXASSOLVER_DECK_H

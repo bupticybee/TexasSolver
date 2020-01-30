@@ -14,7 +14,7 @@ string Card::getCard() {
     return this->card;
 }
 
-int Card::getCardint() {
+int Card::getCardInt() {
     return this->card_int;
 }
 

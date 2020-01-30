@@ -19,7 +19,7 @@ private:
 
 private:
     vector<double> payoffs;
-    int winner;
+    int winner{};
 };
 
 

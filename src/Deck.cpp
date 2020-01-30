@@ -4,18 +4,16 @@
 
 #include "Deck.h"
 
-Deck::Deck() {
+Deck::Deck() = default;
 
-}
-
-Deck::Deck(vector<string> ranks, vector<string> suits) {
+Deck::Deck(const vector<string>& ranks, const vector<string>& suits) {
     this->ranks = ranks;
     this->suits = suits;
-    for(string one_rank : ranks){
-        for(string one_suit: suits){
+    for(const string& one_rank : ranks){
+        for(const string& one_suit: suits){
             string one_card = one_rank + one_suit;
             cards_str.push_back(one_card);
-            cards.push_back(Card(one_card));
+            cards.emplace_back(one_card);
         }
     }
 }

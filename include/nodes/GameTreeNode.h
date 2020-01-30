@@ -37,8 +37,8 @@ public:
     };
     GameTreeNode();
     GameTreeNode(GameRound round, double pot, shared_ptr<GameTreeNode> parent);
-    int depth;
-    int subtree_size;
+    int depth{};
+    int subtree_size{};
     static int gameRound2int(GameRound gameRound);
     shared_ptr<GameTreeNode> getParent();
     void setParent(shared_ptr<GameTreeNode> parent);
@@ -50,7 +50,7 @@ public:
 
 private:
     GameRound round;
-    double pot;
+    double pot{};
     shared_ptr<GameTreeNode> parent;
 
 };

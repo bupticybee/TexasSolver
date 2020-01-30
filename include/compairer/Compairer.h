@@ -6,6 +6,7 @@
 #define TEXASSOLVER_COMPAIRER_H
 #include <iostream>
 #include <string>
+#include <utility>
 #include <vector>
 #include <Card.h>
 #include "fmt/format.h"
@@ -14,9 +15,9 @@
 class Compairer {
 public:
     enum CompairResult{LARGER,EQUAL,SMALLER};
-    Compairer(){};
+    Compairer()= default;;
     Compairer(string dic_dir,int lines){
-        this->dic_dir = dic_dir;
+        this->dic_dir = std::move(dic_dir);
         this->lines = lines;
     };
     virtual CompairResult compair(vector<Card> private_former, vector<Card> private_latter, vector<Card> public_board) = 0;
@@ -27,7 +28,7 @@ public:
 
 protected:
     string dic_dir;
-    int lines;
+    int lines{};
 };
 
 

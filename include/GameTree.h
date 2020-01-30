@@ -24,15 +24,15 @@ private:
     shared_ptr<GameTreeNode> root = nullptr;
     Deck deck;
 public:
-    GameTree(string tree_json_dir,Deck deck);;
+    GameTree(const string& tree_json_dir,Deck deck);;
     shared_ptr<GameTreeNode> getRoot();
-    static ifstream readAllBytes(string filePath);
-    GameTreeNode::GameRound strToGameRound(string round);
-    void recurrentPrintTree(shared_ptr<GameTreeNode> node,int depth,int depth_limit);
-    shared_ptr<GameTreeNode> recurrentGenerateTreeNode(json node_json,shared_ptr<GameTreeNode> parent);
-    shared_ptr<ActionNode> generateActionNode(json meta,vector<string> childrens_actions, vector<json> childrens_nodes, string round,shared_ptr<GameTreeNode> parent);
-    shared_ptr<ChanceNode> generateChanceNode(json meta,json child,string round,shared_ptr<GameTreeNode> parent);
-    shared_ptr<ShowdownNode> generateShowdownNode(json meta, string round,shared_ptr<GameTreeNode> parent);
+    static ifstream readAllBytes(const string& filePath);
+    static GameTreeNode::GameRound strToGameRound(const string& round);
+    static void recurrentPrintTree(const shared_ptr<GameTreeNode>& node,int depth,int depth_limit);
+    shared_ptr<GameTreeNode> recurrentGenerateTreeNode(json node_json,const shared_ptr<GameTreeNode>& parent);
+    shared_ptr<ActionNode> generateActionNode(json meta,vector<string> childrens_actions, vector<json> childrens_nodes, const string& round,shared_ptr<GameTreeNode> parent);
+    shared_ptr<ChanceNode> generateChanceNode(json meta,const json& child,string round,shared_ptr<GameTreeNode> parent);
+    static shared_ptr<ShowdownNode> generateShowdownNode(json meta, string round,shared_ptr<GameTreeNode> parent);
     shared_ptr<TerminalNode> generateTerminalNode(json meta, string round,shared_ptr<GameTreeNode> parent);
     void printTree(int depth);
     json reConvertJson(shared_ptr<GameTreeNode> node);

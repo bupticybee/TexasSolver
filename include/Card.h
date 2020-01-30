@@ -17,7 +17,7 @@ class Card {
         int card_int;
     public:
         Card();
-        Card(string card);
+        explicit Card(string card);
         string getCard();
         int getCardInt();
         static int card2int(Card card);

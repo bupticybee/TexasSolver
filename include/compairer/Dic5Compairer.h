@@ -36,7 +36,7 @@ private:
     unordered_map<uint64_t,int> cardslong2rank;
     int getRank(vector<Card> cards);
     int getRank(vector<int> cards);
-    CompairResult compairRanks(int rank_former,int rank_latter);
+    static CompairResult compairRanks(int rank_former,int rank_latter);
 
 };
 

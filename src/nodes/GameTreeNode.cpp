@@ -4,6 +4,8 @@
 
 #include "nodes/GameTreeNode.h"
 
+#include <utility>
+
 GameTreeNode::GameTreeNode() {
 
 }
@@ -11,7 +13,7 @@ GameTreeNode::GameTreeNode() {
 GameTreeNode::GameTreeNode(GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode> parent) {
     this->round = round;
     this->pot = pot;
-    this->parent = parent;
+    this->parent = std::move(parent);
 }
 
 int GameTreeNode::gameRound2int(GameTreeNode::GameRound gameRound) {

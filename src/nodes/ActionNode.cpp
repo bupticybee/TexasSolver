@@ -4,11 +4,13 @@
 
 #include "nodes/ActionNode.h"
 
+#include <utility>
+
 ActionNode::ActionNode(vector<GameActions> actions, vector<shared_ptr<GameTreeNode>> childrens, int player,
-                       GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode> parent) :GameTreeNode(round,pot,parent){
-    this->actions = actions;
+                       GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode> parent) :GameTreeNode(round,pot,std::move(parent)){
+    this->actions = std::move(actions);
     this->player = player;
-    this->childrens = childrens;
+    this->childrens = std::move(childrens);
 
 }
 

@@ -17,10 +17,10 @@ public:
     double getAmount();
     GameActions(GameTreeNode::PokerActions action, double amount);
     string toString();
-    const string pokerActionToString(GameTreeNode::PokerActions action);
+    string pokerActionToString(GameTreeNode::PokerActions pokerActions);
 private:
     GameTreeNode::PokerActions action;
-    double amount;
+    double amount{};
 
 };
 

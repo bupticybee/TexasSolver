@@ -106,9 +106,10 @@ vector<int> Card::long2board(long board_long) {
 
 vector<Card> Card::long2boardCards(long board_long){
         vector<int> board = long2board(board_long);
-        vector<Card> board_cards;
-        for(int one_board:board){
-            board_cards.push_back(Card(intCard2Str(one_board)));
+        vector<Card> board_cards(board.size());
+        for(int i = 0;i < board.size();i ++){
+            int one_board = board[i];
+            board_cards[i] = Card(intCard2Str(one_board));
         }
         if (board_cards.size() < 1 || board_cards.size() > 7){
             throw runtime_error(fmt::format("board length not correct, board length {}",board_cards.size()));

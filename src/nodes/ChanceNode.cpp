@@ -4,8 +4,10 @@
 
 #include "nodes/ChanceNode.h"
 
-ChanceNode::ChanceNode(vector<shared_ptr<GameTreeNode>> childrens, GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode> parent,
-                       vector<Card> cards): GameTreeNode(round,pot,parent) {
+#include <utility>
+
+ChanceNode::ChanceNode(const vector<shared_ptr<GameTreeNode>>& childrens, GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode> parent,
+                       const vector<Card>& cards): GameTreeNode(round,pot,std::move(parent)) {
     this->childrens = childrens;
     this->cards = cards;
     if(childrens.size() != cards.size())

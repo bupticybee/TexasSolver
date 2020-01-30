@@ -4,11 +4,13 @@
 
 #include "nodes/ShowdownNode.h"
 
+#include <utility>
+
 ShowdownNode::ShowdownNode(vector<double> tie_payoffs, vector<vector<double>> player_payoffs,
                            GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode>parent):
-                           GameTreeNode(round,pot,parent) {
-    this->tie_payoffs = tie_payoffs;
-    this->player_payoffs = player_payoffs;
+                           GameTreeNode(round,pot,std::move(parent)) {
+    this->tie_payoffs = std::move(tie_payoffs);
+    this->player_payoffs = std::move(player_payoffs);
 }
 
 vector<double> ShowdownNode::get_payoffs(ShowdownNode::ShowDownResult result, int winner) {

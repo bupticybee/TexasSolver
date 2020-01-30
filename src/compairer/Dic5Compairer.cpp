@@ -4,10 +4,11 @@
 
 #include "compairer/Dic5Compairer.h"
 
-Dic5Compairer::Dic5Compairer() {
-}
+#include <utility>
 
-Dic5Compairer::Dic5Compairer(string dic_dir,int lines):Compairer(dic_dir,lines){
+Dic5Compairer::Dic5Compairer() = default;
+
+Dic5Compairer::Dic5Compairer(string dic_dir,int lines):Compairer(std::move(dic_dir),lines){
     ifstream infile(this->dic_dir);
     string line;
     progressbar bar(lines / 1000);
@@ -120,9 +121,9 @@ int Dic5Compairer::getRank(vector<Card> cards) {
 }
 
 int Dic5Compairer::getRank(vector<int> cards) {
-    Combinations<int> comb_cards(cards,5);
+    Combinations<int> comb_cards(std::move(cards),5);
     int min_rank = numeric_limits<int>::max();
-    for (vector<int> one_comb : comb_cards)
+    for (const vector<int>& one_comb : comb_cards)
     {
         if(one_comb.size() != 5)throw runtime_error(fmt::format("card size incorrect: {} should be 5",one_comb.size()));
         uint64_t comb_uint64 = Card::boardInts2long(one_comb);

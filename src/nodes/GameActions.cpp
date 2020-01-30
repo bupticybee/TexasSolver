@@ -4,9 +4,7 @@
 
 #include "nodes/GameActions.h"
 
-GameActions::GameActions() {
-
-}
+GameActions::GameActions() = default;
 
 GameTreeNode::PokerActions GameActions::getAction() {
     return this->action;
@@ -26,8 +24,8 @@ GameActions::GameActions(GameTreeNode::PokerActions action, double amount) {
     this->amount = amount;
 }
 
-const string GameActions::pokerActionToString(GameTreeNode::PokerActions action) {
-    switch (action)
+string GameActions::pokerActionToString(GameTreeNode::PokerActions pokerActions) {
+    switch (pokerActions)
     {
         case GameTreeNode::PokerActions::BEGIN :   return "BEGIN";
         case GameTreeNode::PokerActions::ROUNDBEGIN :   return "ROUNDBEGIN";

@@ -11,7 +11,7 @@
 
 class ChanceNode:public GameTreeNode {
 public:
-    ChanceNode(vector<shared_ptr<GameTreeNode>> childrens, GameRound round, double pot, shared_ptr<GameTreeNode>parent, vector<Card> cards);
+    ChanceNode(const vector<shared_ptr<GameTreeNode>>& childrens, GameRound round, double pot, shared_ptr<GameTreeNode>parent, const vector<Card>& cards);
     vector<Card> getCards();
     vector<shared_ptr<GameTreeNode>> getChildrens();
     int getPlayer();
@@ -23,7 +23,7 @@ private:
 private:
     vector<shared_ptr<GameTreeNode>> childrens;
     //Trainable trainable;
-    int player;
+    int player{};
     vector<Card> cards;
 
 };

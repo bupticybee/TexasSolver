@@ -4,16 +4,18 @@
 
 #include "GameTree.h"
 
-GameTree::GameTree(string tree_json_dir, Deck deck) {
+#include <utility>
+
+GameTree::GameTree(const string& tree_json_dir, Deck deck) {
     this->tree_json_dir = tree_json_dir;
-    this->deck = deck;
-    ifstream fs = this->readAllBytes(tree_json_dir);
+    this->deck = std::move(deck);
+    ifstream fs = GameTree::readAllBytes(tree_json_dir);
     json json_content;
     fs >> json_content;
     this->root = this->recurrentGenerateTreeNode(json_content["root"], nullptr);
 }
 
-shared_ptr<GameTreeNode> GameTree::recurrentGenerateTreeNode(json node_json, shared_ptr<GameTreeNode> parent) {
+shared_ptr<GameTreeNode> GameTree::recurrentGenerateTreeNode(json node_json, const shared_ptr<GameTreeNode>& parent) {
     json meta = node_json["meta"];
     string round = meta["round"];
     if(round.empty()){
@@ -44,7 +46,7 @@ shared_ptr<GameTreeNode> GameTree::recurrentGenerateTreeNode(json node_json, sha
 
     if(node_type == "Action") {
         // 孩子节点的动作，存在list里
-        vector<string> childrens_actions = node_json["children_actions"].get<std::vector<string>>();
+        auto childrens_actions = node_json["children_actions"].get<std::vector<string>>();
         // 孩子节点本身，同样存在list里,和上面的children_actions 一一对应,事实上两者的长度一致
         vector<json> childrens = node_json["children"].get<std::vector<json>>();
         if (childrens.size() != childrens_actions.size()) {
@@ -59,7 +61,7 @@ shared_ptr<GameTreeNode> GameTree::recurrentGenerateTreeNode(json node_json, sha
         return std::dynamic_pointer_cast<GameTreeNode>(this->generateTerminalNode(meta, round,parent));
     }
     else if(node_type == "Chance") {
-        vector<json> childrens = node_json["children"].get<std::vector<json>>();
+        auto childrens = node_json["children"].get<std::vector<json>>();
         if(childrens.size() != 1) throw runtime_error("Chance node should have only one child");
         return std::dynamic_pointer_cast<GameTreeNode>(this->generateChanceNode(meta, childrens[0], round,parent));
     }
@@ -69,7 +71,7 @@ shared_ptr<GameTreeNode> GameTree::recurrentGenerateTreeNode(json node_json, sha
 }
 
 shared_ptr<ActionNode>
-GameTree::generateActionNode(json meta, vector<string> childrens_actions, vector<json> childrens_nodes, string round,
+GameTree::generateActionNode(json meta, vector<string> childrens_actions, vector<json> childrens_nodes, const string& round,
                              shared_ptr<GameTreeNode> parent) {
     if(childrens_actions.size() != childrens_nodes.size()){
         throw runtime_error(
@@ -147,7 +149,7 @@ GameTree::generateActionNode(json meta, vector<string> childrens_actions, vector
     }
     GameTreeNode::GameRound game_round = strToGameRound(round);
     shared_ptr<ActionNode> actionNode = make_shared<ActionNode>(actions,childrens,player,game_round,pot,parent);
-    for(shared_ptr<GameTreeNode> one_node: childrens){
+    for(const shared_ptr<GameTreeNode>& one_node: childrens){
         one_node->setParent(std::dynamic_pointer_cast<GameTreeNode>(actionNode));
     }
     return actionNode;
@@ -155,7 +157,7 @@ GameTree::generateActionNode(json meta, vector<string> childrens_actions, vector
 }
 
 shared_ptr<ChanceNode>
-GameTree::generateChanceNode(json meta, json child, string round, shared_ptr<GameTreeNode> parent) {
+GameTree::generateChanceNode(json meta, const json& child, string round, shared_ptr<GameTreeNode> parent) {
     //节点上的下注额度
     double pot = meta["pot"];
     vector<shared_ptr<GameTreeNode>> childrens;
@@ -163,9 +165,9 @@ GameTree::generateChanceNode(json meta, json child, string round, shared_ptr<Gam
         shared_ptr<GameTreeNode> one_node = recurrentGenerateTreeNode(child, nullptr);
         childrens.push_back(one_node);
     }
-    GameTreeNode::GameRound game_round = strToGameRound(round);
+    GameTreeNode::GameRound game_round = strToGameRound(std::move(round));
     shared_ptr<ChanceNode> chanceNode = make_shared<ChanceNode>(childrens,game_round,pot,parent,this->deck.getCards());
-    for(shared_ptr<GameTreeNode> gameTreeNode: chanceNode->getChildrens()){
+    for(const shared_ptr<GameTreeNode>& gameTreeNode: chanceNode->getChildrens()){
         gameTreeNode->setParent(chanceNode);
     }
     return chanceNode;
@@ -180,7 +182,7 @@ shared_ptr<ShowdownNode> GameTree::generateShowdownNode(json meta, string round,
     double pot = meta["pot"];
 
     for(auto one_player_meta=meta_payoffs.begin(); one_player_meta!=meta_payoffs.end(); one_player_meta++){
-        string one_player = one_player_meta.key();
+        const string& one_player = one_player_meta.key();
         if(one_player == "tie"){
             continue;
         }
@@ -194,7 +196,7 @@ shared_ptr<ShowdownNode> GameTree::generateShowdownNode(json meta, string round,
 
         player_payoffs[atoi(one_player.c_str())] = player_payoff;
     }
-    GameTreeNode::GameRound game_round = strToGameRound(round);
+    GameTreeNode::GameRound game_round = strToGameRound(std::move(round));
     return make_shared<ShowdownNode>(tie_payoffs,player_payoffs,game_round,pot,parent);
 }
 
@@ -210,7 +212,7 @@ shared_ptr<TerminalNode> GameTree::generateTerminalNode(json meta, string round,
     //节点上的下注额度
     double pot = meta["pot"];
 
-    GameTreeNode::GameRound game_round = this->strToGameRound(round);
+    GameTreeNode::GameRound game_round = this->strToGameRound(std::move(round));
     // 多人游戏的时候winner就不等于当前节点的玩家了，这里要注意
     int player = meta["player"];
 
@@ -221,12 +223,12 @@ shared_ptr<GameTreeNode> GameTree::getRoot() {
     return this->root;
 }
 
-ifstream GameTree::readAllBytes(string filePath) {
+ifstream GameTree::readAllBytes(const string& filePath) {
     ifstream input_file(filePath);
     return input_file;
 }
 
-GameTreeNode::GameRound GameTree::strToGameRound(string round) {
+GameTreeNode::GameRound GameTree::strToGameRound(const string& round) {
     GameTreeNode::GameRound game_round;
     if(round == "preflop"){
         game_round = GameTreeNode::GameRound::PREFLOP;
@@ -246,7 +248,7 @@ GameTreeNode::GameRound GameTree::strToGameRound(string round) {
     return game_round;
 }
 
-void GameTree::recurrentPrintTree(shared_ptr<GameTreeNode> node, int depth, int depth_limit) {
+void GameTree::recurrentPrintTree(const shared_ptr<GameTreeNode>& node, int depth, int depth_limit) {
     if(depth_limit != -1 && depth >= depth_limit){
         return;
     }
@@ -260,7 +262,7 @@ void GameTree::recurrentPrintTree(shared_ptr<GameTreeNode> node, int depth, int 
             shared_ptr<GameTreeNode> one_child = childrens[i];
             GameActions one_action = actions[i];
 
-            string prefix = "";
+            string prefix;
             for(int j = 0;j < depth;j++) prefix += "\t";
             cout << (fmt::format(
                     "{}p{}: {}",prefix,action_node->getPlayer(),one_action.toString()
@@ -269,7 +271,7 @@ void GameTree::recurrentPrintTree(shared_ptr<GameTreeNode> node, int depth, int 
         }
     }else if(node->getType() == GameTreeNode::SHOWDOWN){
         shared_ptr<ShowdownNode> showdown_node = std::dynamic_pointer_cast<ShowdownNode>(node);
-        string prefix = "";
+        string prefix;
         for(int j = 0;j < depth;j++) prefix += "\t";
         cout << (fmt::format(
                 "{} SHOWDOWN pot {} ",prefix,showdown_node->getPot()
@@ -298,7 +300,7 @@ void GameTree::recurrentPrintTree(shared_ptr<GameTreeNode> node, int depth, int 
         cout << endl;
     }else if(node->getType() == GameTreeNode::TERMINAL){
         shared_ptr<TerminalNode> terminal_node = std::dynamic_pointer_cast<TerminalNode>(node);
-        string prefix = "";
+        string prefix;
         for(int j = 0;j < depth;j++) prefix += "\t";
         cout << (fmt::format(
                 "{} TERMINAL pot {} ",prefix,terminal_node->getPot()

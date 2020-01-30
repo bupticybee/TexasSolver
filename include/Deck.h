@@ -10,7 +10,7 @@
 class Deck {
 public:
     Deck();
-    Deck(vector<string> ranks, vector<string> suits);
+    Deck(const vector<string>& ranks, const vector<string>& suits);
     vector<Card> getCards();
 private:
     vector<string> ranks;

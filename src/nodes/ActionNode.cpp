@@ -29,3 +29,11 @@ int ActionNode::getPlayer() {
 GameTreeNode::GameTreeNodeType ActionNode::getType() {
     return ACTION;
 }
+
+shared_ptr<Trainable> ActionNode::getTrainable() {
+    return this->trainable;
+}
+
+void ActionNode::setTrainable(shared_ptr<Trainable> trainable) {
+    this->trainable = trainable;
+}

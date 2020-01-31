@@ -37,7 +37,7 @@ string Card::intCard2Str(int card){
     return Card::rankToString(rank) + Card::suitToString(suit);
 }
 
-long Card::boardCards2long(vector<string> cards) {
+uint64_t Card::boardCards2long(vector<string> cards) {
     vector<Card> cards_objs(cards.size());
     for(int i = 0;i < cards.size();i++){
         cards_objs[i] = Card(cards[i]);
@@ -45,12 +45,12 @@ long Card::boardCards2long(vector<string> cards) {
     return Card::boardCards2long(cards_objs);
 }
 
-long Card::boardCard2long(Card card){
+uint64_t Card::boardCard2long(Card card){
     vector<Card> cards = {std::move(card)};
     return Card::boardCards2long(cards);
 }
 
-long Card::boardCards2long(vector<Card> cards){
+uint64_t Card::boardCards2long(vector<Card> cards){
     std::vector<int> board_int(cards.size());
     for(int i = 0;i < cards.size();i++){
         board_int[i] = Card::card2int(cards[i]);
@@ -58,23 +58,22 @@ long Card::boardCards2long(vector<Card> cards){
     return Card::boardInts2long(board_int);
 }
 
-bool Card::boardsHasIntercept(long board1,long board2){
+bool Card::boardsHasIntercept(uint64_t board1,uint64_t board2){
     return ((board1 & board2) != 0);
 }
 
-long Card::boardInts2long(vector<int> board){
+uint64_t Card::boardInts2long(const vector<int>& board){
     if(board.size() < 1 || board.size() > 7){
         throw runtime_error(fmt::format("Card length incorrect: {}",board.size()));
     }
-    long board_long = 0;
+    uint64_t board_long = 0;
     for(int one_card: board){
         // 这里hard code了一副扑克牌是52张
         if(one_card < 0 || one_card >= 52){
             throw runtime_error(fmt::format("Card with id {} not found",one_card));
         }
-        // long d
-        // long 的range 在- 2 ^ 63 - 1 ~ + 2^ 63之间,所以不用太担心溢出问题
-        board_long += ((long)(1) << one_card);
+        // uint64_7 的range 在0 ~ + 2^ 64之间,所以不用太担心溢出问题
+        board_long += ((uint64_t)(1) << one_card);
     }
     return board_long;
 }
@@ -85,7 +84,7 @@ long Card::privateHand2long(PrivateCards one_hand){
 }
  */
 
-vector<int> Card::long2board(long board_long) {
+vector<int> Card::long2board(uint64_t board_long) {
     vector<int> board;
     for(int i = 0;i < 52;i ++){
         // 看二进制最后一位是否为1
@@ -104,7 +103,7 @@ vector<int> Card::long2board(long board_long) {
     return retval;
 }
 
-vector<Card> Card::long2boardCards(long board_long){
+vector<Card> Card::long2boardCards(uint64_t board_long){
         vector<int> board = long2board(board_long);
         vector<Card> board_cards(board.size());
         for(int i = 0;i < board.size();i ++){

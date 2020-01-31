@@ -36,6 +36,8 @@ public:
     shared_ptr<TerminalNode> generateTerminalNode(json meta, string round,shared_ptr<GameTreeNode> parent);
     void printTree(int depth);
     json reConvertJson(shared_ptr<GameTreeNode> node);
+private:
+    int recurrentSetDepth(shared_ptr<GameTreeNode> node,int depth);
 };
 
 

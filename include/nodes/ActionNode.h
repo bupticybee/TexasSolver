@@ -6,6 +6,7 @@
 #define TEXASSOLVER_ACTIONNODE_H
 
 
+#include <trainable/Trainable.h>
 #include "GameTreeNode.h"
 #include "GameActions.h"
 
@@ -15,15 +16,15 @@ public:
     vector<GameActions> getActions();
     vector<shared_ptr<GameTreeNode>> getChildrens();
     int getPlayer();
+    shared_ptr<Trainable> getTrainable();
+    void setTrainable(shared_ptr<Trainable> trainable);
 
 private:
     GameTreeNodeType getType() override;
-    //Trainable getTrainable();
-    //void setTrainable(Trainable trainable);
 private:
     vector<GameActions> actions;
     vector<shared_ptr<GameTreeNode>> childrens;
-    //Trainable trainable;
+    shared_ptr<Trainable> trainable;
     int player;
 
 };

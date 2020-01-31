@@ -3,10 +3,12 @@
 //
 #include <iostream>
 #include <GameTree.h>
+#include <ranges/PrivateCards.h>
 #include "gtest/gtest.h"
 #include "Card.h"
 #include "fmt/format.h"
 #include "compairer/Dic5Compairer.h"
+#include "tools/PrivateRangeConverter.h"
 
 using namespace std;
 static Dic5Compairer compairer;
@@ -42,9 +44,9 @@ TEST(TestCase,test_card_convert ) {
             Card("6h"),
             Card("7s")
     };
-    long board_int = Card::boardCards2long(board);
+    uint64_t board_int = Card::boardCards2long(board);
     vector<Card> board_cards = Card::long2boardCards(board_int);
-    long board_int_rev = Card::boardCards2long(board_cards);
+    uint64_t board_int_rev = Card::boardCards2long(board_cards);
 
     for(Card i:board)
         cout << (i.getCard()) << endl;
@@ -76,8 +78,8 @@ TEST(TestCase,test_card_convert_ne ) {
             Card("6h"),
             Card("7s")
     };
-    long board_int1 = Card::boardCards2long(board1);
-    long board_int2 = Card::boardCards2long(board2);
+    uint64_t board_int1 = Card::boardCards2long(board1);
+    uint64_t board_int2 = Card::boardCards2long(board2);
     EXPECT_NE(board_int1,board_int2);
 }
 
@@ -131,8 +133,8 @@ TEST(TestCase,test_compairer_equivlent){
             (Card("6h").getCardInt()),
             (Card("7s").getCardInt())
     };
-    long board_int1 = compairer.get_rank(board1_private,board1_public);
-    long board_int2 = compairer.get_rank(board2_private,board2_public);
+    uint64_t board_int1 = compairer.get_rank(board1_private,board1_public);
+    uint64_t board_int2 = compairer.get_rank(board2_private,board2_public);
     cout << (board_int1) << endl;
     cout << (board_int2) << endl;
     EXPECT_EQ(board_int1,board_int2);
@@ -219,6 +221,57 @@ TEST(TestCase,test_tree_print_complex){
     );
     GameTree game_tree = GameTree("../resources/gametree/part_tree_depthinf.km",deck);
     game_tree.printTree(2);
+}
+
+TEST(TestCase,test_converter_simple){
+    vector<int> initialBoard {
+            Card::strCard2int("Kd"),
+            Card::strCard2int("Jd"),
+            Card::strCard2int("Td"),
+    };
+    string range = "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76";
+    vector<PrivateCards> range_converted = PrivateRangeConverter::rangeStr2Cards(range,initialBoard);
+    for(PrivateCards one_private_range:range_converted)
+        EXPECT_EQ(one_private_range.weight,1);
+}
+
+TEST(TestCase,test_converter_withweight){
+    vector<int> initialBoard {
+            Card::strCard2int("Kd"),
+            Card::strCard2int("Jd"),
+            Card::strCard2int("Td"),
+    };
+    string range = "AA:2,KK:1.5,QQ:0,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76";
+    vector<PrivateCards> range_converted = PrivateRangeConverter::rangeStr2Cards(range,initialBoard);
+    for(PrivateCards one_private_range:range_converted) {
+        EXPECT_NE(one_private_range.weight, 0);
+        if(one_private_range.toString() == "AhAs") {
+            EXPECT_EQ(one_private_range.weight, 2);
+        }else if(one_private_range.toString() == "KhKs") {
+            EXPECT_EQ(one_private_range.weight, 1.5);
+        }else if(one_private_range.toString() == "AhKs"){
+            EXPECT_EQ(one_private_range.weight, 1);
+        }
+    }
+}
+
+TEST(TestCase,test_converter_o){
+    vector<int> initialBoard {
+            Card::strCard2int("Kd"),
+            Card::strCard2int("Jd"),
+            Card::strCard2int("Td"),
+    };
+    string range = "AAo:1,AKs:10";
+    vector<PrivateCards> range_converted = PrivateRangeConverter::rangeStr2Cards(range,initialBoard);
+    for(PrivateCards one_private_range:range_converted) {
+        cout << one_private_range.toString() << " " << one_private_range.weight << endl;
+        EXPECT_NE(one_private_range.weight, 0);
+        if(one_private_range.toString() == "AhAs") {
+            EXPECT_EQ(one_private_range.weight, 1);
+        }else if(one_private_range.toString() == "AhKh"){
+            EXPECT_EQ(one_private_range.weight, 10);
+        }
+    }
 }
 
 int main(int argc, char **argv)

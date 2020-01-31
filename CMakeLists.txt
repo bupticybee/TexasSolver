@@ -16,12 +16,18 @@ include_directories(include)
 AUX_SOURCE_DIRECTORY(src lib_src)
 AUX_SOURCE_DIRECTORY(src/compairer lib_src)
 AUX_SOURCE_DIRECTORY(src/nodes lib_src)
+AUX_SOURCE_DIRECTORY(src/ranges lib_src)
 AUX_SOURCE_DIRECTORY(src/tools lib_src)
+AUX_SOURCE_DIRECTORY(src/trainable lib_src)
+AUX_SOURCE_DIRECTORY(src/solver lib_src)
 
 AUX_SOURCE_DIRECTORY(include lib_src)
 AUX_SOURCE_DIRECTORY(include/compairer lib_src)
 AUX_SOURCE_DIRECTORY(include/nodes lib_src)
+AUX_SOURCE_DIRECTORY(include/ranges lib_src)
 AUX_SOURCE_DIRECTORY(include/tools lib_src)
+AUX_SOURCE_DIRECTORY(include/trainable lib_src)
+AUX_SOURCE_DIRECTORY(include/solver lib_src)
 
 add_library(TexasSolver
         ${lib_src}

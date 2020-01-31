@@ -13,6 +13,29 @@ GameTree::GameTree(const string& tree_json_dir, Deck deck) {
     json json_content;
     fs >> json_content;
     this->root = this->recurrentGenerateTreeNode(json_content["root"], nullptr);
+    this->recurrentSetDepth(this->root,0);
+}
+
+int GameTree::recurrentSetDepth(shared_ptr<GameTreeNode> node, int depth) {
+    node->depth = depth;
+    if(node->getType() == GameTreeNode::ACTION) {
+        shared_ptr<ActionNode> actionNode = std::dynamic_pointer_cast<ActionNode>(node);
+        int subtree_size = 1;
+        for(shared_ptr<GameTreeNode> one_child:actionNode->getChildrens()){
+            subtree_size += this->recurrentSetDepth(one_child,depth + 1);
+        }
+        node->subtree_size = subtree_size;
+    }else if(node->getType() == GameTreeNode::CHANCE){
+        shared_ptr<ChanceNode> chanceNode = std::dynamic_pointer_cast<ChanceNode>(node);
+        int subtree_size = 1;
+        for(shared_ptr<GameTreeNode> one_child:chanceNode->getChildrens()){
+            subtree_size += this->recurrentSetDepth(one_child,depth + 1);
+        }
+        node->subtree_size = subtree_size;
+    }else{
+        node->subtree_size = 1;
+    }
+    return node->subtree_size;
 }
 
 shared_ptr<GameTreeNode> GameTree::recurrentGenerateTreeNode(json node_json, const shared_ptr<GameTreeNode>& parent) {

@@ -45,12 +45,11 @@ uint64_t Card::boardCards2long(vector<string> cards) {
     return Card::boardCards2long(cards_objs);
 }
 
-uint64_t Card::boardCard2long(Card card){
-    vector<Card> cards = {std::move(card)};
-    return Card::boardCards2long(cards);
+uint64_t Card::boardCard2long(Card& card){
+    return Card::boardInt2long(card.getCardInt());
 }
 
-uint64_t Card::boardCards2long(vector<Card> cards){
+uint64_t Card::boardCards2long(vector<Card>& cards){
     std::vector<int> board_int(cards.size());
     for(int i = 0;i < cards.size();i++){
         board_int[i] = Card::card2int(cards[i]);
@@ -60,6 +59,15 @@ uint64_t Card::boardCards2long(vector<Card> cards){
 
 bool Card::boardsHasIntercept(uint64_t board1,uint64_t board2){
     return ((board1 & board2) != 0);
+}
+
+uint64_t Card::boardInt2long(int board){
+    // 这里hard code了一副扑克牌是52张
+    if(board < 0 || board >= 52){
+        throw runtime_error(fmt::format("Card with id {} not found",board));
+    }
+    // uint64_7 的range 在0 ~ + 2^ 64之间,所以不用太担心溢出问题
+    return ((uint64_t)(1) << board);
 }
 
 uint64_t Card::boardInts2long(const vector<int>& board){

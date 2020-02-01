@@ -9,9 +9,10 @@
 #include "fmt/format.h"
 #include "compairer/Dic5Compairer.h"
 #include "tools/PrivateRangeConverter.h"
+#include "solver/CfrSolver.h"
 
 using namespace std;
-static Dic5Compairer compairer;
+static shared_ptr<Dic5Compairer> compairer;
 
 TEST(TestCase,test_card ){
     Card card8h("8h");
@@ -84,7 +85,7 @@ TEST(TestCase,test_card_convert_ne ) {
 }
 
 TEST(TestCase,test_comapirer_load ){
-    compairer = Dic5Compairer("../resources/compairer/card5_dic_sorted_shortdeck.txt",376993);
+    compairer = make_shared<Dic5Compairer>("../resources/compairer/card5_dic_sorted_shortdeck.txt",376993);
 }
 
 TEST(TestCase,test_compairer_lg){
@@ -104,7 +105,7 @@ TEST(TestCase,test_compairer_lg){
             Card("9s")
     };
 
-    Compairer::CompairResult cr = compairer.compair(private1,private2,board);
+    Compairer::CompairResult cr = compairer->compair(private1,private2,board);
 
     EXPECT_EQ(cr,Compairer::CompairResult::LARGER);
 }
@@ -133,8 +134,8 @@ TEST(TestCase,test_compairer_equivlent){
             (Card("6h").getCardInt()),
             (Card("7s").getCardInt())
     };
-    uint64_t board_int1 = compairer.get_rank(board1_private,board1_public);
-    uint64_t board_int2 = compairer.get_rank(board2_private,board2_public);
+    uint64_t board_int1 = compairer->get_rank(board1_private,board1_public);
+    uint64_t board_int2 = compairer->get_rank(board2_private,board2_public);
     cout << (board_int1) << endl;
     cout << (board_int2) << endl;
     EXPECT_EQ(board_int1,board_int2);
@@ -158,7 +159,7 @@ TEST(TestCase,test_compairer_eq){
             Card("7h")
     };
 
-    Compairer::CompairResult cr = compairer.compair(private1,private2,board);
+    Compairer::CompairResult cr = compairer->compair(private1,private2,board);
 
     EXPECT_EQ(cr,Compairer::CompairResult::EQUAL);
 }
@@ -180,7 +181,7 @@ TEST(TestCase,test_compairer_sm){
             Card("7h")
     };
 
-    Compairer::CompairResult cr = compairer.compair(private1,private2,board);
+    Compairer::CompairResult cr = compairer->compair(private1,private2,board);
 
     EXPECT_EQ(cr,Compairer::CompairResult::SMALLER);
 }
@@ -198,7 +199,7 @@ TEST(TestCase,test_compairer_get_rank){
             Card("7s")
     };
 
-    int rank = compairer.get_rank(private_cards,board);
+    int rank = compairer->get_rank(private_cards,board);
 
     EXPECT_EQ(rank,687);
 }
@@ -274,8 +275,46 @@ TEST(TestCase,test_converter_o){
     }
 }
 
+TEST(TestCase,test_cfr_simple){
+    vector<string> ranks = {"A", "K", "Q", "J", "T", "9", "8", "7", "6"};
+    vector<string> suits = {"h", "s", "d", "c"};
+    Deck deck = Deck(
+            ranks,suits
+    );
+    shared_ptr<GameTree> game_tree = make_shared<GameTree>("../resources/gametree/simple_part_tree_depthinf.km",deck);
+    string player1RangeStr = "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76";
+    string player2RangeStr = "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76";
+
+    vector<int> initialBoard = vector<int>{
+            Card::strCard2int("Kd"),
+            Card::strCard2int("Jd"),
+            Card::strCard2int("Td"),
+            Card::strCard2int("7s"),
+            Card::strCard2int("8s")
+    };
+
+    vector<PrivateCards> player1Range = PrivateRangeConverter::rangeStr2Cards(player1RangeStr,initialBoard);
+    vector<PrivateCards> player2Range = PrivateRangeConverter::rangeStr2Cards(player2RangeStr,initialBoard);
+    string logfile_name = "../resources/outputs/outputs_log.txt";
+    CfrSolver solver = CfrSolver(
+            game_tree
+            , player1Range
+            , player2Range
+            , initialBoard
+            , compairer
+            , deck
+            , 100
+            , false
+            , 10
+            , logfile_name
+            , "discounted_cfr"
+            , Solver::MonteCarolAlg::NONE
+    );
+    solver.train();
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    RUN_ALL_TESTS();
 }

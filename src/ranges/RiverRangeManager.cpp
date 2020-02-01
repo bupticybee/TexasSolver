@@ -29,19 +29,19 @@ RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &riverC
 
 const vector<RiverCombs> &
 RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &preflopCombos, uint64_t board_long) {
-    unordered_map<uint64_t , vector<RiverCombs>> riverRanges;
+    unordered_map<uint64_t , vector<RiverCombs>>* riverRanges;
 
-    if (player == 1)
-        riverRanges = p1RiverRanges;
-    else if (player == 2)
-        riverRanges = p2RiverRanges;
+    if (player == 0)
+        riverRanges = &p1RiverRanges;
+    else if (player == 1)
+        riverRanges = &p2RiverRanges;
     else
         throw runtime_error(fmt::format("player {} not found",player));
 
     uint64_t key = board_long;
 
-    if (riverRanges.find(key) != riverRanges.end())
-        return riverRanges[key];
+    if (riverRanges->find(key) != riverRanges->end())
+        return (*riverRanges)[key];
 
     int count = 0;
 
@@ -76,7 +76,7 @@ RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &preflo
         return lhs.rank > rhs.rank;
     });
 
-    riverRanges[key] =  std::move(riverCombos);
+    (*riverRanges)[key] =  std::move(riverCombos);
 
-    return riverRanges[key];
+    return (*riverRanges)[key];
 }

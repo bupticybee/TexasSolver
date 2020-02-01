@@ -17,10 +17,11 @@ public:
     uint64_t toBoardLong();
     int hashCode();
     string toString();
-    vector<int> get_hands();
+    vector<int>& get_hands();
 private:
     vector<int> card_vec;
     int hash_code{};
+    uint64_t board_long;
 };
 
 

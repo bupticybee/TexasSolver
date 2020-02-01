@@ -30,14 +30,14 @@ PrivateCardsManager::PrivateCardsManager(vector<vector<PrivateCards>> private_ca
     this->setRelativeProbs();
 }
 
-vector<PrivateCards> PrivateCardsManager::getPreflopCards(int player) {
+vector<PrivateCards>& PrivateCardsManager::getPreflopCards(int player) {
     return this->private_cards[player];
 }
 
 int PrivateCardsManager::indPlayer2Player(int from_player, int to_player, int index) {
     if(index < 0 || index >= this->getPreflopCards(from_player).size()) throw runtime_error("index out of range");
-    PrivateCards player_combo = this->getPreflopCards(from_player)[index];
-    int to_player_index = this->card_player_index[player_combo.hashCode()][to_player];
+    //PrivateCards player_combo = this->getPreflopCards(from_player)[index];
+    int to_player_index = this->card_player_index[this->private_cards[from_player][index].hashCode()][to_player];
     if(to_player_index == -1){
         return -1;
     }else {
@@ -68,8 +68,8 @@ void PrivateCardsManager::setRelativeProbs() {
 
         for(int i = 0;i < this->private_cards[player_id].size();i ++) {
             float oppo_prob_sum = 0;
-            PrivateCards player_card = this->private_cards[player_id][i];
-            uint64_t player_long = Card::boardInts2long(player_card.get_hands());
+            PrivateCards* player_card = &this->private_cards[player_id][i];
+            uint64_t player_long = Card::boardInts2long(player_card->get_hands());
 
             //
             if (Card::boardsHasIntercept(player_long,this->initialboard)){
@@ -86,11 +86,12 @@ void PrivateCardsManager::setRelativeProbs() {
                 oppo_prob_sum += oppo_card.weight;
 
             }
-            player_card.relative_prob = oppo_prob_sum * player_card.weight;
-            player_prob_sum += player_card.relative_prob;
+            player_card->relative_prob = oppo_prob_sum * player_card->weight;
+            player_prob_sum += player_card->relative_prob;
         }
-        for(auto player_card : this->private_cards[player_id]) {
-            player_card.relative_prob = player_card.relative_prob / player_prob_sum;
+        for(int i = 0;i < this->private_cards[player_id].size();i ++) {
+            this->private_cards[player_id][i].relative_prob = this->private_cards[player_id][i].relative_prob / player_prob_sum;
+            //player_card.relative_prob = player_card.relative_prob / player_prob_sum;
         }
 
     }

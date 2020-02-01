@@ -11,7 +11,7 @@ class Deck {
 public:
     Deck();
     Deck(const vector<string>& ranks, const vector<string>& suits);
-    vector<Card> getCards();
+    vector<Card>& getCards();
 private:
     vector<string> ranks;
     vector<string> suits;

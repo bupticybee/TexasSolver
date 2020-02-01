@@ -12,7 +12,7 @@
 class ChanceNode:public GameTreeNode {
 public:
     ChanceNode(const vector<shared_ptr<GameTreeNode>>& childrens, GameRound round, double pot, shared_ptr<GameTreeNode>parent, const vector<Card>& cards);
-    vector<Card> getCards();
+    vector<Card>& getCards();
     vector<shared_ptr<GameTreeNode>> getChildrens();
     int getPlayer();
 

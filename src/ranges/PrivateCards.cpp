@@ -18,10 +18,12 @@ PrivateCards::PrivateCards(int card1, int card2, float weight) {
     }else{
         this->hash_code = card2 * 52 + card1;
     }
+    this->board_long = Card::boardInts2long(this->card_vec);
 }
 
 uint64_t PrivateCards::toBoardLong() {
-    return Card::boardInts2long(this->card_vec);
+    return this->board_long;
+    //return Card::boardInts2long(this->card_vec);
 }
 
 int PrivateCards::hashCode() {
@@ -37,6 +39,6 @@ string PrivateCards::toString() {
     }
 }
 
-vector<int> PrivateCards::get_hands() {
+vector<int>& PrivateCards::get_hands() {
     return this->card_vec;
 }

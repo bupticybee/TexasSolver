@@ -2,8 +2,7 @@
 // Created by Xuefeng Huang on 2020/1/31.
 //
 
-#include <trainable/CfrPlusTrainable.h>
-#include <trainable/DiscountedCfrTrainable.h>
+#include <solver/BestResponse.h>
 #include "solver/CfrSolver.h"
 
 CfrSolver::CfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, vector<PrivateCards> range2,
@@ -76,8 +75,7 @@ CfrSolver::noDuplicateRange(const vector<PrivateCards> &private_range, uint64_t 
             range_array.push_back(one_range);
         }
     }
-    vector<PrivateCards> ret(range_array.size());
-    return ret;
+    return range_array;
 
 }
 
@@ -92,6 +90,8 @@ void CfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
             action_node->setTrainable(make_shared<CfrPlusTrainable>(action_node,player_privates));
         }else if(this->trainer == "discounted_cfr"){
             action_node->setTrainable(make_shared<DiscountedCfrTrainable>(action_node,player_privates));
+        }else{
+            throw runtime_error(fmt::format("trainer {} not found",this->trainer));
         }
 
         vector<shared_ptr<GameTreeNode>> childrens =  action_node->getChildrens();
@@ -108,16 +108,103 @@ void CfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
     }
 }
 
-const vector<float> &CfrSolver::getCardsWeights(int player, vector<float> oppo_reach_probs, uint64_t current_board) {
-}
-
-const vector<float> &CfrSolver::cfr(int player, GameTreeNode node, const vector<vector<float>> &reach_probs, int iter,
+const vector<float> &CfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, const vector<vector<float>> &reach_probs, int iter,
                                     uint64_t current_board) {
+    switch(node->getType()) {
+        case GameTreeNode::ACTION: {
+            shared_ptr<ActionNode> action_node = std::dynamic_pointer_cast<ActionNode>(node);
+            return actionUtility(player, action_node, reach_probs, iter, current_board);
+        }case GameTreeNode::SHOWDOWN: {
+            shared_ptr<ShowdownNode> showdown_node = std::dynamic_pointer_cast<ShowdownNode>(node);
+            return showdownUtility(player, showdown_node, reach_probs, iter, current_board);
+        }case GameTreeNode::TERMINAL: {
+            shared_ptr<TerminalNode> terminal_node = std::dynamic_pointer_cast<TerminalNode>(node);
+            return terminalUtility(player, terminal_node, reach_probs, iter, current_board);
+        }case GameTreeNode::CHANCE: {
+            shared_ptr<ChanceNode> chance_node = std::dynamic_pointer_cast<ChanceNode>(node);
+            return chanceUtility(player, chance_node, reach_probs, iter, current_board);
+        }default:
+            throw runtime_error("node type unknown");
+    }
 }
 
 const vector<float> &
 CfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<vector<float>> &reach_probs, int iter,
                          uint64_t current_board) {
+    vector<Card> cards = this->deck.getCards();
+    if(cards.size() != node->getChildrens().size()) throw runtime_error("size mismatch");
+    //float[] cardWeights = getCardsWeights(player,reach_probs[1 - player],current_board);
+
+    int card_num = node->getCards().size();
+    // 可能的发牌情况,2代表每个人的holecard是两张
+    int possible_deals = node->getChildrens().size() - Card::long2board(current_board).size() - 2;
+
+    vector<float> chance_utility(reach_probs[player].size());
+    // 遍历每一种发牌的可能性
+    // TODO 查为什么PCS的exploitability不为0
+    int random_deal = 0,cardcount = 0;
+    if(this->monteCarolAlg==MonteCarolAlg::PUBLIC) {
+        if (this->round_deal[GameTreeNode::gameRound2int(node->getRound())] == -1) {
+            random_deal = random(1, possible_deals + 1 + 2);
+            this->round_deal[GameTreeNode::gameRound2int(node->getRound())] = random_deal;
+        } else {
+            random_deal = this->round_deal[GameTreeNode::gameRound2int(node->getRound())];
+        }
+    }
+    for(int card = 0;card < node->getCards().size();card ++){
+        shared_ptr<GameTreeNode> one_child = node->getChildrens()[card];
+        Card* one_card  = &(node->getCards()[card]);
+        uint64_t card_long = Card::boardInt2long(one_card->getCardInt());//Card::boardCards2long(new Card[]{one_card});
+
+        // 不可能发出和board重复的牌，对吧
+        if(Card::boardsHasIntercept(card_long,current_board)) continue;
+        cardcount += 1;
+
+
+        uint64_t new_board_long = current_board | card_long;
+        if(this->monteCarolAlg == MonteCarolAlg::PUBLIC){
+            if(cardcount == random_deal){
+                return this->cfr(player,one_child,reach_probs,iter,new_board_long);
+            }else{
+                continue;
+            }
+        }
+
+        vector<PrivateCards>* playerPrivateCard = &(this->ranges[player]);
+        vector<PrivateCards>* oppoPrivateCards = &(this->ranges[1 - player]);
+
+        float[][] new_reach_probs = new float[2][];
+
+        new_reach_probs[player] = new float[playerPrivateCard.length];
+        new_reach_probs[1 - player] = new float[oppoPrivateCards.length];
+
+        // 检查是否双方 hand和reach prob长度符合要求
+        if(playerPrivateCard.length !=reach_probs[player].length) throw new RuntimeException("length not match");
+        if(oppoPrivateCards.length !=reach_probs[1 - player].length) throw new RuntimeException("length not match");
+
+        for(int one_player = 0;one_player < 2;one_player ++) {
+            int player_hand_len = this.ranges[one_player].length;
+            for (int player_hand = 0; player_hand < player_hand_len; player_hand++) {
+                PrivateCards one_private = this.ranges[one_player][player_hand];
+                uint64_t privateBoardLong = one_private.toBoardLong();
+                if (Card.boardsHasIntercept(card_long, privateBoardLong)) continue;
+                new_reach_probs[one_player][player_hand] = reach_probs[one_player][player_hand] / possible_deals;
+            }
+        }
+
+        if(Card.boardsHasIntercept(current_board,card_long))
+            throw new RuntimeException("board has intercept with dealt card");
+
+        float[] child_utility = this.cfr(player,one_child,new_reach_probs,iter,new_board_long);
+        if(child_utility.length != chance_utility.length) throw new RuntimeException("length not match");
+        for(int i = 0;i < child_utility.length;i ++)
+            chance_utility[i] += child_utility[i];
+    }
+
+    if(this.monteCarolAlg == MonteCarolAlg.PUBLIC) {
+        throw new RuntimeException("not possible");
+    }
+    return chance_utility;
 }
 
 const vector<float> &
@@ -146,47 +233,46 @@ void CfrSolver::train() {
     player_privates[0] = pcm.getPreflopCards(0);
     player_privates[1] = pcm.getPreflopCards(1);
 
-    //BestResponse br = new BestResponse(player_privates,this.player_number,this.compairer,this.pcm,this.rrm,this.deck,this.debug);
+    BestResponse br = BestResponse(player_privates,this->player_number,this->pcm,this->rrm,this->deck,this->debug);
 
-    //br.printExploitability(tree.getRoot(), 0, tree.getRoot().getPot().floatValue(), initial_board_long);
+    br.printExploitability(tree->getRoot(), 0, tree->getRoot()->getPot(), initial_board_long);
 
     vector<vector<float>> reach_probs = this->getReachProbs();
-    /*
-    FileWriter fileWriter = new FileWriter(this.logfile);
+    ofstream fileWriter;
+    fileWriter.open(this->logfile);
 
-    long begintime = System.currentTimeMillis();
-    long endtime = System.currentTimeMillis();
-    for(int i = 0;i < this.iteration_number;i++){
-        for(int player_id = 0;player_id < this.player_number;player_id ++) {
-            if(this.debug){
-                System.out.println(String.format(
-                        "---------------------------------     player %s --------------------------------",
+    uint64_t begintime = timeSinceEpochMillisec();
+    uint64_t endtime = timeSinceEpochMillisec();
+    for(int i = 0;i < this->iteration_number;i++){
+        for(int player_id = 0;player_id < this->player_number;player_id ++) {
+            if(this->debug){
+                cout << (fmt::format(
+                        "---------------------------------     player {} --------------------------------",
                         player_id
-                ));
+                )) << endl;
             }
-            this.round_deal = new int[]{-1,-1,-1,-1};
-            cfr(player_id,this.tree.getRoot(),reach_probs,i,this.initial_board_long);
+            this->round_deal = vector<int>{-1,-1,-1,-1};
+            cfr(player_id,this->tree->getRoot(),reach_probs,i,this->initial_board_long);
 
         }
-        if(i % this.print_interval == 0) {
-            System.out.println("-------------------");
-            endtime = System.currentTimeMillis();
-            float expliotibility = br.printExploitability(tree.getRoot(), i + 1, tree.getRoot().getPot().floatValue(), initial_board_long);
-            if(this.logfile != null){
+        if(i % this->print_interval == 0) {
+            cout << ("-------------------") << endl;
+            endtime = timeSinceEpochMillisec();
+            float expliotibility = br.printExploitability(tree->getRoot(), i + 1, tree->getRoot()->getPot(), initial_board_long);
+            if(!this->logfile.empty()){
                 long time_ms = endtime - begintime;
-                JSONObject jo = new JSONObject();
-                jo.put("iteration",i);
-                jo.put("exploitibility",expliotibility);
-                jo.put("time_ms",time_ms);
-                fileWriter.write(String.format("%s\n",jo.toJSONString()));
+                json jo;
+                jo["iteration"] = i;
+                jo["exploitibility"] = expliotibility;
+                jo["time_ms"] = time_ms;
+                fileWriter << jo << endl;
             }
-            begintime = System.currentTimeMillis();
+            begintime = timeSinceEpochMillisec();
         }
     }
     fileWriter.flush();
     fileWriter.close();
     // System.out.println(this.tree.dumps(false).toJSONString());
-    */
 
 }
 

@@ -3,10 +3,11 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <vector>
+#include <chrono>
+#include <cstdint>
 
 using namespace std;
-
-#include <vector>
 
 template<typename T> class Combinations {
 // Combinations(std::vector<T> s, int m) iterate all Combinations without repetition
@@ -78,6 +79,7 @@ Combinations<T>::comb(unsigned long long n, unsigned long long k) {
 }
 
 vector<string> string_split(string strin,char split);
-
+uint64_t timeSinceEpochMillisec();
+int random(int min, int max);
 
 #endif //TEXASSOLVER_LIBRARY_H

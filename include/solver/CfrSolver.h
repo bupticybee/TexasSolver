@@ -9,6 +9,8 @@
 #include <Deck.h>
 #include <ranges/RiverRangeManager.h>
 #include <ranges/PrivateCardsManager.h>
+#include <trainable/CfrPlusTrainable.h>
+#include <trainable/DiscountedCfrTrainable.h>
 #include "Solver.h"
 
 class CfrSolver:Solver {
@@ -26,6 +28,7 @@ public:
             string trainer,
             Solver::MonteCarolAlg monteCarolAlg
     );
+    void train() override;
 private:
     vector<vector<PrivateCards>> ranges;
     vector<PrivateCards> range1;
@@ -44,19 +47,18 @@ private:
     string trainer;
     string logfile;
     Solver::MonteCarolAlg monteCarolAlg;
+    vector<int> round_deal;
 
     const vector<PrivateCards>& playerHands(int player);
     vector<vector<float>> getReachProbs();
-    vector<PrivateCards> noDuplicateRange(const vector<PrivateCards>& private_range,uint64_t board_long);
+    static vector<PrivateCards> noDuplicateRange(const vector<PrivateCards>& private_range,uint64_t board_long);
     void setTrainable(shared_ptr<GameTreeNode> root);
-    const vector<float>& getCardsWeights(int player,vector<float> oppo_reach_probs,uint64_t current_board);
-    const vector<float>& cfr(int player,GameTreeNode node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
+    const vector<float>& cfr(int player, shared_ptr<GameTreeNode> node, const vector<vector<float>>& reach_probs, int iter, uint64_t current_board);
     const vector<float>& chanceUtility(int player,shared_ptr<ChanceNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
     const vector<float>& showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
     const vector<float>& actionUtility(int player,shared_ptr<ActionNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
     const vector<float>& terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<vector<float>>& reach_prob,int iter,uint64_t current_board);
 
-    void train() override;
 
 };
 

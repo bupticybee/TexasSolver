@@ -34,7 +34,7 @@ private:
 
     const vector<float>& getcurrentStrategy() override;
 
-    void updateRegrets(vector<float> regrets, int iteration_number, vector<float> reach_probs) override;
+    void updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) override;
 
     json dump_strategy(bool with_state) override;
 

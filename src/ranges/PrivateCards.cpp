@@ -39,6 +39,6 @@ string PrivateCards::toString() {
     }
 }
 
-vector<int>& PrivateCards::get_hands() {
+const vector<int> & PrivateCards::get_hands() const {
     return this->card_vec;
 }

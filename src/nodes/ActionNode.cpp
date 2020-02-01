@@ -14,11 +14,11 @@ ActionNode::ActionNode(vector<GameActions> actions, vector<shared_ptr<GameTreeNo
 
 }
 
-vector<GameActions> ActionNode::getActions() {
+vector<GameActions>& ActionNode::getActions() {
     return this->actions;
 }
 
-vector<shared_ptr<GameTreeNode>> ActionNode::getChildrens() {
+vector<shared_ptr<GameTreeNode>>& ActionNode::getChildrens() {
     return this->childrens;
 }
 

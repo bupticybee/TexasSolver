@@ -17,7 +17,7 @@ public:
     uint64_t toBoardLong();
     int hashCode();
     string toString();
-    vector<int>& get_hands();
+    const vector<int> & get_hands() const;
 private:
     vector<int> card_vec;
     int hash_code{};

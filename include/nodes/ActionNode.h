@@ -13,11 +13,12 @@
 class ActionNode :public GameTreeNode {
 public:
     ActionNode(vector<GameActions> actions, vector<shared_ptr<GameTreeNode>> childrens, int player, GameRound round,double pot,shared_ptr<GameTreeNode> parent);
-    vector<GameActions> getActions();
-    vector<shared_ptr<GameTreeNode>> getChildrens();
+    vector<GameActions>& getActions();
+    vector<shared_ptr<GameTreeNode>>& getChildrens();
     int getPlayer();
     shared_ptr<Trainable> getTrainable();
     void setTrainable(shared_ptr<Trainable> trainable);
+    vector<vector<vector<float>>> arr_new_reach_probs;
 
 private:
     GameTreeNodeType getType() override;

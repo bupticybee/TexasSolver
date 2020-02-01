@@ -187,7 +187,6 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, vector
     }else{
         // 如果是别人做决定，那么就按照别人的策略加权算出一个 ev
         vector<float> total_payoffs(player_hands[player]);
-
         vector<float> node_strategy;
         node_strategy = node->getTrainable()->getAverageStrategy();
         if(node_strategy.size() != node->getChildrens().size() * reach_probs[node->getPlayer()].size()) {

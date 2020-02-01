@@ -62,7 +62,7 @@ const vector<float>& DiscountedCfrTrainable::getcurrentStrategy() {
     return retval;
 }
 
-void DiscountedCfrTrainable::updateRegrets(vector<float> regrets, int iteration_number, vector<float> reach_probs) {
+void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) {
     this->regrets = regrets;
     if(regrets.size() != this->action_number * this->card_number) throw runtime_error("length not match");
 

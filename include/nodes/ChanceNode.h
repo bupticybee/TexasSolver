@@ -15,12 +15,12 @@ public:
     vector<Card>& getCards();
     vector<shared_ptr<GameTreeNode>> getChildrens();
     int getPlayer();
+    vector<vector<vector<float>>> arr_new_reach_probs;
 
 private:
     GameTreeNodeType getType() override;
     //Trainable getTrainable();
     //void setTrainable(Trainable trainable);
-private:
     vector<shared_ptr<GameTreeNode>> childrens;
     //Trainable trainable;
     int player{};

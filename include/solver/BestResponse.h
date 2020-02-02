@@ -4,6 +4,7 @@
 
 #ifndef TEXASSOLVER_BESTRESPONSE_H
 #define TEXASSOLVER_BESTRESPONSE_H
+#include <omp.h>
 #include <ranges/PrivateCards.h>
 #include <compairer/Compairer.h>
 #include <Deck.h>
@@ -28,6 +29,7 @@ private:
     PrivateCardsManager& pcm;
     bool debug;
     vector<vector<float>> reach_probs;
+    int nthreads;
 public:
     BestResponse(
             vector<vector<PrivateCards>>& private_combos,
@@ -35,7 +37,8 @@ public:
             PrivateCardsManager& pcm,
             RiverRangeManager& rrm,
             Deck& deck,
-            bool debug);
+            bool debug,
+            int nthreads = 1);
     float printExploitability(shared_ptr<GameTreeNode> root, int iterationCount, float initial_pot, uint64_t initialBoard);
     float getBestReponseEv(shared_ptr<GameTreeNode> node, int player,vector<vector<float>> reach_probs, uint64_t initialBoard);
 

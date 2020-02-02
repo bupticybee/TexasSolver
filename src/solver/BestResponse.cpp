@@ -5,7 +5,7 @@
 #include "solver/BestResponse.h"
 
 BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int player_number,
-                           PrivateCardsManager &pcm, RiverRangeManager &rrm, Deck &deck, bool debug)
+                           PrivateCardsManager &pcm, RiverRangeManager &rrm, Deck &deck, bool debug,int nthreads)
                            :rrm(rrm),pcm(pcm),private_combos(private_combos),deck(deck){
     this->player_number = player_number;
     this->debug = debug;
@@ -18,6 +18,7 @@ BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int pla
     for(int i = 0;i < player_number;i ++) {
         player_hands[i] = private_combos[i].size();
     }
+    this->nthreads = nthreads;
 }
 
 float BestResponse::printExploitability(shared_ptr<GameTreeNode> root, int iterationCount, float initial_pot,
@@ -123,6 +124,9 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
         node->best_respond_arr_new_reach_probs = vector<vector<vector<float>>>(node->getCards().size());
     }
     // 遍历每一种发牌的可能性
+
+    omp_set_num_threads(this->nthreads);
+    #pragma omp parallel for
     for(int card = 0;card < node->getCards().size();card ++){
         shared_ptr<GameTreeNode> one_child = node->getChildrens()[card];
         Card one_card = node->getCards()[card];

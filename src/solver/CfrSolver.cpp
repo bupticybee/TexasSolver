@@ -140,10 +140,14 @@ CfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<v
     int possible_deals = node->getChildrens().size() - Card::long2board(current_board).size() - 2;
 
     //vector<float> chance_utility(reach_probs[player].size());
-    if(node->utilities.empty())
-        node->utilities = vector<float>(reach_probs[player].size());
+    if(node->utilities.empty()) {
+        node->utilities = vector<vector<float>>(2);
+    }
+    if(node->utilities[player].empty()) {
+        node->utilities[player] = vector<float>(reach_probs[player].size());
+    }
     //vector<float>& payoffs = node->utilities;
-    vector<float>& chance_utility = node->utilities;
+    vector<float>& chance_utility = node->utilities[player];
     fill(chance_utility.begin(),chance_utility.end(),0);
 
     int random_deal = 0,cardcount = 0;
@@ -195,7 +199,10 @@ CfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<v
             for (int player_hand = 0; player_hand < player_hand_len; player_hand++) {
                 PrivateCards& one_private = this->ranges[one_player][player_hand];
                 uint64_t privateBoardLong = one_private.toBoardLong();
-                if (Card::boardsHasIntercept(card_long, privateBoardLong)) continue;
+                if (Card::boardsHasIntercept(card_long, privateBoardLong)) {
+                    new_reach_probs[one_player][player_hand] = 0;
+                    continue;
+                }
                 new_reach_probs[one_player][player_hand] = reach_probs[one_player][player_hand] / possible_deals;
             }
         }
@@ -219,9 +226,13 @@ CfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<v
     const vector<PrivateCards>& node_player_private_cards = this->ranges[node->getPlayer()];
     shared_ptr<Trainable> trainable = node->getTrainable();
 
-    if(node->utilities.empty())
-        node->utilities = vector<float>(this->ranges[player].size());
-    vector<float>& payoffs = node->utilities;
+    if(node->utilities.empty()) {
+        node->utilities = vector<vector<float>>(2);
+    }
+    if(node->utilities[player].empty()) {
+        node->utilities[player] = vector<float>(this->ranges[player].size());
+    }
+    vector<float>& payoffs = node->utilities[player];
     fill(payoffs.begin(),payoffs.end(),0);
     vector<shared_ptr<GameTreeNode>>& children =  node->getChildrens();
     vector<GameActions>& actions =  node->getActions();
@@ -261,7 +272,7 @@ CfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<v
     //为了节省计算成本将action regret 存在一位数组而不是二维数组中，两个纬度分别是（该infoset有多少动作,该palyer有多少holecard）
     vector<float> regrets(actions.size() * node_player_private_cards.size());
 
-    vector<vector<float>> all_action_utility(actions.size());
+    vector<vector<float> *> all_action_utility(actions.size());
     int node_player = node->getPlayer();
 
     for(int action_id = 0;action_id < actions.size(); action_id++) {
@@ -283,7 +294,7 @@ CfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<v
         new_reach_prob[1 - node_player].assign(reach_probs[1 - node_player].begin(),reach_probs[1 - node_player].end());
 
         const vector<float>& action_utilities = this->cfr(player,children[action_id],new_reach_prob,iter,current_board);
-        all_action_utility[action_id] = action_utilities;
+        all_action_utility[action_id] = const_cast<vector<float, allocator<float>> *>(&action_utilities);
 
         // cfr结果是每手牌的收益，payoffs代表的也是每手牌的收益，他们的长度理应相等
         if(action_utilities.size() != payoffs.size()){
@@ -317,7 +328,7 @@ CfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<v
                 // 下面是regret计算的伪代码
                 // regret[action_id * player_hc: (action_id + 1) * player_hc]
                 //     = all_action_utilitiy[action_id] - payoff[action_id]
-                regrets[action_id * node_player_private_cards.size() + i] = all_action_utility[action_id][i] - payoffs[i];
+                regrets[action_id * node_player_private_cards.size() + i] = (*all_action_utility[action_id])[i] - payoffs[i];
             }
         }
         trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
@@ -333,24 +344,33 @@ CfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vect
                            int iter, uint64_t current_board) {
     // player win时候player的收益，player lose的时候收益明显为-player_payoff
     int oppo = 1 - player;
-    float win_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE,player)[player];
-    float lose_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE,oppo)[player];
-    vector<PrivateCards>& player_private_cards = this->ranges[player];
-    vector<PrivateCards>& oppo_private_cards = this->ranges[oppo];
+    float win_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE,player,player);
+    float lose_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE,oppo,player);
+    const vector<PrivateCards>& player_private_cards = this->ranges[player];
+    const vector<PrivateCards>& oppo_private_cards = this->ranges[oppo];
 
     const vector<RiverCombs>& player_combs = this->rrm.getRiverCombos(player,player_private_cards,current_board);
     const vector<RiverCombs>& oppo_combs = this->rrm.getRiverCombos(oppo,oppo_private_cards,current_board);
 
-    if(node->utilities.empty())
-        node->utilities = vector<float>(player_private_cards.size());
-    vector<float>& payoffs = node->utilities;
+    if(node->utilities.empty()) {
+        node->utilities = vector<vector<float>>(2);
+    }
+    if(node->utilities[player].empty()) {
+        node->utilities[player] = vector<float>(player_private_cards.size());
+    }
+    vector<float>& payoffs = node->utilities[player];
 
     float winsum = 0;
-    vector<float> card_winsum(52);
+    if(node->card_sum.empty()){
+        node->card_sum = vector<float> (52);
+    }
+    vector<float>& card_winsum = node->card_sum;
+    fill(card_winsum.begin(),card_winsum.end(),0);
 
     int j = 0;
     //if(player_combs.length != oppo_combs.length) throw new RuntimeException("");
 
+    /*
     if(this->debug){
         cout << ("[PRESHOWDOWN]=======================");
         cout << ("preflop combos: ") << endl;
@@ -362,12 +382,14 @@ CfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vect
         }
         cout << endl;
     }
+    */
 
     for(int i = 0;i < player_combs.size();i ++){
         const RiverCombs& one_player_comb = player_combs[i];
         while (j < oppo_combs.size() && one_player_comb.rank < oppo_combs[j].rank){
             const RiverCombs& one_oppo_comb = oppo_combs[j];
             winsum += reach_probs[oppo][one_oppo_comb.reach_prob_index];
+            /*
             if(this->debug) {
                 if (one_player_comb.reach_prob_index == 0) {
                     cout << (fmt::format("[{}]:{}-{}({}) "
@@ -378,12 +400,14 @@ CfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vect
                     )) << endl;
                 }
             }
+            */
 
             // TODO 这里有问题，要加上reach prob，但是reach prob的index怎么解决？
             card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             j ++;
         }
+        /*
         if(this->debug){
             cout << (fmt::format("Before Adding {}, win_payoff {} winsum {}, subcard1 {} subcard2 {}"
                     ,payoffs[one_player_comb.reach_prob_index]
@@ -393,20 +417,24 @@ CfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vect
                     ,- card_winsum[one_player_comb.private_cards.card2]
             )) << endl;
         }
+         */
         payoffs[one_player_comb.reach_prob_index] = (winsum
                                                      - card_winsum[one_player_comb.private_cards.card1]
                                                      - card_winsum[one_player_comb.private_cards.card2]
                                                     ) * win_payoff;
+        /*
         if(this->debug) {
             if (one_player_comb.reach_prob_index == 0) {
                 cout << (fmt::format("winsum {}",winsum)) << endl;
             }
         }
+         */
     }
 
     // 计算失败时的payoff
     float losssum = 0;
-    vector<float> card_losssum(52);
+    vector<float>& card_losssum = node->card_sum;
+    fill(card_losssum.begin(),card_losssum.end(),0);
     for(int i = 0;i < card_losssum.size();i ++) card_losssum[i] = 0;
 
     j = oppo_combs.size() - 1;
@@ -415,6 +443,7 @@ CfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vect
         while (j >= 0 && one_player_comb.rank > oppo_combs[j].rank){
             const RiverCombs& one_oppo_comb = oppo_combs[j];
             losssum += reach_probs[oppo][one_oppo_comb.reach_prob_index];
+            /*
             if(this->debug) {
                 if (one_player_comb.reach_prob_index == 0) {
                     cout << (fmt::format("lose :{} "
@@ -422,39 +451,43 @@ CfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vect
                     )) << endl;
                 }
             }
-
+            */
             // TODO 这里有问题，要加上reach prob，但是reach prob的index怎么解决？
             card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             j --;
         }
+        /*
         if(this->debug) {
             cout << (fmt::format("Before Substract {}", payoffs[one_player_comb.reach_prob_index])) << endl;
         }
+        */
         payoffs[one_player_comb.reach_prob_index] += (losssum
                                                       - card_losssum[one_player_comb.private_cards.card1]
                                                       - card_losssum[one_player_comb.private_cards.card2]
                                                      ) * lose_payoff;
+        /*
         if(this->debug) {
             if (one_player_comb.reach_prob_index == 0) {
                 cout << (fmt::format("losssum {}",losssum)) << endl;
             }
         }
+         */
     }
+    /*
     if(this->debug) {
         cout << endl;
         cout << ("[SHOWDOWN]============") << endl;
         node->printHistory();
         cout << (fmt::format("loss payoffs: {}",lose_payoff));
-        /*
             player 0 card AdAc
             actions: CALL FOLD
             history: <- (player 1 BET 2.0)
             payoffs : -778.0 -394.0
             regrets: [-192.0, 191.0]
-         */
         cout << (fmt::format("oppo sum {}, substracted payoff {}",losssum,payoffs[0]));
     }
+    */
     return payoffs;
 }
 
@@ -467,13 +500,21 @@ CfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vect
     const vector<PrivateCards>& player_hand = playerHands(player);
     const vector<PrivateCards>& oppo_hand = playerHands(oppo);
 
-    if(node->utilities.empty())
-        node->utilities = vector<float>(this->playerHands(player).size());
-    vector<float>& payoffs = node->utilities;
+    if(node->utilities.empty()) {
+        node->utilities = vector<vector<float>>(2);
+    }
+    if(node->utilities[player].empty()) {
+        node->utilities[player] = vector<float>(this->playerHands(player).size());
+    }
+    vector<float>& payoffs = node->utilities[player];
 
     // TODO hard code
     float oppo_sum = 0;
-    vector<float> oppo_card_sum(52,0);
+    if(node->oppo_card_sum.empty()) {
+        node->oppo_card_sum = vector<float> (52);
+    }
+    vector<float>& oppo_card_sum = node->oppo_card_sum;
+    fill(oppo_card_sum.begin(),oppo_card_sum.end(),0);
 
     for(int i = 0;i < oppo_hand.size();i ++){
         oppo_card_sum[oppo_hand[i].card1] += reach_prob[oppo][i];
@@ -481,9 +522,11 @@ CfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vect
         oppo_sum += reach_prob[oppo][i];
     }
 
+    /*
     if(this->debug) {
         cout << ("[PRETERMINAL]============") << endl;
     }
+    */
     for(int i = 0;i < player_hand.size();i ++){
         const PrivateCards& one_player_hand = player_hand[i];
         if(Card::boardsHasIntercept(current_board,Card::boardInts2long(one_player_hand.get_hands()))){
@@ -502,14 +545,17 @@ CfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vect
                 - oppo_card_sum[one_player_hand.card2]
                 + plus_reach_prob
         );
+        /*
         if(this->debug) {
             cout << (fmt::format("oppo_card_sum1 {} ", oppo_card_sum[one_player_hand.card1])) << endl;
             cout << (fmt::format("oppo_card_sum2 {} ", oppo_card_sum[one_player_hand.card2])) << endl;
             cout << (fmt::format("reach_prob i {} ", plus_reach_prob)) << endl;
         }
+        */
     }
 
     //TODO 校对图上每个节点payoff
+    /*
     if(this->debug) {
         cout << ("[TERMINAL]============") << endl;
         node->printHistory();
@@ -518,6 +564,7 @@ CfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vect
         cout << (fmt::format("oppo sum {}, substracted sum {}",oppo_sum,payoffs[0] / player_payoff)) << endl;
         cout << (fmt::format("substracted sum {}",payoffs[0])) << endl;
     }
+    */
     return payoffs;
 }
 

@@ -24,12 +24,12 @@ private:
     vector<float> cum_r_plus;
     vector<float> cum_r_plus_sum;
     vector<float> regrets;
-    vector<float> retval;
+    vector<float> current_strategy;
+    vector<float> average_strategy;
 public:
     DiscountedCfrTrainable(shared_ptr<ActionNode> action_node, vector<PrivateCards> privateCards);
     bool isAllZeros(const vector<float>& input_array);
 
-private:
     const vector<float>& getAverageStrategy() override;
 
     const vector<float>& getcurrentStrategy() override;
@@ -37,6 +37,10 @@ private:
     void updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) override;
 
     json dump_strategy(bool with_state) override;
+
+private:
+
+    const vector<float>& getcurrentStrategyNoCache();
 
     TrainableType get_type() override;
 

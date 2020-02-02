@@ -16,6 +16,8 @@ public:
     GameTreeNodeType getType() override;
     ShowdownNode(vector<double> tie_payoffs,vector<vector<double>> player_payoffs,GameRound round,double pot,shared_ptr<GameTreeNode> parent);
     vector<double> get_payoffs(ShowDownResult result,int winner);
+    double get_payoffs(ShowDownResult result,int winner,int player);
+    vector<float> card_sum;
 
 private:
     vector<double> tie_payoffs;

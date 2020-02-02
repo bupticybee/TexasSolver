@@ -47,7 +47,8 @@ public:
     void printHistory();
     static void printNodeHistory(GameTreeNode* node);
     virtual GameTreeNodeType getType() = 0;
-    vector<float> utilities;
+    vector<vector<float>> utilities;
+    vector<vector<float>> best_respond_utilities;
 
 private:
     GameRound round;

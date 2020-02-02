@@ -57,10 +57,6 @@ uint64_t Card::boardCards2long(vector<Card>& cards){
     return Card::boardInts2long(board_int);
 }
 
-bool Card::boardsHasIntercept(uint64_t board1,uint64_t board2){
-    return ((board1 & board2) != 0);
-}
-
 uint64_t Card::boardInt2long(int board){
     // 这里hard code了一副扑克牌是52张
     if(board < 0 || board >= 52){
@@ -94,6 +90,7 @@ long Card::privateHand2long(PrivateCards one_hand){
 
 vector<int> Card::long2board(uint64_t board_long) {
     vector<int> board;
+    board.reserve(7);
     for(int i = 0;i < 52;i ++){
         // 看二进制最后一位是否为1
         if((board_long & 1) == 1){
@@ -104,11 +101,7 @@ vector<int> Card::long2board(uint64_t board_long) {
     if (board.size() < 1 || board.size() > 7){
         throw runtime_error(fmt::format("board length not correct, board length {}",board.size()));
     }
-    vector<int> retval(board.size());
-    for(int i = 0;i < board.size();i ++){
-        retval[i] = board[i];
-    }
-    return retval;
+    return board;
 }
 
 vector<Card> Card::long2boardCards(uint64_t board_long){

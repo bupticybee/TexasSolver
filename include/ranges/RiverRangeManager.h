@@ -14,7 +14,6 @@ class RiverRangeManager {
 public:
     RiverRangeManager();
     RiverRangeManager(shared_ptr<Compairer> handEvaluator);
-    const vector<RiverCombs>& getRiverCombos(int player, const vector<RiverCombs>& riverCombos, const vector<int>& board);
     const vector<RiverCombs>& getRiverCombos(int player, const vector<PrivateCards>& riverCombos, const vector<int>& board);
     const vector<RiverCombs>& getRiverCombos(int player, const vector<PrivateCards>& riverCombos, uint64_t board_long);
 private:

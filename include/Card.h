@@ -26,7 +26,9 @@ class Card {
         static uint64_t boardCards2long(vector<string> cards);
         static uint64_t boardCard2long(Card& card);
         static uint64_t boardCards2long(vector<Card>& cards);
-        static bool boardsHasIntercept(uint64_t board1,uint64_t board2);
+        static inline bool boardsHasIntercept(uint64_t board1,uint64_t board2){
+            return ((board1 & board2) != 0);
+        };
         static uint64_t boardInts2long(const vector<int>& board);
         static uint64_t boardInt2long(int board);
         static vector<int> long2board(uint64_t board_long);

@@ -18,7 +18,7 @@ vector<Card>& ChanceNode::getCards() {
     return this->cards;
 }
 
-vector<shared_ptr<GameTreeNode>> ChanceNode::getChildrens() {
+vector<shared_ptr<GameTreeNode>>& ChanceNode::getChildrens() {
     return this->childrens;
 }
 

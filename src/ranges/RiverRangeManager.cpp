@@ -13,15 +13,6 @@ RiverRangeManager::RiverRangeManager(shared_ptr<Compairer> handEvaluator) {
 }
 
 const vector<RiverCombs> &
-RiverRangeManager::getRiverCombos(int player, const vector<RiverCombs> &riverCombos, const vector<int> &board) {
-    vector<PrivateCards> preflopCombos(riverCombos.size());
-    for(int i = 0;i < riverCombos.size();i ++){
-        preflopCombos[i] = riverCombos[i].private_cards;
-    }
-    return getRiverCombos(player,preflopCombos,board);
-}
-
-const vector<RiverCombs> &
 RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &riverCombos, const vector<int> &board) {
     uint64_t board_long = Card::boardInts2long(board);
     return this->getRiverCombos(player,riverCombos,board_long);

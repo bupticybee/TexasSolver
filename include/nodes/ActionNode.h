@@ -19,6 +19,7 @@ public:
     shared_ptr<Trainable> getTrainable();
     void setTrainable(shared_ptr<Trainable> trainable);
     vector<vector<vector<float>>> arr_new_reach_probs;
+    vector<vector<vector<float>>> best_respond_arr_new_reach_probs;
 
 private:
     GameTreeNodeType getType() override;

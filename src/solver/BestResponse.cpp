@@ -19,6 +19,7 @@ BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int pla
         player_hands[i] = private_combos[i].size();
     }
     this->nthreads = nthreads;
+    omp_set_num_threads(this->nthreads);
 }
 
 float BestResponse::printExploitability(shared_ptr<GameTreeNode> root, int iterationCount, float initial_pot,
@@ -125,7 +126,6 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
     }
     // 遍历每一种发牌的可能性
 
-    omp_set_num_threads(this->nthreads);
     #pragma omp parallel for
     for(int card = 0;card < node->getCards().size();card ++){
         shared_ptr<GameTreeNode> one_child = node->getChildrens()[card];

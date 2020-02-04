@@ -2,10 +2,9 @@
 // Created by Xuefeng Huang on 2020/1/31.
 //
 
-#include <solver/BestResponse.h>
-#include "solver/PCfrSolver.h"
+#include "solver/TCfrSolver.h"
 
-PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, vector<PrivateCards> range2,
+TCfrSolver::TCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, vector<PrivateCards> range2,
                      vector<int> initial_board, shared_ptr<Compairer> compairer, Deck deck, int iteration_number, bool debug,
                      int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int num_threads) :Solver(tree){
     this->initial_board = initial_board;
@@ -37,11 +36,14 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
     this->debug = debug;
     this->print_interval = print_interval;
     this->monteCarolAlg = monteCarolAlg;
+    if(num_threads == -1){
+        num_threads = boost::thread::hardware_concurrency() + 1;
+    }
     this->num_threads = num_threads;
-    omp_set_num_threads(this->num_threads);
+    this->pool = make_shared<boost::basic_thread_pool>(this->num_threads);
 }
 
-const vector<PrivateCards> &PCfrSolver::playerHands(int player) {
+const vector<PrivateCards> &TCfrSolver::playerHands(int player) {
     if(player == 0){
         return range1;
     }else if (player == 1){
@@ -51,7 +53,7 @@ const vector<PrivateCards> &PCfrSolver::playerHands(int player) {
     }
 }
 
-vector<vector<float>> PCfrSolver::getReachProbs() {
+vector<vector<float>> TCfrSolver::getReachProbs() {
     vector<vector<float>> retval(this->player_number);
     for(int player = 0;player < this->player_number;player ++){
         vector<PrivateCards> player_cards = this->playerHands(player);
@@ -65,7 +67,7 @@ vector<vector<float>> PCfrSolver::getReachProbs() {
 }
 
 vector<PrivateCards>
-PCfrSolver::noDuplicateRange(const vector<PrivateCards> &private_range, uint64_t board_long) {
+TCfrSolver::noDuplicateRange(const vector<PrivateCards> &private_range, uint64_t board_long) {
     vector<PrivateCards> range_array;
     unordered_map<int,bool> rangekv;
     for(PrivateCards one_range:private_range){
@@ -81,7 +83,7 @@ PCfrSolver::noDuplicateRange(const vector<PrivateCards> &private_range, uint64_t
 
 }
 
-void PCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
+void TCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
     if(root->getType() == GameTreeNode::ACTION){
         shared_ptr<ActionNode> action_node = std::dynamic_pointer_cast<ActionNode>(root);
 
@@ -110,7 +112,7 @@ void PCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
     }
 }
 
-const vector<float>* PCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, const vector<vector<float>> &reach_probs, int iter,
+const vector<float>* TCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, const vector<vector<float>> &reach_probs, int iter,
                                     uint64_t current_board) {
     switch(node->getType()) {
         case GameTreeNode::ACTION: {
@@ -131,7 +133,7 @@ const vector<float>* PCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, 
 }
 
 const vector<float>*
-PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<vector<float>> &reach_probs, int iter,
+TCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<vector<float>> &reach_probs, int iter,
                          uint64_t current_board) {
     vector<Card>& cards = this->deck.getCards();
     if(cards.size() != node->getChildrens().size()) throw runtime_error("size mismatch");
@@ -219,7 +221,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
 }
 
 const vector<float> *
-PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<vector<float>> &reach_probs, int iter,
+TCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<vector<float>> &reach_probs, int iter,
                          uint64_t current_board) {
     int oppo = 1 - player;
     const vector<PrivateCards>& node_player_private_cards = this->ranges[node->getPlayer()];
@@ -274,9 +276,8 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
     vector<const vector<float> *> all_action_utility(actions.size());
     int node_player = node->getPlayer();
 
-    vector<const vector<float>*> results(actions.size());
-    fill(results.begin(),results.end(),nullptr);
-    #pragma omp parallel for
+    vector<boost::future<const vector<float>*>> results(actions.size());
+    //fill(results.begin(),results.end(),nullptr);
     for (int action_id = 0; action_id < actions.size(); action_id++) {
 
         if (node->arr_new_reach_probs[action_id].empty()) {
@@ -296,14 +297,21 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
         new_reach_prob[1 - node_player].assign(reach_probs[1 - node_player].begin(),
                                                reach_probs[1 - node_player].end());
 
-        //#pragma omp task shared(results,action_id)
-        results[action_id] = this->cfr(player, children[action_id], new_reach_prob, iter,
-                                       current_board);
+        results[action_id] = boost::async(
+            [&]()->const vector<float> * {
+                    return this->cfr(player, children[action_id], new_reach_prob, iter,
+                              current_board);
+                }
+            );
     }
 
-    //#pragma omp taskwait
     for (int action_id = 0; action_id < actions.size(); action_id++) {
-        const vector<float> *action_utilities = results[action_id];
+        boost::future<const vector<float>*>& action_utilities_result = results[action_id];
+        this->pool->reschedule_until([&]()->bool{
+            return action_utilities_result.is_ready();
+        });
+        const vector<float>* action_utilities = action_utilities_result.get();
+
         if(action_utilities == nullptr){
             continue;
         }
@@ -353,7 +361,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
 }
 
 const vector<float>*
-PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vector<vector<float>> &reach_probs,
+TCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vector<vector<float>> &reach_probs,
                            int iter, uint64_t current_board) {
     // player win时候player的收益，player lose的时候收益明显为-player_payoff
     int oppo = 1 - player;
@@ -505,7 +513,7 @@ PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vec
 }
 
 const vector<float>*
-PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vector<vector<float>> &reach_prob, int iter,
+TCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vector<vector<float>> &reach_prob, int iter,
                            uint64_t current_board) {
     float player_payoff = node->get_payoffs()[player];
 
@@ -581,7 +589,7 @@ PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vec
     return &payoffs;
 }
 
-void PCfrSolver::train() {
+void TCfrSolver::train() {
     setTrainable(this->tree->getRoot());
 
     //RiverCombs[][] player_rivers = new RiverCombs[this.player_number][];
@@ -640,3 +648,16 @@ void PCfrSolver::train() {
 
 }
 
+template<typename T, typename F, typename Ex>
+boost::future<T> TCfrSolver::fork(Ex& ex, F&& func) {
+    boost::promise<T> pr;
+    boost::future<T> ft = pr.get_future();
+    ex.submit_front([p = std::move(pr), f = std::move(func)]() {
+        try {
+            p.set_value(f());
+        } catch (std::exception& e) {
+            p.set_exception(e);
+        }
+    });
+    return ft;
+}

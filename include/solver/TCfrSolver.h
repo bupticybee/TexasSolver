@@ -2,8 +2,9 @@
 // Created by Xuefeng Huang on 2020/1/31.
 //
 
-#ifndef TEXASSOLVER_PCFRSOLVER_H
-#define TEXASSOLVER_PCFRSOLVER_H
+#ifndef TEXASSOLVER_TCFRSOLVER_H
+#define TEXASSOLVER_TCFRSOLVER_H
+#include <solver/BestResponse.h>
 #include <ranges/PrivateCards.h>
 #include <compairer/Compairer.h>
 #include <Deck.h>
@@ -12,11 +13,16 @@
 #include <trainable/CfrPlusTrainable.h>
 #include <trainable/DiscountedCfrTrainable.h>
 #include "Solver.h"
-#include <omp.h>
+#include <boost/thread/executors/basic_thread_pool.hpp>
+#include <boost/thread/future.hpp>
+#include <boost/thread.hpp>
+#include <boost/thread/detail/nullary_function.hpp>
+#include <boost/thread/csbl/functional.hpp>
+#include <boost/thread/detail/config.hpp>
 
-class PCfrSolver:Solver {
+class TCfrSolver:Solver {
 public:
-    PCfrSolver(shared_ptr<GameTree> tree,
+    TCfrSolver(shared_ptr<GameTree> tree,
             vector<PrivateCards> range1 ,
             vector<PrivateCards> range2,
             vector<int> initial_board,
@@ -51,6 +57,7 @@ private:
     Solver::MonteCarolAlg monteCarolAlg;
     vector<int> round_deal;
     int num_threads;
+    shared_ptr<boost::basic_thread_pool> pool;
 
     const vector<PrivateCards>& playerHands(int player);
     vector<vector<float>> getReachProbs();
@@ -61,9 +68,9 @@ private:
     const vector<float>* showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
     const vector<float>* actionUtility(int player,shared_ptr<ActionNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
     const vector<float>* terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<vector<float>>& reach_prob,int iter,uint64_t current_board);
-
-
+    template<typename T, typename F, typename Ex>
+    boost::future<T> fork(Ex& ex, F&& func);
 };
 
 
-#endif //TEXASSOLVER_PCFRSOLVER_H
+#endif //TEXASSOLVER_TCFRSOLVER_H

@@ -126,7 +126,6 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
     }
     // 遍历每一种发牌的可能性
 
-    #pragma omp parallel for
     for(int card = 0;card < node->getCards().size();card ++){
         shared_ptr<GameTreeNode> one_child = node->getChildrens()[card];
         Card one_card = node->getCards()[card];

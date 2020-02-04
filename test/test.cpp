@@ -358,7 +358,6 @@ TEST(TestCase,test_cfr_river_asymmetric){
     solver.train();
 }
 
-/*
 TEST(TestCase,test_cfr_turn){
     vector<string> ranks = {"A", "K", "Q", "J", "T", "9", "8", "7", "6"};
     vector<string> suits = {"h", "s", "d", "c"};
@@ -396,6 +395,7 @@ TEST(TestCase,test_cfr_turn){
     solver.train();
 }
 
+/*
 TEST(TestCase,test_cfr_turn_asymmetric){
     vector<string> ranks = {"A", "K", "Q", "J", "T", "9", "8", "7", "6"};
     vector<string> suits = {"h", "s", "d", "c"};
@@ -478,7 +478,7 @@ TEST(TestCase,test_cfr_turn_parallel){
     );
     shared_ptr<GameTree> game_tree = make_shared<GameTree>("../resources/gametree/part_tree_turn_depthinf.km",deck);
     string player1RangeStr = "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76";
-    string player2RangeStr = "A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76";
+    string player2RangeStr = "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76";
 
     vector<int> initialBoard = vector<int>{
             Card::strCard2int("Kd"),
@@ -507,46 +507,6 @@ TEST(TestCase,test_cfr_turn_parallel){
     );
     solver.train();
 }
-
-/*
-TEST(TestCase,test_cfr_turn_threadpool){
-    vector<string> ranks = {"A", "K", "Q", "J", "T", "9", "8", "7", "6"};
-    vector<string> suits = {"h", "s", "d", "c"};
-    Deck deck = Deck(
-            ranks,suits
-    );
-    shared_ptr<GameTree> game_tree = make_shared<GameTree>("../resources/gametree/part_tree_turn_depthinf.km",deck);
-    string player1RangeStr = "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76";
-    string player2RangeStr = "A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76";
-
-    vector<int> initialBoard = vector<int>{
-            Card::strCard2int("Kd"),
-            Card::strCard2int("Jd"),
-            Card::strCard2int("Td"),
-            Card::strCard2int("7s"),
-    };
-
-    vector<PrivateCards> player1Range = PrivateRangeConverter::rangeStr2Cards(player1RangeStr,initialBoard);
-    vector<PrivateCards> player2Range = PrivateRangeConverter::rangeStr2Cards(player2RangeStr,initialBoard);
-    string logfile_name = "../resources/outputs/outputs_log.txt";
-    TCfrSolver solver = TCfrSolver(
-            game_tree
-            , player1Range
-            , player2Range
-            , initialBoard
-            , compairer
-            , deck
-            , 100
-            , false
-            , 10
-            , logfile_name
-            , "discounted_cfr"
-            , Solver::MonteCarolAlg::NONE
-            , 2
-    );
-    solver.train();
-}
- */
 
 int main(int argc, char **argv)
 {

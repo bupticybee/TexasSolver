@@ -165,39 +165,42 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         node->arr_new_reach_probs = vector<vector<vector<float>>>(node->getCards().size());
     }
 
+    vector<const vector<float>*> results(node->getCards().size());
+    fill(results.begin(),results.end(),nullptr);
+
     #pragma omp parallel for
     for(int card = 0;card < node->getCards().size();card ++) {
         shared_ptr<GameTreeNode> one_child = node->getChildrens()[card];
         Card *one_card = &(node->getCards()[card]);
         uint64_t card_long = Card::boardInt2long(one_card->getCardInt());//Card::boardCards2long(new Card[]{one_card});
-        if(Card::boardsHasIntercept(card_long,current_board)) continue;
+        if (Card::boardsHasIntercept(card_long, current_board)) continue;
         cardcount += 1;
 
         uint64_t new_board_long = current_board | card_long;
-        if(this->monteCarolAlg == MonteCarolAlg::PUBLIC){
+        if (this->monteCarolAlg == MonteCarolAlg::PUBLIC) {
             throw runtime_error("parallel solver don't support public monte carol");
         }
 
-        vector<PrivateCards>& playerPrivateCard = (this->ranges[player]);
-        vector<PrivateCards>& oppoPrivateCards = (this->ranges[1 - player]);
+        vector<PrivateCards> &playerPrivateCard = (this->ranges[player]);
+        vector<PrivateCards> &oppoPrivateCards = (this->ranges[1 - player]);
 
-        if(node->arr_new_reach_probs[card].empty()){
+        if (node->arr_new_reach_probs[card].empty()) {
             node->arr_new_reach_probs[card] = vector<vector<float>>(2);
         }
-        vector<vector<float>>& new_reach_probs = node->arr_new_reach_probs[card];
-        if(new_reach_probs[player].empty()) {
+        vector<vector<float>> &new_reach_probs = node->arr_new_reach_probs[card];
+        if (new_reach_probs[player].empty()) {
             new_reach_probs[player] = vector<float>(playerPrivateCard.size());
             new_reach_probs[1 - player] = vector<float>(oppoPrivateCards.size());
         }
 
 
-        if(playerPrivateCard.size() !=reach_probs[player].size()) throw runtime_error("length not match");
-        if(oppoPrivateCards.size() !=reach_probs[1 - player].size()) throw runtime_error("length not match");
+        if (playerPrivateCard.size() != reach_probs[player].size()) throw runtime_error("length not match");
+        if (oppoPrivateCards.size() != reach_probs[1 - player].size()) throw runtime_error("length not match");
 
-        for(int one_player = 0;one_player < 2;one_player ++) {
+        for (int one_player = 0; one_player < 2; one_player++) {
             int player_hand_len = this->ranges[one_player].size();
             for (int player_hand = 0; player_hand < player_hand_len; player_hand++) {
-                PrivateCards& one_private = this->ranges[one_player][player_hand];
+                PrivateCards &one_private = this->ranges[one_player][player_hand];
                 uint64_t privateBoardLong = one_private.toBoardLong();
                 if (Card::boardsHasIntercept(card_long, privateBoardLong)) {
                     new_reach_probs[one_player][player_hand] = 0;
@@ -206,9 +209,16 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
                 new_reach_probs[one_player][player_hand] = reach_probs[one_player][player_hand] / possible_deals;
             }
         }
-        if(Card::boardsHasIntercept(current_board,card_long))
+        if (Card::boardsHasIntercept(current_board, card_long))
             throw runtime_error("board has intercept with dealt card");
-        const vector<float>* child_utility = this->cfr(player,one_child,new_reach_probs,iter,new_board_long);
+        const vector<float> *child_utility = this->cfr(player, one_child, new_reach_probs, iter, new_board_long);
+        results[card] = child_utility;
+    }
+
+    for(int card = 0;card < node->getCards().size();card ++) {
+        const vector<float> *child_utility = results[card];
+        if(child_utility == nullptr)
+            continue;
         if(child_utility->size() != chance_utility.size()) throw runtime_error("length not match");
         for(int i = 0;i < child_utility->size();i ++)
             chance_utility[i] += (*child_utility)[i];

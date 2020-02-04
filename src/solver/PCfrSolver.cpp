@@ -37,6 +37,10 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
     this->debug = debug;
     this->print_interval = print_interval;
     this->monteCarolAlg = monteCarolAlg;
+    if(num_threads == -1){
+        num_threads = omp_get_num_procs();
+    }
+    cout << fmt::format("Using {} threads",num_threads) << endl;
     this->num_threads = num_threads;
     omp_set_num_threads(this->num_threads);
 }

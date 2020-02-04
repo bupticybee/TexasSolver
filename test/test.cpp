@@ -503,7 +503,7 @@ TEST(TestCase,test_cfr_turn_parallel){
             , logfile_name
             , "discounted_cfr"
             , Solver::MonteCarolAlg::NONE
-            , 8
+            , -1
     );
     solver.train();
 }

@@ -8,12 +8,11 @@
 #include "Card.h"
 #include "fmt/format.h"
 #include "compairer/Dic5Compairer.h"
+#include <boost/version.hpp>
 #include "tools/PrivateRangeConverter.h"
 #include "solver/CfrSolver.h"
 #include "solver/PCfrSolver.h"
-#include <boost/version.hpp>
-//#include "solver/TCfrSolver.h"
-//#include <iostream>
+#include "solver/TCfrSolver.h"
 
 using namespace std;
 static shared_ptr<Dic5Compairer> compairer;
@@ -359,6 +358,7 @@ TEST(TestCase,test_cfr_river_asymmetric){
     solver.train();
 }
 
+/*
 TEST(TestCase,test_cfr_turn){
     vector<string> ranks = {"A", "K", "Q", "J", "T", "9", "8", "7", "6"};
     vector<string> suits = {"h", "s", "d", "c"};
@@ -433,7 +433,6 @@ TEST(TestCase,test_cfr_turn_asymmetric){
     solver.train();
 }
 
-/*
 TEST(TestCase,test_cfr_flop){
     vector<string> ranks = {"A", "K", "Q", "J", "T", "9", "8", "7", "6"};
     vector<string> suits = {"h", "s", "d", "c"};
@@ -469,8 +468,8 @@ TEST(TestCase,test_cfr_flop){
     );
     solver.train();
 }
-*/
 
+ */
 TEST(TestCase,test_cfr_turn_parallel){
     vector<string> ranks = {"A", "K", "Q", "J", "T", "9", "8", "7", "6"};
     vector<string> suits = {"h", "s", "d", "c"};
@@ -504,7 +503,7 @@ TEST(TestCase,test_cfr_turn_parallel){
             , logfile_name
             , "discounted_cfr"
             , Solver::MonteCarolAlg::NONE
-            , 2
+            , 8
     );
     solver.train();
 }

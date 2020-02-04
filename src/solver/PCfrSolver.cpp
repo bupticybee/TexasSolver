@@ -165,6 +165,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         node->arr_new_reach_probs = vector<vector<vector<float>>>(node->getCards().size());
     }
 
+    #pragma omp parallel for
     for(int card = 0;card < node->getCards().size();card ++) {
         shared_ptr<GameTreeNode> one_child = node->getChildrens()[card];
         Card *one_card = &(node->getCards()[card]);
@@ -276,7 +277,6 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
 
     vector<const vector<float>*> results(actions.size());
     fill(results.begin(),results.end(),nullptr);
-    #pragma omp parallel for
     for (int action_id = 0; action_id < actions.size(); action_id++) {
 
         if (node->arr_new_reach_probs[action_id].empty()) {

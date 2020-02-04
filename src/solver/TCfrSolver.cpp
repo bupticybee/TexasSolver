@@ -297,9 +297,10 @@ TCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
         new_reach_prob[1 - node_player].assign(reach_probs[1 - node_player].begin(),
                                                reach_probs[1 - node_player].end());
 
+        shared_ptr<GameTreeNode> nextnode = children[action_id];
         results[action_id] = boost::async(
             [&]()->const vector<float> * {
-                    return this->cfr(player, children[action_id], new_reach_prob, iter,
+                    return this->cfr(player,nextnode , new_reach_prob, iter,
                               current_board);
                 }
             );

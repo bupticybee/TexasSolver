@@ -385,9 +385,9 @@ TEST(TestCase,test_cfr_turn){
             , initialBoard
             , compairer
             , deck
-            , 100
+            , 1000
             , false
-            , 10
+            , 100
             , logfile_name
             , "discounted_cfr"
             , Solver::MonteCarolAlg::NONE
@@ -497,9 +497,9 @@ TEST(TestCase,test_cfr_turn_parallel){
             , initialBoard
             , compairer
             , deck
-            , 100
+            , 1000
             , false
-            , 10
+            , 100
             , logfile_name
             , "discounted_cfr"
             , Solver::MonteCarolAlg::NONE

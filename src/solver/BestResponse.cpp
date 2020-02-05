@@ -126,22 +126,27 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
     }
     // 遍历每一种发牌的可能性
 
-    for(int card = 0;card < node->getCards().size();card ++){
+    vector<const vector<float>*> results(node->getCards().size());
+    fill(results.begin(),results.end(),nullptr);
+
+    #pragma omp parallel for
+    for(int card = 0;card < node->getCards().size();card ++) {
         shared_ptr<GameTreeNode> one_child = node->getChildrens()[card];
         Card one_card = node->getCards()[card];
         uint64_t card_long = Card::boardInt2long(one_card.getCardInt());
 
         // 不可能发出和board重复的牌，对吧
-        if(Card::boardsHasIntercept(card_long,current_board)) continue;
+        if (Card::boardsHasIntercept(card_long, current_board)) continue;
 
-        const vector<PrivateCards>& playerPrivateCard = this->pcm.getPreflopCards(player);//this.getPlayerPrivateCard(player);
-        const vector<PrivateCards>& oppoPrivateCards = this->pcm.getPreflopCards(1 - player);
+        const vector<PrivateCards> &playerPrivateCard = this->pcm.getPreflopCards(
+                player);//this.getPlayerPrivateCard(player);
+        const vector<PrivateCards> &oppoPrivateCards = this->pcm.getPreflopCards(1 - player);
 
-        if(node->best_respond_arr_new_reach_probs[card].empty()){
+        if (node->best_respond_arr_new_reach_probs[card].empty()) {
             node->best_respond_arr_new_reach_probs[card] = vector<vector<float>>(2);
         }
-        vector<vector<float>>& new_reach_probs = node->best_respond_arr_new_reach_probs[card];
-        if(new_reach_probs[player].empty()) {
+        vector<vector<float>> &new_reach_probs = node->best_respond_arr_new_reach_probs[card];
+        if (new_reach_probs[player].empty()) {
             new_reach_probs[player] = vector<float>(playerPrivateCard.size());
             new_reach_probs[1 - player] = vector<float>(oppoPrivateCards.size());
         }
@@ -152,10 +157,10 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
             throw runtime_error("length mismatch");
 
         // 检查是否双方 hand和reach prob长度符合要求
-        if(playerPrivateCard.size() != reach_probs[player].size()) throw runtime_error("length not match");
-        if(oppoPrivateCards.size() != reach_probs[1 - player].size()) throw runtime_error("length not match");
+        if (playerPrivateCard.size() != reach_probs[player].size()) throw runtime_error("length not match");
+        if (oppoPrivateCards.size() != reach_probs[1 - player].size()) throw runtime_error("length not match");
 
-        for(int one_player = 0;one_player < 2;one_player ++) {
+        for (int one_player = 0; one_player < 2; one_player++) {
             int player_hand_len = this->pcm.getPreflopCards(one_player).size();
             for (int player_hand = 0; player_hand < player_hand_len; player_hand++) {
                 uint64_t privateBoardLong = this->pcm.getPreflopCards(one_player)[player_hand].toBoardLong();
@@ -167,14 +172,21 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
             }
         }
 
-        if(Card::boardsHasIntercept(current_board,card_long))
+        if (Card::boardsHasIntercept(current_board, card_long))
             throw runtime_error("board has intercept with dealt card");
         uint64_t new_board_long = current_board | card_long;
 
-        const vector<float>& child_utility = this->bestResponse(one_child,player,new_reach_probs,new_board_long);
-        if(child_utility.size() != chance_utility.size()) throw runtime_error("length not match");
-        for(int i = 0;i < child_utility.size();i ++)
-            chance_utility[i] += child_utility[i];
+        const vector<float> &child_utility = this->bestResponse(one_child, player, new_reach_probs, new_board_long);
+        results[card] = &child_utility;
+    }
+
+    for(int card = 0;card < node->getCards().size();card ++) {
+        const vector<float> *child_utility = results[card];
+        if(child_utility == nullptr)
+            continue;
+        if(child_utility->size() != chance_utility.size()) throw runtime_error("length not match");
+        for(int i = 0;i < child_utility->size();i ++)
+            chance_utility[i] += (*child_utility)[i];
     }
 
     return chance_utility;

@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <compairer/Compairer.h>
 #include <compairer/Dic5Compairer.h>
+#include <mutex>
 
 class RiverRangeManager {
 public:
@@ -20,6 +21,7 @@ private:
     unordered_map<uint64_t , vector<RiverCombs>> p1RiverRanges;
     unordered_map<uint64_t , vector<RiverCombs>> p2RiverRanges;
     shared_ptr<Compairer> handEvaluator;
+    shared_ptr<mutex> maplock;
 };
 
 

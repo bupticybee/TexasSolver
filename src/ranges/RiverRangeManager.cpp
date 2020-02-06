@@ -10,6 +10,7 @@ RiverRangeManager::RiverRangeManager() = default;
 
 RiverRangeManager::RiverRangeManager(shared_ptr<Compairer> handEvaluator) {
     this->handEvaluator = std::move(handEvaluator);
+    this->maplock = std::make_shared<std::mutex>();
 }
 
 const vector<RiverCombs> &
@@ -67,7 +68,9 @@ RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &preflo
         return lhs.rank > rhs.rank;
     });
 
+    this->maplock->lock();
     (*riverRanges)[key] =  std::move(riverCombos);
+    this->maplock->unlock();
 
     return (*riverRanges)[key];
 }

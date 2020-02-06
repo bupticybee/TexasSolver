@@ -13,12 +13,12 @@
 #include <trainable/CfrPlusTrainable.h>
 #include <trainable/DiscountedCfrTrainable.h>
 #include "solver/Solver.h"
-#include <boost/thread/executors/basic_thread_pool.hpp>
-#include <boost/thread/future.hpp>
-#include <boost/thread.hpp>
-#include <boost/thread/detail/nullary_function.hpp>
-#include <boost/thread/csbl/functional.hpp>
-#include <boost/thread/detail/config.hpp>
+//#include <boost/thread/executors/basic_thread_pool.hpp>
+//#include <boost/thread/future.hpp>
+//#include <boost/thread.hpp>
+//#include <boost/thread/detail/nullary_function.hpp>
+//#include <boost/thread/csbl/functional.hpp>
+//#include <boost/thread/detail/config.hpp>
 
 class TCfrSolver:Solver {
 public:

@@ -12,7 +12,7 @@
 #include <ranges/PrivateCardsManager.h>
 #include <trainable/CfrPlusTrainable.h>
 #include <trainable/DiscountedCfrTrainable.h>
-#include "Solver.h"
+#include "solver/Solver.h"
 #include <boost/thread/executors/basic_thread_pool.hpp>
 #include <boost/thread/future.hpp>
 #include <boost/thread.hpp>
@@ -57,7 +57,7 @@ private:
     Solver::MonteCarolAlg monteCarolAlg;
     vector<int> round_deal;
     int num_threads;
-    shared_ptr<boost::basic_thread_pool> pool;
+    //shared_ptr<boost::basic_thread_pool> pool;
 
     const vector<PrivateCards>& playerHands(int player);
     vector<vector<float>> getReachProbs();
@@ -68,8 +68,8 @@ private:
     const vector<float>* showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
     const vector<float>* actionUtility(int player,shared_ptr<ActionNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
     const vector<float>* terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<vector<float>>& reach_prob,int iter,uint64_t current_board);
-    template<typename T, typename F, typename Ex>
-    boost::future<T> fork(Ex& ex, F&& func);
+    //template<typename T, typename F, typename Ex>
+    //boost::future<T> fork(Ex& ex, F&& func);
 };
 
 

@@ -8,18 +8,20 @@
 #include "Card.h"
 #include "fmt/format.h"
 #include "compairer/Dic5Compairer.h"
-#include <boost/version.hpp>
 #include "tools/PrivateRangeConverter.h"
 #include "solver/CfrSolver.h"
 #include "solver/PCfrSolver.h"
-#include "solver/TCfrSolver.h"
+#include "experimental/TCfrSolver.h"
+//#include <boost/version.hpp>
 
 using namespace std;
 static shared_ptr<Dic5Compairer> compairer;
 
+/*
 TEST(TestCase,test_boost_env){
     cout << "Boost版本：" << BOOST_VERSION << endl;
 }
+*/
 
 TEST(TestCase,test_card ){
     Card card8h("8h");
@@ -385,9 +387,9 @@ TEST(TestCase,test_cfr_turn){
             , initialBoard
             , compairer
             , deck
-            , 1000
-            , false
             , 100
+            , false
+            , 10
             , logfile_name
             , "discounted_cfr"
             , Solver::MonteCarolAlg::NONE
@@ -497,9 +499,9 @@ TEST(TestCase,test_cfr_turn_parallel){
             , initialBoard
             , compairer
             , deck
-            , 1000
-            , false
             , 100
+            , false
+            , 10
             , logfile_name
             , "discounted_cfr"
             , Solver::MonteCarolAlg::NONE

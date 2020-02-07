@@ -32,8 +32,13 @@ RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &preflo
 
     uint64_t key = board_long;
 
-    if (riverRanges->find(key) != riverRanges->end())
-        return (*riverRanges)[key];
+    this->maplock->lock();
+    if (riverRanges->find(key) != riverRanges->end()) {
+        const vector<RiverCombs> &retval = (*riverRanges)[key];
+        this->maplock->unlock();
+        return retval;
+    }
+    this->maplock->unlock();
 
     int count = 0;
 

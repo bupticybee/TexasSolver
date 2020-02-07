@@ -26,7 +26,8 @@ public:
             string log_file,
             int iteration_number,
             int print_interval,
-            string algorithm
+            string algorithm,
+            int threads
             );
 
 private:

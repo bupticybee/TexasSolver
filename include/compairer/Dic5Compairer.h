@@ -17,7 +17,6 @@
 class Dic5Compairer:public Compairer{
 
 public:
-    Dic5Compairer();
     Dic5Compairer(string dic_dir,int lines);
 
     CompairResult compair(vector<Card> private_former, vector<Card> private_latter, vector<Card> public_board) override;

@@ -11,6 +11,7 @@
 #include "tools/PrivateRangeConverter.h"
 #include "solver/CfrSolver.h"
 #include "solver/PCfrSolver.h"
+#include "runtime/PokerSolver.h"
 #include "experimental/TCfrSolver.h"
 //#include <boost/version.hpp>
 
@@ -360,6 +361,7 @@ TEST(TestCase,test_cfr_river_asymmetric){
     solver.train();
 }
 
+/*
 TEST(TestCase,test_cfr_turn){
     vector<string> ranks = {"A", "K", "Q", "J", "T", "9", "8", "7", "6"};
     vector<string> suits = {"h", "s", "d", "c"};
@@ -396,6 +398,7 @@ TEST(TestCase,test_cfr_turn){
     );
     solver.train();
 }
+*/
 
 /*
 TEST(TestCase,test_cfr_turn_asymmetric){
@@ -508,6 +511,25 @@ TEST(TestCase,test_cfr_turn_parallel){
             , -1
     );
     solver.train();
+}
+
+TEST(TestCase,test_poker_solver){
+    string ranks = "A,K,Q,J,T,9,8,7,6";
+    string suits = "h,s,d,c";
+    string game_tree = "../resources/gametree/generated_tree.km";
+    string logfile_name = "../resources/outputs/outputs_log.txt";
+    PokerSolver ps = PokerSolver(ranks,suits,"../resources/compairer/card5_dic_sorted_shortdeck.txt",376993);
+    ps.load_game_tree(game_tree);
+    ps.train(
+            "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76",
+            "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76",
+             "Kd,Jd,Td",
+            logfile_name,
+            20,
+            10,
+            "discounted_cfr",
+            -1
+    );
 }
 
 int main(int argc, char **argv)

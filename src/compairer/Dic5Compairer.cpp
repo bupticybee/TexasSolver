@@ -6,7 +6,6 @@
 
 #include <utility>
 
-Dic5Compairer::Dic5Compairer() = default;
 
 Dic5Compairer::Dic5Compairer(string dic_dir,int lines):Compairer(std::move(dic_dir),lines){
     ifstream infile(this->dic_dir);

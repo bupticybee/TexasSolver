@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(TexasSolver)
+project(bindSolver)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.7)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
@@ -21,12 +21,12 @@ IF(OPENMP_FOUND)
 ENDIF()
 
 # swag
-FIND_PACKAGE(SWIG REQUIRED)
-INCLUDE(${SWIG_USE_FILE})
-FIND_PACKAGE(PythonLibs REQUIRED)
-INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-SET(CMAKE_SWIG_FLAGS "")
+#FIND_PACKAGE(SWIG REQUIRED)
+#INCLUDE(${SWIG_USE_FILE})
+#FIND_PACKAGE(PythonLibs REQUIRED)
+#INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+#SET(CMAKE_SWIG_FLAGS "")
 
 #find_package(PythonLibs 3 REQUIRED)
 find_package(PythonInterp ${PYTHONLIBS_VERSION_STRING} REQUIRED)
@@ -61,6 +61,10 @@ add_subdirectory(ext/googletest/googletest)
 include_directories(ext/fmt/include ext/fmt)
 add_subdirectory(ext/fmt/)
 
+# ppybind11
+include_directories(ext/pybind11/include)
+add_subdirectory(ext/pybind11)
+
 include_directories(include)
 
 AUX_SOURCE_DIRECTORY(src lib_src)
@@ -81,7 +85,7 @@ AUX_SOURCE_DIRECTORY(include/trainable lib_src)
 AUX_SOURCE_DIRECTORY(include/solver lib_src)
 AUX_SOURCE_DIRECTORY(include/runtime lib_src)
 
-add_library(TexasSolver SHARED
+add_library(TexasSolver
         ${lib_src}
         )
 
@@ -92,10 +96,18 @@ add_executable(test test/test.cpp)
 target_link_libraries(test gtest TexasSolver)
 
 #set_property(SOURCE swig/PokerSolver.i PROPERTY CPLUSPLUS ON)
-SET_SOURCE_FILES_PROPERTIES(PokerSolver.i PROPERTIES CPLUSPLUS ON)
-SET_SOURCE_FILES_PROPERTIES(PokerSolver.i PROPERTIES SWIG_FLAGS "")
-SWIG_ADD_LIBRARY(PokerSolver TYPE SHARED LANGUAGE python SOURCES PokerSolver.i)
-set_target_properties(PokerSolver PROPERTIES LIBRARY_OUTPUT_DIRECTORY ./output)
-#SWIG_ADD_MODULE(PokerSolver python PokerSolver.i ${lib_src})
-SWIG_LINK_LIBRARIES(PokerSolver TexasSolver ${PYTHON_LIBRARIES})
+#SET_SOURCE_FILES_PROPERTIES(PokerSolver.i PROPERTIES CPLUSPLUS ON)
+#SET_SOURCE_FILES_PROPERTIES(PokerSolver.i PROPERTIES SWIG_FLAGS "")
+#SWIG_ADD_LIBRARY(PokerSolver TYPE SHARED LANGUAGE python SOURCES PokerSolver.i)
+#set_target_properties(PokerSolver PROPERTIES LIBRARY_OUTPUT_DIRECTORY ./output)
+##SWIG_ADD_MODULE(PokerSolver python PokerSolver.i ${lib_src})
+#SWIG_LINK_LIBRARIES(PokerSolver TexasSolver ${PYTHON_LIBRARIES})
+#
+pybind11_add_module(bindSolver src/pybind/bindSolver.cpp)
+target_link_libraries(bindSolver PRIVATE TexasSolver)
 
+INSTALL(DIRECTORY "${PROJECT_SOURCE_DIR}/resources/python" DESTINATION "${PROJECT_SOURCE_DIR}/install" OPTIONAL)
+INSTALL(FILES "${PROJECT_SOURCE_DIR}/resources/python/test.py" DESTINATION "${PROJECT_SOURCE_DIR}/install" OPTIONAL)
+INSTALL(FILES "${PROJECT_SOURCE_DIR}/resources/yamls/general_rule.yaml" DESTINATION "${PROJECT_SOURCE_DIR}/install" OPTIONAL)
+INSTALL(FILES "${PROJECT_SOURCE_DIR}/resources/compairer/card5_dic_sorted_shortdeck.txt" DESTINATION "${PROJECT_SOURCE_DIR}/install" OPTIONAL)
+INSTALL(TARGETS bindSolver COMPONENT Library DESTINATION "${PROJECT_SOURCE_DIR}/install")

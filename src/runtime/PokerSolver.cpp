@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/2/6.
 //
 
-#include "include/runtime/PokerSolver.h"
+#include "runtime/PokerSolver.h"
 
 PokerSolver::PokerSolver() {
 
@@ -17,10 +17,11 @@ PokerSolver::PokerSolver(string ranks, string suits, string compairer_file,int c
 
 void PokerSolver::load_game_tree(string game_tree_file) {
     shared_ptr<GameTree> game_tree = make_shared<GameTree>(game_tree_file,this->deck);
+    this->game_tree = game_tree;
 }
 
 void PokerSolver::train(string p1_range, string p2_range, string boards, string log_file, int iteration_number,
-                        int print_interval, string algorithm) {
+                        int print_interval, string algorithm,int threads) {
     string player1RangeStr = p1_range;
     string player2RangeStr = p2_range;
 
@@ -46,7 +47,7 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
             , logfile_name
             , algorithm
             , Solver::MonteCarolAlg::NONE
-            , -1
+            , threads
     );
     solver.train();
 

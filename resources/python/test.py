@@ -12,16 +12,16 @@ ps = bindSolver.PokerSolver("A,K,Q,J,T,9,8,7,6","h,s,d,c","card5_dic_sorted_shor
 
 rule = RulesBuilder(
     conf,
-    current_commit = [2,2],
-    current_round =  2,
-    raise_limit = 1,
+    current_commit = [5,5],
+    current_round =  3,
+    raise_limit = 2,
     check_limit = 2,
     small_blind = 0.5,
     big_blind = 1,
-    stack = 10,
-    bet_sizes = ["1_pot"],
+    stack = 100,
+    #bet_sizes = ["0.3_pot","0.6_pot","1_pot","2_pot","all-in"],
+    bet_sizes = ["0.5_pot","1_pot","2_pot","all-in"],
 )
-
 
 gameTree = PartGameTreeBuilder(rule)
 
@@ -38,11 +38,11 @@ ps.train(
     "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76",
     "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76",
     #"Kd,Jd,Td,7s,8s",
-    #"Kd,Jd,Td,7s",
-    "Kd,Jd,Td",
+    "Kd,Jd,Td,7s",
+    #"Kd,Jd,Td",
     "log.txt",
-    200, # iterations
-    50, # print_interval
+    100, # iterations
+    10, # print_interval
     "discounted_cfr", #algorithm
     -1 # threads
 )

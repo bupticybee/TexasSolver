@@ -46,3 +46,4 @@ ps.train(
     "discounted_cfr", #algorithm
     -1 # threads
 )
+ps.dump_strategy("dumped_strategy.json")

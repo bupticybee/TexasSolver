@@ -13,7 +13,7 @@
 #include <trainable/DiscountedCfrTrainable.h>
 #include "Solver.h"
 
-class CfrSolver:Solver {
+class CfrSolver:public Solver {
 public:
     CfrSolver(shared_ptr<GameTree> tree,
             vector<PrivateCards> range1 ,

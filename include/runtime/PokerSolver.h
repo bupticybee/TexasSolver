@@ -29,7 +29,7 @@ public:
             string algorithm,
             int threads
             );
-
+    void dump_strategy(string dump_file);
 private:
     shared_ptr<Dic5Compairer> compairer;
     Deck deck;

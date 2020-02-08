@@ -64,7 +64,8 @@ PYBIND11_MODULE(bindSolver, m) {
     py::class_<PokerSolver>(m, "PokerSolver")
             .def(py::init<std::string,std::string,std::string,int>())
             .def("load_game_tree", &PokerSolver::load_game_tree)
-            .def("train", &PokerSolver::train);
+            .def("train", &PokerSolver::train)
+            .def("dump_strategy", &PokerSolver::dump_strategy);
 
 
 #ifdef VERSION_INFO

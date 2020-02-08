@@ -123,43 +123,30 @@ json DiscountedCfrTrainable::dump_strategy(bool with_state) {
 
     json strategy;
     const vector<float>& average_strategy = this->getcurrentStrategyNoCache();
-    const vector<GameActions>& game_actions = action_node->getActions();
+    vector<GameActions>& game_actions = action_node->getActions();
     vector<string> actions_str;
-    for(GameActions one_action:game_actions) {
+    for(GameActions& one_action:game_actions) {
         actions_str.push_back(
                 one_action.toString()
         );
     }
 
-    //SolverEnvironment se = SolverEnvironment.getInstance();
-    //Compairer comp = se.getCompairer();
 
     for(int i = 0;i < this->privateCards.size();i ++){
-        PrivateCards one_private_card = this->privateCards[i];
+        PrivateCards& one_private_card = this->privateCards[i];
         vector<float> one_strategy(this->action_number);
-
-        /*
-        int[] initialBoard = new int[]{
-                Card.strCard2int("Kd"),
-                Card.strCard2int("Jd"),
-                Card.strCard2int("Td"),
-                Card.strCard2int("7s"),
-                Card.strCard2int("8s")
-        };
-        int rank = comp.get_rank(new int[]{one_private_card.card1,one_private_card.card2},initialBoard);
-         */
 
         for(int j = 0;j < this->action_number;j ++){
             int strategy_index = j * this->privateCards.size() + i;
             one_strategy[j] = average_strategy[strategy_index];
         }
-        strategy[fmt::format("{}",one_private_card.toString())] = one_strategy;
+        strategy[fmt::format("{}",one_private_card.toString())] = std::move(one_strategy);
     }
 
     json retjson;
-    retjson["actions"] = actions_str;
-    retjson["strategy"] = strategy;
-    return retjson;
+    retjson["actions"] = std::move(actions_str);
+    retjson["strategy"] = std::move(strategy);
+    return std::move(retjson);
 }
 
 Trainable::TrainableType DiscountedCfrTrainable::get_type() {

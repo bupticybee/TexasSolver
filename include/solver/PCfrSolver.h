@@ -14,7 +14,7 @@
 #include "Solver.h"
 #include <omp.h>
 
-class PCfrSolver:Solver {
+class PCfrSolver:public Solver {
 public:
     PCfrSolver(shared_ptr<GameTree> tree,
             vector<PrivateCards> range1 ,

@@ -351,14 +351,21 @@ TEST(TestCase,test_cfr_river_asymmetric){
             , initialBoard
             , compairer
             , deck
-            , 100
+            , 1000
             , false
-            , 10
+            , 100
             , logfile_name
             , "discounted_cfr"
             , Solver::MonteCarolAlg::NONE
     );
     solver.train();
+
+    json dump_json = solver.getTree()->dumps(false);
+    ofstream fileWriter;
+    fileWriter.open("../resources/outputs/outputs_strategy.json");
+    fileWriter << dump_json;
+    fileWriter.flush();
+    fileWriter.close();
 }
 
 /*
@@ -530,6 +537,7 @@ TEST(TestCase,test_poker_solver){
             "discounted_cfr",
             -1
     );
+    //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }
 
 int main(int argc, char **argv)

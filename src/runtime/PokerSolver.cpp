@@ -50,5 +50,13 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
             , threads
     );
     solver.train();
+}
 
+void PokerSolver::dump_strategy(string dump_file) {
+    json dump_json = this->game_tree->dumps(false);
+    ofstream fileWriter;
+    fileWriter.open(dump_file);
+    fileWriter << dump_json;
+    fileWriter.flush();
+    fileWriter.close();
 }

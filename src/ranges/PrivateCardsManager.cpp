@@ -14,7 +14,7 @@ PrivateCardsManager::PrivateCardsManager(vector<vector<PrivateCards>> private_ca
     this->player_number = player_number;
     this->card_player_index = vector<vector<int>>(52 * 52);
     for(int i = 0;i < 52 * 52;i ++){
-        this->card_player_index[i] = vector<int>(this->player_number,0);
+        this->card_player_index[i] = vector<int>(this->player_number,-1);
     }
 
     // 用一个二维数组记录每个Private Combo的对应index,方便从一方的手牌找对方的同名卡牌的index

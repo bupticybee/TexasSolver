@@ -349,61 +349,70 @@ void GameTree::printTree(int depth) {
     this->recurrentPrintTree(this->root,0,depth);
 }
 
-json GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node) {
+void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key="") {
     if(node->getType() == GameTreeNode::GameTreeNodeType::ACTION) {
+        json* retval;
+        if(key != ""){
+            strategy[key] = json();
+            retval = &(strategy[key]);
+        }else{
+            retval = &strategy;
+        }
+
         shared_ptr<ActionNode> one_node = std::dynamic_pointer_cast<ActionNode>(node);
-        json retjson;
 
         vector<string> actions_str;
         for(GameActions one_action:one_node->getActions()) actions_str.push_back(one_action.toString());
 
-        retjson["actions"] = actions_str;
-        retjson["player"] = one_node->getPlayer();
+        (*retval)["actions"] = actions_str;
+        (*retval)["player"] = one_node->getPlayer();
 
-        json childrens = nullptr;
+        (*retval)["childrens"] = json();
+        json& childrens = (*retval)["childrens"];
 
         for(int i = 0;i < one_node->getActions().size();i ++){
-            GameActions one_action = one_node->getActions()[i];
+            GameActions& one_action = one_node->getActions()[i];
             shared_ptr<GameTreeNode> one_child = one_node->getChildrens()[i];
 
-            json one_json = this->reConvertJson(one_child);
-            if(one_json != nullptr) {
-                if(childrens == nullptr)childrens = json();
-                childrens[one_action.toString()] = std::move(one_json);
-            }
+            this->reConvertJson(one_child,childrens,one_action.toString());
         }
-        if(childrens != nullptr) {
-            retjson["childrens"] = childrens;
+        if((*retval)["childrens"].empty()){
+            (*retval).erase("childrens");
         }
-        retjson["strategy"] = one_node->getTrainable()->dump_strategy(false);
-        retjson["node_type"] = "action_node";
-        return std::move(retjson);
+        (*retval)["strategy"] = one_node->getTrainable()->dump_strategy(false);
+        (*retval)["node_type"] = "action_node";
     }else if(node->getType() == GameTreeNode::GameTreeNodeType::SHOWDOWN) {
-        return nullptr;
     }else if(node->getType() == GameTreeNode::GameTreeNodeType::TERMINAL) {
-        return nullptr;
     }else if(node->getType() == GameTreeNode::GameTreeNodeType::CHANCE) {
+        json* retval;
+        if(key != ""){
+            strategy[key] = json();
+            retval = &(strategy[key]);
+        }else{
+            retval = &strategy;
+        }
+
         shared_ptr<ChanceNode> chanceNode = std::dynamic_pointer_cast<ChanceNode>(node);
-        vector<Card> cards = chanceNode->getCards();
-        vector<shared_ptr<GameTreeNode>> childerns = chanceNode->getChildrens();
+        vector<Card>& cards = chanceNode->getCards();
+        vector<shared_ptr<GameTreeNode>>& childerns = chanceNode->getChildrens();
         if(cards.size() != childerns.size())
             throw runtime_error("length not match");
-        json retjson;
         vector<string> card_strs;
         for(Card card:cards)
             card_strs.push_back(card.toString());
 
-        json dealcards;
+        json& dealcards = (*retval)["dealcards"];
         for(int i = 0;i < cards.size();i ++){
-            Card one_card = cards[i];
+            Card& one_card = cards[i];
             shared_ptr<GameTreeNode> gameTreeNode = childerns[i];
-            dealcards[one_card.toString()] = this->reConvertJson(gameTreeNode);
+            this->reConvertJson(gameTreeNode,dealcards,one_card.toString());
+        }
+        if((*retval)["dealcards"].empty()){
+            (*retval).erase("dealcards");
         }
 
-        retjson["deal_cards"] = dealcards;
-        retjson["deal_number"] = dealcards.size();
-        retjson["node_type"] = "chance_node";
-        return std::move(retjson);
+        (*retval)["deal_number"] = dealcards.size();
+        (*retval)["node_type"] = "chance_node";
     }else{
         throw runtime_error("node type unknown!!");
     }
@@ -413,5 +422,7 @@ json GameTree::dumps(bool with_status) {
     if(with_status == true){
         throw runtime_error("");
     }
-    return std::move(this->reConvertJson(this->getRoot()));
+    json retjson;
+    this->reConvertJson(this->getRoot(),retjson);
+    return std::move(retjson);
 }

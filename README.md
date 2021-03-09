@@ -5,6 +5,9 @@ Cpp version of [TexasHoldemSolverJava](https://github.com/bupticybee/TexasHoldem
 Embedded with python iterfaces.
 
 ## How to use?
+
+### Linux
+
 ```bash
 mkdir build
 cd build
@@ -13,7 +16,7 @@ make install
 ./test
 ```
 
-## Windows
+### Windows
 build with visual studio 2019
 ```
 mkdir vsbuild

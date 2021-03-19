@@ -524,6 +524,7 @@ TEST(TestCase,test_poker_solver){
     string ranks = "A,K,Q,J,T,9,8,7,6";
     string suits = "h,s,d,c";
     string game_tree = "../resources/gametree/generated_tree.km";
+    game_tree = "../install/tree.km";
     string logfile_name = "../resources/outputs/outputs_log.txt";
     PokerSolver ps = PokerSolver(ranks,suits,"../resources/compairer/card5_dic_sorted_shortdeck.txt",376993);
     ps.load_game_tree(game_tree);
@@ -532,10 +533,10 @@ TEST(TestCase,test_poker_solver){
             "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76",
              "Kd,Jd,Td",
             logfile_name,
-            20,
+            100,
             10,
             "discounted_cfr",
-            -1
+            8
     );
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }

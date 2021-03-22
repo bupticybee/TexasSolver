@@ -121,9 +121,7 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
     vector<float>& chance_utility = node->best_respond_utilities[player];
     fill(chance_utility.begin(),chance_utility.end(),0);
 
-    if(node->best_respond_arr_new_reach_probs.empty()){
-        node->best_respond_arr_new_reach_probs = vector<vector<vector<float>>>(node->getCards().size());
-    }
+    vector<vector<vector<float>>> best_respond_arr_new_reach_probs = vector<vector<vector<float>>>(node->getCards().size());
     // 遍历每一种发牌的可能性
 
     vector<const vector<float>*> results(node->getCards().size());
@@ -142,10 +140,10 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
                 player);//this.getPlayerPrivateCard(player);
         const vector<PrivateCards> &oppoPrivateCards = this->pcm.getPreflopCards(1 - player);
 
-        if (node->best_respond_arr_new_reach_probs[card].empty()) {
-            node->best_respond_arr_new_reach_probs[card] = vector<vector<float>>(2);
+        if (best_respond_arr_new_reach_probs[card].empty()) {
+            best_respond_arr_new_reach_probs[card] = vector<vector<float>>(2);
         }
-        vector<vector<float>> &new_reach_probs = node->best_respond_arr_new_reach_probs[card];
+        vector<vector<float>> &new_reach_probs = best_respond_arr_new_reach_probs[card];
         if (new_reach_probs[player].empty()) {
             new_reach_probs[player] = vector<float>(playerPrivateCard.size());
             new_reach_probs[1 - player] = vector<float>(oppoPrivateCards.size());
@@ -242,15 +240,13 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
         }
 
 
-        if(node->best_respond_arr_new_reach_probs.empty()){
-            node->best_respond_arr_new_reach_probs = vector<vector<vector<float>>>(node->getChildrens().size());
-        }
+        vector<vector<vector<float>>> best_respond_arr_new_reach_probs = vector<vector<vector<float>>>(node->getChildrens().size());
         // 构造reach probs矩阵
         for(int action_ind = 0;action_ind < node->getChildrens().size();action_ind ++){
-            if(node->best_respond_arr_new_reach_probs[action_ind].empty()){
-                node->best_respond_arr_new_reach_probs[action_ind] = vector<vector<float>>(this->player_number);
+            if(best_respond_arr_new_reach_probs[action_ind].empty()){
+                best_respond_arr_new_reach_probs[action_ind] = vector<vector<float>>(this->player_number);
             }
-            vector<vector<float>>& next_reach_probs = node->best_respond_arr_new_reach_probs[action_ind];
+            vector<vector<float>>& next_reach_probs = best_respond_arr_new_reach_probs[action_ind];
             if(next_reach_probs[player].empty()) {
                 next_reach_probs[player] = vector<float>(reach_probs[player].size());
                 next_reach_probs[1 - player] = vector<float>(reach_probs[1 - player].size());

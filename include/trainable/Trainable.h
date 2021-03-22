@@ -15,8 +15,8 @@ public:
         CFR_PLUS_TRAINABLE,
         DISCOUNTED_CFR_TRAINABLE
     };
-    virtual const vector<float>& getAverageStrategy() = 0;
-    virtual const vector<float>& getcurrentStrategy() = 0;
+    virtual const vector<float> getAverageStrategy() = 0;
+    virtual const vector<float> getcurrentStrategy() = 0;
     virtual void updateRegrets(const vector<float>& regrets,int iteration_number,const vector<float>& reach_probs) = 0;
     virtual json dump_strategy(bool with_state) = 0;
     virtual TrainableType get_type() = 0;

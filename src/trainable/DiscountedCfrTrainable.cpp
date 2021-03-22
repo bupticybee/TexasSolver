@@ -4,11 +4,11 @@
 
 #include "trainable/DiscountedCfrTrainable.h"
 
-DiscountedCfrTrainable::DiscountedCfrTrainable(shared_ptr<ActionNode> action_node, vector<PrivateCards> privateCards) {
+DiscountedCfrTrainable::DiscountedCfrTrainable(shared_ptr<ActionNode> action_node, vector<PrivateCards>* privateCards) {
     this->action_node = action_node;
     this->privateCards = privateCards;
     this->action_number = action_node->getChildrens().size();
-    this->card_number = privateCards.size();
+    this->card_number = privateCards->size();
 
     this->r_plus = vector<float>(this->action_number * this->card_number);
     this->r_plus_sum = vector<float>(this->card_number);
@@ -24,10 +24,9 @@ bool DiscountedCfrTrainable::isAllZeros(const vector<float>& input_array) {
     return true;
 }
 
-const vector<float>& DiscountedCfrTrainable::getAverageStrategy() {
-    if(this->average_strategy.empty()){
-        this->average_strategy = vector<float>(this->action_number * this->card_number);
-    }
+const vector<float> DiscountedCfrTrainable::getAverageStrategy() {
+    vector<float> average_strategy;
+    average_strategy = vector<float>(this->action_number * this->card_number);
     if(this->cum_r_plus_sum.empty() || this->isAllZeros(this->cum_r_plus_sum)){
         fill(average_strategy.begin(),average_strategy.end(),1.0 / this->action_number);
     }else {
@@ -45,19 +44,13 @@ const vector<float>& DiscountedCfrTrainable::getAverageStrategy() {
     return average_strategy;
 }
 
-const vector<float>& DiscountedCfrTrainable::getcurrentStrategy() {
-    if(current_strategy.empty()) {
-        this->current_strategy = vector<float>(this->action_number * this->card_number);
-        return this->getcurrentStrategyNoCache();
-    }else{
-        return this->current_strategy;
-    }
+const vector<float> DiscountedCfrTrainable::getcurrentStrategy() {
+    return this->getcurrentStrategyNoCache();
 }
 
-const vector<float>& DiscountedCfrTrainable::getcurrentStrategyNoCache() {
-    if(current_strategy.empty()) {
-        this->current_strategy = vector<float>(this->action_number * this->card_number);
-    }
+const vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
+    vector<float> current_strategy;
+    current_strategy = vector<float>(this->action_number * this->card_number);
     if(this->r_plus_sum.empty()){
         fill(current_strategy.begin(),current_strategy.end(),1.0 / this->action_number);
     }else {
@@ -77,7 +70,6 @@ const vector<float>& DiscountedCfrTrainable::getcurrentStrategyNoCache() {
 }
 
 void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) {
-    this->regrets = regrets;
     if(regrets.size() != this->action_number * this->card_number) throw runtime_error("length not match");
 
     auto alpha_coef = pow(iteration_number, this->alpha);
@@ -106,7 +98,7 @@ void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int ite
             // this.cum_r_plus_sum[private_id] += this.cum_r_plus[index];
         }
     }
-    const vector<float>& current_strategy = this->getcurrentStrategyNoCache();
+    vector<float> current_strategy = this->getcurrentStrategyNoCache();
     float strategy_coef = pow(((float)iteration_number / (iteration_number + 1)),gamma);
     for (int action_id = 0;action_id < action_number;action_id ++) {
         for(int private_id = 0;private_id < this->card_number;private_id ++) {
@@ -132,12 +124,12 @@ json DiscountedCfrTrainable::dump_strategy(bool with_state) {
     }
 
 
-    for(int i = 0;i < this->privateCards.size();i ++){
-        PrivateCards& one_private_card = this->privateCards[i];
+    for(int i = 0;i < this->privateCards->size();i ++){
+        PrivateCards& one_private_card = (*this->privateCards)[i];
         vector<float> one_strategy(this->action_number);
 
         for(int j = 0;j < this->action_number;j ++){
-            int strategy_index = j * this->privateCards.size() + i;
+            int strategy_index = j * this->privateCards->size() + i;
             one_strategy[j] = average_strategy[strategy_index];
         }
         strategy[fmt::format("{}",one_private_card.toString())] = std::move(one_strategy);

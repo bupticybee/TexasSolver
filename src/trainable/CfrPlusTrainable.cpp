@@ -29,7 +29,7 @@ bool CfrPlusTrainable::isAllZeros(vector<float> input_array) {
     return true;
 }
 
-const vector<float>& CfrPlusTrainable::getAverageStrategy() {
+const vector<float> CfrPlusTrainable::getAverageStrategy() {
     /*
     vector<float> retval(this->action_number * this->card_number);
     if(this->cum_r_plus_sum.empty() || this->isAllZeros(this->cum_r_plus_sum)){
@@ -50,7 +50,7 @@ const vector<float>& CfrPlusTrainable::getAverageStrategy() {
     return this->getcurrentStrategy();
 }
 
-const vector<float>& CfrPlusTrainable::getcurrentStrategy() {
+const vector<float> CfrPlusTrainable::getcurrentStrategy() {
     if(this->r_plus_sum.empty()){
         fill(retval.begin(),retval.end(),1.0 / this->action_number);
     }else {

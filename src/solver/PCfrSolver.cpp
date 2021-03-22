@@ -43,6 +43,7 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
     cout << fmt::format("Using {} threads",num_threads) << endl;
     this->num_threads = num_threads;
     omp_set_num_threads(this->num_threads);
+    setTrainable(this->tree->getRoot());
 }
 
 const vector<PrivateCards> &PCfrSolver::playerHands(int player) {
@@ -90,11 +91,13 @@ void PCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
         shared_ptr<ActionNode> action_node = std::dynamic_pointer_cast<ActionNode>(root);
 
         int player = action_node->getPlayer();
-        vector<PrivateCards> player_privates = this->ranges[player];
+        // TODO 这里是不是会引发深拷贝
 
         if(this->trainer == "cfr_plus"){
+            vector<PrivateCards> player_privates = this->ranges[player];
             action_node->setTrainable(make_shared<CfrPlusTrainable>(action_node,player_privates));
         }else if(this->trainer == "discounted_cfr"){
+            vector<PrivateCards>* player_privates = &this->ranges[player];
             action_node->setTrainable(make_shared<DiscountedCfrTrainable>(action_node,player_privates));
         }else{
             throw runtime_error(fmt::format("trainer {} not found",this->trainer));
@@ -165,9 +168,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
             random_deal = this->round_deal[GameTreeNode::gameRound2int(node->getRound())];
         }
     }
-    if(node->arr_new_reach_probs.empty()){
-        node->arr_new_reach_probs = vector<vector<vector<float>>>(node->getCards().size());
-    }
+    vector<vector<vector<float>>> arr_new_reach_probs = vector<vector<vector<float>>>(node->getCards().size());
 
     vector<const vector<float>*> results(node->getCards().size());
     fill(results.begin(),results.end(),nullptr);
@@ -175,7 +176,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
     #pragma omp parallel for
     for(int card = 0;card < node->getCards().size();card ++) {
         shared_ptr<GameTreeNode> one_child = node->getChildrens()[card];
-        Card *one_card = &(node->getCards()[card]);
+        Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
         uint64_t card_long = Card::boardInt2long(one_card->getCardInt());//Card::boardCards2long(new Card[]{one_card});
         if (Card::boardsHasIntercept(card_long, current_board)) continue;
         cardcount += 1;
@@ -188,10 +189,10 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         vector<PrivateCards> &playerPrivateCard = (this->ranges[player]);
         vector<PrivateCards> &oppoPrivateCards = (this->ranges[1 - player]);
 
-        if (node->arr_new_reach_probs[card].empty()) {
-            node->arr_new_reach_probs[card] = vector<vector<float>>(2);
+        if (arr_new_reach_probs[card].empty()) {
+            arr_new_reach_probs[card] = vector<vector<float>>(2);
         }
-        vector<vector<float>> &new_reach_probs = node->arr_new_reach_probs[card];
+        vector<vector<float>> &new_reach_probs = arr_new_reach_probs[card];
         if (new_reach_probs[player].empty()) {
             new_reach_probs[player] = vector<float>(playerPrivateCard.size());
             new_reach_probs[1 - player] = vector<float>(oppoPrivateCards.size());
@@ -251,7 +252,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
     vector<shared_ptr<GameTreeNode>>& children =  node->getChildrens();
     vector<GameActions>& actions =  node->getActions();
 
-    const vector<float>& current_strategy = trainable->getcurrentStrategy();
+    const vector<float> current_strategy = trainable->getcurrentStrategy();
     if(this->debug){
         for(float one_strategy:current_strategy){
             // when one_strategy is nan
@@ -279,9 +280,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
         ));
     }
 
-    if(node->arr_new_reach_probs.empty()){
-        node->arr_new_reach_probs = vector<vector<vector<float>>>(actions.size());
-    }
+    vector<vector<vector<float>>> arr_new_reach_probs = vector<vector<vector<float>>>(actions.size());
 
     //为了节省计算成本将action regret 存在一位数组而不是二维数组中，两个纬度分别是（该infoset有多少动作,该palyer有多少holecard）
     vector<float> regrets(actions.size() * node_player_private_cards.size());
@@ -293,10 +292,10 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
     fill(results.begin(),results.end(),nullptr);
     for (int action_id = 0; action_id < actions.size(); action_id++) {
 
-        if (node->arr_new_reach_probs[action_id].empty()) {
-            node->arr_new_reach_probs[action_id] = vector<vector<float>>(2);
+        if (arr_new_reach_probs[action_id].empty()) {
+            arr_new_reach_probs[action_id] = vector<vector<float>>(2);
         }
-        vector<vector<float>> &new_reach_prob = node->arr_new_reach_probs[action_id];
+        vector<vector<float>> &new_reach_prob = arr_new_reach_probs[action_id];
         if (new_reach_prob[player].empty()) {
             new_reach_prob[player] = vector<float>(reach_probs[player].size());
             new_reach_prob[1 - player] = vector<float>(reach_probs[1 - player].size());
@@ -596,7 +595,6 @@ PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vec
 }
 
 void PCfrSolver::train() {
-    setTrainable(this->tree->getRoot());
 
     //RiverCombs[][] player_rivers = new RiverCombs[this.player_number][];
     // TODO 回头把BestRespond改完之后回头改掉这一块

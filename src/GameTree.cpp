@@ -393,7 +393,7 @@ void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy
         }
 
         shared_ptr<ChanceNode> chanceNode = std::dynamic_pointer_cast<ChanceNode>(node);
-        vector<Card>& cards = chanceNode->getCards();
+        const vector<Card>& cards = chanceNode->getCards();
         vector<shared_ptr<GameTreeNode>>& childerns = chanceNode->getChildrens();
         if(cards.size() != childerns.size())
             throw runtime_error("length not match");
@@ -403,7 +403,7 @@ void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy
 
         json& dealcards = (*retval)["dealcards"];
         for(int i = 0;i < cards.size();i ++){
-            Card& one_card = cards[i];
+            Card& one_card = const_cast<Card &>(cards[i]);
             shared_ptr<GameTreeNode> gameTreeNode = childerns[i];
             this->reConvertJson(gameTreeNode,dealcards,one_card.toString());
         }

@@ -27,9 +27,9 @@ public:
     CfrPlusTrainable(shared_ptr<ActionNode> action_node, vector<PrivateCards> privateCards);
     bool isAllZeros(vector<float> input_array);
 
-    const vector<float>& getAverageStrategy() override;
+    const vector<float> getAverageStrategy() override;
 
-    const vector<float>& getcurrentStrategy() override;
+    const vector<float> getcurrentStrategy() override;
 
     void updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) override;
 

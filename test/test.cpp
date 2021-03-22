@@ -285,6 +285,7 @@ TEST(TestCase,test_converter_o){
     }
 }
 
+/*
 TEST(TestCase,test_cfr_river){
     vector<string> ranks = {"A", "K", "Q", "J", "T", "9", "8", "7", "6"};
     vector<string> suits = {"h", "s", "d", "c"};
@@ -367,6 +368,7 @@ TEST(TestCase,test_cfr_river_asymmetric){
     fileWriter.flush();
     fileWriter.close();
 }
+*/
 
 /*
 TEST(TestCase,test_cfr_turn){
@@ -481,7 +483,6 @@ TEST(TestCase,test_cfr_flop){
     solver.train();
 }
 
- */
 TEST(TestCase,test_cfr_turn_parallel){
     vector<string> ranks = {"A", "K", "Q", "J", "T", "9", "8", "7", "6"};
     vector<string> suits = {"h", "s", "d", "c"};
@@ -519,6 +520,7 @@ TEST(TestCase,test_cfr_turn_parallel){
     );
     solver.train();
 }
+ */
 
 TEST(TestCase,test_poker_solver){
     string ranks = "A,K,Q,J,T,9,8,7,6";
@@ -533,7 +535,7 @@ TEST(TestCase,test_poker_solver){
             "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76",
              "Kd,Jd,Td",
             logfile_name,
-            100,
+            50,
             10,
             "discounted_cfr",
             8

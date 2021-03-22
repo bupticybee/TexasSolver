@@ -12,7 +12,7 @@ using namespace std;
 class DiscountedCfrTrainable:public Trainable {
 private:
     shared_ptr<ActionNode> action_node;
-    vector<PrivateCards> privateCards;
+    vector<PrivateCards>* privateCards;
     int action_number;
     int card_number;
     vector<float> r_plus;
@@ -23,16 +23,15 @@ private:
     vector<float> r_plus_sum;
     vector<float> cum_r_plus;
     vector<float> cum_r_plus_sum;
-    vector<float> regrets;
-    vector<float> current_strategy;
-    vector<float> average_strategy;
+    //vector<float> current_strategy;
+    //vector<float> average_strategy;
 public:
-    DiscountedCfrTrainable(shared_ptr<ActionNode> action_node, vector<PrivateCards> privateCards);
+    DiscountedCfrTrainable(shared_ptr<ActionNode> action_node, vector<PrivateCards>* privateCards);
     bool isAllZeros(const vector<float>& input_array);
 
-    const vector<float>& getAverageStrategy() override;
+    const vector<float> getAverageStrategy() override;
 
-    const vector<float>& getcurrentStrategy() override;
+    const vector<float> getcurrentStrategy() override;
 
     void updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) override;
 
@@ -40,7 +39,7 @@ public:
 
 private:
 
-    const vector<float>& getcurrentStrategyNoCache();
+    const vector<float> getcurrentStrategyNoCache();
 
     TrainableType get_type() override;
 

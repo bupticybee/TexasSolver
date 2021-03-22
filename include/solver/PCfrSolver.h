@@ -56,11 +56,11 @@ private:
     vector<vector<float>> getReachProbs();
     static vector<PrivateCards> noDuplicateRange(const vector<PrivateCards>& private_range,uint64_t board_long);
     void setTrainable(shared_ptr<GameTreeNode> root);
-    const vector<float>* cfr(int player, shared_ptr<GameTreeNode> node, const vector<vector<float>>& reach_probs, int iter, uint64_t current_board);
-    const vector<float>* chanceUtility(int player,shared_ptr<ChanceNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
-    const vector<float>* showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
-    const vector<float>* actionUtility(int player,shared_ptr<ActionNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
-    const vector<float>* terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<vector<float>>& reach_prob,int iter,uint64_t current_board);
+    vector<float> cfr(int player, shared_ptr<GameTreeNode> node, const vector<vector<float>>& reach_probs, int iter, uint64_t current_board);
+    vector<float> chanceUtility(int player,shared_ptr<ChanceNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
+    vector<float> showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
+    vector<float> actionUtility(int player,shared_ptr<ActionNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
+    vector<float> terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<vector<float>>& reach_prob,int iter,uint64_t current_board);
 
 
 };

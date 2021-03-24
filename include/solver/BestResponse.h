@@ -40,14 +40,14 @@ public:
             bool debug,
             int nthreads = 1);
     float printExploitability(shared_ptr<GameTreeNode> root, int iterationCount, float initial_pot, uint64_t initialBoard);
-    float getBestReponseEv(shared_ptr<GameTreeNode> node, int player,vector<vector<float>> reach_probs, uint64_t initialBoard);
+    float getBestReponseEv(shared_ptr<GameTreeNode> node, int player,vector<vector<float>> reach_probs, uint64_t initialBoard,int deal);
 
 private:
-    vector<float> bestResponse(shared_ptr<GameTreeNode> node, int player, const vector<vector<float>>& reach_probs, uint64_t board);
-    vector<float> chanceBestReponse(shared_ptr<ChanceNode> node, int player, const vector<vector<float>>& reach_probs, uint64_t current_board);
-    vector<float> actionBestResponse(shared_ptr<ActionNode> node, int player, const vector<vector<float>>& reach_probs, uint64_t board);
-    vector<float> terminalBestReponse(shared_ptr<TerminalNode> node, int player, const vector<vector<float>>& reach_probs, uint64_t board);
-    vector<float> showdownBestResponse(shared_ptr<ShowdownNode> node, int player, const vector<vector<float>>& reach_probs,uint64_t board);
+    vector<float> bestResponse(shared_ptr<GameTreeNode> node, int player, const vector<vector<float>>& reach_probs, uint64_t board,int deal);
+    vector<float> chanceBestReponse(shared_ptr<ChanceNode> node, int player, const vector<vector<float>>& reach_probs, uint64_t current_board,int deal);
+    vector<float> actionBestResponse(shared_ptr<ActionNode> node, int player, const vector<vector<float>>& reach_probs, uint64_t board,int deal);
+    vector<float> terminalBestReponse(shared_ptr<TerminalNode> node, int player, const vector<vector<float>>& reach_probs, uint64_t board,int deal);
+    vector<float> showdownBestResponse(shared_ptr<ShowdownNode> node, int player, const vector<vector<float>>& reach_probs,uint64_t board,int deal);
 };
 
 

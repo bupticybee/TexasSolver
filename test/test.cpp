@@ -24,6 +24,7 @@ TEST(TestCase,test_boost_env){
 }
 */
 
+/*
 TEST(TestCase,test_card ){
     Card card8h("8h");
     int card8h2int = Card::card2int(card8h);
@@ -284,6 +285,7 @@ TEST(TestCase,test_converter_o){
         }
     }
 }
+*/
 
 /*
 TEST(TestCase,test_cfr_river){
@@ -538,7 +540,7 @@ TEST(TestCase,test_poker_solver){
             50,
             10,
             "discounted_cfr",
-            4
+            8
     );
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }

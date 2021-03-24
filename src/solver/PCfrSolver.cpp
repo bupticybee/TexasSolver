@@ -94,11 +94,24 @@ void PCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
         // TODO 这里是不是会引发深拷贝
 
         if(this->trainer == "cfr_plus"){
-            vector<PrivateCards> player_privates = this->ranges[player];
-            action_node->setTrainable(make_shared<CfrPlusTrainable>(action_node,player_privates));
+            //vector<PrivateCards> player_privates = this->ranges[player];
+            //action_node->setTrainable(make_shared<CfrPlusTrainable>(action_node,player_privates));
+            throw runtime_error(fmt::format("trainer {} not supported",this->trainer));
         }else if(this->trainer == "discounted_cfr"){
             vector<PrivateCards>* player_privates = &this->ranges[player];
-            action_node->setTrainable(make_shared<DiscountedCfrTrainable>(action_node,player_privates));
+            //action_node->setTrainable(make_shared<DiscountedCfrTrainable>(action_node,player_privates));
+            int num;
+            if(this->tree->getRoot()->getRound() == GameTreeNode::FLOP) {
+                num = this->deck.getCards().size() * this->deck.getCards().size() +
+                          this->deck.getCards().size() + 1;
+            }else if(this->tree->getRoot()->getRound() == GameTreeNode::TURN) {
+                num = this->deck.getCards().size() + 1;
+            }else if(this->tree->getRoot()->getRound() == GameTreeNode::RIVER) {
+                num =  1;
+            }else{
+                throw runtime_error("round not understand");
+            }
+            action_node->setTrainable(vector<shared_ptr<Trainable>>(num),player_privates,action_node);
         }else{
             throw runtime_error(fmt::format("trainer {} not found",this->trainer));
         }
@@ -107,8 +120,8 @@ void PCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
         for(shared_ptr<GameTreeNode> one_child:childrens) setTrainable(one_child);
     }else if(root->getType() == GameTreeNode::CHANCE) {
         shared_ptr<ChanceNode> chance_node = std::dynamic_pointer_cast<ChanceNode>(root);
-        vector<shared_ptr<GameTreeNode>> childrens =  chance_node->getChildrens();
-        for(shared_ptr<GameTreeNode> one_child:childrens) setTrainable(one_child);
+        shared_ptr<GameTreeNode> children = chance_node->getChildren();
+        setTrainable(children);
     }
     else if(root->getType() == GameTreeNode::TERMINAL){
 
@@ -118,20 +131,20 @@ void PCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
 }
 
 vector<float> PCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, const vector<vector<float>> &reach_probs, int iter,
-                                    uint64_t current_board) {
+                                    uint64_t current_board,int deal) {
     switch(node->getType()) {
         case GameTreeNode::ACTION: {
             shared_ptr<ActionNode> action_node = std::dynamic_pointer_cast<ActionNode>(node);
-            return actionUtility(player, action_node, reach_probs, iter, current_board);
+            return actionUtility(player, action_node, reach_probs, iter, current_board,deal);
         }case GameTreeNode::SHOWDOWN: {
             shared_ptr<ShowdownNode> showdown_node = std::dynamic_pointer_cast<ShowdownNode>(node);
-            return showdownUtility(player, showdown_node, reach_probs, iter, current_board);
+            return showdownUtility(player, showdown_node, reach_probs, iter, current_board,deal);
         }case GameTreeNode::TERMINAL: {
             shared_ptr<TerminalNode> terminal_node = std::dynamic_pointer_cast<TerminalNode>(node);
-            return terminalUtility(player, terminal_node, reach_probs, iter, current_board);
+            return terminalUtility(player, terminal_node, reach_probs, iter, current_board,deal);
         }case GameTreeNode::CHANCE: {
             shared_ptr<ChanceNode> chance_node = std::dynamic_pointer_cast<ChanceNode>(node);
-            return chanceUtility(player, chance_node, reach_probs, iter, current_board);
+            return chanceUtility(player, chance_node, reach_probs, iter, current_board,deal);
         }default:
             throw runtime_error("node type unknown");
     }
@@ -139,14 +152,13 @@ vector<float> PCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, const v
 
 vector<float>
 PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<vector<float>> &reach_probs, int iter,
-                         uint64_t current_board) {
+                         uint64_t current_board,int deal) {
     vector<Card>& cards = this->deck.getCards();
-    if(cards.size() != node->getChildrens().size()) throw runtime_error("size mismatch");
     //float[] cardWeights = getCardsWeights(player,reach_probs[1 - player],current_board);
 
     int card_num = node->getCards().size();
     // 可能的发牌情况,2代表每个人的holecard是两张
-    int possible_deals = node->getChildrens().size() - Card::long2board(current_board).size() - 2;
+    int possible_deals = node->getCards().size() - Card::long2board(current_board).size() - 2;
 
     //vector<float> chance_utility(reach_probs[player].size());
     vector<float> chance_utility = vector<float>(reach_probs[player].size());
@@ -168,7 +180,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
 
     #pragma omp parallel for
     for(int card = 0;card < node->getCards().size();card ++) {
-        shared_ptr<GameTreeNode> one_child = node->getChildrens()[card];
+        shared_ptr<GameTreeNode> one_child = node->getChildren();
         Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
         uint64_t card_long = Card::boardInt2long(one_card->getCardInt());//Card::boardCards2long(new Card[]{one_card});
         if (Card::boardsHasIntercept(card_long, current_board)) continue;
@@ -209,7 +221,20 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         }
         if (Card::boardsHasIntercept(current_board, card_long))
             throw runtime_error("board has intercept with dealt card");
-        vector<float> child_utility = this->cfr(player, one_child, new_reach_probs, iter, new_board_long);
+
+        int new_deal;
+        int decknum = this->deck.getCards().size();
+        if(deal == 0){
+            new_deal = card + 1;
+        } else if (deal > 0 && deal <= decknum){
+            int origin_deal = deal - 1;
+            if(origin_deal == card) throw runtime_error("deal should not be equal");
+            new_deal = decknum * origin_deal + card;
+            new_deal += (1 + decknum);
+        } else{
+            throw runtime_error(fmt::format("deal out of range : {} ",deal));
+        }
+        vector<float> child_utility = this->cfr(player, one_child, new_reach_probs, iter, new_board_long, new_deal);
         results[card] = child_utility;
     }
 
@@ -229,10 +254,13 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
 
 vector<float>
 PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<vector<float>> &reach_probs, int iter,
-                         uint64_t current_board) {
+                         uint64_t current_board,int deal) {
     int oppo = 1 - player;
     const vector<PrivateCards>& node_player_private_cards = this->ranges[node->getPlayer()];
-    shared_ptr<Trainable> trainable = node->getTrainable();
+    shared_ptr<Trainable> trainable = node->getTrainable(deal);
+    if(trainable == nullptr){
+        throw runtime_error("null trainable");
+    }
 
     vector<float> payoffs = vector<float>(this->ranges[player].size());
     fill(payoffs.begin(),payoffs.end(),0);
@@ -249,7 +277,6 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
 
         }
         for(int one_player = 0;one_player < this->player_number;one_player ++){
-            ;
             for(float one_prob:reach_probs[one_player]){
                 if(one_prob != one_prob)
                     throw runtime_error("prob nan");
@@ -297,7 +324,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
 
         //#pragma omp task shared(results,action_id)
         results[action_id] = this->cfr(player, children[action_id], new_reach_prob, iter,
-                                       current_board);
+                                       current_board,deal);
     }
 
     //#pragma omp taskwait
@@ -353,7 +380,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
 
 vector<float>
 PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vector<vector<float>> &reach_probs,
-                           int iter, uint64_t current_board) {
+                           int iter, uint64_t current_board,int deal) {
     // player win时候player的收益，player lose的时候收益明显为-player_payoff
     int oppo = 1 - player;
     float win_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE,player,player);
@@ -411,7 +438,7 @@ PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vec
 
 vector<float>
 PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vector<vector<float>> &reach_prob, int iter,
-                           uint64_t current_board) {
+                           uint64_t current_board,int deal) {
     float player_payoff = node->get_payoffs()[player];
 
     int oppo = 1 - player;
@@ -513,7 +540,7 @@ void PCfrSolver::train() {
             {
                 //#pragma omp single
                 {
-                    cfr(player_id, this->tree->getRoot(), reach_probs, i, this->initial_board_long);
+                    cfr(player_id, this->tree->getRoot(), reach_probs, i, this->initial_board_long,0);
                 }
             }
         }

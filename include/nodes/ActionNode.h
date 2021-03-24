@@ -24,7 +24,9 @@ public:
 private:
     GameTreeNodeType getType() override;
 private:
+    // TODO 这里可以减肥
     vector<GameActions> actions;
+    // TODO 这里也可以减肥，不同chance node之后的节点都可以复用,可能通过记录一个id的形式区分不同分支,复用，复用，复用到极致
     vector<shared_ptr<GameTreeNode>> childrens;
     shared_ptr<Trainable> trainable;
     int player;

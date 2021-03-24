@@ -51,7 +51,7 @@ public:
 private:
     GameRound round;
     double pot{};
-    shared_ptr<GameTreeNode> parent;
+    //shared_ptr<GameTreeNode> parent;
 
 };
 

@@ -13,7 +13,7 @@ GameTreeNode::GameTreeNode() {
 GameTreeNode::GameTreeNode(GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode> parent) {
     this->round = round;
     this->pot = pot;
-    this->parent = std::move(parent);
+    //this->parent = std::move(parent);
 }
 
 int GameTreeNode::gameRound2int(GameTreeNode::GameRound gameRound) {
@@ -30,11 +30,11 @@ int GameTreeNode::gameRound2int(GameTreeNode::GameRound gameRound) {
 }
 
 shared_ptr<GameTreeNode>GameTreeNode::getParent() {
-    return this->parent;
+    return nullptr;//this->parent;
 }
 
 void GameTreeNode::setParent(shared_ptr<GameTreeNode>parent) {
-    this->parent = parent;
+    //this->parent = parent;
 }
 
 GameTreeNode::GameRound GameTreeNode::getRound() {
@@ -46,14 +46,14 @@ double GameTreeNode::getPot() {
 }
 
 void GameTreeNode::printHistory() {
-    GameTreeNode::printNodeHistory(this);
+    //GameTreeNode::printNodeHistory(this);
 }
 
 void GameTreeNode::printNodeHistory(GameTreeNode* node) {
+    /*
     while(node != nullptr) {
         shared_ptr<GameTreeNode>parent_node = node->parent;
         if (parent_node == nullptr) break;
-        /*
         if(parent_node instanceof ActionNode){
             ActionNode action_node = (ActionNode)parent_node;
             for(int i = 0;i < action_node.getActions().size();i ++){
@@ -80,6 +80,6 @@ void GameTreeNode::printNodeHistory(GameTreeNode* node) {
         node = parent_node;
     }
     System.out.println()
-         */
     }
+     */
 }

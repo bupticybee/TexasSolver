@@ -283,8 +283,7 @@ BestResponse::terminalBestReponse(shared_ptr<TerminalNode> node, int player, con
 
     if(this->player_number != 2) throw runtime_error("player NE 2 not supported");
     // 对手的手牌可能需要和其reach prob一样长
-    //TODO 把这里的bug解决
-
+    // TODO 把这里的bug解决
     // TODO 写的通用一些，这里用了hard code，因为一副牌，不管是长牌还是短牌，最多扑克牌的数量都是52张
     vector<float> oppo_card_sum(52);
 

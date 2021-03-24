@@ -20,6 +20,7 @@ private:
     float beta = 0.5f;
     float gamma = 2;
     float theta = 0.9f;
+    // TODO 這裏能不能减肥
     vector<float> r_plus_sum;
     vector<float> cum_r_plus;
     vector<float> cum_r_plus_sum;

@@ -17,9 +17,9 @@ public:
     ShowdownNode(vector<double> tie_payoffs,vector<vector<double>> player_payoffs,GameRound round,double pot,shared_ptr<GameTreeNode> parent);
     vector<double> get_payoffs(ShowDownResult result,int winner);
     double get_payoffs(ShowDownResult result,int winner,int player);
-    vector<float> card_sum;
 
 private:
+    // TODO 这里可以减减肥
     vector<double> tie_payoffs;
     vector<vector<double>> player_payoffs;
 };

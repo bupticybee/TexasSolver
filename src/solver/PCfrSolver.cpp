@@ -367,10 +367,7 @@ PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vec
     vector<float> payoffs = vector<float>(player_private_cards.size());
 
     float winsum = 0;
-    if(node->card_sum.empty()){
-        node->card_sum = vector<float> (52);
-    }
-    vector<float>& card_winsum = node->card_sum;
+    vector<float> card_winsum = vector<float> (52);//node->card_sum;
     fill(card_winsum.begin(),card_winsum.end(),0);
 
     int j = 0;
@@ -391,7 +388,7 @@ PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vec
 
     // 计算失败时的payoff
     float losssum = 0;
-    vector<float>& card_losssum = node->card_sum;
+    vector<float>& card_losssum = card_winsum;
     fill(card_losssum.begin(),card_losssum.end(),0);
 
     j = oppo_combs.size() - 1;

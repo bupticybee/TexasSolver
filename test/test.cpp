@@ -538,7 +538,7 @@ TEST(TestCase,test_poker_solver){
             50,
             10,
             "discounted_cfr",
-            8
+            4
     );
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }

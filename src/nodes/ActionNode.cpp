@@ -36,7 +36,7 @@ shared_ptr<Trainable> ActionNode::getTrainable(int i) {
         throw runtime_error(fmt::format("size unacceptable {} > {} ",i,this->trainables.size()));
     }
     if(this->trainables[i] == nullptr){
-        this->trainables[i] = make_shared<DiscountedCfrTrainable>(this->action_node,player_privates);
+        this->trainables[i] = make_shared<DiscountedCfrTrainable>(this->action_node, player_privates);
     }
     return this->trainables[i];
 }

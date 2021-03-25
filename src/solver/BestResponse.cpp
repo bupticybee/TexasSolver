@@ -165,14 +165,13 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
         uint64_t new_board_long = current_board | card_long;
 
         int new_deal;
-        int decknum = this->deck.getCards().size();
         if(deal == 0){
             new_deal = card + 1;
-        } else if (deal > 0 && deal <= decknum){
+        } else if (deal > 0 && deal <= card_num){
             int origin_deal = deal - 1;
             if(origin_deal == card) throw runtime_error("deal should not be equal");
-            new_deal = decknum * origin_deal + card;
-            new_deal += (1 + decknum);
+            new_deal = card_num * origin_deal + card;
+            new_deal += (1 + card_num);
         } else{
             throw runtime_error(fmt::format("deal out of range : {} ",deal));
         }

@@ -7,6 +7,8 @@
 
 
 #include <trainable/Trainable.h>
+#include <thread>
+#include <mutex>
 #include <ranges/PrivateCards.h>
 #include "GameTreeNode.h"
 #include "GameActions.h"
@@ -33,7 +35,6 @@ private:
     vector<shared_ptr<GameTreeNode>> childrens;
     vector<shared_ptr<Trainable>> trainables;
     int player;
-
 };
 
 

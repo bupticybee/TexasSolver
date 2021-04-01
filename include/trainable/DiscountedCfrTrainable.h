@@ -21,9 +21,9 @@ private:
     float gamma = 2;
     float theta = 0.9f;
     // TODO 這裏能不能减肥
-    vector<float> r_plus_sum;
+    //vector<float> r_plus_sum;
     vector<float> cum_r_plus;
-    vector<float> cum_r_plus_sum;
+    //vector<float> cum_r_plus_sum;
     //vector<float> current_strategy;
     //vector<float> average_strategy;
 public:

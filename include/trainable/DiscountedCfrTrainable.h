@@ -11,7 +11,7 @@ using namespace std;
 
 class DiscountedCfrTrainable:public Trainable {
 private:
-    shared_ptr<ActionNode> action_node;
+    ActionNode& action_node;
     vector<PrivateCards>* privateCards;
     int action_number;
     int card_number;
@@ -27,7 +27,8 @@ private:
     //vector<float> current_strategy;
     //vector<float> average_strategy;
 public:
-    DiscountedCfrTrainable(shared_ptr<ActionNode> action_node, vector<PrivateCards>* privateCards);
+    DiscountedCfrTrainable(vector<PrivateCards> *privateCards,
+                           ActionNode &actionNode);
     bool isAllZeros(const vector<float>& input_array);
 
     const vector<float> getAverageStrategy() override;

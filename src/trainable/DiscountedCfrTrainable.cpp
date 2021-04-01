@@ -4,10 +4,10 @@
 
 #include "trainable/DiscountedCfrTrainable.h"
 
-DiscountedCfrTrainable::DiscountedCfrTrainable(shared_ptr<ActionNode> action_node, vector<PrivateCards>* privateCards) {
-    this->action_node = action_node;
+DiscountedCfrTrainable::DiscountedCfrTrainable(vector<PrivateCards> *privateCards,
+                                               ActionNode &actionNode) : action_node(actionNode) {
     this->privateCards = privateCards;
-    this->action_number = action_node->getChildrens().size();
+    this->action_number = action_node.getChildrens().size();
     this->card_number = privateCards->size();
 
     this->r_plus = vector<float>(this->action_number * this->card_number);
@@ -115,7 +115,7 @@ json DiscountedCfrTrainable::dump_strategy(bool with_state) {
 
     json strategy;
     const vector<float>& average_strategy = this->getcurrentStrategyNoCache();
-    vector<GameActions>& game_actions = action_node->getActions();
+    vector<GameActions>& game_actions = action_node.getActions();
     vector<string> actions_str;
     for(GameActions& one_action:game_actions) {
         actions_str.push_back(

@@ -111,7 +111,7 @@ void PCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
             }else{
                 throw runtime_error("round not understand");
             }
-            action_node->setTrainable(vector<shared_ptr<Trainable>>(num),player_privates,action_node);
+            action_node->setTrainable(vector<shared_ptr<Trainable>>(num),player_privates);
         }else{
             throw runtime_error(fmt::format("trainer {} not found",this->trainer));
         }
@@ -371,6 +371,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
         }
         trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
     }
+
     //if(this.debug && player == node.getPlayer()) {
 
     return payoffs;
@@ -448,10 +449,7 @@ PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vec
 
     // TODO hard code
     float oppo_sum = 0;
-    if(node->oppo_card_sum.empty()) {
-        node->oppo_card_sum = vector<float> (52);
-    }
-    vector<float>& oppo_card_sum = node->oppo_card_sum;
+    vector<float> oppo_card_sum = vector<float> (52);
     fill(oppo_card_sum.begin(),oppo_card_sum.end(),0);
 
     for(int i = 0;i < oppo_hand.size();i ++){

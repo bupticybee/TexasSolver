@@ -20,11 +20,8 @@ public:
     vector<shared_ptr<GameTreeNode>>& getChildrens();
     int getPlayer();
     shared_ptr<Trainable> getTrainable(int i);
-    void setTrainable(vector<shared_ptr<Trainable>> trainable,vector<PrivateCards>* player_privates,shared_ptr<ActionNode> action_node);
+    void setTrainable(vector<shared_ptr<Trainable>> trainable,vector<PrivateCards>* player_privates);
     vector<PrivateCards>* player_privates;
-    shared_ptr<ActionNode> action_node;
-    //vector<vector<vector<float>>> arr_new_reach_probs;
-    //vector<vector<vector<float>>> best_respond_arr_new_reach_probs;
 
 private:
     GameTreeNodeType getType() override;

@@ -36,13 +36,12 @@ shared_ptr<Trainable> ActionNode::getTrainable(int i) {
         throw runtime_error(fmt::format("size unacceptable {} > {} ",i,this->trainables.size()));
     }
     if(this->trainables[i] == nullptr){
-        this->trainables[i] = make_shared<DiscountedCfrTrainable>(this->action_node, player_privates);
+        this->trainables[i] = make_shared<DiscountedCfrTrainable>(player_privates,*this);
     }
     return this->trainables[i];
 }
 
-void ActionNode::setTrainable(vector<shared_ptr<Trainable>> trainables,vector<PrivateCards>* player_privates,shared_ptr<ActionNode> action_node) {
+void ActionNode::setTrainable(vector<shared_ptr<Trainable>> trainables,vector<PrivateCards>* player_privates) {
     this->trainables = trainables;
     this->player_privates = player_privates;
-    this->action_node = action_node;
 }

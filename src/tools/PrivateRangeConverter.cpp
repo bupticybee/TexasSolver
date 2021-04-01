@@ -48,7 +48,7 @@ vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vec
                     int begin_index = rank1 == rank2 ? i:0;
                     for(int j = begin_index;j < suits.size();j++){
                         string another_suit = suits[j];
-                        if(one_suit == another_suit && rank1 == rank2){
+                        if(one_suit == another_suit){
                             continue;
                         }
                         int card1 = Card::strCard2int(rank1 + one_suit);

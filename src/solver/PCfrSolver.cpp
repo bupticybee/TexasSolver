@@ -276,8 +276,6 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
         ));
     }
 
-    vector<vector<vector<float>>> arr_new_reach_probs = vector<vector<vector<float>>>(actions.size());
-
     //为了节省计算成本将action regret 存在一位数组而不是二维数组中，两个纬度分别是（该infoset有多少动作,该palyer有多少holecard）
     vector<float> regrets(actions.size() * node_player_private_cards.size());
 
@@ -286,11 +284,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
 
     vector<vector<float>> results(actions.size());
     for (int action_id = 0; action_id < actions.size(); action_id++) {
-
-        if (arr_new_reach_probs[action_id].empty()) {
-            arr_new_reach_probs[action_id] = vector<vector<float>>(2);
-        }
-        vector<vector<float>> &new_reach_prob = arr_new_reach_probs[action_id];
+        vector<vector<float>> new_reach_prob = vector<vector<float>>(2);
         if (new_reach_prob[player].empty()) {
             new_reach_prob[player] = vector<float>(reach_probs[player].size());
             new_reach_prob[1 - player] = vector<float>(reach_probs[1 - player].size());

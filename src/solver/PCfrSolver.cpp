@@ -91,7 +91,6 @@ void PCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
         shared_ptr<ActionNode> action_node = std::dynamic_pointer_cast<ActionNode>(root);
 
         int player = action_node->getPlayer();
-        // TODO 这里是不是会引发深拷贝
 
         if(this->trainer == "cfr_plus"){
             //vector<PrivateCards> player_privates = this->ranges[player];
@@ -254,6 +253,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
 vector<float>
 PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<vector<float>> &reach_probs, int iter,
                          uint64_t current_board,int deal) {
+    // TODO more than 50% nodes are action node. If we merge all action node traverse with different chance node value, is it possible to do matrix calculation?
     int oppo = 1 - player;
     const vector<PrivateCards>& node_player_private_cards = this->ranges[node->getPlayer()];
     shared_ptr<Trainable> trainable = node->getTrainable(deal);
@@ -267,21 +267,6 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
     vector<GameActions>& actions =  node->getActions();
 
     const vector<float> current_strategy = trainable->getcurrentStrategy();
-    if(this->debug){
-        for(float one_strategy:current_strategy){
-            // when one_strategy is nan
-            if(one_strategy != one_strategy) {
-                throw runtime_error("strategy contains nan");
-            }
-
-        }
-        for(int one_player = 0;one_player < this->player_number;one_player ++){
-            for(float one_prob:reach_probs[one_player]){
-                if(one_prob != one_prob)
-                    throw runtime_error("prob nan");
-            }
-        }
-    }
     if (current_strategy.size() != actions.size() * node_player_private_cards.size()) {
         node->printHistory();
         throw runtime_error(fmt::format(
@@ -371,9 +356,6 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
         }
         trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
     }
-
-    //if(this.debug && player == node.getPlayer()) {
-
     return payoffs;
 
 }
@@ -447,7 +429,6 @@ PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vec
 
     vector<float> payoffs = vector<float>(this->playerHands(player).size());
 
-    // TODO hard code
     float oppo_sum = 0;
     vector<float> oppo_card_sum = vector<float> (52);
     fill(oppo_card_sum.begin(),oppo_card_sum.end(),0);
@@ -458,17 +439,11 @@ PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vec
         oppo_sum += reach_prob[oppo][i];
     }
 
-    /*
-    if(this->debug) {
-        cout << ("[PRETERMINAL]============") << endl;
-    }
-    */
     for(int i = 0;i < player_hand.size();i ++){
         const PrivateCards& one_player_hand = player_hand[i];
         if(Card::boardsHasIntercept(current_board,Card::boardInts2long(one_player_hand.get_hands()))){
             continue;
         }
-        //TODO bug here
         int oppo_same_card_ind = this->pcm.indPlayer2Player(player,oppo,i);
         float plus_reach_prob;
         if(oppo_same_card_ind == -1){
@@ -481,35 +456,13 @@ PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vec
                 - oppo_card_sum[one_player_hand.card2]
                 + plus_reach_prob
         );
-        /*
-        if(this->debug) {
-            cout << (fmt::format("oppo_card_sum1 {} ", oppo_card_sum[one_player_hand.card1])) << endl;
-            cout << (fmt::format("oppo_card_sum2 {} ", oppo_card_sum[one_player_hand.card2])) << endl;
-            cout << (fmt::format("reach_prob i {} ", plus_reach_prob)) << endl;
-        }
-        */
     }
 
-    //TODO 校对图上每个节点payoff
-    /*
-    if(this->debug) {
-        cout << ("[TERMINAL]============") << endl;
-        node->printHistory();
-        cout << (fmt::format("PPPayoffs: {}",player_payoff)) << endl;
-        cout << (fmt::format("reach prob {}",reach_prob[oppo][0])) << endl;
-        cout << (fmt::format("oppo sum {}, substracted sum {}",oppo_sum,payoffs[0] / player_payoff)) << endl;
-        cout << (fmt::format("substracted sum {}",payoffs[0])) << endl;
-    }
-    */
     return payoffs;
 }
 
 void PCfrSolver::train() {
 
-    //RiverCombs[][] player_rivers = new RiverCombs[this.player_number][];
-    // TODO 回头把BestRespond改完之后回头改掉这一块
-    //player_rivers[0] = rrm.getRiverCombos(0, this.range1, board);
-    //player_rivers[1] = rrm.getRiverCombos(1, this.range2, board);
     vector<vector<PrivateCards>> player_privates(this->player_number);
     player_privates[0] = pcm.getPreflopCards(0);
     player_privates[1] = pcm.getPreflopCards(1);
@@ -526,12 +479,6 @@ void PCfrSolver::train() {
     uint64_t endtime = timeSinceEpochMillisec();
     for(int i = 0;i < this->iteration_number;i++){
         for(int player_id = 0;player_id < this->player_number;player_id ++) {
-            if(this->debug){
-                cout << (fmt::format(
-                        "---------------------------------     player {} --------------------------------",
-                        player_id
-                )) << endl;
-            }
             this->round_deal = vector<int>{-1,-1,-1,-1};
             //#pragma omp parallel
             {

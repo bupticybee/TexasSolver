@@ -16,10 +16,10 @@ private:
     int action_number;
     int card_number;
     vector<float> r_plus;
-    float alpha = 1.5f;
-    float beta = 0.5f;
-    float gamma = 2;
-    float theta = 0.9f;
+    constexpr static float alpha = 1.5f;
+    constexpr static float beta = 0.5f;
+    constexpr static float gamma = 2;
+    constexpr static float theta = 0.9f;
     // TODO 這裏能不能减肥
     //vector<float> r_plus_sum;
     vector<float> cum_r_plus;

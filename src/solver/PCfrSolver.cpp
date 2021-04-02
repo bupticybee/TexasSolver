@@ -172,7 +172,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
             random_deal = this->round_deal[GameTreeNode::gameRound2int(node->getRound())];
         }
     }
-    vector<vector<vector<float>>> arr_new_reach_probs = vector<vector<vector<float>>>(node->getCards().size());
+    //vector<vector<vector<float>>> arr_new_reach_probs = vector<vector<vector<float>>>(node->getCards().size());
 
     vector<vector<float>> results(node->getCards().size());
     //fill(results.begin(),results.end(),nullptr);
@@ -193,10 +193,8 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         vector<PrivateCards> &playerPrivateCard = (this->ranges[player]);
         vector<PrivateCards> &oppoPrivateCards = (this->ranges[1 - player]);
 
-        if (arr_new_reach_probs[card].empty()) {
-            arr_new_reach_probs[card] = vector<vector<float>>(2);
-        }
-        vector<vector<float>> &new_reach_probs = arr_new_reach_probs[card];
+
+        vector<vector<float>> new_reach_probs = vector<vector<float>>(2);
         if (new_reach_probs[player].empty()) {
             new_reach_probs[player] = vector<float>(playerPrivateCard.size());
             new_reach_probs[1 - player] = vector<float>(oppoPrivateCards.size());

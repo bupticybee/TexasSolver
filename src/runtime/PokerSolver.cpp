@@ -21,7 +21,7 @@ void PokerSolver::load_game_tree(string game_tree_file) {
 }
 
 void PokerSolver::train(string p1_range, string p2_range, string boards, string log_file, int iteration_number,
-                        int print_interval, string algorithm,int threads) {
+                        int print_interval, string algorithm,int warmup,int threads) {
     string player1RangeStr = p1_range;
     string player2RangeStr = p2_range;
 
@@ -47,6 +47,7 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
             , logfile_name
             , algorithm
             , Solver::MonteCarolAlg::NONE
+            , warmup
             , threads
     );
     solver.train();

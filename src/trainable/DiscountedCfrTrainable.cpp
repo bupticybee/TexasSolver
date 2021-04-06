@@ -50,6 +50,12 @@ const vector<float> DiscountedCfrTrainable::getcurrentStrategy() {
     return this->getcurrentStrategyNoCache();
 }
 
+void DiscountedCfrTrainable::copyStrategy(shared_ptr<Trainable> other_trainable){
+    shared_ptr<DiscountedCfrTrainable> trainable = dynamic_pointer_cast<DiscountedCfrTrainable>(other_trainable);
+    this->r_plus.assign(trainable->r_plus.begin(),trainable->r_plus.end());
+    this->cum_r_plus.assign(trainable->cum_r_plus.begin(),trainable->cum_r_plus.end());
+}
+
 const vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
     vector<float> current_strategy;
     current_strategy = vector<float>(this->action_number * this->card_number);

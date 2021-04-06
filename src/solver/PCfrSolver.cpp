@@ -7,11 +7,12 @@
 
 PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, vector<PrivateCards> range2,
                      vector<int> initial_board, shared_ptr<Compairer> compairer, Deck deck, int iteration_number, bool debug,
-                     int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int num_threads) :Solver(tree){
+                     int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int warmup,int num_threads) :Solver(tree){
     this->initial_board = initial_board;
     this->initial_board_long = Card::boardInts2long(initial_board);
     this->logfile = logfile;
     this->trainer = trainer;
+    this->warmup = warmup;
 
     range1 = this->noDuplicateRange(range1,initial_board_long);
     range2 = this->noDuplicateRange(range2,initial_board_long);
@@ -100,15 +101,20 @@ void PCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
             vector<PrivateCards>* player_privates = &this->ranges[player];
             //action_node->setTrainable(make_shared<DiscountedCfrTrainable>(action_node,player_privates));
             int num;
-            if(this->tree->getRoot()->getRound() == GameTreeNode::FLOP) {
+            GameTreeNode::GameRound gr = this->tree->getRoot()->getRound();
+            int root_round = GameTreeNode::gameRound2int(gr);
+            int current_round = GameTreeNode::gameRound2int(root->getRound());
+            int gap = current_round - root_round;
+
+            if(gap == 2) {
                 num = this->deck.getCards().size() * this->deck.getCards().size() +
                           this->deck.getCards().size() + 1;
-            }else if(this->tree->getRoot()->getRound() == GameTreeNode::TURN) {
+            }else if(gap == 1) {
                 num = this->deck.getCards().size() + 1;
-            }else if(this->tree->getRoot()->getRound() == GameTreeNode::RIVER) {
+            }else if(gap == 0) {
                 num =  1;
             }else{
-                throw runtime_error("round not understand");
+                throw runtime_error("gap not understand");
             }
             action_node->setTrainable(vector<shared_ptr<Trainable>>(num),player_privates);
         }else{
@@ -127,6 +133,35 @@ void PCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
     }else if(root->getType() == GameTreeNode::SHOWDOWN){
 
     }
+}
+
+vector<int> PCfrSolver::getAllAbstractionDeal(int deal){
+    vector<int> all_deal;
+    int card_num = this->deck.getCards().size();
+    if(deal == 0){
+        all_deal.push_back(deal);
+    } else if (deal > 0 && deal <= card_num){
+        int origin_deal = int((deal - 1) / 4) * 4;
+        for(int i = 0;i < 4;i ++){
+            int one_card = origin_deal + i + 1;
+            all_deal.push_back(one_card);
+        }
+    } else{
+        //cout << "______________________" << endl;
+        int c_deal = deal - (1 + card_num);
+        int first_deal = int((c_deal / card_num) / 4) * 4;
+        int second_deal = int((c_deal % card_num) / 4) * 4;
+
+        for(int i = 0;i < 4;i ++) {
+            for(int j = 0;j < 4;j ++) {
+                int one_card = card_num * (first_deal + i) + (second_deal + j) + 1 + card_num;
+                //cout << ";" << this->deck.getCards()[first_deal + i].toString() << "," << this->deck.getCards()[second_deal + j].toString();
+                all_deal.push_back(one_card);
+            }
+        }
+        //cout << endl;
+    }
+    return all_deal;
 }
 
 vector<float> PCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, const vector<vector<float>> &reach_probs, int iter,
@@ -156,6 +191,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
     //float[] cardWeights = getCardsWeights(player,reach_probs[1 - player],current_board);
 
     int card_num = node->getCards().size();
+    if(card_num % 4 != 0) throw runtime_error("card num cannot round 4");
     // 可能的发牌情况,2代表每个人的holecard是两张
     int possible_deals = node->getCards().size() - Card::long2board(current_board).size() - 2;
 
@@ -163,7 +199,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
     vector<float> chance_utility = vector<float>(reach_probs[player].size());
     fill(chance_utility.begin(),chance_utility.end(),0);
 
-    int random_deal = 0,cardcount = 0;
+    int random_deal = 0;
     if(this->monteCarolAlg==MonteCarolAlg::PUBLIC) {
         if (this->round_deal[GameTreeNode::gameRound2int(node->getRound())] == -1) {
             random_deal = random(1, possible_deals + 1 + 2);
@@ -177,18 +213,51 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
     vector<vector<float>> results(node->getCards().size());
     //fill(results.begin(),results.end(),nullptr);
 
+    vector<float> multiplier;
+    if(iter <= this->warmup){
+        multiplier = vector<float>(card_num);
+        fill(multiplier.begin(), multiplier.end(), 0);
+        for (int card_base = 0; card_base < card_num / 4; card_base++) {
+            int cardr = std::rand() % 4;
+            int card_target = card_base * 4 + cardr;
+            int multiplier_num = 0;
+            for (int i = 0; i < 4; i++) {
+                int i_card = card_base * 4 + i;
+                if (i == cardr) {
+                    Card *one_card = const_cast<Card *>(&(node->getCards()[i_card]));
+                    uint64_t card_long = Card::boardInt2long(
+                            one_card->getCardInt());
+                    if (!Card::boardsHasIntercept(card_long, current_board)) {
+                        multiplier_num += 1;
+                    }
+                } else {
+                    Card *one_card = const_cast<Card *>(&(node->getCards()[i_card]));
+                    uint64_t card_long = Card::boardInt2long(
+                            one_card->getCardInt());
+                    if (!Card::boardsHasIntercept(card_long, current_board)) {
+                        multiplier_num += 1;
+                    }
+                }
+            }
+            multiplier[card_target] = multiplier_num;
+        }
+    }
+
     #pragma omp parallel for
     for(int card = 0;card < node->getCards().size();card ++) {
         shared_ptr<GameTreeNode> one_child = node->getChildren();
         Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
         uint64_t card_long = Card::boardInt2long(one_card->getCardInt());//Card::boardCards2long(new Card[]{one_card});
         if (Card::boardsHasIntercept(card_long, current_board)) continue;
-        cardcount += 1;
+        if (iter <= this->warmup && multiplier[card] == 0) continue;
+
 
         uint64_t new_board_long = current_board | card_long;
         if (this->monteCarolAlg == MonteCarolAlg::PUBLIC) {
             throw runtime_error("parallel solver don't support public monte carol");
         }
+
+        //cout << "Card deal:" << one_card->toString() << endl;
 
         vector<PrivateCards> &playerPrivateCard = (this->ranges[player]);
         vector<PrivateCards> &oppoPrivateCards = (this->ranges[1 - player]);
@@ -239,8 +308,13 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         if(child_utility.empty())
             continue;
         if(child_utility.size() != chance_utility.size()) throw runtime_error("length not match");
-        for(int i = 0;i < child_utility.size();i ++)
-            chance_utility[i] += child_utility[i];
+        if(iter > this->warmup) {
+            for (int i = 0; i < child_utility.size(); i++)
+                chance_utility[i] += child_utility[i];
+        }else{
+            for (int i = 0; i < child_utility.size(); i++)
+                chance_utility[i] += child_utility[i] * multiplier[card];
+        }
     }
     if(this->monteCarolAlg == MonteCarolAlg::PUBLIC) {
         throw runtime_error("not possible");
@@ -346,7 +420,22 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
                         (all_action_utility[action_id])[i] - payoffs[i];
             }
         }
-        trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
+        vector<int> deals = this->getAllAbstractionDeal(deal);
+
+        if(iter > this->warmup) {
+            trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
+        }else {
+            shared_ptr<Trainable> standard_trainable = nullptr;
+            for (int one_deal : deals) {
+                shared_ptr<Trainable> one_trainable = node->getTrainable(one_deal);
+                if(standard_trainable == nullptr) {
+                    one_trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
+                    standard_trainable = one_trainable;
+                }else{
+                    one_trainable->copyStrategy(standard_trainable);
+                }
+            }
+        }
     }
     return payoffs;
 
@@ -461,7 +550,7 @@ void PCfrSolver::train() {
 
     BestResponse br = BestResponse(player_privates,this->player_number,this->pcm,this->rrm,this->deck,this->debug,this->num_threads);
 
-    br.printExploitability(tree->getRoot(), 0, tree->getRoot()->getPot(), initial_board_long);
+    //br.printExploitability(tree->getRoot(), 0, tree->getRoot()->getPot(), initial_board_long);
 
     vector<vector<float>> reach_probs = this->getReachProbs();
     ofstream fileWriter;
@@ -480,7 +569,7 @@ void PCfrSolver::train() {
                 }
             }
         }
-        if(i % this->print_interval == 0) {
+        if(i % this->print_interval == 0 && i != 0 && i > this->warmup - 1) {
             cout << ("-------------------") << endl;
             endtime = timeSinceEpochMillisec();
             float expliotibility = br.printExploitability(tree->getRoot(), i + 1, tree->getRoot()->getPot(), initial_board_long);

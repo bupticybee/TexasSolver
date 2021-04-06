@@ -37,6 +37,8 @@ public:
 
     void updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) override;
 
+    void copyStrategy(shared_ptr<Trainable> other_trainable);
+
     json dump_strategy(bool with_state) override;
 
 private:

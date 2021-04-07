@@ -65,6 +65,8 @@ private:
     vector<float> showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board,int deal);
     vector<float> actionUtility(int player,shared_ptr<ActionNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board,int deal);
     vector<float> terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<vector<float>>& reach_prob,int iter,uint64_t current_board,int deal);
+    void findGameSpecificIsomorphisms();
+    void purnTree();
 
 
 };

@@ -542,6 +542,15 @@ PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vec
     return payoffs;
 }
 
+void PCfrSolver::findGameSpecificIsomorphisms() {
+    vector<int> board = this->initial_board;
+    // TODO maybe use isomorphisms of texas holdem itself to do some kind of speedup
+}
+
+void PCfrSolver::purnTree() {
+    // TODO how to purn the tree, use wramup to start training in memory-save mode, and switch to purn tree directly to both save memory and speedup
+}
+
 void PCfrSolver::train() {
 
     vector<vector<PrivateCards>> player_privates(this->player_number);
@@ -555,15 +564,10 @@ void PCfrSolver::train() {
     vector<vector<float>> reach_probs = this->getReachProbs();
     ofstream fileWriter;
     fileWriter.open(this->logfile);
+    this->findGameSpecificIsomorphisms();
 
     uint64_t begintime = timeSinceEpochMillisec();
     uint64_t endtime = timeSinceEpochMillisec();
-
-    ub1 key[100];
-    int key_size=99;
-    for (int i=0;i<key_size;i++) key[i]=i; //fill key with sample data
-    ub8 hashcode =hash1(key, (ub8)sizeof(key[0])*key_size, (ub8)0);
-    cout << "hash code : " << hashcode << endl;
 
     for(int i = 0;i < this->iteration_number;i++){
         for(int player_id = 0;player_id < this->player_number;player_id ++) {
@@ -577,18 +581,19 @@ void PCfrSolver::train() {
             }
         }
         if(i % this->print_interval == 0 && i != 0 && i > this->warmup - 1) {
-            cout << ("-------------------") << endl;
             endtime = timeSinceEpochMillisec();
+            long time_ms = endtime - begintime;
+            cout << ("-------------------") << endl;
             float expliotibility = br.printExploitability(tree->getRoot(), i + 1, tree->getRoot()->getPot(), initial_board_long);
+            cout << "time used: " << float(time_ms) / 1000 << endl;
             if(!this->logfile.empty()){
-                long time_ms = endtime - begintime;
                 json jo;
                 jo["iteration"] = i;
                 jo["exploitibility"] = expliotibility;
                 jo["time_ms"] = time_ms;
                 fileWriter << jo << endl;
             }
-            begintime = timeSinceEpochMillisec();
+            //begintime = timeSinceEpochMillisec();
         }
     }
     fileWriter.flush();

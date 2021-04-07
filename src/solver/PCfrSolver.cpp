@@ -558,6 +558,13 @@ void PCfrSolver::train() {
 
     uint64_t begintime = timeSinceEpochMillisec();
     uint64_t endtime = timeSinceEpochMillisec();
+
+    ub1 key[100];
+    int key_size=99;
+    for (int i=0;i<key_size;i++) key[i]=i; //fill key with sample data
+    ub8 hashcode =hash1(key, (ub8)sizeof(key[0])*key_size, (ub8)0);
+    cout << "hash code : " << hashcode << endl;
+
     for(int i = 0;i < this->iteration_number;i++){
         for(int player_id = 0;player_id < this->player_number;player_id ++) {
             this->round_deal = vector<int>{-1,-1,-1,-1};

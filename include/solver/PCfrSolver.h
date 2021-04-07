@@ -13,6 +13,7 @@
 #include <trainable/DiscountedCfrTrainable.h>
 #include "Solver.h"
 #include <omp.h>
+#include "tools/lookup8.h"
 
 class PCfrSolver:public Solver {
 public:

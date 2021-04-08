@@ -528,7 +528,7 @@ TEST(TestCase,test_poker_solver){
     string ranks = "A,K,Q,J,T,9,8,7,6,5,4,3,2";
     string suits = "h,s,d,c";
     string game_tree = "../resources/gametree/generated_tree.km";
-    game_tree = "../install/tree_new.km";
+    game_tree = "../install/tree.km";
     string logfile_name = "../resources/outputs/outputs_log.txt";
     PokerSolver ps = PokerSolver(ranks,suits,"../resources/compairer/card5_dic_sorted.txt",2598961);
     ps.load_game_tree(game_tree);
@@ -540,7 +540,7 @@ TEST(TestCase,test_poker_solver){
             191,
             10,
             "discounted_cfr",
-            -1,
+            100,
             8
     );
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");

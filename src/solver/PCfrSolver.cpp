@@ -144,6 +144,11 @@ vector<int> PCfrSolver::getAllAbstractionDeal(int deal){
         int origin_deal = int((deal - 1) / 4) * 4;
         for(int i = 0;i < 4;i ++){
             int one_card = origin_deal + i + 1;
+
+            Card *first_card = const_cast<Card *>(&(this->deck.getCards()[origin_deal + i]));
+            uint64_t first_long = Card::boardInt2long(
+                    first_card->getCardInt());
+            if (Card::boardsHasIntercept(first_long, this->initial_board_long))continue;
             all_deal.push_back(one_card);
         }
     } else{
@@ -154,6 +159,18 @@ vector<int> PCfrSolver::getAllAbstractionDeal(int deal){
 
         for(int i = 0;i < 4;i ++) {
             for(int j = 0;j < 4;j ++) {
+                if(first_deal == second_deal && i == j) continue;
+
+                Card *first_card = const_cast<Card *>(&(this->deck.getCards()[first_deal + i]));
+                uint64_t first_long = Card::boardInt2long(
+                        first_card->getCardInt());
+                if (Card::boardsHasIntercept(first_long, this->initial_board_long))continue;
+
+                Card *second_card = const_cast<Card *>(&(this->deck.getCards()[second_deal + j]));
+                uint64_t second_long = Card::boardInt2long(
+                        second_card->getCardInt());
+                if (Card::boardsHasIntercept(second_long, this->initial_board_long))continue;
+
                 int one_card = card_num * (first_deal + i) + (second_deal + j) + 1 + card_num;
                 //cout << ";" << this->deck.getCards()[first_deal + i].toString() << "," << this->deck.getCards()[second_deal + j].toString();
                 all_deal.push_back(one_card);
@@ -328,15 +345,27 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
     // TODO more than 50% nodes are action node. If we merge all action node traverse with different chance node value, is it possible to do matrix calculation?
     int oppo = 1 - player;
     const vector<PrivateCards>& node_player_private_cards = this->ranges[node->getPlayer()];
-    shared_ptr<Trainable> trainable = node->getTrainable(deal);
-    if(trainable == nullptr){
-        throw runtime_error("null trainable");
-    }
 
     vector<float> payoffs = vector<float>(this->ranges[player].size());
     fill(payoffs.begin(),payoffs.end(),0);
     vector<shared_ptr<GameTreeNode>>& children =  node->getChildrens();
     vector<GameActions>& actions =  node->getActions();
+
+    shared_ptr<Trainable> trainable;
+
+    /*
+    if(iter <= this->warmup){
+        vector<int> deals = this->getAllAbstractionDeal(deal);
+        trainable = node->getTrainable(deals[0]);
+    }else{
+        trainable = node->getTrainable(deal);
+    }
+     */
+    trainable = node->getTrainable(deal);
+
+    if(trainable == nullptr){
+        throw runtime_error("null trainable");
+    }
 
     const vector<float> current_strategy = trainable->getcurrentStrategy();
     if (current_strategy.size() != actions.size() * node_player_private_cards.size()) {
@@ -420,11 +449,16 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
                         (all_action_utility[action_id])[i] - payoffs[i];
             }
         }
-        vector<int> deals = this->getAllAbstractionDeal(deal);
 
         if(iter > this->warmup) {
             trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
-        }else {
+        }/*else if(iter < this->warmup){
+            vector<int> deals = this->getAllAbstractionDeal(deal);
+            shared_ptr<Trainable> one_trainable = node->getTrainable(deals[0]);
+            one_trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
+        }*/else{
+            // iter == this->warmup
+            vector<int> deals = this->getAllAbstractionDeal(deal);
             shared_ptr<Trainable> standard_trainable = nullptr;
             for (int one_deal : deals) {
                 shared_ptr<Trainable> one_trainable = node->getTrainable(one_deal);
@@ -580,7 +614,7 @@ void PCfrSolver::train() {
                 }
             }
         }
-        if(i % this->print_interval == 0 && i != 0 && i > this->warmup - 1) {
+        if(i % this->print_interval == 0 && i != 0 && i >= this->warmup) {
             endtime = timeSinceEpochMillisec();
             long time_ms = endtime - begintime;
             cout << ("-------------------") << endl;

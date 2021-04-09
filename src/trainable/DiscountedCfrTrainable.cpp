@@ -114,7 +114,8 @@ void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int ite
         for(int private_id = 0;private_id < this->card_number;private_id ++) {
             int index = action_id * this->card_number + private_id;
             this->cum_r_plus[index] *= this->theta;
-            this->cum_r_plus[index] += current_strategy[index] * strategy_coef * reach_probs[private_id];
+            // okay what's the actual formular here? it seems it would only lose a very small part of accuracy if we remove reach prob multiply here.
+            this->cum_r_plus[index] += current_strategy[index] * strategy_coef ;// * reach_probs[private_id];
             //this->cum_r_plus_sum[private_id] += this->cum_r_plus[index] ;
         }
     }

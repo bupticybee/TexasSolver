@@ -462,7 +462,7 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
                             (all_action_utility[action_id])[i] - payoffs[i];
                 }
             }
-            trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
+            trainable->updateRegrets(regrets, iter + 1, reach_probs);
             /*if (iter > this->warmup) {
                 trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
             }else if(iter < this->warmup){

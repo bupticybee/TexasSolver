@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 from networkx.drawing.nx_agraph import graphviz_layout
 
 class Struct:
-    def __init__(self, **entries): 
+    def __init__(self, **entries):
         self.__dict__.update(entries)
-        
+
 class RulesBuilder():
     """
     two card texas holdem game tree builder
@@ -25,10 +25,11 @@ class RulesBuilder():
                  big_blind = 1,
                  stack = 10,
                  bet_sizes = ["1_pot"],
-                ):
+                 raise_sizes = ["1_pot"],
+                 ):
         self.rule = rule
         self.parse_rules()
-        
+
         self.current_commit = current_commit
         self.current_round = current_round
         self.raise_limit = raise_limit
@@ -37,13 +38,14 @@ class RulesBuilder():
         self.big_blind = big_blind
         self.stack = stack
         self.bet_sizes = bet_sizes
-    
+        self.raise_sizes = raise_sizes
+
     def parse_rules(self):
         for k,v in self.rule.items():
             setattr(self,k,v)
         rule = Struct(**self.rule)
         self.rule = rule
-    
+
     def get_beginning_chip(self):
         assert(self.players >= 2)
         # 中间不下注的人的 bet 都是0
@@ -51,8 +53,8 @@ class RulesBuilder():
         for i in range(self.players - 2):
             midbets.append(0)
         chips = [self.small_blind] + midbets + [self.big_blind]
-        return chips 
-    
+        return chips
+
 def raise_number_this_round(root):
     if root is None:
         return 0
@@ -68,7 +70,7 @@ def raise_number_this_round(root):
         return 0
     else:
         raise
-                    
+
 def check_number_this_round(root):
     if root is None:
         return 0
@@ -89,9 +91,9 @@ class TreeBuilder:
     def __init__(self,rule):
         self.rule = rule
         self.build_tree()
-    
+
     def build_tree(self):
-        pass    
+        pass
 
     def format_tree(self,depth_limit=None):
         self.formatted_arr = []
@@ -103,8 +105,8 @@ class TreeBuilder:
 
     def plot_tree(self,jupyter=True,depth_limit = 50,show=False):
         # not jupyter plot not supportted
-        assert jupyter 
-        
+        assert jupyter
+
         tree_tovis = self.format_tree(depth_limit=depth_limit)
         G = nx.DiGraph()
 
@@ -121,12 +123,12 @@ class TreeBuilder:
 
     def __format_tree(self,root,depth,limit):
         if limit is not None and depth > limit:
-            return 
+            return
         if root.children is not None:
             for one_child in root.children.values():
                 self.formatted_arr.append([root.to_string(),one_child.to_string()])
                 self.__format_tree(one_child,depth + 1,limit)
-                
+
     def gen_km_json(self,json_file,path_prefix=[],limit=np.inf,ret_json=False):
         """
         利用百度脑图的格式可视化决策树
@@ -139,18 +141,18 @@ class TreeBuilder:
             json.dump({'root':retjson},whdl)
         if ret_json == True:
             return retjson
-            
+
     def __gen_km_json(self,root,depth,limit,parent=None):
         if limit is not None and depth > limit:
-            return 
+            return
         children = []
         children_actions = []
         text = root.to_string()
         node_type = "Action"
-        
+
         if "dealcard" in text and "dealcard" in parent.to_string():
             text = "Chance [DealCard]"
-        
+
         text += "\nround: {}".format({1:"preflop",2:"flop",3:"turn",4:"river"}[root.betting_round])
         if "dealcard" in text and "dealcard" not in parent.to_string():
             node_type = "Chance"
@@ -161,14 +163,14 @@ class TreeBuilder:
                 node_type = "Showdown"
             else:
                 node_type = "Chance"
-        
+
         one_json = {
             "data": {
                 "text": text},
             "children": children,
             "children_actions": children_actions,
-            "font-weight": "bold", 
-            "background": "#73a1bf", 
+            "font-weight": "bold",
+            "background": "#73a1bf",
             "resource": [],
             "meta":{
                 "round": {1:"preflop",2:"flop",3:"turn",4:"river"}[root.betting_round],
@@ -177,12 +179,12 @@ class TreeBuilder:
                 "node_type":node_type
             }
         }
-        
+
         if root.showdown == True:
             one_json["meta"]["payoffs"] = root.payoffs
         elif root.terminal == True:
             one_json["meta"]["payoff"] = root.payoff
-            
+
         if root.children is not None:
             if node_type == "Chance":
                 root_childs = [["dealcard",root]]
@@ -193,19 +195,19 @@ class TreeBuilder:
                 if child_json:
                     children.append(child_json)
                     children_actions.append(one_action)
-                    
+
         if root.showdown == True and root.betting_round < 4:
             one_json["meta"]["node_type"] = node_type
             one_json["meta"]["round"] = {1:"preflop",2:"flop",3:"turn",4:"river"}[root.betting_round + 1]
             text = "Chance [DealCard]\nround:{}".format(one_json["meta"]["round"])
             one_json["data"]["text"] = text
-            
+
             new_root = deepcopy(root)
             new_root.betting_round += 1
             child_json = self.__gen_km_json(new_root,depth + 1,limit,root)
             children.append(child_json)
             children_actions.append("dealcard")
-                
+
         return one_json
 
 class FiveCardTexasTreeBuilder(TreeBuilder):
@@ -215,7 +217,7 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
         root = ActionNode(None,committed = self.rule.get_beginning_chip(),players = players,player = player,last_action='begin',bet_history = [],betting_round=1)
         self.root = root
         return self.__build(root)
-    
+
     def __build(self,root):
         #print("history:" + '|'.join(root.bet_history))
         if type(root) is ActionNode:
@@ -230,10 +232,16 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
             print(type(root),' should not be a node type')
             raise
         return root
-    
-    def get_possible_betting_sizes(self,root,player,next_player):
+
+    def get_possible_betting_sizes(self,root,player,next_player,typeofbet):
         committed = root.committed
-        illegal_bets = self.rule.bet_sizes
+        if typeofbet == "bet":
+            illegal_bets = self.rule.bet_sizes
+        elif typeofbet == "raise":
+            illegal_bets = self.rule.raise_sizes
+        else:
+            raise
+
         bets = []
         for one_bet in illegal_bets:
             assert('_pot' in one_bet or one_bet == "all-in")
@@ -243,22 +251,22 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
             elif 'all-in' == one_bet:
                 pass
             bets.append(one_bet)
-        
+
         # 池里的数额实际上等于双方最小下注 * 2, 这里*2实际上是限定了玩家人数只能是2,多出来的那些是还没进池里的筹码(没有
         #     被call过)
         # pot = min(committed) * 2
         # 第二种计算方式，pod 值仅仅等于committed之和
         pot = sum(committed)
-        
+
         # 根据conf计算下注数额，比如3x pot,2x pot, 0.5x pot
         possible_amounts = []
-        
+
         def round_nearest(number,round_num):
             round_num = 1 / round_num
             return round((number * round_num)) / round_num
         sb = self.rule.small_blind
         bb = self.rule.big_blind
-        
+
         for one_bet in bets:
             if type(one_bet) is float or type(one_bet) is int:
                 if committed[player] == sb:
@@ -266,7 +274,7 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
                     amount = one_bet * committed[next_player]  - sb
                     amount = round_nearest(amount,sb)
                 elif committed[player] == bb and committed[next_player] == bb:
-                    # 当德州扑克开始时，在第一个玩家call 的时候第二个玩家要 raise的时候,需要特殊处理 
+                    # 当德州扑克开始时，在第一个玩家call 的时候第二个玩家要 raise的时候,需要特殊处理
                     amount = one_bet * bb
                     amount = round_nearest(amount,sb)
                 else:
@@ -277,7 +285,7 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
                 assert(one_bet == 'all-in')
                 amount = self.rule.stack - committed[player]
             possible_amounts.append(amount)
-            
+
         if committed[player] != sb: # 一开始的possible bet amount不能简单取整
             possible_amounts = [int(i) for i in possible_amounts if i > 0]
         if committed[player] == sb:
@@ -289,40 +297,40 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
             gap = committed[next_player] - committed[player]
             assert(gap >= 0)
             possible_amounts = [i for i in possible_amounts if i >= gap * 2]
-        
-        # 同样，需要过滤掉一些过大的bet size
+
+            # 同样，需要过滤掉一些过大的bet size
             possible_amounts = [i for i in possible_amounts if i <= self.rule.stack - committed[player]]
-        
+
         return possible_amounts
-                
-    
+
+
     def build_action(self,root):
         # players list
         players = root.players
-        
+
         # current players
         player = root.player
-        
+
         # thenext_player possible actions after certain action
         if type(root) is DealCardNode:
             possible_actions = self.rule.legal_actions_after['roundbegin']
         else:
             possible_actions = self.rule.legal_actions_after[root.last_action.split('_')[0]]
-        
+
         #print("possible_actions: ",possible_actions)
         # calculate the next player to make move
         next_player = (player + 1) % len(players)
-        
+
         # for each possible action create a subtree
         if possible_actions is None:
             return
-        
+
         # 如果双方都check了就停止生成动作
         check_limit = self.rule.check_limit
         # check numbers in a round cannot be larger than a certain number
         #checksum = sum([1 if i == 'check' else 0 for i in root.bet_history[-check_limit:] ])
         checksum = check_number_this_round(root)
-        
+
         #flag = "".join(root.bet_history) == ''.join(['call', 'check', 'check', 'check', 'check', 'bet_1.0', 'call'])
         #if flag:
         #    print(root.bet_history,possible_actions)
@@ -347,7 +355,7 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
                 self.__build(nextnode)
             elif one_action == 'bet':
                 #  赌注大小分两类：固定size (比如10$)赌注和 pot 的固定倍数 的size (比如pot的50%，100%，300%)
-                betting_sizes = self.get_possible_betting_sizes(root,player,next_player)
+                betting_sizes = self.get_possible_betting_sizes(root,player,next_player,"bet")
                 for one_betting_size in betting_sizes:
                     committed = deepcopy(root.committed)
                     #committed[player] += self.rule.amounts[one_action]
@@ -355,7 +363,7 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
                     one_action_bet = one_action + "_" + str(one_betting_size)
                     nextnode = ActionNode(root,committed = committed,players = players,player = next_player,last_action=one_action_bet,bet_history = root.bet_history + [one_action_bet])
                     self.__build(nextnode)
-                
+
             elif one_action == 'call':
                 committed = deepcopy(root.committed)
                 # 不管是什么时候一方call了那么双方一定下注相同
@@ -369,7 +377,7 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
                     nextnode = ShowdownNode(root,committed = committed,players = players,player = next_player,last_action=one_action,bet_history = root.bet_history + [one_action])
                 else:
                     nextnode = DealCardNode(root,committed = committed,players = players,player = 1,last_action=one_action,bet_history = root.bet_history + [one_action],betting_round = root.betting_round + 1)
-                    
+
                 #nextnode = ShowdownNode(root,committed = committed,players = players,player = next_player,last_action=one_action,bet_history = root.bet_history + [one_action])
                 self.__build(nextnode)
             elif one_action == 'raise':
@@ -378,7 +386,7 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
                         pass
                     else:
                         continue
-                # 第二轮之后的check后面只能跟 bet 
+                # 第二轮之后的check后面只能跟 bet
                 if root.last_action == 'check':
                     # TODO check这里的逻辑替换会不会引出新问题
                     #if root.parent and root.parent.parent is None:
@@ -386,14 +394,14 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
                         pass
                     else:
                         continue
-                
+
                 # 如果raise次数超出限制，则不可以继续raise
                 if raise_number_this_round(root) >= self.rule.raise_limit:
                     continue
-                
+
                 # 当第一个call 之后的raise需要特殊处理
-                betting_sizes = self.get_possible_betting_sizes(root,player,next_player)
-                
+                betting_sizes = self.get_possible_betting_sizes(root,player,next_player,"raise")
+
                 for one_betting_size in betting_sizes:
                     one_action_raise = one_action + "_" + str(one_betting_size)
                     committed = deepcopy(root.committed)
@@ -406,7 +414,7 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
                 self.__build(nextnode)
             else:
                 raise
-                
+
 class PartGameTreeBuilder(FiveCardTexasTreeBuilder):
     def __init__(self,rule):
         self.rule = rule
@@ -432,8 +440,8 @@ class PartGameTreeBuilder(FiveCardTexasTreeBuilder):
             print(type(root),' should not be a node type')
             raise
         return root
-    
-      
+
+
 class Node(object):
     def __init__(self, parent, committed, players, player,  bet_history,betting_round=None,**kwargs):
         self.committed = deepcopy(committed)
@@ -443,39 +451,39 @@ class Node(object):
         self.player = player
         self.children = None
         self.parent = parent
-        
+
         #分别标记 是否到达终局的flag
         self.terminal = False
         self.showdown = False
         self.serialized = None
-        
+
         # 第几轮下注，德州扑克中有四轮，preflop,flop , turn river，而其简化版--两张德州中仅有一轮
         self.betting_round = betting_round if betting_round is not None else (parent.betting_round if parent is not None else None)
-        
+
     def get_opponent(self):
         if len(self.players) == 2:
             return (self.player + 1) % len(self.players)
         else:
             return list(set(self.players) - set([self.player,]))
-        
+
     def add_child(self, child):
         if self.children is None:
             self.children = [child]
         else:
             self.children.append(child)
-            
+
     def serialize(self):
         if self.serialized is None:
             self.serialized =  "[{}]".format("|".join(self.bet_history))
-        return self.serialized 
-            
+        return self.serialized
+
     def to_string(self):
         return "{}\n{} \n {}".format(
             "player: " + str(self.get_opponent()),
             "pot:" + "-".join([str(i) for i in self.committed]),
             hash(''.join(self.bet_history)) % 10000
         )
-    
+
 # TODO get chance node done later
 class ChanceNode(Node):
     def __init__(self, parent, committed, players, player,  bet_history,betting_round=None,**kwargs):
@@ -483,13 +491,13 @@ class ChanceNode(Node):
         self.last_action = kwargs['last_action']
         if parent:
             self.parent.add_child(self,self.last_action)
-        
+
     def add_child(self, child,action):
         if self.children is None:
             self.children = { action:child }
         else:
             self.children[action] = child
-            
+
     def to_string(self):
         return "{}-{}\n{} \n {}".format(
             "player: " + str(self.get_opponent()),
@@ -497,20 +505,20 @@ class ChanceNode(Node):
             "pot:" + "-".join([str(i) for i in self.committed]),
             hash(''.join(self.bet_history)) % 10000
         )
-            
+
 class ActionNode(Node):
     def __init__(self, parent, committed, players, player,  bet_history,betting_round=None,**kwargs):
         super().__init__(parent, committed, players, player,  bet_history,betting_round=betting_round)
         self.last_action = kwargs['last_action']
         if parent:
             self.parent.add_child(self,self.last_action)
-        
+
     def add_child(self, child,action):
         if self.children is None:
             self.children = { action:child }
         else:
             self.children[action] = child
-            
+
     def to_string(self):
         return "{}-{}\n{} \n {}".format(
             "player: " + str(self.get_opponent()),
@@ -525,25 +533,25 @@ class ShowdownNode(ActionNode):
         self.last_action = kwargs['last_action']
         if parent:
             self.parent.add_child(self,self.last_action)
-            
+
         self.payoffs = {}
         # payoff's key is player id represent what happens if player i wins
         # it's value is payoffs for all players if player i wins
-        
+
         for i in players:
             # everybody throw in money
             self.payoffs[i] = [-i for i in self.committed]
             # winner get all money
             self.payoffs[i][i] += self.pot
-            
+
         # 仅考虑两个玩家的情况
         self.payoffs['tie'] = [-i + (self.pot / 2) for i in self.committed]
         self.showdown = True
-            
+
     def add_child(self, child,action):
         # Showdown Node shouldn't have any child
         raise
-        
+
     def to_string(self):
         return "{}\n{}-{}\n{} \n {} \n {}".format(
             "[++showdown++]",
@@ -552,19 +560,19 @@ class ShowdownNode(ActionNode):
             "pot:" + "-".join([str(i) for i in self.committed]),
             self.payoffs,
             hash(''.join(self.bet_history)) % 10000,
-        )
-    
+            )
+
 class DealCardNode(ShowdownNode):
     def __init__(self, parent, committed, players, player,  bet_history,betting_round=None,**kwargs):
         super().__init__(parent, committed, players, player,  bet_history,betting_round=betting_round, ** kwargs)
         self.showdown = False
-        
+
     def add_child(self, child,action):
         if self.children is None:
             self.children = { action:child }
         else:
             self.children[action] = child
-            
+
     def to_string(self):
         return "{}\n{}-{}\n{} \n {} \n {}".format(
             "[++dealcard++]",
@@ -573,29 +581,29 @@ class DealCardNode(ShowdownNode):
             "pot:" + "-".join([str(i) for i in self.committed]),
             self.payoffs,
             hash(''.join(self.bet_history)) % 10000,
-        )
-    
-        
+            )
+
+
 class TerminalNode(ActionNode):
     def __init__(self, parent, committed, players, player,  bet_history,betting_round=None,**kwargs):
         super().__init__(parent, committed, players, player,  bet_history,betting_round=betting_round, ** kwargs)
         self.last_action = kwargs['last_action']
         if parent:
             self.parent.add_child(self,self.last_action)
-            
+
         self.payoff = []
         # payoff's key is player id represent what happens if player i wins
         # it's value is payoffs for all players if player i wins
-        
+
         self.payoff = [-i for i in self.committed]
         # winner get all money
         self.payoff[player] += self.pot
         self.terminal = True
-            
+
     def add_child(self, child,action):
         # Showdown Node shouldn't have any child
         raise
-        
+
     def to_string(self):
         return "{}\n{}-{}\n{} \n {} \n {}".format(
             "[--terminal--]",
@@ -604,7 +612,7 @@ class TerminalNode(ActionNode):
             "pot:" + "-".join([str(i) for i in self.committed]),
             self.payoff,
             hash(''.join(self.bet_history)) % 10000,
-        )
+            )
 
 class HolecardChanceNode(Node):
     def __init__(self, parent, committed, holecards, board, deck, bet_history, todeal):

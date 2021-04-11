@@ -206,6 +206,7 @@ vector<float> PCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, const v
 vector<float> PCfrSolver::chanceUtility(int player,shared_ptr<ChanceNode> node,const vector<float>& reach_probs
                             ,int iter,vector<uint64_t> current_boards,vector<int> deals){
 
+    cout << "chance" << endl;
     vector<Card>& cards = this->deck.getCards();
     //float[] cardWeights = getCardsWeights(player,reach_probs[1 - player],current_board);
     int oppo = 1 - player;
@@ -341,12 +342,14 @@ vector<float> PCfrSolver::chanceUtility(int player,shared_ptr<ChanceNode> node,c
             chance_utility[origin_deal * this->ranges[player].size() + j] += child_utility[ind];
         }
     }
+    cout << "chance end" << endl;
     return chance_utility;
 }
 
 vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,const vector<float>& reach_probs
                             ,int iter,vector<uint64_t> current_boards,vector<int> deals){
     // TODO modify action node to implement new structure
+    cout << "action" << endl;
     int oppo = 1 - player;
 
     if(current_boards.size() != deals.size()){
@@ -358,12 +361,12 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
 
     const vector<PrivateCards>& node_player_private_cards = this->ranges[node->getPlayer()];
 
-    vector<float> payoffs = vector<float>(this->ranges[player].size());
+    vector<float> payoffs = vector<float>(deals.size() * this->ranges[player].size());
     fill(payoffs.begin(),payoffs.end(),0);
     vector<shared_ptr<GameTreeNode>>& children =  node->getChildrens();
     vector<GameActions>& actions =  node->getActions();
 
-    shared_ptr<Trainable> trainable;
+    int node_player = node->getPlayer();
 
     /*
     if(iter <= this->warmup){
@@ -374,84 +377,89 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
     }
      */
 
-    for(int i_deal = 0;i_deal < deals.size();i_deal ++) {
-        uint64_t current_board = current_boards[i_deal];
-        int deal = deals[i_deal];
-        trainable = node->getTrainable(deal);
+    vector<vector<float>> strategys = vector<vector<float>>(deals.size());
+    shared_ptr<Trainable> trainable;
+    for(int i_deal = 0;i_deal < deals.size();i_deal++) {
+        trainable = node->getTrainable(deals[i_deal]);
+        strategys[i_deal] = trainable->getcurrentStrategy();
+    }
 
-        if (trainable == nullptr) {
-            throw runtime_error("null trainable");
-        }
+    vector<vector<float>> all_action_utility(actions.size());
 
-        const vector<float> current_strategy = trainable->getcurrentStrategy();
-        if (current_strategy.size() != actions.size() * node_player_private_cards.size()) {
-            node->printHistory();
-            throw runtime_error(fmt::format(
-                    "length not match {} - {} \n action size {} private_card size {}", current_strategy.size(),
-                    actions.size() * node_player_private_cards.size(), actions.size(), node_player_private_cards.size()
-            ));
-        }
+    vector<vector<float>> results(actions.size());
 
-        //为了节省计算成本将action regret 存在一位数组而不是二维数组中，两个纬度分别是（该infoset有多少动作,该palyer有多少holecard）
-        vector<float> regrets(actions.size() * node_player_private_cards.size());
-
-        vector<vector<float>> all_action_utility(actions.size());
-        int node_player = node->getPlayer();
-
-        vector<vector<float>> results(actions.size());
-        for (int action_id = 0; action_id < actions.size(); action_id++) {
-            vector<vector<float>> new_reach_prob = vector<vector<float>>(2);
-            if (new_reach_prob[player].empty()) {
-                new_reach_prob[player] = vector<float>(reach_probs[player].size());
-                new_reach_prob[1 - player] = vector<float>(reach_probs[1 - player].size());
-            }
-
-            for (int hand_id = 0; hand_id < new_reach_prob[node_player].size(); hand_id++) {
-                float strategy_prob = current_strategy[hand_id + action_id * node_player_private_cards.size()];
-                new_reach_prob[node_player][hand_id] = reach_probs[node_player][hand_id] * strategy_prob;
-            }
-
-            new_reach_prob[1 - node_player].assign(reach_probs[1 - node_player].begin(),
-                                                   reach_probs[1 - node_player].end());
-
+    for (int action_id = 0; action_id < actions.size(); action_id++) {
+        if(node_player == oppo) {
             //#pragma omp task shared(results,action_id)
+            vector<float> new_reach_prob = vector<float>(current_boards.size() * this->ranges[oppo].size());
+            fill(new_reach_prob.begin(),new_reach_prob.end(),0);
+
+            for(int i_deal = 0;i_deal < deals.size();i_deal++){
+                const vector<float>& current_strategy = strategys[i_deal];
+                if (current_strategy.size() != actions.size() * node_player_private_cards.size()) {
+                    cout << current_strategy.size() << endl;
+                    cout << actions.size() << endl;
+                    cout << node_player_private_cards.size() << endl;
+                    throw runtime_error(fmt::format(
+                            "length not match"
+                    ));
+                }
+
+                // TODO maybe this code can use some vector optimize
+                for (int hand_id = 0; hand_id < node_player_private_cards.size(); hand_id++) {
+                    float strategy_prob = current_strategy[action_id * node_player_private_cards.size() + hand_id];
+                    new_reach_prob[i_deal * node_player_private_cards.size() + hand_id] = reach_probs[i_deal * node_player_private_cards.size() + hand_id] * strategy_prob;
+                }
+            }
             results[action_id] = this->cfr(player, children[action_id], new_reach_prob, iter,
-                                           current_board, deal);
+                                           current_boards, deals);
+
+        }else{
+            results[action_id] = this->cfr(player, children[action_id], reach_probs, iter,
+                                           current_boards, deals);
+        }
+    }
+
+    //#pragma omp taskwait
+    for (int action_id = 0; action_id < actions.size(); action_id++) {
+        vector<float> action_utilities = results[action_id];
+        if (action_utilities.empty()) {
+            continue;
+        }
+        all_action_utility[action_id] = action_utilities;
+
+        // cfr结果是每手牌的收益，payoffs代表的也是每手牌的收益，他们的长度理应相等
+        if (action_utilities.size() != payoffs.size()) {
+            cout << ("errmsg") << endl;
+            cout << (fmt::format("node player {} ", node->getPlayer())) << endl;
+            node->printHistory();
+            throw runtime_error(
+                    fmt::format(
+                            "action and payoff length not match {} - {}", action_utilities.size(),
+                            payoffs.size()
+                    )
+            );
         }
 
-        //#pragma omp taskwait
-        for (int action_id = 0; action_id < actions.size(); action_id++) {
-            vector<float> action_utilities = results[action_id];
-            if (action_utilities.empty()) {
-                continue;
-            }
-            all_action_utility[action_id] = action_utilities;
-
-            // cfr结果是每手牌的收益，payoffs代表的也是每手牌的收益，他们的长度理应相等
-            if (action_utilities.size() != payoffs.size()) {
-                cout << ("errmsg") << endl;
-                cout << (fmt::format("node player {} ", node->getPlayer())) << endl;
-                node->printHistory();
-                throw runtime_error(
-                        fmt::format(
-                                "action and payoff length not match {} - {}", action_utilities.size(),
-                                payoffs.size()
-                        )
-                );
-            }
-
-            for (int hand_id = 0; hand_id < action_utilities.size(); hand_id++) {
+        for (int i_deal = 0; i_deal < deals.size(); i_deal++) {
+            const vector<float> &current_strategy = strategys[i_deal];
+            for (int hand_id = 0; hand_id < node_player_private_cards.size(); hand_id++) {
                 if (player == node->getPlayer()) {
                     float strategy_prob = current_strategy[hand_id + action_id * node_player_private_cards.size()];
-                    payoffs[hand_id] += strategy_prob * (action_utilities)[hand_id];
+                    payoffs[i_deal * node_player_private_cards.size() + hand_id] +=
+                            strategy_prob * (action_utilities)[i_deal * node_player_private_cards.size() + hand_id];
                 } else {
-                    payoffs[hand_id] += (action_utilities)[hand_id];
+                    payoffs[i_deal * node_player_private_cards.size() + hand_id] += (action_utilities)[
+                            i_deal * node_player_private_cards.size() + hand_id];
                 }
             }
         }
+    }
 
-
-        if (player == node->getPlayer()) {
+    if (player == node->getPlayer()) {
+        for(int i_deal = 0;i_deal < deals.size();i_deal++) {
+            trainable = node->getTrainable(deals[i_deal]);
+            vector<float> regrets(actions.size() * node_player_private_cards.size());
             for (int i = 0; i < node_player_private_cards.size(); i++) {
                 //boolean regrets_all_negative = true;
                 for (int action_id = 0; action_id < actions.size(); action_id++) {
@@ -459,32 +467,34 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
                     // regret[action_id * player_hc: (action_id + 1) * player_hc]
                     //     = all_action_utilitiy[action_id] - payoff[action_id]
                     regrets[action_id * node_player_private_cards.size() + i] =
-                            (all_action_utility[action_id])[i] - payoffs[i];
+                            (all_action_utility[action_id])[i_deal * node_player_private_cards.size() + i] -
+                            payoffs[i_deal * node_player_private_cards.size() + i];
                 }
             }
             trainable->updateRegrets(regrets, iter + 1, reach_probs);
-            /*if (iter > this->warmup) {
-                trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
-            }else if(iter < this->warmup){
-            vector<int> deals = this->getAllAbstractionDeal(deal);
-            shared_ptr<Trainable> one_trainable = node->getTrainable(deals[0]);
-            one_trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
-            }else {
-                // iter == this->warmup
-                vector<int> deals = this->getAllAbstractionDeal(deal);
-                shared_ptr<Trainable> standard_trainable = nullptr;
-                for (int one_deal : deals) {
-                    shared_ptr<Trainable> one_trainable = node->getTrainable(one_deal);
-                    if (standard_trainable == nullptr) {
-                        one_trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
-                        standard_trainable = one_trainable;
-                    } else {
-                        one_trainable->copyStrategy(standard_trainable);
-                    }
-                }
-            }*/
         }
+        /*if (iter > this->warmup) {
+            trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
+        }else if(iter < this->warmup){
+        vector<int> deals = this->getAllAbstractionDeal(deal);
+        shared_ptr<Trainable> one_trainable = node->getTrainable(deals[0]);
+        one_trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
+        }else {
+            // iter == this->warmup
+            vector<int> deals = this->getAllAbstractionDeal(deal);
+            shared_ptr<Trainable> standard_trainable = nullptr;
+            for (int one_deal : deals) {
+                shared_ptr<Trainable> one_trainable = node->getTrainable(one_deal);
+                if (standard_trainable == nullptr) {
+                    one_trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
+                    standard_trainable = one_trainable;
+                } else {
+                    one_trainable->copyStrategy(standard_trainable);
+                }
+            }
+        }*/
     }
+    cout << "action end" << endl;
     return payoffs;
 
 }
@@ -492,99 +502,110 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
 vector<float> PCfrSolver::showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<float>& reach_probs
                               ,int iter,vector<uint64_t> current_boards,vector<int> deals){
     // player win时候player的收益，player lose的时候收益明显为-player_payoff
+    cout << "showdown" << endl;
     int oppo = 1 - player;
-    float win_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE,player,player);
-    float lose_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE,oppo,player);
-    const vector<PrivateCards>& player_private_cards = this->ranges[player];
-    const vector<PrivateCards>& oppo_private_cards = this->ranges[oppo];
+    float win_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE, player, player);
+    float lose_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE, oppo, player);
+    const vector<PrivateCards> &player_private_cards = this->ranges[player];
+    const vector<PrivateCards> &oppo_private_cards = this->ranges[oppo];
 
-    const vector<RiverCombs>& player_combs = this->rrm.getRiverCombos(player,player_private_cards,current_board);
-    const vector<RiverCombs>& oppo_combs = this->rrm.getRiverCombos(oppo,oppo_private_cards,current_board);
+    vector<float> payoffs = vector<float>(deals.size() * player_private_cards.size());
 
-    vector<float> payoffs = vector<float>(player_private_cards.size());
+    for(int i_deal = 0;i_deal < deals.size();i_deal ++) {
+        uint64_t current_board = current_boards[i_deal];
 
-    float winsum = 0;
-    vector<float> card_winsum = vector<float> (52);//node->card_sum;
-    fill(card_winsum.begin(),card_winsum.end(),0);
+        const vector<RiverCombs> &player_combs = this->rrm.getRiverCombos(player, player_private_cards, current_board);
+        const vector<RiverCombs> &oppo_combs = this->rrm.getRiverCombos(oppo, oppo_private_cards, current_board);
 
-    int j = 0;
-    for(int i = 0;i < player_combs.size();i ++){
-        const RiverCombs& one_player_comb = player_combs[i];
-        while (j < oppo_combs.size() && one_player_comb.rank < oppo_combs[j].rank){
-            const RiverCombs& one_oppo_comb = oppo_combs[j];
-            winsum += reach_probs[oppo][one_oppo_comb.reach_prob_index];
-            card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
-            card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
-            j ++;
+        float winsum = 0;
+        vector<float> card_winsum = vector<float>(52);//node->card_sum;
+        fill(card_winsum.begin(), card_winsum.end(), 0);
+
+        int j = 0;
+        for (int i = 0; i < player_combs.size(); i++) {
+            const RiverCombs &one_player_comb = player_combs[i];
+            while (j < oppo_combs.size() && one_player_comb.rank < oppo_combs[j].rank) {
+                const RiverCombs &one_oppo_comb = oppo_combs[j];
+                winsum += reach_probs[i_deal * oppo_combs.size() + one_oppo_comb.reach_prob_index];
+                card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[i_deal * oppo_combs.size() + one_oppo_comb.reach_prob_index];
+                card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[i_deal * oppo_combs.size() + one_oppo_comb.reach_prob_index];
+                j++;
+            }
+            payoffs[i_deal * player_private_cards.size() + one_player_comb.reach_prob_index] = (winsum
+                                                         - card_winsum[one_player_comb.private_cards.card1]
+                                                         - card_winsum[one_player_comb.private_cards.card2]
+                                                        ) * win_payoff;
         }
-        payoffs[one_player_comb.reach_prob_index] = (winsum
-                                                     - card_winsum[one_player_comb.private_cards.card1]
-                                                     - card_winsum[one_player_comb.private_cards.card2]
-                                                    ) * win_payoff;
-    }
 
-    // 计算失败时的payoff
-    float losssum = 0;
-    vector<float>& card_losssum = card_winsum;
-    fill(card_losssum.begin(),card_losssum.end(),0);
+        // 计算失败时的payoff
+        float losssum = 0;
+        vector<float> &card_losssum = card_winsum;
+        fill(card_losssum.begin(), card_losssum.end(), 0);
 
-    j = oppo_combs.size() - 1;
-    for(int i = player_combs.size() - 1;i >= 0;i --){
-        const RiverCombs& one_player_comb = player_combs[i];
-        while (j >= 0 && one_player_comb.rank > oppo_combs[j].rank){
-            const RiverCombs& one_oppo_comb = oppo_combs[j];
-            losssum += reach_probs[oppo][one_oppo_comb.reach_prob_index];
-            card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
-            card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
-            j --;
+        j = oppo_combs.size() - 1;
+        for (int i = player_combs.size() - 1; i >= 0; i--) {
+            const RiverCombs &one_player_comb = player_combs[i];
+            while (j >= 0 && one_player_comb.rank > oppo_combs[j].rank) {
+                const RiverCombs &one_oppo_comb = oppo_combs[j];
+                losssum += reach_probs[i_deal * oppo_combs.size() + one_oppo_comb.reach_prob_index];
+                card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[i_deal * oppo_combs.size() + one_oppo_comb.reach_prob_index];
+                card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[i_deal * oppo_combs.size() + one_oppo_comb.reach_prob_index];
+                j--;
+            }
+            payoffs[i_deal * player_private_cards.size() + one_player_comb.reach_prob_index] += (losssum
+                                                          - card_losssum[one_player_comb.private_cards.card1]
+                                                          - card_losssum[one_player_comb.private_cards.card2]
+                                                         ) * lose_payoff;
         }
-        payoffs[one_player_comb.reach_prob_index] += (losssum
-                                                      - card_losssum[one_player_comb.private_cards.card1]
-                                                      - card_losssum[one_player_comb.private_cards.card2]
-                                                     ) * lose_payoff;
     }
+    cout << "showdown end" << endl;
     return payoffs;
 }
 
 vector<float> PCfrSolver::terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<float>& reach_prob
                                           ,int iter,vector<uint64_t> current_boards,vector<int> deals){
+    cout << "terminal" << endl;
     float player_payoff = node->get_payoffs()[player];
 
     int oppo = 1 - player;
     const vector<PrivateCards>& player_hand = playerHands(player);
     const vector<PrivateCards>& oppo_hand = playerHands(oppo);
 
-    vector<float> payoffs = vector<float>(this->playerHands(player).size());
+    vector<float> payoffs = vector<float>(deals.size() * player_hand.size());
 
-    float oppo_sum = 0;
-    vector<float> oppo_card_sum = vector<float> (52);
-    fill(oppo_card_sum.begin(),oppo_card_sum.end(),0);
+    for(int i_deal = 0;i_deal < deals.size();i_deal ++) {
+        uint64_t current_board = current_boards[i_deal];
+        float oppo_sum = 0;
+        vector<float> oppo_card_sum = vector<float>(52);
+        fill(oppo_card_sum.begin(), oppo_card_sum.end(), 0);
 
-    for(int i = 0;i < oppo_hand.size();i ++){
-        oppo_card_sum[oppo_hand[i].card1] += reach_prob[oppo][i];
-        oppo_card_sum[oppo_hand[i].card2] += reach_prob[oppo][i];
-        oppo_sum += reach_prob[oppo][i];
+        for (int i = 0; i < oppo_hand.size(); i++) {
+            oppo_card_sum[oppo_hand[i].card1] += reach_prob[i_deal * oppo_hand.size() + i];
+            oppo_card_sum[oppo_hand[i].card2] += reach_prob[i_deal * oppo_hand.size() + i];
+            oppo_sum += reach_prob[i_deal * oppo_hand.size() + i];
+        }
+
+        for (int i = 0; i < player_hand.size(); i++) {
+            const PrivateCards &one_player_hand = player_hand[i];
+            if (Card::boardsHasIntercept(current_board, Card::boardInts2long(one_player_hand.get_hands()))) {
+                continue;
+            }
+            int oppo_same_card_ind = this->pcm.indPlayer2Player(player, oppo, i);
+            float plus_reach_prob;
+            if (oppo_same_card_ind == -1) {
+                plus_reach_prob = 0;
+            } else {
+                plus_reach_prob = reach_prob[i_deal * oppo_hand.size() + oppo_same_card_ind];
+            }
+            payoffs[i_deal * player_hand.size() + i] = player_payoff * (
+                    oppo_sum - oppo_card_sum[one_player_hand.card1]
+                    - oppo_card_sum[one_player_hand.card2]
+                    + plus_reach_prob
+            );
+        }
     }
 
-    for(int i = 0;i < player_hand.size();i ++){
-        const PrivateCards& one_player_hand = player_hand[i];
-        if(Card::boardsHasIntercept(current_board,Card::boardInts2long(one_player_hand.get_hands()))){
-            continue;
-        }
-        int oppo_same_card_ind = this->pcm.indPlayer2Player(player,oppo,i);
-        float plus_reach_prob;
-        if(oppo_same_card_ind == -1){
-            plus_reach_prob = 0;
-        }else{
-            plus_reach_prob = reach_prob[oppo][oppo_same_card_ind];
-        }
-        payoffs[i] = player_payoff * (
-                oppo_sum - oppo_card_sum[one_player_hand.card1]
-                - oppo_card_sum[one_player_hand.card2]
-                + plus_reach_prob
-        );
-    }
-
+    cout << "terminal end" << endl;
     return payoffs;
 }
 
@@ -622,7 +643,7 @@ void PCfrSolver::train() {
             {
                 //#pragma omp single
                 {
-                    cfr(player_id, this->tree->getRoot(), reach_probs, i, this->initial_board_long,0);
+                    cfr(player_id, this->tree->getRoot(), reach_probs[1 - player_id], i, vector<uint64_t>{this->initial_board_long},vector<int>{0});
                 }
             }
         }

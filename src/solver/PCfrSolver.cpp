@@ -206,7 +206,7 @@ vector<float> PCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, const v
 vector<float> PCfrSolver::chanceUtility(int player,shared_ptr<ChanceNode> node,const vector<float>& reach_probs
                             ,int iter,vector<uint64_t> current_boards,vector<int> deals){
 
-    cout << "chance" << endl;
+    //cout << "chance" << endl;
     vector<Card>& cards = this->deck.getCards();
     //float[] cardWeights = getCardsWeights(player,reach_probs[1 - player],current_board);
     int oppo = 1 - player;
@@ -294,8 +294,8 @@ vector<float> PCfrSolver::chanceUtility(int player,shared_ptr<ChanceNode> node,c
             //if (playerPrivateCard.size() != reach_probs[player].size()) throw runtime_error("length not match");
             //if (oppoPrivateCards.size() != reach_probs[1 - player].size()) throw runtime_error("length not match");
 
-            int player_hand_len = this->ranges[oppo].size();
-            for (int player_hand = 0; player_hand < player_hand_len; player_hand++) {
+            int oppo_hand_len = this->ranges[oppo].size();
+            for (int player_hand = 0; player_hand < oppo_hand_len; player_hand++) {
                 PrivateCards &one_private = this->ranges[oppo][player_hand];
                 uint64_t privateBoardLong = one_private.toBoardLong();
                 if (Card::boardsHasIntercept(card_long, privateBoardLong)) {
@@ -333,7 +333,9 @@ vector<float> PCfrSolver::chanceUtility(int player,shared_ptr<ChanceNode> node,c
     if (this->monteCarolAlg == MonteCarolAlg::PUBLIC) {
         throw runtime_error("not possible");
     }
-    if(child_utility.size() != new_deals.size() * this->ranges[player].size())
+    if(child_utility.size() != new_deals.size() * this->ranges[player].size()) {
+        throw runtime_error("child utility and deal size not match");
+    }
 
     for(int i = 0;i < new_deals.size();i ++) {
         int origin_deal = original_deals[i];
@@ -342,14 +344,15 @@ vector<float> PCfrSolver::chanceUtility(int player,shared_ptr<ChanceNode> node,c
             chance_utility[origin_deal * this->ranges[player].size() + j] += child_utility[ind];
         }
     }
-    cout << "chance end" << endl;
+    //cout << "chance end" << endl;
     return chance_utility;
 }
 
 vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,const vector<float>& reach_probs
                             ,int iter,vector<uint64_t> current_boards,vector<int> deals){
     // TODO modify action node to implement new structure
-    cout << "action" << endl;
+    //cout << "action" << endl;
+    //cout << "node player " << node->getPlayer() << endl;
     int oppo = 1 - player;
 
     if(current_boards.size() != deals.size()){
@@ -376,16 +379,13 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
         trainable = node->getTrainable(deal);
     }
      */
+    //cout << "deal number: " << deals.size() << endl;
 
     vector<vector<float>> strategys = vector<vector<float>>(deals.size());
-    shared_ptr<Trainable> trainable;
     for(int i_deal = 0;i_deal < deals.size();i_deal++) {
-        trainable = node->getTrainable(deals[i_deal]);
+        shared_ptr<Trainable> trainable = node->getTrainable(deals[i_deal]);
         strategys[i_deal] = trainable->getcurrentStrategy();
     }
-
-    vector<vector<float>> all_action_utility(actions.size());
-
     vector<vector<float>> results(actions.size());
 
     for (int action_id = 0; action_id < actions.size(); action_id++) {
@@ -395,9 +395,9 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
             fill(new_reach_prob.begin(),new_reach_prob.end(),0);
 
             for(int i_deal = 0;i_deal < deals.size();i_deal++){
-                const vector<float>& current_strategy = strategys[i_deal];
-                if (current_strategy.size() != actions.size() * node_player_private_cards.size()) {
-                    cout << current_strategy.size() << endl;
+                const vector<float>* current_strategy = &strategys[i_deal];
+                if (current_strategy->size() != actions.size() * node_player_private_cards.size()) {
+                    cout << current_strategy->size() << endl;
                     cout << actions.size() << endl;
                     cout << node_player_private_cards.size() << endl;
                     throw runtime_error(fmt::format(
@@ -407,7 +407,7 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
 
                 // TODO maybe this code can use some vector optimize
                 for (int hand_id = 0; hand_id < node_player_private_cards.size(); hand_id++) {
-                    float strategy_prob = current_strategy[action_id * node_player_private_cards.size() + hand_id];
+                    float strategy_prob = (*current_strategy)[action_id * node_player_private_cards.size() + hand_id];
                     new_reach_prob[i_deal * node_player_private_cards.size() + hand_id] = reach_probs[i_deal * node_player_private_cards.size() + hand_id] * strategy_prob;
                 }
             }
@@ -422,35 +422,34 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
 
     //#pragma omp taskwait
     for (int action_id = 0; action_id < actions.size(); action_id++) {
-        vector<float> action_utilities = results[action_id];
-        if (action_utilities.empty()) {
+        vector<float>* action_utilities = &(results[action_id]);
+        if (action_utilities->empty()) {
             continue;
         }
-        all_action_utility[action_id] = action_utilities;
 
         // cfr结果是每手牌的收益，payoffs代表的也是每手牌的收益，他们的长度理应相等
-        if (action_utilities.size() != payoffs.size()) {
+        if (action_utilities->size() != payoffs.size()) {
             cout << ("errmsg") << endl;
             cout << (fmt::format("node player {} ", node->getPlayer())) << endl;
             node->printHistory();
             throw runtime_error(
                     fmt::format(
-                            "action and payoff length not match {} - {}", action_utilities.size(),
+                            "action and payoff length not match {} - {}", action_utilities->size(),
                             payoffs.size()
                     )
             );
         }
 
         for (int i_deal = 0; i_deal < deals.size(); i_deal++) {
-            const vector<float> &current_strategy = strategys[i_deal];
-            for (int hand_id = 0; hand_id < node_player_private_cards.size(); hand_id++) {
+            const vector<float>* current_strategy = &(strategys[i_deal]);
+            for (int hand_id = 0; hand_id < this->ranges[player].size(); hand_id++) {
                 if (player == node->getPlayer()) {
-                    float strategy_prob = current_strategy[hand_id + action_id * node_player_private_cards.size()];
-                    payoffs[i_deal * node_player_private_cards.size() + hand_id] +=
-                            strategy_prob * (action_utilities)[i_deal * node_player_private_cards.size() + hand_id];
+                    float strategy_prob = (*current_strategy)[hand_id + action_id * this->ranges[player].size()];
+                    payoffs[i_deal * this->ranges[player].size() + hand_id] +=
+                            strategy_prob * (*action_utilities)[i_deal * this->ranges[player].size() + hand_id];
                 } else {
-                    payoffs[i_deal * node_player_private_cards.size() + hand_id] += (action_utilities)[
-                            i_deal * node_player_private_cards.size() + hand_id];
+                    payoffs[i_deal * this->ranges[player].size() + hand_id] += (*action_utilities)[
+                            i_deal * this->ranges[player].size() + hand_id];
                 }
             }
         }
@@ -458,7 +457,7 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
 
     if (player == node->getPlayer()) {
         for(int i_deal = 0;i_deal < deals.size();i_deal++) {
-            trainable = node->getTrainable(deals[i_deal]);
+            shared_ptr<Trainable> trainable = node->getTrainable(deals[i_deal]);
             vector<float> regrets(actions.size() * node_player_private_cards.size());
             for (int i = 0; i < node_player_private_cards.size(); i++) {
                 //boolean regrets_all_negative = true;
@@ -467,12 +466,13 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
                     // regret[action_id * player_hc: (action_id + 1) * player_hc]
                     //     = all_action_utilitiy[action_id] - payoff[action_id]
                     regrets[action_id * node_player_private_cards.size() + i] =
-                            (all_action_utility[action_id])[i_deal * node_player_private_cards.size() + i] -
+                            (results[action_id])[i_deal * node_player_private_cards.size() + i] -
                             payoffs[i_deal * node_player_private_cards.size() + i];
                 }
             }
             trainable->updateRegrets(regrets, iter + 1, reach_probs);
         }
+
         /*if (iter > this->warmup) {
             trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
         }else if(iter < this->warmup){
@@ -494,7 +494,7 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
             }
         }*/
     }
-    cout << "action end" << endl;
+    //cout << "action end" << endl;
     return payoffs;
 
 }
@@ -502,7 +502,7 @@ vector<float> PCfrSolver::actionUtility(int player,shared_ptr<ActionNode> node,c
 vector<float> PCfrSolver::showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<float>& reach_probs
                               ,int iter,vector<uint64_t> current_boards,vector<int> deals){
     // player win时候player的收益，player lose的时候收益明显为-player_payoff
-    cout << "showdown" << endl;
+    //cout << "showdown" << endl;
     int oppo = 1 - player;
     float win_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE, player, player);
     float lose_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE, oppo, player);
@@ -510,6 +510,7 @@ vector<float> PCfrSolver::showdownUtility(int player,shared_ptr<ShowdownNode> no
     const vector<PrivateCards> &oppo_private_cards = this->ranges[oppo];
 
     vector<float> payoffs = vector<float>(deals.size() * player_private_cards.size());
+    fill(payoffs.begin(),payoffs.end(),0);
 
     for(int i_deal = 0;i_deal < deals.size();i_deal ++) {
         uint64_t current_board = current_boards[i_deal];
@@ -558,13 +559,13 @@ vector<float> PCfrSolver::showdownUtility(int player,shared_ptr<ShowdownNode> no
                                                          ) * lose_payoff;
         }
     }
-    cout << "showdown end" << endl;
+    //cout << "showdown end" << endl;
     return payoffs;
 }
 
 vector<float> PCfrSolver::terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<float>& reach_prob
                                           ,int iter,vector<uint64_t> current_boards,vector<int> deals){
-    cout << "terminal" << endl;
+    //cout << "terminal" << endl;
     float player_payoff = node->get_payoffs()[player];
 
     int oppo = 1 - player;
@@ -605,7 +606,7 @@ vector<float> PCfrSolver::terminalUtility(int player,shared_ptr<TerminalNode> no
         }
     }
 
-    cout << "terminal end" << endl;
+    //cout << "terminal end" << endl;
     return payoffs;
 }
 
@@ -644,6 +645,7 @@ void PCfrSolver::train() {
                 //#pragma omp single
                 {
                     cfr(player_id, this->tree->getRoot(), reach_probs[1 - player_id], i, vector<uint64_t>{this->initial_board_long},vector<int>{0});
+                    cout << __LINE__ << endl;
                 }
             }
         }

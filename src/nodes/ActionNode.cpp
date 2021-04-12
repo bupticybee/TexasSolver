@@ -32,7 +32,7 @@ GameTreeNode::GameTreeNodeType ActionNode::getType() {
 }
 
 shared_ptr<Trainable> ActionNode::getTrainable(int i) {
-    if(i > this->trainables.size()){
+    if(i >= this->trainables.size() || i < 0){
         throw runtime_error(fmt::format("size unacceptable {} > {} ",i,this->trainables.size()));
     }
     if(this->trainables[i] == nullptr){

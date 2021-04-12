@@ -56,7 +56,7 @@ void DiscountedCfrTrainable::copyStrategy(shared_ptr<Trainable> other_trainable)
     this->cum_r_plus.assign(trainable->cum_r_plus.begin(),trainable->cum_r_plus.end());
 }
 
-const vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
+vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
     vector<float> current_strategy;
     current_strategy = vector<float>(this->action_number * this->card_number);
     for (int private_id = 0; private_id < this->card_number; private_id++) {

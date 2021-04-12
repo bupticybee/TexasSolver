@@ -43,7 +43,7 @@ public:
 
 private:
 
-    const vector<float> getcurrentStrategyNoCache();
+    vector<float> getcurrentStrategyNoCache();
 
     TrainableType get_type() override;
 

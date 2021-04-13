@@ -5,6 +5,8 @@
 #include <solver/BestResponse.h>
 #include "solver/PCfrSolver.h"
 
+//#define DEBUG;
+
 PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, vector<PrivateCards> range2,
                      vector<int> initial_board, shared_ptr<Compairer> compairer, Deck deck, int iteration_number, bool debug,
                      int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int warmup,int num_threads) :Solver(tree){
@@ -181,7 +183,7 @@ vector<int> PCfrSolver::getAllAbstractionDeal(int deal){
     return all_deal;
 }
 
-vector<float> PCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, const vector<vector<float>> &reach_probs, int iter,
+vector<float> PCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, const vector<float> &reach_probs, int iter,
                                     uint64_t current_board,int deal) {
     switch(node->getType()) {
         case GameTreeNode::ACTION: {
@@ -202,7 +204,7 @@ vector<float> PCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, const v
 }
 
 vector<float>
-PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<vector<float>> &reach_probs, int iter,
+PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<float> &reach_probs, int iter,
                          uint64_t current_board,int deal) {
     vector<Card>& cards = this->deck.getCards();
     //float[] cardWeights = getCardsWeights(player,reach_probs[1 - player],current_board);
@@ -211,9 +213,10 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
     if(card_num % 4 != 0) throw runtime_error("card num cannot round 4");
     // 可能的发牌情况,2代表每个人的holecard是两张
     int possible_deals = node->getCards().size() - Card::long2board(current_board).size() - 2;
+    int oppo = 1 - player;
 
     //vector<float> chance_utility(reach_probs[player].size());
-    vector<float> chance_utility = vector<float>(reach_probs[player].size());
+    vector<float> chance_utility = vector<float>(this->ranges[player].size());
     fill(chance_utility.begin(),chance_utility.end(),0);
 
     int random_deal = 0;
@@ -280,37 +283,39 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         vector<PrivateCards> &oppoPrivateCards = (this->ranges[1 - player]);
 
 
-        vector<vector<float>> new_reach_probs = vector<vector<float>>(2);
-        if (new_reach_probs[player].empty()) {
-            new_reach_probs[player] = vector<float>(playerPrivateCard.size());
-            new_reach_probs[1 - player] = vector<float>(oppoPrivateCards.size());
-        }
+        vector<float> new_reach_probs = vector<float>(oppoPrivateCards.size());
 
 
-        if (playerPrivateCard.size() != reach_probs[player].size()) throw runtime_error("length not match");
-        if (oppoPrivateCards.size() != reach_probs[1 - player].size()) throw runtime_error("length not match");
 
-        for (int one_player = 0; one_player < 2; one_player++) {
-            int player_hand_len = this->ranges[one_player].size();
-            for (int player_hand = 0; player_hand < player_hand_len; player_hand++) {
-                PrivateCards &one_private = this->ranges[one_player][player_hand];
-                uint64_t privateBoardLong = one_private.toBoardLong();
-                if (Card::boardsHasIntercept(card_long, privateBoardLong)) {
-                    new_reach_probs[one_player][player_hand] = 0;
-                    continue;
-                }
-                new_reach_probs[one_player][player_hand] = reach_probs[one_player][player_hand] / possible_deals;
+#ifdef DEBUG
+        if (playerPrivateCard.size() != this->ranges[player].size()) throw runtime_error("length not match");
+        if (oppoPrivateCards.size() != this->ranges[1 - player].size()) throw runtime_error("length not match");
+#endif
+
+        int player_hand_len = this->ranges[oppo].size();
+        for (int player_hand = 0; player_hand < player_hand_len; player_hand++) {
+            PrivateCards &one_private = this->ranges[oppo][player_hand];
+            uint64_t privateBoardLong = one_private.toBoardLong();
+            if (Card::boardsHasIntercept(card_long, privateBoardLong)) {
+                new_reach_probs[player_hand] = 0;
+                continue;
             }
+            new_reach_probs[player_hand] = reach_probs[player_hand] / possible_deals;
         }
+#ifdef DEBUG
         if (Card::boardsHasIntercept(current_board, card_long))
             throw runtime_error("board has intercept with dealt card");
+#endif
 
         int new_deal;
         if(deal == 0){
             new_deal = card + 1;
         } else if (deal > 0 && deal <= card_num){
             int origin_deal = deal - 1;
+
+#ifdef DEBUG
             if(origin_deal == card) throw runtime_error("deal should not be equal");
+#endif
             new_deal = card_num * origin_deal + card;
             new_deal += (1 + card_num);
         } else{
@@ -324,7 +329,10 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         vector<float> child_utility = results[card];
         if(child_utility.empty())
             continue;
+
+#ifdef DEBUG
         if(child_utility.size() != chance_utility.size()) throw runtime_error("length not match");
+#endif
         if(iter > this->warmup) {
             for (int i = 0; i < child_utility.size(); i++)
                 chance_utility[i] += child_utility[i];
@@ -333,14 +341,17 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
                 chance_utility[i] += child_utility[i] * multiplier[card];
         }
     }
+
+#ifdef DEBUG
     if(this->monteCarolAlg == MonteCarolAlg::PUBLIC) {
         throw runtime_error("not possible");
     }
+#endif
     return chance_utility;
 }
 
 vector<float>
-PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<vector<float>> &reach_probs, int iter,
+PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<float> &reach_probs, int iter,
                          uint64_t current_board,int deal) {
     // TODO more than 50% nodes are action node. If we merge all action node traverse with different chance node value, is it possible to do matrix calculation?
     int oppo = 1 - player;
@@ -363,11 +374,14 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
      */
     trainable = node->getTrainable(deal);
 
+#ifdef DEBUG
     if(trainable == nullptr){
         throw runtime_error("null trainable");
     }
+#endif
 
     const vector<float> current_strategy = trainable->getcurrentStrategy();
+#ifdef DEBUG
     if (current_strategy.size() != actions.size() * node_player_private_cards.size()) {
         node->printHistory();
         throw runtime_error(fmt::format(
@@ -378,6 +392,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
                 ,node_player_private_cards.size()
         ));
     }
+#endif
 
     //为了节省计算成本将action regret 存在一位数组而不是二维数组中，两个纬度分别是（该infoset有多少动作,该palyer有多少holecard）
     vector<float> regrets(actions.size() * node_player_private_cards.size());
@@ -387,23 +402,22 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
 
     vector<vector<float>> results(actions.size());
     for (int action_id = 0; action_id < actions.size(); action_id++) {
-        vector<vector<float>> new_reach_prob = vector<vector<float>>(2);
-        if (new_reach_prob[player].empty()) {
-            new_reach_prob[player] = vector<float>(reach_probs[player].size());
-            new_reach_prob[1 - player] = vector<float>(reach_probs[1 - player].size());
+
+        if (node_player != player) {
+            vector<float> new_reach_prob = vector<float>(reach_probs.size());
+            for (int hand_id = 0; hand_id < new_reach_prob.size(); hand_id++) {
+                float strategy_prob = current_strategy[hand_id + action_id * node_player_private_cards.size()];
+                new_reach_prob[hand_id] = reach_probs[hand_id] * strategy_prob;
+            }
+            //#pragma omp task shared(results,action_id)
+            results[action_id] = this->cfr(player, children[action_id], new_reach_prob, iter,
+                                           current_board,deal);
+        }else {
+            //#pragma omp task shared(results,action_id)
+            results[action_id] = this->cfr(player, children[action_id], reach_probs, iter,
+                                           current_board,deal);
         }
 
-        for (int hand_id = 0; hand_id < new_reach_prob[node_player].size(); hand_id++) {
-            float strategy_prob = current_strategy[hand_id + action_id * node_player_private_cards.size()];
-            new_reach_prob[node_player][hand_id] = reach_probs[node_player][hand_id] * strategy_prob;
-        }
-
-        new_reach_prob[1 - node_player].assign(reach_probs[1 - node_player].begin(),
-                                               reach_probs[1 - node_player].end());
-
-        //#pragma omp task shared(results,action_id)
-        results[action_id] = this->cfr(player, children[action_id], new_reach_prob, iter,
-                                       current_board,deal);
     }
 
     //#pragma omp taskwait
@@ -415,6 +429,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
         all_action_utility[action_id] = action_utilities;
 
         // cfr结果是每手牌的收益，payoffs代表的也是每手牌的收益，他们的长度理应相等
+#ifdef DEBUG
         if (action_utilities.size() != payoffs.size()) {
             cout << ("errmsg") << endl;
             cout << (fmt::format("node player {} ", node->getPlayer())) << endl;
@@ -426,6 +441,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
                     )
             );
         }
+#endif
 
         for (int hand_id = 0; hand_id < action_utilities.size(); hand_id++) {
             if (player == node->getPlayer()) {
@@ -451,7 +467,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
         }
 
         if(iter > this->warmup) {
-            trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
+            trainable->updateRegrets(regrets, iter + 1, reach_probs);
         }/*else if(iter < this->warmup){
             vector<int> deals = this->getAllAbstractionDeal(deal);
             shared_ptr<Trainable> one_trainable = node->getTrainable(deals[0]);
@@ -463,7 +479,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
             for (int one_deal : deals) {
                 shared_ptr<Trainable> one_trainable = node->getTrainable(one_deal);
                 if(standard_trainable == nullptr) {
-                    one_trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
+                    one_trainable->updateRegrets(regrets, iter + 1, reach_probs);
                     standard_trainable = one_trainable;
                 }else{
                     one_trainable->copyStrategy(standard_trainable);
@@ -476,7 +492,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
 }
 
 vector<float>
-PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vector<vector<float>> &reach_probs,
+PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vector<float> &reach_probs,
                            int iter, uint64_t current_board,int deal) {
     // player win时候player的收益，player lose的时候收益明显为-player_payoff
     int oppo = 1 - player;
@@ -499,9 +515,9 @@ PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vec
         const RiverCombs& one_player_comb = player_combs[i];
         while (j < oppo_combs.size() && one_player_comb.rank < oppo_combs[j].rank){
             const RiverCombs& one_oppo_comb = oppo_combs[j];
-            winsum += reach_probs[oppo][one_oppo_comb.reach_prob_index];
-            card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
-            card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
+            winsum += reach_probs[one_oppo_comb.reach_prob_index];
+            card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[one_oppo_comb.reach_prob_index];
+            card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[one_oppo_comb.reach_prob_index];
             j ++;
         }
         payoffs[one_player_comb.reach_prob_index] = (winsum
@@ -520,9 +536,9 @@ PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vec
         const RiverCombs& one_player_comb = player_combs[i];
         while (j >= 0 && one_player_comb.rank > oppo_combs[j].rank){
             const RiverCombs& one_oppo_comb = oppo_combs[j];
-            losssum += reach_probs[oppo][one_oppo_comb.reach_prob_index];
-            card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
-            card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
+            losssum += reach_probs[one_oppo_comb.reach_prob_index];
+            card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[one_oppo_comb.reach_prob_index];
+            card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[one_oppo_comb.reach_prob_index];
             j --;
         }
         payoffs[one_player_comb.reach_prob_index] += (losssum
@@ -534,7 +550,7 @@ PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vec
 }
 
 vector<float>
-PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vector<vector<float>> &reach_prob, int iter,
+PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vector<float> &reach_prob, int iter,
                            uint64_t current_board,int deal) {
     float player_payoff = node->get_payoffs()[player];
 
@@ -549,9 +565,9 @@ PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vec
     fill(oppo_card_sum.begin(),oppo_card_sum.end(),0);
 
     for(int i = 0;i < oppo_hand.size();i ++){
-        oppo_card_sum[oppo_hand[i].card1] += reach_prob[oppo][i];
-        oppo_card_sum[oppo_hand[i].card2] += reach_prob[oppo][i];
-        oppo_sum += reach_prob[oppo][i];
+        oppo_card_sum[oppo_hand[i].card1] += reach_prob[i];
+        oppo_card_sum[oppo_hand[i].card2] += reach_prob[i];
+        oppo_sum += reach_prob[i];
     }
 
     for(int i = 0;i < player_hand.size();i ++){
@@ -564,7 +580,7 @@ PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vec
         if(oppo_same_card_ind == -1){
             plus_reach_prob = 0;
         }else{
-            plus_reach_prob = reach_prob[oppo][oppo_same_card_ind];
+            plus_reach_prob = reach_prob[oppo_same_card_ind];
         }
         payoffs[i] = player_payoff * (
                 oppo_sum - oppo_card_sum[one_player_hand.card1]
@@ -593,7 +609,7 @@ void PCfrSolver::train() {
 
     BestResponse br = BestResponse(player_privates,this->player_number,this->pcm,this->rrm,this->deck,this->debug,this->num_threads);
 
-    //br.printExploitability(tree->getRoot(), 0, tree->getRoot()->getPot(), initial_board_long);
+    br.printExploitability(tree->getRoot(), 0, tree->getRoot()->getPot(), initial_board_long);
 
     vector<vector<float>> reach_probs = this->getReachProbs();
     ofstream fileWriter;
@@ -610,7 +626,7 @@ void PCfrSolver::train() {
             {
                 //#pragma omp single
                 {
-                    cfr(player_id, this->tree->getRoot(), reach_probs, i, this->initial_board_long,0);
+                    cfr(player_id, this->tree->getRoot(), reach_probs[1 - player_id], i, this->initial_board_long,0);
                 }
             }
         }

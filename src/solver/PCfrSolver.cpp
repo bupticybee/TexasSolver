@@ -260,6 +260,8 @@ vector<float> PCfrSolver::chanceUtility(int player,shared_ptr<ChanceNode> node,c
     shared_ptr<GameTreeNode> one_child = node->getChildren();
 
     vector<float> new_reach_probs;
+    int oppo_hand_len = this->ranges[oppo].size();
+    new_reach_probs.reserve(deals.size() * node->getCards().size() * oppo_hand_len);
     vector<int> original_deals;
     vector<uint64_t> new_board_longs;
     vector<int> new_deals;
@@ -294,7 +296,6 @@ vector<float> PCfrSolver::chanceUtility(int player,shared_ptr<ChanceNode> node,c
             //if (playerPrivateCard.size() != reach_probs[player].size()) throw runtime_error("length not match");
             //if (oppoPrivateCards.size() != reach_probs[1 - player].size()) throw runtime_error("length not match");
 
-            int oppo_hand_len = this->ranges[oppo].size();
             for (int player_hand = 0; player_hand < oppo_hand_len; player_hand++) {
                 PrivateCards &one_private = this->ranges[oppo][player_hand];
                 uint64_t privateBoardLong = one_private.toBoardLong();
@@ -523,16 +524,18 @@ vector<float> PCfrSolver::showdownUtility(int player,shared_ptr<ShowdownNode> no
         fill(card_winsum.begin(), card_winsum.end(), 0);
 
         int j = 0;
+        int base_ind = i_deal * this->ranges[oppo].size();
+        int base_ind_player = i_deal * this->ranges[player].size();
         for (int i = 0; i < player_combs.size(); i++) {
             const RiverCombs &one_player_comb = player_combs[i];
             while (j < oppo_combs.size() && one_player_comb.rank < oppo_combs[j].rank) {
                 const RiverCombs &one_oppo_comb = oppo_combs[j];
-                winsum += reach_probs[i_deal * this->ranges[oppo].size() + one_oppo_comb.reach_prob_index];
-                card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[i_deal * this->ranges[oppo].size() + one_oppo_comb.reach_prob_index];
-                card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[i_deal * this->ranges[oppo].size() + one_oppo_comb.reach_prob_index];
+                winsum += reach_probs[base_ind + one_oppo_comb.reach_prob_index];
+                card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[base_ind + one_oppo_comb.reach_prob_index];
+                card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[base_ind + one_oppo_comb.reach_prob_index];
                 j++;
             }
-            payoffs[i_deal * player_private_cards.size() + one_player_comb.reach_prob_index] = (winsum
+            payoffs[base_ind_player + one_player_comb.reach_prob_index] = (winsum
                                                          - card_winsum[one_player_comb.private_cards.card1]
                                                          - card_winsum[one_player_comb.private_cards.card2]
                                                         ) * win_payoff;
@@ -548,12 +551,12 @@ vector<float> PCfrSolver::showdownUtility(int player,shared_ptr<ShowdownNode> no
             const RiverCombs &one_player_comb = player_combs[i];
             while (j >= 0 && one_player_comb.rank > oppo_combs[j].rank) {
                 const RiverCombs &one_oppo_comb = oppo_combs[j];
-                losssum += reach_probs[i_deal * this->ranges[oppo].size() + one_oppo_comb.reach_prob_index];
-                card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[i_deal * this->ranges[oppo].size() + one_oppo_comb.reach_prob_index];
-                card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[i_deal * this->ranges[oppo].size() + one_oppo_comb.reach_prob_index];
+                losssum += reach_probs[base_ind + one_oppo_comb.reach_prob_index];
+                card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[base_ind + one_oppo_comb.reach_prob_index];
+                card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[base_ind + one_oppo_comb.reach_prob_index];
                 j--;
             }
-            payoffs[i_deal * player_private_cards.size() + one_player_comb.reach_prob_index] += (losssum
+            payoffs[base_ind_player + one_player_comb.reach_prob_index] += (losssum
                                                           - card_losssum[one_player_comb.private_cards.card1]
                                                           - card_losssum[one_player_comb.private_cards.card2]
                                                          ) * lose_payoff;

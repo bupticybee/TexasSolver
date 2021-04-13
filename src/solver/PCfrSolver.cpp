@@ -527,9 +527,9 @@ vector<float> PCfrSolver::showdownUtility(int player,shared_ptr<ShowdownNode> no
             const RiverCombs &one_player_comb = player_combs[i];
             while (j < oppo_combs.size() && one_player_comb.rank < oppo_combs[j].rank) {
                 const RiverCombs &one_oppo_comb = oppo_combs[j];
-                winsum += reach_probs[i_deal * oppo_combs.size() + one_oppo_comb.reach_prob_index];
-                card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[i_deal * oppo_combs.size() + one_oppo_comb.reach_prob_index];
-                card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[i_deal * oppo_combs.size() + one_oppo_comb.reach_prob_index];
+                winsum += reach_probs[i_deal * this->ranges[oppo].size() + one_oppo_comb.reach_prob_index];
+                card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[i_deal * this->ranges[oppo].size() + one_oppo_comb.reach_prob_index];
+                card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[i_deal * this->ranges[oppo].size() + one_oppo_comb.reach_prob_index];
                 j++;
             }
             payoffs[i_deal * player_private_cards.size() + one_player_comb.reach_prob_index] = (winsum
@@ -548,9 +548,9 @@ vector<float> PCfrSolver::showdownUtility(int player,shared_ptr<ShowdownNode> no
             const RiverCombs &one_player_comb = player_combs[i];
             while (j >= 0 && one_player_comb.rank > oppo_combs[j].rank) {
                 const RiverCombs &one_oppo_comb = oppo_combs[j];
-                losssum += reach_probs[i_deal * oppo_combs.size() + one_oppo_comb.reach_prob_index];
-                card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[i_deal * oppo_combs.size() + one_oppo_comb.reach_prob_index];
-                card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[i_deal * oppo_combs.size() + one_oppo_comb.reach_prob_index];
+                losssum += reach_probs[i_deal * this->ranges[oppo].size() + one_oppo_comb.reach_prob_index];
+                card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[i_deal * this->ranges[oppo].size() + one_oppo_comb.reach_prob_index];
+                card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[i_deal * this->ranges[oppo].size() + one_oppo_comb.reach_prob_index];
                 j--;
             }
             payoffs[i_deal * player_private_cards.size() + one_player_comb.reach_prob_index] += (losssum
@@ -627,7 +627,7 @@ void PCfrSolver::train() {
 
     BestResponse br = BestResponse(player_privates,this->player_number,this->pcm,this->rrm,this->deck,this->debug,this->num_threads);
 
-    //br.printExploitability(tree->getRoot(), 0, tree->getRoot()->getPot(), initial_board_long);
+    br.printExploitability(tree->getRoot(), 0, tree->getRoot()->getPot(), initial_board_long);
 
     vector<vector<float>> reach_probs = this->getReachProbs();
     ofstream fileWriter;
@@ -645,11 +645,10 @@ void PCfrSolver::train() {
                 //#pragma omp single
                 {
                     cfr(player_id, this->tree->getRoot(), reach_probs[1 - player_id], i, vector<uint64_t>{this->initial_board_long},vector<int>{0});
-                    cout << __LINE__ << endl;
                 }
             }
         }
-        if(i % this->print_interval == 0 && i != 0 && i >= this->warmup) {
+        if(i % this->print_interval == 0 && i >= this->warmup) {
             endtime = timeSinceEpochMillisec();
             long time_ms = endtime - begintime;
             cout << ("-------------------") << endl;

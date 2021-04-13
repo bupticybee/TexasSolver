@@ -537,11 +537,11 @@ TEST(TestCase,test_poker_solver){
             "QQ:0.5,JJ:0.75,TT,99,88,77,66,55,44,33,22,AKo:0.25,AQs,AQo:0.75,AJs,AJo:0.75,ATs,ATo:0.75,A9s,A8s,A7s,A6s,A5s,A4s,A3s,A2s,KQ,KJ,KTs,KTo:0.5,K9s,K8s,K7s,K6s,K5s,K4s:0.5,K3s:0.5,K2s:0.5,QJ,QTs,Q9s,Q8s,Q7s,JTs,JTo:0.5,J9s,J8s,T9s,T8s,T7s,98s,97s,96s,87s,86s,76s,75s,65s,64s,54s,53s,43s",
              "Qs,Jh,2h",
             logfile_name,
-            11,
-            10,
+            3,
+            1,
             "discounted_cfr",
             -1,
-            8
+            1
     );
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }

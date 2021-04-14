@@ -3,6 +3,7 @@
 //
 
 #include "trainable/DiscountedCfrTrainable.h"
+//#define DEBUG;
 
 DiscountedCfrTrainable::DiscountedCfrTrainable(vector<PrivateCards> *privateCards,
                                                ActionNode &actionNode) : action_node(actionNode) {
@@ -70,7 +71,9 @@ const vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
                 }else{
                     current_strategy[index] = 1.0 / (this->action_number);
                 }
+#ifdef DEBUG
                 if(this->r_plus[index] != this->r_plus[index]) throw runtime_error("nan found");
+#endif
             }
         }
     }
@@ -78,7 +81,10 @@ const vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
 }
 
 void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) {
+
+#ifdef DEBUG
     if(regrets.size() != this->action_number * this->card_number) throw runtime_error("length not match");
+#endif
 
     auto alpha_coef = pow(iteration_number, this->alpha);
     alpha_coef = alpha_coef / (1 + alpha_coef);

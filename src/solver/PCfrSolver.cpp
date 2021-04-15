@@ -398,8 +398,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
             new_reach_prob[node_player][hand_id] = reach_probs[node_player][hand_id] * strategy_prob;
         }
 
-        new_reach_prob[1 - node_player].assign(reach_probs[1 - node_player].begin(),
-                                               reach_probs[1 - node_player].end());
+        new_reach_prob[1 - node_player] = reach_probs[1 - node_player];//.assign(reach_probs[1 - node_player].begin(),reach_probs[1 - node_player].end());
 
         //#pragma omp task shared(results,action_id)
         results[action_id] = this->cfr(player, children[action_id], new_reach_prob, iter,

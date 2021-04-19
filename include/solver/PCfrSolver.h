@@ -18,8 +18,9 @@
 
 template<typename T>
 class ThreadsafeQueue {
-    std::queue<T> queue_;
     mutable std::mutex mutex_;
+public:
+    std::queue<T> queue_;
 
     // Moved out of public interface to prevent races between this
     // and pop().
@@ -63,10 +64,27 @@ public:
 struct TaskParams{
     int player;
     shared_ptr<GameTreeNode> node;
-    const vector<float> &reach_probs;
+    vector<float> reach_probs;
     int iter;
     uint64_t current_board;
     int deal;
+    public:
+    TaskParams(int player, shared_ptr<GameTreeNode> node, const vector<float> &reach_probs, int iter,
+                       uint64_t current_board,int deal){
+        this->player = player;
+        this->node = node;
+        this->reach_probs = reach_probs;
+        this->iter = iter;
+        this->current_board = current_board;
+        this->deal = deal;
+    }
+};
+
+struct TaskResult{
+    vector<float> result;
+    TaskResult(vector<float> result){
+        this->result = result;
+    }
 };
 
 class PCfrSolver:public Solver {
@@ -110,7 +128,14 @@ private:
     int warmup;
     GameTreeNode::GameRound root_round;
     GameTreeNode::GameRound split_round;
-    bool distributing_task;
+    enum TaskType {
+        Stage1,
+        Stage2,
+        Stage3
+    };
+    TaskType distributing_task;
+    ThreadsafeQueue<TaskParams> taskqueue;
+    ThreadsafeQueue<TaskResult> resultqueue;
 
     const vector<PrivateCards>& playerHands(int player);
     vector<vector<float>> getReachProbs();

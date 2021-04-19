@@ -45,7 +45,7 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
     }
     cout << fmt::format("Using {} threads",num_threads) << endl;
     this->num_threads = num_threads;
-    this->distributing_task = false;
+    this->distributing_task = TaskType::Stage1;
     omp_set_num_threads(this->num_threads);
     setTrainable(this->tree->getRoot());
     this->root_round = this->tree->getRoot()->getRound();
@@ -275,7 +275,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         }
     }
 
-    #pragma omp parallel for schedule(static)
+    //#pragma omp parallel for schedule(static)
     for(int card = 0;card < node->getCards().size();card ++) {
         shared_ptr<GameTreeNode> one_child = node->getChildren();
         Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
@@ -333,9 +333,11 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         } else{
             throw runtime_error(fmt::format("deal out of range : {} ",deal));
         }
-        if(this->distributing_task && node->getRound() == this->split_round) {
+        if(this->distributing_task == TaskType::Stage1 && node->getRound() == this->split_round) {
             results[card] = vector<float>(this->ranges[player].size());
-            //TaskParams taskParams = TaskParams();
+            this->taskqueue.push(TaskParams(player, one_child, new_reach_probs, iter, new_board_long, new_deal));
+        }else if(this->distributing_task == TaskType::Stage3 && node->getRound() == this->split_round) {
+            results[card] = this->resultqueue.pop()->result;
         }else {
             vector<float> child_utility = this->cfr(player, one_child, new_reach_probs, iter, new_board_long, new_deal);
             results[card] = child_utility;
@@ -483,7 +485,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
             }
         }
 
-        if(!this->distributing_task) {
+        if(this->distributing_task == TaskType::Stage2 || this->distributing_task == TaskType::Stage3) {
             if (iter > this->warmup) {
                 trainable->updateRegrets(regrets, iter + 1, reach_probs);
             }/*else if(iter < this->warmup){
@@ -646,9 +648,29 @@ void PCfrSolver::train() {
             {
                 //#pragma omp single
                 {
-                    //this->distributing_task = true;
+
+#ifdef DEBUG
+                    if(!this->taskqueue.empty() || !this->resultqueue.empty()){
+                        throw runtime_error(fmt::format("queue status error,task queue {} result queue {}",taskqueue.size(),resultqueue.size()));
+                    }
+#endif
+                    this->distributing_task = TaskType::Stage1;
                     cfr(player_id, this->tree->getRoot(), reach_probs[1 - player_id], i, this->initial_board_long,0);
-                    //throw runtime_error("returning...");
+                    this->distributing_task = TaskType::Stage2;
+                    // TODO get this thing parallel
+                    while(!taskqueue.empty()){
+                        optional<TaskParams> taskParams = this->taskqueue.pop();
+                        this->resultqueue.push(this->cfr(
+                                taskParams->player,
+                                taskParams->node,
+                                taskParams->reach_probs,
+                                taskParams->iter,
+                                taskParams->current_board,
+                                taskParams->deal
+                                ));
+                    }
+                    this->distributing_task = TaskType::Stage3;
+                    cfr(player_id, this->tree->getRoot(), reach_probs[1 - player_id], i, this->initial_board_long,0);
                 }
             }
         }

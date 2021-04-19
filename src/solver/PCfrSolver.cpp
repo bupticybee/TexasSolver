@@ -45,8 +45,20 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
     }
     cout << fmt::format("Using {} threads",num_threads) << endl;
     this->num_threads = num_threads;
+    this->distributing_task = false;
     omp_set_num_threads(this->num_threads);
     setTrainable(this->tree->getRoot());
+    this->root_round = this->tree->getRoot()->getRound();
+    if(this->root_round == GameTreeNode::GameRound::PREFLOP){
+        this->split_round = GameTreeNode::GameRound::FLOP;
+    }else if(this->root_round == GameTreeNode::GameRound::FLOP){
+        this->split_round = GameTreeNode::GameRound::TURN;
+    }else if(this->root_round == GameTreeNode::GameRound::TURN){
+        this->split_round = GameTreeNode::GameRound::RIVER;
+    }else{
+        // do not use multithread in river, really not necessary
+        this->split_round = GameTreeNode::GameRound::PREFLOP;
+    }
 }
 
 const vector<PrivateCards> &PCfrSolver::playerHands(int player) {
@@ -263,7 +275,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         }
     }
 
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(static)
     for(int card = 0;card < node->getCards().size();card ++) {
         shared_ptr<GameTreeNode> one_child = node->getChildren();
         Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
@@ -321,8 +333,13 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         } else{
             throw runtime_error(fmt::format("deal out of range : {} ",deal));
         }
-        vector<float> child_utility = this->cfr(player, one_child, new_reach_probs, iter, new_board_long, new_deal);
-        results[card] = child_utility;
+        if(this->distributing_task && node->getRound() == this->split_round) {
+            results[card] = vector<float>(this->ranges[player].size());
+            //TaskParams taskParams = TaskParams();
+        }else {
+            vector<float> child_utility = this->cfr(player, one_child, new_reach_probs, iter, new_board_long, new_deal);
+            results[card] = child_utility;
+        }
     }
 
     for(int card = 0;card < node->getCards().size();card ++) {
@@ -466,23 +483,26 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
             }
         }
 
-        if(iter > this->warmup) {
-            trainable->updateRegrets(regrets, iter + 1, reach_probs);
-        }/*else if(iter < this->warmup){
+        if(!this->distributing_task) {
+            if (iter > this->warmup) {
+                trainable->updateRegrets(regrets, iter + 1, reach_probs);
+            }/*else if(iter < this->warmup){
             vector<int> deals = this->getAllAbstractionDeal(deal);
             shared_ptr<Trainable> one_trainable = node->getTrainable(deals[0]);
             one_trainable->updateRegrets(regrets, iter + 1, reach_probs[player]);
-        }*/else{
-            // iter == this->warmup
-            vector<int> deals = this->getAllAbstractionDeal(deal);
-            shared_ptr<Trainable> standard_trainable = nullptr;
-            for (int one_deal : deals) {
-                shared_ptr<Trainable> one_trainable = node->getTrainable(one_deal);
-                if(standard_trainable == nullptr) {
-                    one_trainable->updateRegrets(regrets, iter + 1, reach_probs);
-                    standard_trainable = one_trainable;
-                }else{
-                    one_trainable->copyStrategy(standard_trainable);
+            }*/
+            else {
+                // iter == this->warmup
+                vector<int> deals = this->getAllAbstractionDeal(deal);
+                shared_ptr<Trainable> standard_trainable = nullptr;
+                for (int one_deal : deals) {
+                    shared_ptr<Trainable> one_trainable = node->getTrainable(one_deal);
+                    if (standard_trainable == nullptr) {
+                        one_trainable->updateRegrets(regrets, iter + 1, reach_probs);
+                        standard_trainable = one_trainable;
+                    } else {
+                        one_trainable->copyStrategy(standard_trainable);
+                    }
                 }
             }
         }
@@ -626,7 +646,9 @@ void PCfrSolver::train() {
             {
                 //#pragma omp single
                 {
+                    //this->distributing_task = true;
                     cfr(player_id, this->tree->getRoot(), reach_probs[1 - player_id], i, this->initial_board_long,0);
+                    //throw runtime_error("returning...");
                 }
             }
         }

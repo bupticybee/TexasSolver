@@ -15,12 +15,13 @@
 #include <omp.h>
 #include "tools/lookup8.h"
 #include <queue>
+#include <thread>
 
 template<typename T>
 class ThreadsafeQueue {
     mutable std::mutex mutex_;
 public:
-    std::queue<T> queue_;
+    std::vector<T> queue_;
 
     // Moved out of public interface to prevent races between this
     // and pop().
@@ -50,14 +51,14 @@ public:
         if (queue_.empty()) {
             return {};
         }
-        T tmp = queue_.front();
-        queue_.pop();
+        T tmp = queue_.back();
+        queue_.pop_back();
         return tmp;
     }
 
     void push(const T &item) {
         std::lock_guard<std::mutex> lock(mutex_);
-        queue_.push(item);
+        queue_.insert(queue_.begin(),item);
     }
 };
 
@@ -68,6 +69,7 @@ struct TaskParams{
     int iter;
     uint64_t current_board;
     int deal;
+    vector<float> result;
     public:
     TaskParams(int player, shared_ptr<GameTreeNode> node, const vector<float> &reach_probs, int iter,
                        uint64_t current_board,int deal){
@@ -80,12 +82,6 @@ struct TaskParams{
     }
 };
 
-struct TaskResult{
-    vector<float> result;
-    TaskResult(vector<float> result){
-        this->result = result;
-    }
-};
 
 class PCfrSolver:public Solver {
 public:
@@ -135,7 +131,7 @@ private:
     };
     TaskType distributing_task;
     ThreadsafeQueue<TaskParams> taskqueue;
-    ThreadsafeQueue<TaskResult> resultqueue;
+    std::vector<std::thread> workers;
 
     const vector<PrivateCards>& playerHands(int player);
     vector<vector<float>> getReachProbs();
@@ -148,8 +144,11 @@ private:
     vector<float> actionUtility(int player,shared_ptr<ActionNode> node,const vector<float>& reach_probs,int iter,uint64_t current_board,int deal);
     vector<float> terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<float>& reach_prob,int iter,uint64_t current_board,int deal);
     void findGameSpecificIsomorphisms();
+    void each_worker_do();
     void purnTree();
 
+    std::mutex numlock;
+    int ind_task;
 
 };
 

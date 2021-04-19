@@ -337,7 +337,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
             results[card] = vector<float>(this->ranges[player].size());
             this->taskqueue.push(TaskParams(player, one_child, new_reach_probs, iter, new_board_long, new_deal));
         }else if(this->distributing_task == TaskType::Stage3 && node->getRound() == this->split_round) {
-            results[card] = this->resultqueue.pop()->result;
+            results[card] = this->taskqueue.pop()->result;
         }else {
             vector<float> child_utility = this->cfr(player, one_child, new_reach_probs, iter, new_board_long, new_deal);
             results[card] = child_utility;
@@ -623,6 +623,32 @@ void PCfrSolver::purnTree() {
     // TODO how to purn the tree, use wramup to start training in memory-save mode, and switch to purn tree directly to both save memory and speedup
 }
 
+void PCfrSolver::each_worker_do(){
+    cout << "worker running" << endl;
+    while(true){
+        int task_id = -1;
+        this->numlock.lock();
+        if(this->ind_task < this->taskqueue.size()){
+            task_id = this->ind_task;
+            this->ind_task += 1;
+        }
+        this->numlock.unlock();
+        if(task_id != -1){
+            const optional<TaskParams> &taskParams = this->taskqueue.queue_[task_id];
+            this->taskqueue.queue_[task_id].result = this->cfr(
+                    taskParams->player,
+                    taskParams->node,
+                    taskParams->reach_probs,
+                    taskParams->iter,
+                    taskParams->current_board,
+                    taskParams->deal
+            );
+        }else{
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+    }
+}
+
 void PCfrSolver::train() {
 
     vector<vector<PrivateCards>> player_privates(this->player_number);
@@ -641,6 +667,10 @@ void PCfrSolver::train() {
     uint64_t begintime = timeSinceEpochMillisec();
     uint64_t endtime = timeSinceEpochMillisec();
 
+    for (int i = 0;i < this->num_threads;i ++){
+        this->workers.push_back(std::thread(std::mem_fun(&PCfrSolver::each_worker_do),this));
+    }
+
     for(int i = 0;i < this->iteration_number;i++){
         for(int player_id = 0;player_id < this->player_number;player_id ++) {
             this->round_deal = vector<int>{-1,-1,-1,-1};
@@ -657,17 +687,12 @@ void PCfrSolver::train() {
                     this->distributing_task = TaskType::Stage1;
                     cfr(player_id, this->tree->getRoot(), reach_probs[1 - player_id], i, this->initial_board_long,0);
                     this->distributing_task = TaskType::Stage2;
+                    this->ind_task = 0;
                     // TODO get this thing parallel
-                    while(!taskqueue.empty()){
-                        optional<TaskParams> taskParams = this->taskqueue.pop();
-                        this->resultqueue.push(this->cfr(
-                                taskParams->player,
-                                taskParams->node,
-                                taskParams->reach_probs,
-                                taskParams->iter,
-                                taskParams->current_board,
-                                taskParams->deal
-                                ));
+                    for (int taskid = 0; taskid < this->taskqueue.size(); taskid++) {
+                        while(this->taskqueue.queue_[taskid].result.empty()){
+                            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                        }
                     }
                     this->distributing_task = TaskType::Stage3;
                     cfr(player_id, this->tree->getRoot(), reach_probs[1 - player_id], i, this->initial_board_long,0);

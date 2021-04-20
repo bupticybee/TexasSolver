@@ -6,7 +6,7 @@
 //#define DEBUG;
 
 BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int player_number,
-                           PrivateCardsManager &pcm, RiverRangeManager &rrm, Deck &deck, bool debug,int color_iso_offset[],GameTreeNode::GameRound split_round,int nthreads)
+                           PrivateCardsManager &pcm, RiverRangeManager &rrm, Deck &deck, bool debug,int color_iso_offset[][4],GameTreeNode::GameRound split_round,int nthreads)
                            :rrm(rrm),pcm(pcm),private_combos(private_combos),deck(deck){
     this->player_number = player_number;
     this->debug = debug;
@@ -22,7 +22,11 @@ BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int pla
         player_hands[i] = private_combos[i].size();
     }
     this->nthreads = nthreads;
-    this->color_iso_offset = color_iso_offset;
+    for(int i = 0;i < 52 * 52 * 2;i ++){
+        for(int j = 0;j < 4;j ++){
+            this->color_iso_offset[i][j] = color_iso_offset[i][j];
+        }
+    }
     this->split_round = split_round;
     omp_set_num_threads(this->nthreads);
 }
@@ -129,7 +133,7 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
 
         // 不可能发出和board重复的牌，对吧
         if (Card::boardsHasIntercept(card_long, current_board)) continue;
-        if(node->getRound() == this->split_round && this->color_iso_offset[one_card.getCardInt() % 4] < 0) continue;
+        if(this->color_iso_offset[deal][one_card.getCardInt() % 4] < 0) continue;
 
         const vector<PrivateCards> &playerPrivateCard = this->pcm.getPreflopCards(
                 player);//this.getPlayerPrivateCard(player);
@@ -193,10 +197,16 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
     for(int card = 0;card < node->getCards().size();card ++) {
         Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
         vector<float> child_utility;
-        int offset = this->color_iso_offset[one_card->getCardInt() % 4];
-        if(node->getRound() == this->split_round && offset < 0) {
+        int offset = this->color_iso_offset[deal][one_card->getCardInt() % 4];
+        if(offset < 0) {
+            int rank1 = one_card->getCardInt() % 4;
+            int rank2 = rank1 + offset;
+#ifdef DEBUG
+            if(rank2 < 0) throw runtime_error("rank error");
+#endif
             // TODO 这里需要调换一下颜色,根据offset
             child_utility = results[one_card->getCardInt() + offset];
+            exchange_color(child_utility,private_combos[player],rank1,rank2);
         }else{
             child_utility = results[one_card->getCardInt()];
         }

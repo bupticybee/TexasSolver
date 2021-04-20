@@ -15,6 +15,7 @@
 #include <nodes/ChanceNode.h>
 #include <nodes/TerminalNode.h>
 #include <nodes/ShowdownNode.h>
+#include <tools/utils.h>
 
 using namespace std;
 
@@ -38,7 +39,7 @@ public:
             RiverRangeManager& rrm,
             Deck& deck,
             bool debug,
-            int *color_iso_offset,
+            int color_iso_offset[][4],
             GameTreeNode::GameRound split_round,
             int nthreads = 1
             );
@@ -51,7 +52,7 @@ private:
     vector<float> actionBestResponse(shared_ptr<ActionNode> node, int player, const vector<vector<float>>& reach_probs, uint64_t board,int deal);
     vector<float> terminalBestReponse(shared_ptr<TerminalNode> node, int player, const vector<vector<float>>& reach_probs, uint64_t board,int deal);
     vector<float> showdownBestResponse(shared_ptr<ShowdownNode> node, int player, const vector<vector<float>>& reach_probs,uint64_t board,int deal);
-    int *color_iso_offset;
+    int color_iso_offset[52 * 52 * 2][4];
     GameTreeNode::GameRound split_round;
 };
 

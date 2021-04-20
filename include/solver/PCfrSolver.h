@@ -14,6 +14,7 @@
 #include "Solver.h"
 #include <omp.h>
 #include "tools/lookup8.h"
+#include "tools/utils.h"
 #include <queue>
 
 template<typename T>
@@ -94,7 +95,7 @@ private:
     vector<int> initial_board;
     uint64_t initial_board_long;
     shared_ptr<Compairer> compairer;
-    int color_iso_offset[4];
+    int color_iso_offset[52 * 52 * 2][4] = {0};
 
     Deck deck;
     RiverRangeManager rrm;

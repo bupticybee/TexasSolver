@@ -282,7 +282,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         uint64_t card_long = Card::boardInt2long(one_card->getCardInt());//Card::boardCards2long(new Card[]{one_card});
         if (Card::boardsHasIntercept(card_long, current_board)) continue;
         if (iter <= this->warmup && multiplier[card] == 0) continue;
-        if(node->getRound() == this->split_round && this->color_iso_offset[one_card->getCardInt() % 4] < 0) continue;
+        if(this->color_iso_offset[deal][one_card->getCardInt() % 4] < 0) continue;
 
         uint64_t new_board_long = current_board | card_long;
         if (this->monteCarolAlg == MonteCarolAlg::PUBLIC) {
@@ -345,10 +345,16 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
     for(int card = 0;card < node->getCards().size();card ++) {
         Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
         vector<float> child_utility;
-        int offset = this->color_iso_offset[one_card->getCardInt() % 4];
-        if(node->getRound() == this->split_round && offset < 0) {
+        int offset = this->color_iso_offset[deal][one_card->getCardInt() % 4];
+        if(offset < 0) {
+            int rank1 = one_card->getCardInt() % 4;
+            int rank2 = rank1 + offset;
+#ifdef DEBUG
+            if(rank2 < 0) throw runtime_error("rank error");
+#endif
             // TODO 这里需要调换一下颜色,根据offset
             child_utility = results[one_card->getCardInt() + offset];
+            exchange_color(child_utility,this->pcm.getPreflopCards(player),rank1,rank2);
         }else{
             child_utility = results[one_card->getCardInt()];
         }
@@ -657,15 +663,15 @@ void PCfrSolver::findGameSpecificIsomorphisms() {
         color_hash[rankind] = color_hash[rankind] | (1 << suitind);
     }
     for(int i = 0;i < 4;i ++){
-        this->color_iso_offset[i] = 0;
+        this->color_iso_offset[0][i] = 0;
         for(int j = 0;j < i;j ++){
             if(color_hash[i] == color_hash[j]){
-                this->color_iso_offset[i] = j - i;
+                this->color_iso_offset[0][i] = j - i;
                 continue;
             }
         }
     }
-    for(int i = 0;i < 4;i ++)cout << this->color_iso_offset[i] << endl;
+    for(int i = 0;i < 4;i ++)cout << this->color_iso_offset[0][i] << endl;
 }
 
 void PCfrSolver::purnTree() {
@@ -677,6 +683,7 @@ void PCfrSolver::train() {
     vector<vector<PrivateCards>> player_privates(this->player_number);
     player_privates[0] = pcm.getPreflopCards(0);
     player_privates[1] = pcm.getPreflopCards(1);
+    this->findGameSpecificIsomorphisms();
 
     BestResponse br = BestResponse(player_privates,this->player_number,this->pcm,this->rrm,this->deck,this->debug,this->color_iso_offset,this->split_round,this->num_threads);
 
@@ -685,7 +692,6 @@ void PCfrSolver::train() {
     vector<vector<float>> reach_probs = this->getReachProbs();
     ofstream fileWriter;
     fileWriter.open(this->logfile);
-    this->findGameSpecificIsomorphisms();
 
     uint64_t begintime = timeSinceEpochMillisec();
     uint64_t endtime = timeSinceEpochMillisec();

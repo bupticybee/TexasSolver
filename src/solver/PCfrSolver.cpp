@@ -282,7 +282,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         uint64_t card_long = Card::boardInt2long(one_card->getCardInt());//Card::boardCards2long(new Card[]{one_card});
         if (Card::boardsHasIntercept(card_long, current_board)) continue;
         if (iter <= this->warmup && multiplier[card] == 0) continue;
-
+        if(node->getRound() == this->split_round && this->color_iso_offset[one_card->getCardInt() % 4] < 0) continue;
 
         uint64_t new_board_long = current_board | card_long;
         if (this->monteCarolAlg == MonteCarolAlg::PUBLIC) {
@@ -334,16 +334,24 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
             throw runtime_error(fmt::format("deal out of range : {} ",deal));
         }
         if(this->distributing_task && node->getRound() == this->split_round) {
-            results[card] = vector<float>(this->ranges[player].size());
+            results[one_card->getCardInt()] = vector<float>(this->ranges[player].size());
             //TaskParams taskParams = TaskParams();
         }else {
             vector<float> child_utility = this->cfr(player, one_child, new_reach_probs, iter, new_board_long, new_deal);
-            results[card] = child_utility;
+            results[one_card->getCardInt()] = child_utility;
         }
     }
 
     for(int card = 0;card < node->getCards().size();card ++) {
-        vector<float> child_utility = results[card];
+        Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
+        vector<float> child_utility;
+        int offset = this->color_iso_offset[one_card->getCardInt() % 4];
+        if(node->getRound() == this->split_round && offset < 0) {
+            // TODO 这里需要调换一下颜色,根据offset
+            child_utility = results[one_card->getCardInt() + offset];
+        }else{
+            child_utility = results[one_card->getCardInt()];
+        }
         if(child_utility.empty())
             continue;
 
@@ -363,6 +371,9 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
     if(this->monteCarolAlg == MonteCarolAlg::PUBLIC) {
         throw runtime_error("not possible");
     }
+    if(chance_utility.size() != this->ranges[player].size()) {
+        throw runtime_error("size problems");
+    }
 #endif
     return chance_utility;
 }
@@ -370,7 +381,6 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
 vector<float>
 PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<float> &reach_probs, int iter,
                          uint64_t current_board,int deal) {
-    // TODO more than 50% nodes are action node. If we merge all action node traverse with different chance node value, is it possible to do matrix calculation?
     int oppo = 1 - player;
     const vector<PrivateCards>& node_player_private_cards = this->ranges[node->getPlayer()];
 
@@ -613,12 +623,14 @@ PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vec
 }
 
 void PCfrSolver::findGameSpecificIsomorphisms() {
+    // hand isomorphisms
     vector<Card> board_cards = Card::long2boardCards(this->initial_board_long);
     for(int i = 0;i <= 1;i ++){
         vector<PrivateCards>& range = i == 0?this->range1:this->range2;
         for(int i_range = 0;i_range < range.size();i_range ++) {
             PrivateCards one_range = range[i_range];
             uint32_t range_hash[4]; // four colors, hash of the isomorphisms range + hand combos
+            for(int i = 0;i < 4;i ++)range_hash[i] = 0;
             for (int color = 0; color < 4; color++) {
                 for (Card one_card:board_cards) {
                     if (one_card.getCardInt() % 4 == color) {
@@ -636,7 +648,24 @@ void PCfrSolver::findGameSpecificIsomorphisms() {
             // TODO check whethe hash is equal with others
         }
     }
-
+    uint16_t color_hash[4];
+    for(int i = 0;i < 4;i ++)color_hash[i] = 0;
+    // chance node isomorphisms
+    for (Card one_card:board_cards) {
+        int rankind = one_card.getCardInt() % 4;
+        int suitind = one_card.getCardInt() / 4;
+        color_hash[rankind] = color_hash[rankind] | (1 << suitind);
+    }
+    for(int i = 0;i < 4;i ++){
+        this->color_iso_offset[i] = 0;
+        for(int j = 0;j < i;j ++){
+            if(color_hash[i] == color_hash[j]){
+                this->color_iso_offset[i] = j - i;
+                continue;
+            }
+        }
+    }
+    for(int i = 0;i < 4;i ++)cout << this->color_iso_offset[i] << endl;
 }
 
 void PCfrSolver::purnTree() {
@@ -649,7 +678,7 @@ void PCfrSolver::train() {
     player_privates[0] = pcm.getPreflopCards(0);
     player_privates[1] = pcm.getPreflopCards(1);
 
-    BestResponse br = BestResponse(player_privates,this->player_number,this->pcm,this->rrm,this->deck,this->debug,this->num_threads);
+    BestResponse br = BestResponse(player_privates,this->player_number,this->pcm,this->rrm,this->deck,this->debug,this->color_iso_offset,this->split_round,this->num_threads);
 
     br.printExploitability(tree->getRoot(), 0, tree->getRoot()->getPot(), initial_board_long);
 

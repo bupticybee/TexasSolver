@@ -6,7 +6,7 @@
 //#define DEBUG;
 
 BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int player_number,
-                           PrivateCardsManager &pcm, RiverRangeManager &rrm, Deck &deck, bool debug,int nthreads)
+                           PrivateCardsManager &pcm, RiverRangeManager &rrm, Deck &deck, bool debug,int color_iso_offset[],GameTreeNode::GameRound split_round,int nthreads)
                            :rrm(rrm),pcm(pcm),private_combos(private_combos),deck(deck){
     this->player_number = player_number;
     this->debug = debug;
@@ -22,6 +22,8 @@ BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int pla
         player_hands[i] = private_combos[i].size();
     }
     this->nthreads = nthreads;
+    this->color_iso_offset = color_iso_offset;
+    this->split_round = split_round;
     omp_set_num_threads(this->nthreads);
 }
 
@@ -56,7 +58,6 @@ float BestResponse::getBestReponseEv(shared_ptr<GameTreeNode> node, int player, 
     float ev = 0;
     //考虑（1）相对的手牌 proability,(2)被场面和对手ban掉的手牌
     const vector<float>& private_cards_evs = bestResponse(node, player, reach_probs, initialBoard, deal);
-    // TODO 这里有bug，player combo的index和showdown节点所使用的private card index不同
     vector<PrivateCards>& player_combo = this->private_combos[player];
     vector<PrivateCards>& oppo_combo = this->private_combos[1 - player];
 
@@ -128,6 +129,7 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
 
         // 不可能发出和board重复的牌，对吧
         if (Card::boardsHasIntercept(card_long, current_board)) continue;
+        if(node->getRound() == this->split_round && this->color_iso_offset[one_card.getCardInt() % 4] < 0) continue;
 
         const vector<PrivateCards> &playerPrivateCard = this->pcm.getPreflopCards(
                 player);//this.getPlayerPrivateCard(player);
@@ -142,7 +144,6 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
             new_reach_probs[1 - player] = vector<float>(oppoPrivateCards.size());
         }
 
-        // TODO reach prob中需要考虑和新发的bord牌有重叠的需要ban掉
         //new_reach_probs[player] = new float[playerPrivateCard.length];
 
 #ifdef DEBUG
@@ -186,11 +187,20 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
             throw runtime_error(fmt::format("deal out of range : {} ",deal));
         }
         vector<float> child_utility = this->bestResponse(one_child, player, new_reach_probs, new_board_long,new_deal);
-        results[card] = child_utility;
+        results[one_card.getCardInt()] = child_utility;
     }
 
     for(int card = 0;card < node->getCards().size();card ++) {
-        vector<float> child_utility = results[card];
+        Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
+        vector<float> child_utility;
+        int offset = this->color_iso_offset[one_card->getCardInt() % 4];
+        if(node->getRound() == this->split_round && offset < 0) {
+            // TODO 这里需要调换一下颜色,根据offset
+            child_utility = results[one_card->getCardInt() + offset];
+        }else{
+            child_utility = results[one_card->getCardInt()];
+        }
+
         if(child_utility.empty())
             continue;
 #ifdef DEBUG
@@ -320,8 +330,6 @@ BestResponse::terminalBestReponse(shared_ptr<TerminalNode> node, int player, con
     if(this->player_number != 2) throw runtime_error("player NE 2 not supported");
 #endif
     // 对手的手牌可能需要和其reach prob一样长
-    // TODO 把这里的bug解决
-    // TODO 写的通用一些，这里用了hard code，因为一副牌，不管是长牌还是短牌，最多扑克牌的数量都是52张
     vector<float> oppo_card_sum(52);
 
     //用于记录对手总共的手牌绝对prob之和
@@ -384,13 +392,11 @@ BestResponse::showdownBestResponse(shared_ptr<ShowdownNode> node, int player,con
     const vector<RiverCombs>& oppo_combs = this->rrm.getRiverCombos(1 - player,this->pcm.getPreflopCards(1 - player),board);  //this.river_combos[player];
 
     float win_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE,player)[player];
-    // TODO hard code, 假设了player只有两个
     float lose_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE,1 - player)[player];
 
     vector<float> payoffs = vector<float>(player_hands[player]);
 
     // 计算胜利时的payoff
-    // TODO 修改掉这里的hard code
     float winsum = 0;
     vector<float> card_winsum(52);
     for(int i = 0;i < card_winsum.size();i ++) card_winsum[i] = 0;
@@ -404,7 +410,6 @@ BestResponse::showdownBestResponse(shared_ptr<ShowdownNode> node, int player,con
             const RiverCombs& one_oppo_comb = oppo_combs[j];
             winsum += reach_probs[oppo][one_oppo_comb.reach_prob_index];
 
-            // TODO 这里有问题，要加上reach prob，但是reach prob的index怎么解决？
             card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             j ++;
@@ -426,7 +431,6 @@ BestResponse::showdownBestResponse(shared_ptr<ShowdownNode> node, int player,con
             const RiverCombs& one_oppo_comb = oppo_combs[j];
             losssum += reach_probs[oppo][one_oppo_comb.reach_prob_index];
 
-            // TODO 这里有问题，要加上reach prob，但是reach prob的index怎么解决？
             card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             j --;

@@ -94,6 +94,7 @@ private:
     vector<int> initial_board;
     uint64_t initial_board_long;
     shared_ptr<Compairer> compairer;
+    int color_iso_offset[4];
 
     Deck deck;
     RiverRangeManager rrm;

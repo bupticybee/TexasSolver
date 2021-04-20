@@ -613,8 +613,30 @@ PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vec
 }
 
 void PCfrSolver::findGameSpecificIsomorphisms() {
-    vector<int> board = this->initial_board;
-    // TODO maybe use isomorphisms of texas holdem itself to do some kind of speedup
+    vector<Card> board_cards = Card::long2boardCards(this->initial_board_long);
+    for(int i = 0;i <= 1;i ++){
+        vector<PrivateCards>& range = i == 0?this->range1:this->range2;
+        for(int i_range = 0;i_range < range.size();i_range ++) {
+            PrivateCards one_range = range[i_range];
+            uint32_t range_hash[4]; // four colors, hash of the isomorphisms range + hand combos
+            for (int color = 0; color < 4; color++) {
+                for (Card one_card:board_cards) {
+                    if (one_card.getCardInt() % 4 == color) {
+                        range_hash[color] = range_hash[color] | (1 << (one_card.getCardInt() / 4));
+                    }
+                }
+            }
+            for (int color = 0; color < 4; color++) {
+                for (int one_card_int:{one_range.card1,one_range.card2}) {
+                    if (one_card_int % 4 == color) {
+                        range_hash[color] = range_hash[color] | (1 << (one_card_int / 4 + 16));
+                    }
+                }
+            }
+            // TODO check whethe hash is equal with others
+        }
+    }
+
 }
 
 void PCfrSolver::purnTree() {

@@ -683,7 +683,6 @@ void PCfrSolver::findGameSpecificIsomorphisms() {
             }
         }
     }
-    /*
     for(int deal = 0;deal < this->deck.getCards().size();deal ++) {
         uint16_t color_hash[4];
         for(int i = 0;i < 4;i ++)color_hash[i] = 0;
@@ -707,7 +706,6 @@ void PCfrSolver::findGameSpecificIsomorphisms() {
             }
         }
     }
-     */
 }
 
 void PCfrSolver::purnTree() {

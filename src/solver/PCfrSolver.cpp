@@ -275,14 +275,25 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         }
     }
 
-    #pragma omp parallel for schedule(static)
+    vector<int> valid_cards;
+    valid_cards.reserve(node->getCards().size());
+
     for(int card = 0;card < node->getCards().size();card ++) {
         shared_ptr<GameTreeNode> one_child = node->getChildren();
         Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
         uint64_t card_long = Card::boardInt2long(one_card->getCardInt());//Card::boardCards2long(new Card[]{one_card});
         if (Card::boardsHasIntercept(card_long, current_board)) continue;
         if (iter <= this->warmup && multiplier[card] == 0) continue;
-        if(this->color_iso_offset[deal][one_card->getCardInt() % 4] < 0) continue;
+        if (this->color_iso_offset[deal][one_card->getCardInt() % 4] < 0) continue;
+        valid_cards.push_back(card);
+    }
+
+    #pragma omp parallel for schedule(static)
+    for(int valid_ind = 0;valid_ind < valid_cards.size();valid_ind++) {
+        int card = valid_cards[valid_ind];
+        shared_ptr<GameTreeNode> one_child = node->getChildren();
+        Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
+        uint64_t card_long = Card::boardInt2long(one_card->getCardInt());//Card::boardCards2long(new Card[]{one_card});
 
         uint64_t new_board_long = current_board | card_long;
         if (this->monteCarolAlg == MonteCarolAlg::PUBLIC) {
@@ -654,9 +665,10 @@ void PCfrSolver::findGameSpecificIsomorphisms() {
             // TODO check whethe hash is equal with others
         }
     }
+
+    // chance node isomorphisms
     uint16_t color_hash[4];
     for(int i = 0;i < 4;i ++)color_hash[i] = 0;
-    // chance node isomorphisms
     for (Card one_card:board_cards) {
         int rankind = one_card.getCardInt() % 4;
         int suitind = one_card.getCardInt() / 4;
@@ -671,7 +683,31 @@ void PCfrSolver::findGameSpecificIsomorphisms() {
             }
         }
     }
-    for(int i = 0;i < 4;i ++)cout << this->color_iso_offset[0][i] << endl;
+    /*
+    for(int deal = 0;deal < this->deck.getCards().size();deal ++) {
+        uint16_t color_hash[4];
+        for(int i = 0;i < 4;i ++)color_hash[i] = 0;
+        // chance node isomorphisms
+        for (Card one_card:board_cards) {
+            int rankind = one_card.getCardInt() % 4;
+            int suitind = one_card.getCardInt() / 4;
+            color_hash[rankind] = color_hash[rankind] | (1 << suitind);
+        }
+        Card one_card = this->deck.getCards()[deal];
+        int rankind = one_card.getCardInt() % 4;
+        int suitind = one_card.getCardInt() / 4;
+        color_hash[rankind] = color_hash[rankind] | (1 << suitind);
+        for (int i = 0; i < 4; i++) {
+            this->color_iso_offset[deal + 1][i] = 0;
+            for (int j = 0; j < i; j++) {
+                if (color_hash[i] == color_hash[j]) {
+                    this->color_iso_offset[deal + 1][i] = j - i;
+                    continue;
+                }
+            }
+        }
+    }
+     */
 }
 
 void PCfrSolver::purnTree() {

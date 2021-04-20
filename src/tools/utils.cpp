@@ -7,6 +7,7 @@ void exchange_color(vector<float>& value,vector<PrivateCards> range,int rank1,in
     if(value.size() != range.size()) throw runtime_error("size problem");
     if(rank1 >= rank2) throw runtime_error("rank value problem");
 #endif
+    if(value.empty())return;
     vector<int> self_ind = vector<int>(value.size());
     std::map<int,int> privateint2ind;
     for(int i = 0;i < range.size();i ++){

@@ -24,6 +24,7 @@ TEST(TestCase,test_boost_env){
 }
 */
 
+/*
 TEST(TestCase,test_card ){
     Card card8h("8h");
     int card8h2int = Card::card2int(card8h);
@@ -284,6 +285,7 @@ TEST(TestCase,test_converter_o){
         }
     }
 }
+*/
 
 /*
 TEST(TestCase,test_cfr_river){
@@ -522,23 +524,26 @@ TEST(TestCase,test_cfr_turn_parallel){
 }
  */
 
+
+
 TEST(TestCase,test_poker_solver){
-    string ranks = "A,K,Q,J,T,9,8,7,6";
+    string ranks = "A,K,Q,J,T,9,8,7,6,5,4,3,2";
     string suits = "h,s,d,c";
     string game_tree = "../resources/gametree/generated_tree.km";
     game_tree = "../install/tree.km";
     string logfile_name = "../resources/outputs/outputs_log.txt";
-    PokerSolver ps = PokerSolver(ranks,suits,"../resources/compairer/card5_dic_sorted_shortdeck.txt",376993);
+    PokerSolver ps = PokerSolver(ranks,suits,"../resources/compairer/card5_dic_sorted.txt",2598961);
     ps.load_game_tree(game_tree);
     ps.train(
-            "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76",
-            "AA,KK,QQ,JJ,TT,99,88,77,66,AK,AQ,AJ,AT,A9,A8,A7,A6,KQ,KJ,KT,K9,K8,K7,K6,QJ,QT,Q9,Q8,Q7,Q6,JT,J9,J8,J7,J6,T9,T8,T7,T6,98,97,96,87,86,76",
-             "Kd,Jd,Td",
+            "AA,KK,QQ,JJ,TT,99:0.75,88:0.75,77:0.5,66:0.25,55:0.25,AK,AQs,AQo:0.75,AJs,AJo:0.5,ATs:0.75,A6s:0.25,A5s:0.75,A4s:0.75,A3s:0.5,A2s:0.5,KQs,KQo:0.5,KJs,KTs:0.75,K5s:0.25,K4s:0.25,QJs:0.75,QTs:0.75,Q9s:0.5,JTs:0.75,J9s:0.75,J8s:0.75,T9s:0.75,T8s:0.75,T7s:0.75,98s:0.75,97s:0.75,96s:0.5,87s:0.75,86s:0.5,85s:0.5,76s:0.75,75s:0.5,65s:0.75,64s:0.5,54s:0.75,53s:0.5,43s:0.5",
+            "QQ:0.5,JJ:0.75,TT,99,88,77,66,55,44,33,22,AKo:0.25,AQs,AQo:0.75,AJs,AJo:0.75,ATs,ATo:0.75,A9s,A8s,A7s,A6s,A5s,A4s,A3s,A2s,KQ,KJ,KTs,KTo:0.5,K9s,K8s,K7s,K6s,K5s,K4s:0.5,K3s:0.5,K2s:0.5,QJ,QTs,Q9s,Q8s,Q7s,JTs,JTo:0.5,J9s,J8s,T9s,T8s,T7s,98s,97s,96s,87s,86s,76s,75s,65s,64s,54s,53s,43s",
+            "Qs,Jh,2h",
             logfile_name,
-            50,
+            91,
             10,
             "discounted_cfr",
-            4
+            -1,
+            8
     );
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }

@@ -28,9 +28,7 @@ int GameTree::recurrentSetDepth(shared_ptr<GameTreeNode> node, int depth) {
     }else if(node->getType() == GameTreeNode::CHANCE){
         shared_ptr<ChanceNode> chanceNode = std::dynamic_pointer_cast<ChanceNode>(node);
         int subtree_size = 1;
-        for(shared_ptr<GameTreeNode> one_child:chanceNode->getChildrens()){
-            subtree_size += this->recurrentSetDepth(one_child,depth + 1);
-        }
+        subtree_size += this->recurrentSetDepth(chanceNode->getChildren(),depth + 1) * chanceNode->getCards().size();
         node->subtree_size = subtree_size;
     }else{
         node->subtree_size = 1;
@@ -183,16 +181,11 @@ shared_ptr<ChanceNode>
 GameTree::generateChanceNode(json meta, const json& child, string round, shared_ptr<GameTreeNode> parent) {
     //节点上的下注额度
     double pot = meta["pot"];
-    vector<shared_ptr<GameTreeNode>> childrens;
-    for(Card one_card:this->deck.getCards()){
-        shared_ptr<GameTreeNode> one_node = recurrentGenerateTreeNode(child, nullptr);
-        childrens.push_back(one_node);
-    }
+    shared_ptr<GameTreeNode> one_child = recurrentGenerateTreeNode(child, nullptr);
     GameTreeNode::GameRound game_round = strToGameRound(std::move(round));
-    shared_ptr<ChanceNode> chanceNode = make_shared<ChanceNode>(childrens,game_round,pot,parent,this->deck.getCards());
-    for(const shared_ptr<GameTreeNode>& gameTreeNode: chanceNode->getChildrens()){
-        gameTreeNode->setParent(chanceNode);
-    }
+    shared_ptr<ChanceNode> chanceNode = make_shared<ChanceNode>(one_child,game_round,pot,parent,this->deck.getCards());
+    shared_ptr<GameTreeNode> gameTreeNode = chanceNode->getChildren();
+    gameTreeNode->setParent(chanceNode);
     return chanceNode;
 }
 
@@ -379,7 +372,7 @@ void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy
         if((*retval)["childrens"].empty()){
             (*retval).erase("childrens");
         }
-        (*retval)["strategy"] = one_node->getTrainable()->dump_strategy(false);
+        (*retval)["strategy"] = one_node->getTrainable(0)->dump_strategy(false);
         (*retval)["node_type"] = "action_node";
     }else if(node->getType() == GameTreeNode::GameTreeNodeType::SHOWDOWN) {
     }else if(node->getType() == GameTreeNode::GameTreeNodeType::TERMINAL) {
@@ -394,9 +387,7 @@ void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy
 
         shared_ptr<ChanceNode> chanceNode = std::dynamic_pointer_cast<ChanceNode>(node);
         const vector<Card>& cards = chanceNode->getCards();
-        vector<shared_ptr<GameTreeNode>>& childerns = chanceNode->getChildrens();
-        if(cards.size() != childerns.size())
-            throw runtime_error("length not match");
+        shared_ptr<GameTreeNode> childerns = chanceNode->getChildren();
         vector<string> card_strs;
         for(Card card:cards)
             card_strs.push_back(card.toString());
@@ -404,8 +395,7 @@ void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy
         json& dealcards = (*retval)["dealcards"];
         for(int i = 0;i < cards.size();i ++){
             Card& one_card = const_cast<Card &>(cards[i]);
-            shared_ptr<GameTreeNode> gameTreeNode = childerns[i];
-            this->reConvertJson(gameTreeNode,dealcards,one_card.toString());
+            this->reConvertJson(childerns,dealcards,one_card.toString());
         }
         if((*retval)["dealcards"].empty()){
             (*retval).erase("dealcards");

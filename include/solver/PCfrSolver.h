@@ -13,6 +13,62 @@
 #include <trainable/DiscountedCfrTrainable.h>
 #include "Solver.h"
 #include <omp.h>
+#include "tools/lookup8.h"
+#include "tools/utils.h"
+#include <queue>
+
+template<typename T>
+class ThreadsafeQueue {
+    std::queue<T> queue_;
+    mutable std::mutex mutex_;
+
+    // Moved out of public interface to prevent races between this
+    // and pop().
+    bool empty() const {
+        return queue_.empty();
+    }
+
+public:
+    ThreadsafeQueue() = default;
+    ThreadsafeQueue(const ThreadsafeQueue<T> &) = delete ;
+    ThreadsafeQueue& operator=(const ThreadsafeQueue<T> &) = delete ;
+
+    ThreadsafeQueue(ThreadsafeQueue<T>&& other) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        queue_ = std::move(other.queue_);
+    }
+
+    virtual ~ThreadsafeQueue() { }
+
+    unsigned long size() const {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return queue_.size();
+    }
+
+    std::optional<T> pop() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (queue_.empty()) {
+            return {};
+        }
+        T tmp = queue_.front();
+        queue_.pop();
+        return tmp;
+    }
+
+    void push(const T &item) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        queue_.push(item);
+    }
+};
+
+struct TaskParams{
+    int player;
+    shared_ptr<GameTreeNode> node;
+    const vector<float> &reach_probs;
+    int iter;
+    uint64_t current_board;
+    int deal;
+};
 
 class PCfrSolver:public Solver {
 public:
@@ -28,6 +84,7 @@ public:
             string logfile,
             string trainer,
             Solver::MonteCarolAlg monteCarolAlg,
+            int warmup,
             int num_threads
     );
     void train() override;
@@ -38,6 +95,7 @@ private:
     vector<int> initial_board;
     uint64_t initial_board_long;
     shared_ptr<Compairer> compairer;
+    int color_iso_offset[52 * 52 * 2][4] = {0};
 
     Deck deck;
     RiverRangeManager rrm;
@@ -51,16 +109,23 @@ private:
     Solver::MonteCarolAlg monteCarolAlg;
     vector<int> round_deal;
     int num_threads;
+    int warmup;
+    GameTreeNode::GameRound root_round;
+    GameTreeNode::GameRound split_round;
+    bool distributing_task;
 
     const vector<PrivateCards>& playerHands(int player);
     vector<vector<float>> getReachProbs();
     static vector<PrivateCards> noDuplicateRange(const vector<PrivateCards>& private_range,uint64_t board_long);
     void setTrainable(shared_ptr<GameTreeNode> root);
-    vector<float> cfr(int player, shared_ptr<GameTreeNode> node, const vector<vector<float>>& reach_probs, int iter, uint64_t current_board);
-    vector<float> chanceUtility(int player,shared_ptr<ChanceNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
-    vector<float> showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
-    vector<float> actionUtility(int player,shared_ptr<ActionNode> node,const vector<vector<float>>& reach_probs,int iter,uint64_t current_board);
-    vector<float> terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<vector<float>>& reach_prob,int iter,uint64_t current_board);
+    vector<float> cfr(int player, shared_ptr<GameTreeNode> node, const vector<float>& reach_probs, int iter, uint64_t current_board,int deal);
+    vector<int> getAllAbstractionDeal(int deal);
+    vector<float> chanceUtility(int player,shared_ptr<ChanceNode> node,const vector<float>& reach_probs,int iter,uint64_t current_boardi,int deal);
+    vector<float> showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<float>& reach_probs,int iter,uint64_t current_board,int deal);
+    vector<float> actionUtility(int player,shared_ptr<ActionNode> node,const vector<float>& reach_probs,int iter,uint64_t current_board,int deal);
+    vector<float> terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<float>& reach_prob,int iter,uint64_t current_board,int deal);
+    void findGameSpecificIsomorphisms();
+    void purnTree();
 
 
 };

@@ -11,9 +11,9 @@
 
 class ChanceNode:public GameTreeNode {
 public:
-    ChanceNode(const vector<shared_ptr<GameTreeNode>>& childrens, GameRound round, double pot, shared_ptr<GameTreeNode>parent, const vector<Card>& cards);
+    ChanceNode(const shared_ptr<GameTreeNode> children, GameRound round, double pot, shared_ptr<GameTreeNode>parent, const vector<Card>& cards);
     const vector<Card>& getCards();
-    vector<shared_ptr<GameTreeNode>>& getChildrens();
+    shared_ptr<GameTreeNode> getChildren();
     int getPlayer();
     //vector<vector<vector<float>>> arr_new_reach_probs;
     //vector<vector<vector<float>>> best_respond_arr_new_reach_probs;
@@ -22,7 +22,8 @@ private:
     GameTreeNodeType getType() override;
     //Trainable getTrainable();
     //void setTrainable(Trainable trainable);
-    vector<shared_ptr<GameTreeNode>> childrens;
+    // TODO 我感觉这里也可以减肥
+    shared_ptr<GameTreeNode> children;
     //Trainable trainable;
     int player{};
     const vector<Card>& cards;

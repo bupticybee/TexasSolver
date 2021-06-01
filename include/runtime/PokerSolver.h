@@ -27,6 +27,7 @@ public:
             int iteration_number,
             int print_interval,
             string algorithm,
+            int warmup,
             int threads
             );
     void dump_strategy(string dump_file);

@@ -7,6 +7,9 @@
 
 
 #include <trainable/Trainable.h>
+#include <thread>
+#include <mutex>
+#include <ranges/PrivateCards.h>
 #include "GameTreeNode.h"
 #include "GameActions.h"
 
@@ -16,10 +19,9 @@ public:
     vector<GameActions>& getActions();
     vector<shared_ptr<GameTreeNode>>& getChildrens();
     int getPlayer();
-    shared_ptr<Trainable> getTrainable();
-    void setTrainable(shared_ptr<Trainable> trainable);
-    //vector<vector<vector<float>>> arr_new_reach_probs;
-    //vector<vector<vector<float>>> best_respond_arr_new_reach_probs;
+    shared_ptr<Trainable> getTrainable(int i);
+    void setTrainable(vector<shared_ptr<Trainable>> trainable,vector<PrivateCards>* player_privates);
+    vector<PrivateCards>* player_privates;
 
 private:
     GameTreeNodeType getType() override;
@@ -28,9 +30,8 @@ private:
     vector<GameActions> actions;
     // TODO 这里也可以减肥，不同chance node之后的节点都可以复用,可能通过记录一个id的形式区分不同分支,复用，复用，复用到极致
     vector<shared_ptr<GameTreeNode>> childrens;
-    shared_ptr<Trainable> trainable;
+    vector<shared_ptr<Trainable>> trainables;
     int player;
-
 };
 
 

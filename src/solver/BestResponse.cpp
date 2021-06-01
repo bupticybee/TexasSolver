@@ -3,22 +3,31 @@
 //
 
 #include "solver/BestResponse.h"
+//#define DEBUG;
 
 BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int player_number,
-                           PrivateCardsManager &pcm, RiverRangeManager &rrm, Deck &deck, bool debug,int nthreads)
+                           PrivateCardsManager &pcm, RiverRangeManager &rrm, Deck &deck, bool debug,int color_iso_offset[][4],GameTreeNode::GameRound split_round,int nthreads)
                            :rrm(rrm),pcm(pcm),private_combos(private_combos),deck(deck){
     this->player_number = player_number;
     this->debug = debug;
 
+#ifdef DEBUG
     if(private_combos.size() != player_number)
         throw runtime_error(
                 fmt::format("river combo length NE player nunber: {} -- {}",private_combos.size(),player_number)
         );
+#endif
     player_hands = vector<int>(player_number);
     for(int i = 0;i < player_number;i ++) {
         player_hands[i] = private_combos[i].size();
     }
     this->nthreads = nthreads;
+    for(int i = 0;i < 52 * 52 * 2;i ++){
+        for(int j = 0;j < 4;j ++){
+            this->color_iso_offset[i][j] = color_iso_offset[i][j];
+        }
+    }
+    this->split_round = split_round;
     omp_set_num_threads(this->nthreads);
 }
 
@@ -39,7 +48,7 @@ float BestResponse::printExploitability(shared_ptr<GameTreeNode> root, int itera
     }
 
     for (int player_id = 0; player_id < this->player_number; player_id++) {
-        float player_exploitability = getBestReponseEv(root, player_id, reach_probs, initialBoard);
+        float player_exploitability = getBestReponseEv(root, player_id, reach_probs, initialBoard, 0);
         exploitible += player_exploitability;
         cout << (fmt::format("player {} exploitability {}", player_id, player_exploitability)) << endl;
     }
@@ -49,11 +58,10 @@ float BestResponse::printExploitability(shared_ptr<GameTreeNode> root, int itera
 }
 
 float BestResponse::getBestReponseEv(shared_ptr<GameTreeNode> node, int player, vector<vector<float>> reach_probs,
-                                     uint64_t initialBoard) {
+                                     uint64_t initialBoard, int deal) {
     float ev = 0;
     //考虑（1）相对的手牌 proability,(2)被场面和对手ban掉的手牌
-    const vector<float>& private_cards_evs = bestResponse(node, player, reach_probs, initialBoard);
-    // TODO 这里有bug，player combo的index和showdown节点所使用的private card index不同
+    const vector<float>& private_cards_evs = bestResponse(node, player, reach_probs, initialBoard, deal);
     vector<PrivateCards>& player_combo = this->private_combos[player];
     vector<PrivateCards>& oppo_combo = this->private_combos[1 - player];
 
@@ -83,33 +91,31 @@ float BestResponse::getBestReponseEv(shared_ptr<GameTreeNode> node, int player, 
 }
 
 vector<float> BestResponse::bestResponse(shared_ptr<GameTreeNode> node, int player,const vector<vector<float>>& reach_probs,
-                                         uint64_t board) {
+                                         uint64_t board,int deal) {
     if (node->getType() == GameTreeNode::ACTION) {
         shared_ptr<ActionNode> action_node = std::dynamic_pointer_cast<ActionNode>(node);
-        return actionBestResponse(action_node, player, reach_probs, board);
+        return actionBestResponse(action_node, player, reach_probs, board, deal);
     } else if (node->getType() == GameTreeNode::SHOWDOWN) {
         shared_ptr<ShowdownNode> showdown_node = std::dynamic_pointer_cast<ShowdownNode>(node);
-        return showdownBestResponse(showdown_node, player, reach_probs, board);
+        return showdownBestResponse(showdown_node, player, reach_probs, board, deal);
     } else if (node->getType() == GameTreeNode::TERMINAL) {
         shared_ptr<TerminalNode> terminal_node = std::dynamic_pointer_cast<TerminalNode>(node);
-        return terminalBestReponse(terminal_node, player, reach_probs, board);
+        return terminalBestReponse(terminal_node, player, reach_probs, board, deal);
     } else if (node->getType() == GameTreeNode::CHANCE) {
         shared_ptr<ChanceNode> chance_node = std::dynamic_pointer_cast<ChanceNode>(node);
-        return chanceBestReponse(chance_node, player, reach_probs, board);
+        return chanceBestReponse(chance_node, player, reach_probs, board, deal);
     }else
         throw runtime_error("Node type not understood ");
 }
 
 vector<float>
 BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const vector<vector<float>>& reach_probs,
-                                uint64_t current_board) {
+                                uint64_t current_board, int deal) {
     vector<Card>& cards = this->deck.getCards();
-    if(cards.size() != node->getChildrens().size()) throw new runtime_error("size mismatch");
-    //float[] cardWeights = getCardsWeights(player,reach_probs[1 - player],current_board);
 
     int card_num = node->getCards().size();
     // 可能的发牌情况,2代表每个人的holecard是两张
-    int possible_deals = node->getChildrens().size() - Card::long2board(current_board).size() - 2;
+    int possible_deals = node->getCards().size() - Card::long2board(current_board).size() - 2;
 
     vector<float> chance_utility = vector<float>(reach_probs[player].size());
     fill(chance_utility.begin(),chance_utility.end(),0);
@@ -121,12 +127,13 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
 
     #pragma omp parallel for
     for(int card = 0;card < node->getCards().size();card ++) {
-        shared_ptr<GameTreeNode> one_child = node->getChildrens()[card];
+        shared_ptr<GameTreeNode> one_child = node->getChildren();
         Card one_card = node->getCards()[card];
         uint64_t card_long = Card::boardInt2long(one_card.getCardInt());
 
         // 不可能发出和board重复的牌，对吧
         if (Card::boardsHasIntercept(card_long, current_board)) continue;
+        if(this->color_iso_offset[deal][one_card.getCardInt() % 4] < 0) continue;
 
         const vector<PrivateCards> &playerPrivateCard = this->pcm.getPreflopCards(
                 player);//this.getPlayerPrivateCard(player);
@@ -141,14 +148,16 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
             new_reach_probs[1 - player] = vector<float>(oppoPrivateCards.size());
         }
 
-        // TODO reach prob中需要考虑和新发的bord牌有重叠的需要ban掉
         //new_reach_probs[player] = new float[playerPrivateCard.length];
+
+#ifdef DEBUG
         if (reach_probs[player].size() != playerPrivateCard.size())
             throw runtime_error("length mismatch");
 
         // 检查是否双方 hand和reach prob长度符合要求
         if (playerPrivateCard.size() != reach_probs[player].size()) throw runtime_error("length not match1 ");
         if (oppoPrivateCards.size() != reach_probs[1 - player].size()) throw runtime_error("length not match2 ");
+#endif
 
         for (int one_player = 0; one_player < 2; one_player++) {
             int player_hand_len = this->pcm.getPreflopCards(one_player).size();
@@ -162,19 +171,51 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
             }
         }
 
+#ifdef DEBUG
         if (Card::boardsHasIntercept(current_board, card_long))
             throw runtime_error("board has intercept with dealt card");
+#endif
         uint64_t new_board_long = current_board | card_long;
 
-        vector<float> child_utility = this->bestResponse(one_child, player, new_reach_probs, new_board_long);
-        results[card] = child_utility;
+        int new_deal;
+        if(deal == 0){
+            new_deal = card + 1;
+        } else if (deal > 0 && deal <= card_num){
+            int origin_deal = deal - 1;
+#ifdef DEBUG
+            if(origin_deal == card) throw runtime_error("deal should not be equal");
+#endif
+            new_deal = card_num * origin_deal + card;
+            new_deal += (1 + card_num);
+        } else{
+            throw runtime_error(fmt::format("deal out of range : {} ",deal));
+        }
+        vector<float> child_utility = this->bestResponse(one_child, player, new_reach_probs, new_board_long,new_deal);
+        results[one_card.getCardInt()] = child_utility;
     }
 
     for(int card = 0;card < node->getCards().size();card ++) {
-        vector<float> child_utility = results[card];
+        Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
+        vector<float> child_utility;
+        int offset = this->color_iso_offset[deal][one_card->getCardInt() % 4];
+        if(offset < 0) {
+            int rank1 = one_card->getCardInt() % 4;
+            int rank2 = rank1 + offset;
+#ifdef DEBUG
+            if(rank2 < 0) throw runtime_error("rank error");
+#endif
+            // TODO 这里需要调换一下颜色,根据offset
+            child_utility = results[one_card->getCardInt() + offset];
+            exchange_color(child_utility,private_combos[player],rank1,rank2);
+        }else{
+            child_utility = results[one_card->getCardInt()];
+        }
+
         if(child_utility.empty())
             continue;
+#ifdef DEBUG
         if(child_utility.size() != chance_utility.size()) throw runtime_error("length not match3 ");
+#endif
         for(int i = 0;i < child_utility.size();i ++)
             chance_utility[i] += (child_utility)[i];
     }
@@ -184,7 +225,7 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
 
 vector<float>
 BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const vector<vector<float>>& reach_probs,
-                                 uint64_t board) {
+                                 uint64_t board, int deal) {
     if(player == node->getPlayer()){
         // 如果是自己在做决定，那么肯定选对自己的最有利的，反之对于对方来说，这个就是我方expliot了对方,
         // 这里可以当成"player"做决定的时候，action prob是0-1分布，因为需要使用最好的策略去expliot对方，最好的策略一定是ont-hot的
@@ -192,7 +233,7 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
 
         bool first_action_flag = true;
         for(shared_ptr<GameTreeNode> one_node:node->getChildrens()){
-            const vector<float>& node_ev = this->bestResponse(one_node,player,reach_probs,board);
+            const vector<float>& node_ev = this->bestResponse(one_node,player,reach_probs,board,deal);
             if(first_action_flag){
                 my_exploitability.assign(node_ev.begin(),node_ev.end());
                 first_action_flag = false;
@@ -212,12 +253,19 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
         // 如果是别人做决定，那么就按照别人的策略加权算出一个 ev
         vector<float> total_payoffs = vector<float>(player_hands[player]);
         fill(total_payoffs.begin(),total_payoffs.end(),0);
-        const vector<float>& node_strategy = node->getTrainable()->getAverageStrategy();
+        shared_ptr<Trainable> trainable = node->getTrainable(deal);
+#ifdef DEBUG
+        if(trainable == nullptr){
+            throw runtime_error("null trainable");
+        }
+#endif
+        const vector<float>& node_strategy = trainable->getAverageStrategy();
+#ifdef DEBUG
         if(node_strategy.size() != node->getChildrens().size() * reach_probs[node->getPlayer()].size()) {
             throw runtime_error(fmt::format("strategy size not match {} - {}",
                                                      node_strategy.size(), node->getChildrens().size() * reach_probs[node->getPlayer()].size()));
         }
-
+#endif
 
         vector<vector<vector<float>>> best_respond_arr_new_reach_probs = vector<vector<vector<float>>>(node->getChildrens().size());
         // 构造reach probs矩阵
@@ -245,9 +293,14 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
 
 
             shared_ptr<GameTreeNode> one_child = node->getChildrens()[action_ind];
+
+#ifdef DEBUG
             if (one_child == nullptr)
                 throw runtime_error("child node not found");
-            const vector<float>& action_payoffs = this->bestResponse(one_child,player,next_reach_probs,board);
+#endif
+            const vector<float>& action_payoffs = this->bestResponse(one_child,player,next_reach_probs,board,deal);
+
+#ifdef DEBUG
             if (action_payoffs.size() != total_payoffs.size())
                 throw runtime_error(
                         fmt::format(
@@ -255,6 +308,7 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
                                 action_payoffs.size(),total_payoffs.size()
                         )
                 );
+#endif
 
             for(int i = 0 ;i < total_payoffs.size();i ++){
                 total_payoffs[i] += action_payoffs[i];//  * node_strategy[i] 的动作实际上已经在递归的时候做过了，所以这里不需要乘
@@ -271,7 +325,7 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
 
 vector<float>
 BestResponse::terminalBestReponse(shared_ptr<TerminalNode> node, int player, const vector<vector<float>>& reach_probs,
-                                  uint64_t board) {
+                                  uint64_t board, int deal) {
     uint64_t board_long = board;
     int oppo = 1 - player;
     const vector<RiverCombs>& player_combs = this->rrm.getRiverCombos(player,this->pcm.getPreflopCards(player),board);  //this.river_combos[player];
@@ -281,10 +335,11 @@ BestResponse::terminalBestReponse(shared_ptr<TerminalNode> node, int player, con
 
     vector<float> payoffs = vector<float>(this->player_hands[player]);
 
+
+#ifdef DEBUG
     if(this->player_number != 2) throw runtime_error("player NE 2 not supported");
+#endif
     // 对手的手牌可能需要和其reach prob一样长
-    // TODO 把这里的bug解决
-    // TODO 写的通用一些，这里用了hard code，因为一副牌，不管是长牌还是短牌，最多扑克牌的数量都是52张
     vector<float> oppo_card_sum(52);
 
     //用于记录对手总共的手牌绝对prob之和
@@ -337,21 +392,21 @@ BestResponse::terminalBestReponse(shared_ptr<TerminalNode> node, int player, con
 
 vector<float>
 BestResponse::showdownBestResponse(shared_ptr<ShowdownNode> node, int player,const vector<vector<float>>& reach_probs,
-                                   uint64_t board) {
+                                   uint64_t board, int deal) {
+#ifdef DEBUG
     if(this->player_number != 2) throw runtime_error("player number is not 2");
+#endif
 
     int oppo = 1 - player;
     const vector<RiverCombs>& player_combs = this->rrm.getRiverCombos(player,this->pcm.getPreflopCards(player),board);  //this.river_combos[player];
     const vector<RiverCombs>& oppo_combs = this->rrm.getRiverCombos(1 - player,this->pcm.getPreflopCards(1 - player),board);  //this.river_combos[player];
 
     float win_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE,player)[player];
-    // TODO hard code, 假设了player只有两个
     float lose_payoff = node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE,1 - player)[player];
 
     vector<float> payoffs = vector<float>(player_hands[player]);
 
     // 计算胜利时的payoff
-    // TODO 修改掉这里的hard code
     float winsum = 0;
     vector<float> card_winsum(52);
     for(int i = 0;i < card_winsum.size();i ++) card_winsum[i] = 0;
@@ -365,7 +420,6 @@ BestResponse::showdownBestResponse(shared_ptr<ShowdownNode> node, int player,con
             const RiverCombs& one_oppo_comb = oppo_combs[j];
             winsum += reach_probs[oppo][one_oppo_comb.reach_prob_index];
 
-            // TODO 这里有问题，要加上reach prob，但是reach prob的index怎么解决？
             card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             j ++;
@@ -387,7 +441,6 @@ BestResponse::showdownBestResponse(shared_ptr<ShowdownNode> node, int player,con
             const RiverCombs& one_oppo_comb = oppo_combs[j];
             losssum += reach_probs[oppo][one_oppo_comb.reach_prob_index];
 
-            // TODO 这里有问题，要加上reach prob，但是reach prob的index怎么解决？
             card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             j --;

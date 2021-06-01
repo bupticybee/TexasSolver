@@ -26,3 +26,7 @@ cmake .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
 nmake install
 test.exe
 ```
+
+# License
+
+[GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html)

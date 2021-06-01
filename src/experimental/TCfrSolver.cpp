@@ -91,7 +91,8 @@ void TCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
         vector<PrivateCards> player_privates = this->ranges[player];
 
         if(this->trainer == "cfr_plus"){
-            action_node->setTrainable(make_shared<CfrPlusTrainable>(action_node,player_privates));
+            //action_node->setTrainable(make_shared<CfrPlusTrainable>(action_node,player_privates));
+            throw runtime_error(fmt::format("trainer {} not supported now",this->trainer));
         }else if(this->trainer == "discounted_cfr"){
             action_node->setTrainable(make_shared<DiscountedCfrTrainable>(action_node,player_privates));
         }else{

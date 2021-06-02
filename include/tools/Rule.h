@@ -6,45 +6,17 @@
 #define BINDSOLVER_RULE_H
 
 #include "Deck.h"
-#include "GameTree.h"
+#include "StreetSetting.h"
+#include "GameTreeBuildingSettings.h"
+
 using namespace std;
-
-class StreetSetting {
-public:
-    vector<float> bet_sizes;
-    vector<float> raise_sizes;
-    vector<float> donk_sizes;
-    bool allin;
-
-    StreetSetting(vector<float> bet_sizes, vector<float> raise_sizes, vector<float> donk_sizes, bool allin);
-
-};
-
-class GameTreeBuildingSettings {
-public:
-    StreetSetting flop_ip;
-    StreetSetting turn_ip;
-    StreetSetting river_ip;
-    StreetSetting flop_oop;
-    StreetSetting turn_oop;
-    StreetSetting river_oop;
-    GameTreeBuildingSettings(
-            StreetSetting flop_ip,
-            StreetSetting turn_ip,
-            StreetSetting river_ip,
-            StreetSetting flop_oop,
-            StreetSetting turn_oop,
-            StreetSetting river_oop) ;
-
-    StreetSetting & getSettings(ActionNode::GameRound round, int player);
-};
 
 class Rule{
 public:
     Deck& deck;
     float oop_commit;
     float ip_commit;
-    int current_round;
+    int current_round; // 0-preflop 1-flop 2-turn 3-river
     int raise_limit;
     float small_blind;
     float big_blind;

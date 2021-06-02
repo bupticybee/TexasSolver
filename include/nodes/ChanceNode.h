@@ -14,6 +14,7 @@ public:
     ChanceNode(const shared_ptr<GameTreeNode> children, GameRound round, double pot, shared_ptr<GameTreeNode>parent, const vector<Card>& cards);
     const vector<Card>& getCards();
     shared_ptr<GameTreeNode> getChildren();
+    void setChildren(shared_ptr<GameTreeNode> children);
     int getPlayer();
     //vector<vector<vector<float>>> arr_new_reach_probs;
     //vector<vector<vector<float>>> best_respond_arr_new_reach_probs;

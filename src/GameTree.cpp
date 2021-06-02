@@ -6,6 +6,18 @@
 
 #include <utility>
 
+StreetSetting getSettings(int int_round, int player,GameTreeBuildingSettings& gameTreeBuildingSettings){
+    GameTreeNode::GameRound round = GameTreeNode::intToGameRound(int_round);
+    if(!(player == 0 || player == 1)) throw runtime_error(fmt::format("player %s not known",player));
+    if(round == GameTreeNode::GameRound::RIVER && player == 0) return gameTreeBuildingSettings.river_ip;
+    else if(round == GameTreeNode::GameRound::TURN && player == 0) return gameTreeBuildingSettings.turn_ip;
+    else if(round == GameTreeNode::GameRound::FLOP && player == 0) return gameTreeBuildingSettings.flop_ip;
+    else if(round == GameTreeNode::GameRound::RIVER && player == 1) return gameTreeBuildingSettings.river_oop;
+    else if(round == GameTreeNode::GameRound::TURN && player == 1) return gameTreeBuildingSettings.turn_oop;
+    else if(round == GameTreeNode::GameRound::FLOP && player == 1) return gameTreeBuildingSettings.flop_oop;
+    else throw new runtime_error(fmt::format("player %s and round not known",player));
+}
+
 GameTree::GameTree(const string& tree_json_dir, Deck deck) {
     this->tree_json_dir = tree_json_dir;
     this->deck = std::move(deck);
@@ -14,6 +26,80 @@ GameTree::GameTree(const string& tree_json_dir, Deck deck) {
     fs >> json_content;
     this->root = this->recurrentGenerateTreeNode(json_content["root"], nullptr);
     this->recurrentSetDepth(this->root,0);
+}
+
+GameTree::GameTree(Deck deck,
+                   float oop_commit,
+                   float ip_commit,
+                   int current_round,
+                   int raise_limit,
+                   float small_blind,
+                   float big_blind,
+                   float stack,
+                   GameTreeBuildingSettings buildingSettings
+){
+    Rule rule = Rule(deck,oop_commit,ip_commit,current_round,raise_limit,small_blind,big_blind,stack,buildingSettings);
+    int current_player = 1;
+    GameTreeNode::GameRound round = GameTreeNode::intToGameRound(rule.current_round);
+    shared_ptr<ActionNode> node = make_shared<ActionNode>(vector<GameActions>(), vector<shared_ptr<GameTreeNode>>(),current_player, round, (double) rule.get_pot(),
+                                 nullptr);
+    this->__build(node,rule);
+    this->root = node;
+}
+
+shared_ptr<GameTreeNode> GameTree::__build(shared_ptr<GameTreeNode> node, Rule rule) {
+    return this->__build(node,rule,"roundbegin",0,0);
+}
+
+shared_ptr<GameTreeNode> GameTree::__build(shared_ptr<GameTreeNode> node, Rule rule, string last_action,
+                                           int check_times, int raise_times) {
+    switch(node->getType()) {
+        case GameTreeNode::ACTION: {
+            this->buildAction(std::dynamic_pointer_cast<ActionNode>(node),rule,last_action,check_times,raise_times);
+        }case GameTreeNode::SHOWDOWN: {
+        }case GameTreeNode::TERMINAL: {
+        }case GameTreeNode::CHANCE: {
+            this->buildChance(std::dynamic_pointer_cast<ChanceNode>(node),rule);
+        }default:
+            throw runtime_error("node type unknown");
+    }
+    return node;
+}
+
+void GameTree::buildChance(shared_ptr<ChanceNode> root,Rule rule){
+    //节点上的下注额度
+    double pot = (double)rule.get_pot();
+    Rule nextrule = Rule(rule);
+    if(rule.current_round > 3)throw runtime_error(fmt::format("current round not valid : %d",rule.current_round));
+
+    shared_ptr<GameTreeNode> one_node;
+    if(rule.oop_commit == rule.ip_commit && rule.oop_commit == rule.stack) {
+        if(rule.current_round >= 3){ // 3 is river
+            double p1_commit = rule.ip_commit;
+            double p2_commit = rule.oop_commit;
+            double peace_getback = (p1_commit + p2_commit) / 2;
+
+
+            vector<vector<double>> payoffs(2);
+            payoffs[0] = {p2_commit, -p2_commit};
+            payoffs[1] = {-p1_commit, p1_commit};
+            vector<double> peace_getback_vec = {peace_getback - p1_commit, peace_getback - p2_commit};
+            one_node = make_shared<ShowdownNode>(peace_getback_vec, payoffs, GameTreeNode::intToGameRound(rule.current_round), (double) rule.get_pot(), root);
+        }else {
+            nextrule.current_round += 1;
+            if(rule.current_round > 3)throw runtime_error(fmt::format("current round not valid : %d",rule.current_round));
+            one_node = make_shared<ChanceNode>(nullptr, GameTreeNode::intToGameRound(rule.current_round + 1), (double) rule.get_pot(), root, rule.deck.getCards());
+        }
+    }else {
+        one_node = make_shared<ActionNode>(vector<GameActions>(), vector<shared_ptr<GameTreeNode>>(), 1, GameTreeNode::intToGameRound(rule.current_round), (double) rule.get_pot(), root);
+    }
+    assert(nextrule.current_round <= 4);
+    this->__build(one_node,nextrule,"begin",0,0);
+    root->setChildren(one_node);
+}
+
+void GameTree::buildAction(shared_ptr<ActionNode> root,Rule rule,string last_action,int check_times,int raise_times){
+    // TODO continue this shit
 }
 
 int GameTree::recurrentSetDepth(shared_ptr<GameTreeNode> node, int depth) {

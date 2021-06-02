@@ -49,6 +49,32 @@ void GameTreeNode::printHistory() {
     //GameTreeNode::printNodeHistory(this);
 }
 
+GameTreeNode::GameRound GameTreeNode::intToGameRound(int round){
+    GameTreeNode::GameRound game_round;
+    switch(round){
+        case 0:{
+            game_round = GameTreeNode::GameRound::PREFLOP;
+            break;
+        }
+        case 1:{
+            game_round = GameTreeNode::GameRound::FLOP;
+            break;
+        }
+        case 2:{
+            game_round = GameTreeNode::GameRound::TURN;
+            break;
+        }
+        case 3:{
+            game_round = GameTreeNode::GameRound::RIVER;
+            break;
+        }
+        default:{
+            throw runtime_error(fmt::format("round %s not found",round));
+        }
+    }
+    return game_round;
+}
+
 void GameTreeNode::printNodeHistory(GameTreeNode* node) {
     /*
     while(node != nullptr) {

@@ -37,6 +37,7 @@ public:
     };
     GameTreeNode();
     GameTreeNode(GameRound round, double pot, shared_ptr<GameTreeNode> parent);
+    static GameTreeNode::GameRound intToGameRound(int round);
     int depth{};
     int subtree_size{};
     static int gameRound2int(GameRound gameRound);

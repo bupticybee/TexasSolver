@@ -19,6 +19,10 @@ shared_ptr<GameTreeNode> ChanceNode::getChildren() {
     return this->children;
 }
 
+void ChanceNode::setChildren(shared_ptr<GameTreeNode> children){
+    this->children = children;
+}
+
 int ChanceNode::getPlayer() {
     return this->player;
 }

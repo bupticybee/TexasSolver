@@ -15,6 +15,7 @@
 #include <nodes/TerminalNode.h>
 #include <nodes/ChanceNode.h>
 #include "library.h"
+#include "tools/Rule.h"
 
 using json = nlohmann::json;
 
@@ -24,8 +25,23 @@ private:
     shared_ptr<GameTreeNode> root = nullptr;
     Deck deck;
 public:
-    GameTree(const string& tree_json_dir,Deck deck);;
+    GameTree(const string& tree_json_dir,Deck deck);
+    GameTree(Deck deck,
+            float oop_commit,
+            float ip_commit,
+            int current_round,
+            int raise_limit,
+            float small_blind,
+            float big_blind,
+            float stack,
+            GameTreeBuildingSettings buildingSettings
+            );
+    shared_ptr<GameTreeNode> __build(shared_ptr<GameTreeNode> node,Rule rule);
+    shared_ptr<GameTreeNode> __build(shared_ptr<GameTreeNode> node,Rule rule,string last_action,int check_times,int raise_times);
+    void buildChance(shared_ptr<ChanceNode> root,Rule rule);
+    void buildAction(shared_ptr<ActionNode> root,Rule rule,string last_action,int check_times,int raise_times);
     shared_ptr<GameTreeNode> getRoot();
+    StreetSetting getSettings(int int_round, int player,GameTreeBuildingSettings& gameTreeBuildingSettings);
     static ifstream readAllBytes(const string& filePath);
     static GameTreeNode::GameRound strToGameRound(const string& round);
     static void recurrentPrintTree(const shared_ptr<GameTreeNode>& node,int depth,int depth_limit);

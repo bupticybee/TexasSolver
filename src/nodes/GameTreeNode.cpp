@@ -13,7 +13,7 @@ GameTreeNode::GameTreeNode() {
 GameTreeNode::GameTreeNode(GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode> parent) {
     this->round = round;
     this->pot = pot;
-    //this->parent = std::move(parent);
+    this->parent = std::move(parent);
 }
 
 int GameTreeNode::gameRound2int(GameTreeNode::GameRound gameRound) {
@@ -30,11 +30,11 @@ int GameTreeNode::gameRound2int(GameTreeNode::GameRound gameRound) {
 }
 
 shared_ptr<GameTreeNode>GameTreeNode::getParent() {
-    return nullptr;//this->parent;
+    return this->parent;
 }
 
 void GameTreeNode::setParent(shared_ptr<GameTreeNode>parent) {
-    //this->parent = parent;
+    this->parent = parent;
 }
 
 GameTreeNode::GameRound GameTreeNode::getRound() {

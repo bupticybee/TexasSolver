@@ -56,10 +56,14 @@ shared_ptr<GameTreeNode> GameTree::__build(shared_ptr<GameTreeNode> node, Rule r
     switch(node->getType()) {
         case GameTreeNode::ACTION: {
             this->buildAction(std::dynamic_pointer_cast<ActionNode>(node),rule,last_action,check_times,raise_times);
+            break;
         }case GameTreeNode::SHOWDOWN: {
+            break;
         }case GameTreeNode::TERMINAL: {
+            break;
         }case GameTreeNode::CHANCE: {
             this->buildChance(std::dynamic_pointer_cast<ChanceNode>(node),rule);
+            break;
         }default:
             throw runtime_error("node type unknown");
     }
@@ -104,19 +108,19 @@ void GameTree::buildAction(shared_ptr<ActionNode> root,Rule rule,string last_act
 
     vector<string> possible_actions;
     if(last_action == "roundbegin") {
-        possible_actions = {"check", "bet"};
+        possible_actions = vector<string>{"check", "bet"};
     }else if(last_action == "begin") {
-        possible_actions = {"check", "bet"};
+        possible_actions = vector<string>{"check", "bet"};
     }else if(last_action == "bet") {
-        possible_actions = {"call", "raise", "fold"};
+        possible_actions = vector<string>{"call", "raise", "fold"};
     }else if(last_action == "raise") {
-        possible_actions = {"call", "raise", "fold"};
+        possible_actions = vector<string>{"call", "raise", "fold"};
     }else if(last_action == "check") {
-        possible_actions = {"check", "raise", "bet"};
+        possible_actions = vector<string>{"check", "raise", "bet"};
     }else if(last_action == "fold") {
-        possible_actions = {};
+        possible_actions = vector<string>{};
     }else if(last_action == "call") {
-        possible_actions = {"check", "raise"};
+        possible_actions = vector<string>{"check", "raise"};
     }else{
         throw runtime_error(fmt::format("last action %s not found", last_action));
     }
@@ -153,7 +157,7 @@ void GameTree::buildAction(shared_ptr<ActionNode> root,Rule rule,string last_act
                 nextnode = make_shared<ActionNode>(vector<GameActions>(),vector<shared_ptr<GameTreeNode>>() , nextplayer, GameTreeNode::intToGameRound(rule.current_round), (double) rule.get_pot(), root);
             }
             this->__build(nextnode, nextrule,"check",check_times + 1,0);
-            actions.push_back(GameActions(GameTreeNode::PokerActions::CHECK,0.0));
+            actions.push_back(GameActions(GameTreeNode::PokerActions::CHECK,-1));
             childrens.push_back(nextnode);
         }else if (action == "bet"){
             BetType betType = BetType::BET;
@@ -203,7 +207,6 @@ void GameTree::buildAction(shared_ptr<ActionNode> root,Rule rule,string last_act
             actions.push_back(GameActions(GameTreeNode::PokerActions::CALL, (double) abs(rule.oop_commit - rule.ip_commit)));
             childrens.push_back(nextnode);
         }else if (action == "raise"){
-            // TODO continue this shit
             if(last_action == "call"){
                 if(!(root->getParent() != nullptr && root->getParent()->getParent() == nullptr)) continue;
             }else if(last_action == "check"){
@@ -234,11 +237,13 @@ void GameTree::buildAction(shared_ptr<ActionNode> root,Rule rule,string last_act
             }else throw runtime_error("unknown player");
             shared_ptr<GameTreeNode> nextnode = make_shared<TerminalNode>(payoffs,nextplayer,GameTreeNode::intToGameRound(rule.current_round), (double) rule.get_pot(),root);
             this->__build(nextnode,nextrule,"fold",0,0);
-            actions.push_back(GameActions(GameTreeNode::PokerActions::FOLD,0.0));
+            actions.push_back(GameActions(GameTreeNode::PokerActions::FOLD,-1));
             childrens.push_back(nextnode);
         }
     }
-
+    if(actions.size() == 0)throw runtime_error("action size is 0");
+    root->setActions(actions);
+    root->setChildrens(childrens);
 }
 
 int GameTree::recurrentSetDepth(shared_ptr<GameTreeNode> node, int depth) {
@@ -700,7 +705,6 @@ vector<double> GameTree::get_possible_bets(shared_ptr<ActionNode> root, int play
         possible_amounts = tmp_vector;
     }else{
         float gap = rule.get_commit(player) - rule.get_commit(next_player);
-        if(gap <= 0)throw runtime_error(fmt::format("gap not valid: %d",gap));
         vector<double> tmp_vector;
         for(double val:possible_amounts){
             if(val >= gap * 2)tmp_vector.push_back(val);

@@ -45,3 +45,11 @@ void ActionNode::setTrainable(vector<shared_ptr<Trainable>> trainables,vector<Pr
     this->trainables = trainables;
     this->player_privates = player_privates;
 }
+
+void ActionNode::setActions(const vector<GameActions> &actions) {
+    ActionNode::actions = actions;
+}
+
+void ActionNode::setChildrens(const vector<shared_ptr<GameTreeNode>> &childrens) {
+    ActionNode::childrens = childrens;
+}

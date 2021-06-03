@@ -19,6 +19,16 @@ public:
     PokerSolver();
     PokerSolver(string ranks,string suits,string compairer_file,int compairer_file_lines);
     void load_game_tree(string game_tree_file);
+    void build_game_tree(
+            float oop_commit,
+            float ip_commit,
+            int current_round,
+            int raise_limit,
+            float small_blind,
+            float big_blind,
+            float stack,
+            GameTreeBuildingSettings buildingSettings
+    );
     void train(
             string p1_range,
             string p2_range,
@@ -35,6 +45,8 @@ private:
     shared_ptr<Dic5Compairer> compairer;
     Deck deck;
     shared_ptr<GameTree> game_tree;
+public:
+    const shared_ptr<GameTree> &getGameTree() const;
 };
 
 

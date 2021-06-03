@@ -24,6 +24,11 @@ private:
     string tree_json_dir;
     shared_ptr<GameTreeNode> root = nullptr;
     Deck deck;
+    enum BetType{
+        BET,
+        DONK,
+        RAISE
+    };
 public:
     GameTree(const string& tree_json_dir,Deck deck);
     GameTree(Deck deck,
@@ -41,6 +46,8 @@ public:
     void buildChance(shared_ptr<ChanceNode> root,Rule rule);
     void buildAction(shared_ptr<ActionNode> root,Rule rule,string last_action,int check_times,int raise_times);
     shared_ptr<GameTreeNode> getRoot();
+    vector<double> get_possible_bets(shared_ptr<ActionNode> root, int player, int next_player, Rule rule, BetType betType);
+    double round_nearest(double number, double round_num);
     StreetSetting getSettings(int int_round, int player,GameTreeBuildingSettings& gameTreeBuildingSettings);
     static ifstream readAllBytes(const string& filePath);
     static GameTreeNode::GameRound strToGameRound(const string& round);

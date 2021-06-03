@@ -11,12 +11,14 @@
 
 class ChanceNode:public GameTreeNode {
 public:
-    ChanceNode(const shared_ptr<GameTreeNode> children, GameRound round, double pot, shared_ptr<GameTreeNode>parent, const vector<Card>& cards);
+    ChanceNode(const shared_ptr<GameTreeNode> children, GameRound round, double pot, shared_ptr<GameTreeNode>parent, const vector<Card>& cards,bool donk=false);
     const vector<Card>& getCards();
     shared_ptr<GameTreeNode> getChildren();
     void setChildren(shared_ptr<GameTreeNode> children);
     int getPlayer();
-    //vector<vector<vector<float>>> arr_new_reach_probs;
+    bool isDonk();
+
+        //vector<vector<vector<float>>> arr_new_reach_probs;
     //vector<vector<vector<float>>> best_respond_arr_new_reach_probs;
 
 private:
@@ -28,6 +30,7 @@ private:
     //Trainable trainable;
     int player{};
     const vector<Card>& cards;
+    bool donk;
 
 };
 

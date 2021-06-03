@@ -6,7 +6,7 @@
 
 #include <utility>
 
-StreetSetting getSettings(int int_round, int player,GameTreeBuildingSettings& gameTreeBuildingSettings){
+StreetSetting GameTree::getSettings(int int_round, int player,GameTreeBuildingSettings& gameTreeBuildingSettings){
     GameTreeNode::GameRound round = GameTreeNode::intToGameRound(int_round);
     if(!(player == 0 || player == 1)) throw runtime_error(fmt::format("player %s not known",player));
     if(round == GameTreeNode::GameRound::RIVER && player == 0) return gameTreeBuildingSettings.river_ip;
@@ -156,26 +156,86 @@ void GameTree::buildAction(shared_ptr<ActionNode> root,Rule rule,string last_act
             actions.push_back(GameActions(GameTreeNode::PokerActions::CHECK,0.0));
             childrens.push_back(nextnode);
         }else if (action == "bet"){
-            // TODO continue this shit
-            /*
-            BetType betType = BetType.BET;
+            BetType betType = BetType::BET;
             // if it's a donk bet
-            if(root.getPlayer() == 1 && root.getParent() != null && root.getParent() instanceof ChanceNode){
-                ChanceNode chanceNodeBeforeThis = (ChanceNode) root.getParent();
-                if(chanceNodeBeforeThis.isDonk()) betType = BetType.DONK;
+            if(root->getPlayer() == 1 && root->getParent() != nullptr && root->getParent()->getType() == GameTreeNode::GameTreeNodeType::CHANCE){
+                shared_ptr<ChanceNode> chanceNodeBeforeThis = std::dynamic_pointer_cast<ChanceNode>(root->getParent());
+                if(chanceNodeBeforeThis->isDonk()) betType = BetType::DONK;
             }
-            List<Double> bet_sizes = get_possible_bets(root,player,nextplayer,rule,betType);
-            for(Double one_betting_size:bet_sizes){
-                Rule nextrule = new Rule(rule);
+            vector<double> bet_sizes = this->get_possible_bets(root,player,nextplayer,rule,betType);
+            for(double one_betting_size:bet_sizes){
+                Rule nextrule = Rule(rule);
                 if (player == 0) nextrule.ip_commit += one_betting_size;
                 else if (player == 1) nextrule.oop_commit += one_betting_size;
-                else throw new RuntimeException("unknown player");
-                GameTreeNode nextnode = new ActionNode(null,null,nextplayer,intToGameRound(rule.current_round),(double) rule.get_pot(),root);
-                __build(nextnode,nextrule,"bet",0,0);
-                actions.add(new GameActions(GameTreeNode.PokerActions.BET,one_betting_size));
-                childrens.add(nextnode);
+                else throw runtime_error("unknown player");
+                shared_ptr<GameTreeNode> nextnode = make_shared<ActionNode>(vector<GameActions>(), vector<shared_ptr<GameTreeNode>>(),nextplayer,GameTreeNode::intToGameRound(rule.current_round),(double) rule.get_pot(),root);
+                this->__build(nextnode,nextrule,"bet",0,0);
+                actions.push_back(GameActions(GameTreeNode::PokerActions::BET,one_betting_size));
+                childrens.push_back(nextnode);
             }
-            */
+        }else if (action == "call"){
+            Rule nextrule = Rule(rule);
+            if (player == 0) nextrule.ip_commit += (rule.oop_commit - rule.ip_commit);
+            else if (player == 1) nextrule.oop_commit += (rule.ip_commit - rule.oop_commit);
+            else throw runtime_error("unknown player");
+
+            shared_ptr<GameTreeNode> nextnode;
+            if(root->getParent() == nullptr) {
+                nextnode = make_shared<ActionNode>(vector<GameActions>(), vector<shared_ptr<GameTreeNode>>(), nextplayer, GameTreeNode::intToGameRound(rule.current_round), (double) rule.get_pot(), root);
+            }else if (rule.current_round == 3 ){ // at river
+                double p1_commit = nextrule.ip_commit;
+                double p2_commit = nextrule.oop_commit;
+                double peace_getback = (p1_commit + p2_commit) / 2;
+
+                vector<vector<double>> payoffs(2);
+                payoffs[0] = {p2_commit, -p2_commit};
+                payoffs[1] = {-p1_commit, p1_commit};
+                vector<double> tie_payoffs = {peace_getback - p1_commit, peace_getback - p2_commit};
+                nextnode = make_shared<ShowdownNode>(tie_payoffs,payoffs,GameTreeNode::intToGameRound(rule.current_round),(double) rule.get_pot(),root);
+            }else{
+                nextrule.current_round += 1;
+                bool donk = false;
+                if(player == 1) donk = true;
+                nextnode = make_shared<ChanceNode>(nullptr,GameTreeNode::intToGameRound(rule.current_round + 1),(double) rule.get_pot(),root,rule.deck.getCards(),donk);
+            }
+            if(nextrule.current_round > 3)throw runtime_error(fmt::format("round %d exceed 3",nextrule.current_round));
+            this->__build(nextnode,nextrule,"call",0,0);
+            actions.push_back(GameActions(GameTreeNode::PokerActions::CALL, (double) abs(rule.oop_commit - rule.ip_commit)));
+            childrens.push_back(nextnode);
+        }else if (action == "raise"){
+            // TODO continue this shit
+            if(last_action == "call"){
+                if(!(root->getParent() != nullptr && root->getParent()->getParent() == nullptr)) continue;
+            }else if(last_action == "check"){
+                // 第二轮之后的check后面只能跟 bet
+                if(!(root->getParent() != nullptr && root->getParent()->getParent() == nullptr && rule.current_round == 0)) continue;
+            }
+            // 如果raise次数超出限制，则不可以继续raise
+            if(raise_times >= rule.raise_limit) continue;
+            vector<double> bet_sizes = this->get_possible_bets(root,player,nextplayer,rule,BetType::RAISE);
+            for(double one_betting_size:bet_sizes){
+                Rule nextrule = Rule(rule);
+                if (player == 0) nextrule.ip_commit += one_betting_size;
+                else if (player == 1) nextrule.oop_commit += one_betting_size;
+                else runtime_error("unknown player");
+                shared_ptr<GameTreeNode> nextnode = make_shared<ActionNode>(vector<GameActions>(), vector<shared_ptr<GameTreeNode>>(),nextplayer,GameTreeNode::intToGameRound(rule.current_round),(double) rule.get_pot(),root);
+                this->__build(nextnode,nextrule,"raise",0,raise_times + 1);
+                actions.push_back(GameActions(GameTreeNode::PokerActions::RAISE,one_betting_size));
+                childrens.push_back(nextnode);
+            }
+
+        }else if (action == "fold"){
+            Rule nextrule = Rule(rule);
+            vector<double> payoffs;
+            if (player == 0) {
+                payoffs = {-rule.ip_commit, rule.ip_commit};
+            }else if(player == 1){
+                payoffs = {rule.oop_commit, -rule.oop_commit};
+            }else throw runtime_error("unknown player");
+            shared_ptr<GameTreeNode> nextnode = make_shared<TerminalNode>(payoffs,nextplayer,GameTreeNode::intToGameRound(rule.current_round), (double) rule.get_pot(),root);
+            this->__build(nextnode,nextrule,"fold",0,0);
+            actions.push_back(GameActions(GameTreeNode::PokerActions::FOLD,0.0));
+            childrens.push_back(nextnode);
         }
     }
 
@@ -580,4 +640,86 @@ json GameTree::dumps(bool with_status) {
     json retjson;
     this->reConvertJson(this->getRoot(),retjson);
     return std::move(retjson);
+}
+
+vector<double> GameTree::get_possible_bets(shared_ptr<ActionNode> root, int player, int next_player, Rule rule,
+                                           GameTree::BetType betType) {
+    if(player != 1 - next_player)throw runtime_error("player error, player and next player not match");
+    StreetSetting streetSetting = this->getSettings(root->getRound(),player,rule.build_settings);
+    vector<double> bets_ratios;
+    bool all_in = streetSetting.allin;
+    vector<float> bets_from_rule;
+    if(betType == BetType::BET)bets_from_rule = streetSetting.bet_sizes;
+    else if(betType == BetType::DONK){bets_from_rule = streetSetting.donk_sizes;all_in = false;}
+    else if(betType == BetType::RAISE)bets_from_rule = streetSetting.raise_sizes;
+    else throw runtime_error("bet type unknown");
+    for(float one_bet:bets_from_rule){
+        bets_ratios.push_back((double) one_bet / 100);
+    }
+    float pot = rule.ip_commit + rule.oop_commit;
+    vector<double> possible_amounts;
+    for(double one_bet: bets_ratios){
+        double amount;
+        if(rule.oop_commit == rule.small_blind){
+            // 当德州扑克开始时，在第一个玩家动作时（sb位置玩家）,视作对手先下注一个bb,这个时候下注要扣除自己的sb
+            amount = one_bet * rule.big_blind  - rule.small_blind;
+            amount = this->round_nearest(amount, (double) rule.small_blind);
+        }else if(rule.ip_commit == rule.big_blind && rule.oop_commit == rule.big_blind){
+            // 当德州扑克开始时，在第一个玩家call 的时候第二个玩家要 raise的时候,需要特殊处理
+            amount = one_bet * rule.big_blind;
+            amount = this->round_nearest(amount, (double) rule.small_blind);
+        }else{
+            amount = one_bet * pot;
+            amount = this->round_nearest(amount, (double) rule.big_blind);
+        }
+        if(amount < rule.stack - rule.get_commit(player)) {
+            possible_amounts.push_back(amount);
+        }
+    }
+    if(all_in) possible_amounts.push_back((double) (rule.stack - rule.get_commit(player)));
+
+    if (rule.get_commit(player) != rule.small_blind){
+        // 一开始的possible bet amount不能简单取整
+        vector<double> tmp_vector;
+        for(double val:possible_amounts){
+            if(val > 0)tmp_vector.push_back(int(val));
+        }
+        possible_amounts = tmp_vector;
+    }
+    if (rule.get_commit(player) == rule.small_blind){
+        vector<double> tmp_vector;
+        for(double val:possible_amounts){
+            if(val >= rule.big_blind)tmp_vector.push_back(val);
+        }
+        possible_amounts = tmp_vector;
+    }else if (rule.get_commit(player) == rule.big_blind && rule.get_commit(next_player) == rule.big_blind){
+        vector<double> tmp_vector;
+        for(double val:possible_amounts){
+            if(val >= rule.big_blind)tmp_vector.push_back(val);
+        }
+        possible_amounts = tmp_vector;
+    }else{
+        float gap = rule.get_commit(player) - rule.get_commit(next_player);
+        if(gap <= 0)throw runtime_error(fmt::format("gap not valid: %d",gap));
+        vector<double> tmp_vector;
+        for(double val:possible_amounts){
+            if(val >= gap * 2)tmp_vector.push_back(val);
+        }
+        possible_amounts = tmp_vector;
+    }
+    vector<double> tmp_vector;
+    for(double val:possible_amounts){
+        if(
+                (val > rule.get_commit(next_player) - rule.get_commit(player)) &&
+                (val <= rule.stack - rule.get_commit(player))
+        )tmp_vector.push_back(val);
+    }
+    possible_amounts = tmp_vector;
+    return possible_amounts;
+}
+
+double GameTree::round_nearest(double number, double round_num) {
+    round_num = 1 / round_num;
+    return round((number * round_num)) / round_num;
+
 }

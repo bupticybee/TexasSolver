@@ -7,8 +7,9 @@
 #include <utility>
 
 ChanceNode::ChanceNode(const shared_ptr<GameTreeNode> children, GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode> parent,
-                       const vector<Card>& cards): GameTreeNode(round,pot,std::move(parent)),cards(cards) {
+                       const vector<Card>& cards,bool donk): GameTreeNode(round,pot,std::move(parent)),cards(cards) {
     this->children = children;
+    this->donk = donk;
 }
 
 const vector<Card>& ChanceNode::getCards() {
@@ -29,4 +30,8 @@ int ChanceNode::getPlayer() {
 
 GameTreeNode::GameTreeNodeType ChanceNode::getType() {
     return CHANCE;
+}
+
+bool ChanceNode::isDonk(){
+    return this->donk;
 }

@@ -40,6 +40,7 @@ GameTree::GameTree(Deck deck,
 ){
     Rule rule = Rule(deck,oop_commit,ip_commit,current_round,raise_limit,small_blind,big_blind,stack,buildingSettings);
     int current_player = 1;
+    this->deck = deck;
     GameTreeNode::GameRound round = GameTreeNode::intToGameRound(rule.current_round);
     shared_ptr<ActionNode> node = make_shared<ActionNode>(vector<GameActions>(), vector<shared_ptr<GameTreeNode>>(),current_player, round, (double) rule.get_pot(),
                                  nullptr);
@@ -92,7 +93,7 @@ void GameTree::buildChance(shared_ptr<ChanceNode> root,Rule rule){
         }else {
             nextrule.current_round += 1;
             if(rule.current_round > 3)throw runtime_error(fmt::format("current round not valid : %d",rule.current_round));
-            one_node = make_shared<ChanceNode>(nullptr, GameTreeNode::intToGameRound(rule.current_round + 1), (double) rule.get_pot(), root, rule.deck.getCards());
+            one_node = make_shared<ChanceNode>(nullptr, GameTreeNode::intToGameRound(rule.current_round + 1), (double) rule.get_pot(), root, this->deck.getCards());
         }
     }else {
         one_node = make_shared<ActionNode>(vector<GameActions>(), vector<shared_ptr<GameTreeNode>>(), 1, GameTreeNode::intToGameRound(rule.current_round), (double) rule.get_pot(), root);
@@ -149,7 +150,7 @@ void GameTree::buildAction(shared_ptr<ActionNode> root,Rule rule,string last_act
                 }else {
                     // 在preflop/flop/turn check 导致游戏进入下一轮
                     nextrule.current_round += 1;
-                    nextnode = make_shared<ChanceNode>(nullptr,GameTreeNode::intToGameRound(rule.current_round + 1), rule.get_pot(), root, rule.deck.getCards());
+                    nextnode = make_shared<ChanceNode>(nullptr,GameTreeNode::intToGameRound(rule.current_round + 1), rule.get_pot(), root, this->deck.getCards());
                 }
             }else if (root->getParent() == nullptr) {
                 nextnode = make_shared<ActionNode>(vector<GameActions>(),vector<shared_ptr<GameTreeNode>>() , nextplayer, GameTreeNode::intToGameRound(rule.current_round), (double) rule.get_pot(), root);
@@ -173,7 +174,7 @@ void GameTree::buildAction(shared_ptr<ActionNode> root,Rule rule,string last_act
                 else if (player == 1) nextrule.oop_commit += one_betting_size;
                 else throw runtime_error("unknown player");
                 shared_ptr<GameTreeNode> nextnode = make_shared<ActionNode>(vector<GameActions>(), vector<shared_ptr<GameTreeNode>>(),nextplayer,GameTreeNode::intToGameRound(rule.current_round),(double) rule.get_pot(),root);
-                this->__build(nextnode,nextrule,"bet",0,0);
+                this->__build(nextnode,nextrule,"bet",0,1);
                 actions.push_back(GameActions(GameTreeNode::PokerActions::BET,one_betting_size));
                 childrens.push_back(nextnode);
             }
@@ -185,7 +186,7 @@ void GameTree::buildAction(shared_ptr<ActionNode> root,Rule rule,string last_act
 
             shared_ptr<GameTreeNode> nextnode;
             if(root->getParent() == nullptr) {
-                nextnode = make_shared<ActionNode>(vector<GameActions>(), vector<shared_ptr<GameTreeNode>>(), nextplayer, GameTreeNode::intToGameRound(rule.current_round), (double) rule.get_pot(), root);
+                nextnode = make_shared<ActionNode>(vector<GameActions>(), vector<shared_ptr<GameTreeNode>>(), nextplayer, GameTreeNode::intToGameRound(rule.current_round), (double) nextrule.get_pot(), root);
             }else if (rule.current_round == 3 ){ // at river
                 double p1_commit = nextrule.ip_commit;
                 double p2_commit = nextrule.oop_commit;
@@ -195,16 +196,16 @@ void GameTree::buildAction(shared_ptr<ActionNode> root,Rule rule,string last_act
                 payoffs[0] = {p2_commit, -p2_commit};
                 payoffs[1] = {-p1_commit, p1_commit};
                 vector<double> tie_payoffs = {peace_getback - p1_commit, peace_getback - p2_commit};
-                nextnode = make_shared<ShowdownNode>(tie_payoffs,payoffs,GameTreeNode::intToGameRound(rule.current_round),(double) rule.get_pot(),root);
+                nextnode = make_shared<ShowdownNode>(tie_payoffs,payoffs,GameTreeNode::intToGameRound(rule.current_round),(double) nextrule.get_pot(),root);
             }else{
                 nextrule.current_round += 1;
                 bool donk = false;
                 if(player == 1) donk = true;
-                nextnode = make_shared<ChanceNode>(nullptr,GameTreeNode::intToGameRound(rule.current_round + 1),(double) rule.get_pot(),root,rule.deck.getCards(),donk);
+                nextnode = make_shared<ChanceNode>(nullptr,GameTreeNode::intToGameRound(rule.current_round + 1),(double) nextrule.get_pot(),root,this->deck.getCards(),donk);
             }
             if(nextrule.current_round > 3)throw runtime_error(fmt::format("round %d exceed 3",nextrule.current_round));
             this->__build(nextnode,nextrule,"call",0,0);
-            actions.push_back(GameActions(GameTreeNode::PokerActions::CALL, (double) abs(rule.oop_commit - rule.ip_commit)));
+            actions.push_back(GameActions(GameTreeNode::PokerActions::CALL, -1));
             childrens.push_back(nextnode);
         }else if (action == "raise"){
             if(last_action == "call"){
@@ -562,6 +563,16 @@ void GameTree::recurrentPrintTree(const shared_ptr<GameTreeNode>& node, int dept
             );
         }
         cout << endl;
+    }else if(node->getType() == GameTreeNode::CHANCE){
+        shared_ptr<ChanceNode> chance_node = std::dynamic_pointer_cast<ChanceNode>(node);
+        shared_ptr<GameTreeNode> children = chance_node->getChildren();
+
+        string prefix;
+        for(int j = 0;j < depth;j++) prefix += "\t";
+        cout << (fmt::format(
+                "{}{}",prefix,"CHANCE"
+        )) << endl;
+        recurrentPrintTree(children,depth + 1,depth_limit);
     }
 }
 
@@ -655,7 +666,7 @@ vector<double> GameTree::get_possible_bets(shared_ptr<ActionNode> root, int play
     bool all_in = streetSetting.allin;
     vector<float> bets_from_rule;
     if(betType == BetType::BET)bets_from_rule = streetSetting.bet_sizes;
-    else if(betType == BetType::DONK){bets_from_rule = streetSetting.donk_sizes;all_in = false;}
+    else if(betType == BetType::DONK)bets_from_rule = streetSetting.donk_sizes;
     else if(betType == BetType::RAISE)bets_from_rule = streetSetting.raise_sizes;
     else throw runtime_error("bet type unknown");
     for(float one_bet:bets_from_rule){

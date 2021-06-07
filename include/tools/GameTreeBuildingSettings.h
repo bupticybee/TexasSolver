@@ -21,6 +21,7 @@ public:
     StreetSetting flop_oop;
     StreetSetting turn_oop;
     StreetSetting river_oop;
+    StreetSetting& get_setting(string player,string round);
 };
 
 #endif //BINDSOLVER_GAMETREEBUILDINGSETTINGS_H

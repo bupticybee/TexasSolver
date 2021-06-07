@@ -48,7 +48,7 @@ void PokerSolver::build_game_tree(
 }
 
 void PokerSolver::train(string p1_range, string p2_range, string boards, string log_file, int iteration_number,
-                        int print_interval, string algorithm,int warmup,int threads) {
+                        int print_interval, string algorithm,int warmup,bool use_isomorphism,int threads) {
     string player1RangeStr = p1_range;
     string player2RangeStr = p2_range;
 
@@ -75,6 +75,7 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
             , algorithm
             , Solver::MonteCarolAlg::NONE
             , warmup
+            , use_isomorphism
             , threads
     );
     solver.train();

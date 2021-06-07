@@ -13,6 +13,7 @@
 #include "solver/PCfrSolver.h"
 #include "runtime/PokerSolver.h"
 #include "experimental/TCfrSolver.h"
+#include "tools/CommandLineTool.h"
 //#include <boost/version.hpp>
 
 using namespace std;
@@ -568,11 +569,11 @@ TEST(TestCase,test_poker_solver_bench){
             10,
             "discounted_cfr",
             -1,
+            true,
             8
     );
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }
- */
 
 TEST(TestCase,test_build_tree_and_solve){
     string ranks = "A,K,Q,J,T,9,8,7,6,5,4,3,2";
@@ -611,10 +612,18 @@ TEST(TestCase,test_build_tree_and_solve){
             10,
             "discounted_cfr",
             -1,
+            true,
             8
     );
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }
+ */
+
+TEST(TestCase,test_command_line_tool){
+    CommandLineTool clt = CommandLineTool();
+    clt.startWorking();
+}
+
 
 int main(int argc, char **argv)
 {

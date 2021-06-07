@@ -9,7 +9,7 @@
 
 PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, vector<PrivateCards> range2,
                      vector<int> initial_board, shared_ptr<Compairer> compairer, Deck deck, int iteration_number, bool debug,
-                     int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int warmup,int num_threads) :Solver(tree){
+                     int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int warmup,bool use_isomorphism,int num_threads) :Solver(tree){
     this->initial_board = initial_board;
     this->initial_board_long = Card::boardInts2long(initial_board);
     this->logfile = logfile;
@@ -29,6 +29,7 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
     this->compairer = compairer;
 
     this->deck = deck;
+    this->use_isomorphism = use_isomorphism;
 
     this->rrm = RiverRangeManager(compairer);
     this->iteration_number = iteration_number;
@@ -717,7 +718,9 @@ void PCfrSolver::train() {
     vector<vector<PrivateCards>> player_privates(this->player_number);
     player_privates[0] = pcm.getPreflopCards(0);
     player_privates[1] = pcm.getPreflopCards(1);
-    this->findGameSpecificIsomorphisms();
+    if(this->use_isomorphism){
+        this->findGameSpecificIsomorphisms();
+    }
 
     BestResponse br = BestResponse(player_privates,this->player_number,this->pcm,this->rrm,this->deck,this->debug,this->color_iso_offset,this->split_round,this->num_threads);
 

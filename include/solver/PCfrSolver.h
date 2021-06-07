@@ -85,6 +85,7 @@ public:
             string trainer,
             Solver::MonteCarolAlg monteCarolAlg,
             int warmup,
+            bool use_isomorphism,
             int num_threads
     );
     void train() override;
@@ -113,6 +114,7 @@ private:
     GameTreeNode::GameRound root_round;
     GameTreeNode::GameRound split_round;
     bool distributing_task;
+    bool use_isomorphism;
 
     const vector<PrivateCards>& playerHands(int player);
     vector<vector<float>> getReachProbs();

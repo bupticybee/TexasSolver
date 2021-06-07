@@ -39,6 +39,7 @@ public:
             int print_interval,
             string algorithm,
             int warmup,
+            bool use_isomorphism,
             int threads
             );
     void dump_strategy(string dump_file);

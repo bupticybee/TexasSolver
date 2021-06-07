@@ -9,7 +9,7 @@ void exchange_color(vector<float>& value,vector<PrivateCards> range,int rank1,in
 #endif
     if(value.empty())return;
     vector<int> self_ind = vector<int>(value.size());
-    int privateint2ind[52 * 52 * 2];
+    int privateint2ind[52 * 52 * 2] = {0};
     for(int i = 0;i < range.size();i ++){
         PrivateCards& pc = range[i];
         int card1 = pc.card1;

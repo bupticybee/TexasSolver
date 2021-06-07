@@ -20,7 +20,7 @@ vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vec
         if(cardstr_arr.size() == 2){
             weight = atof(cardstr_arr[1].c_str());
         }
-        if(weight == 0){
+        if(weight <= 0.005){
             continue;
         }
 

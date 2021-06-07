@@ -21,6 +21,7 @@ private:
     float ip_commit=5;
     int current_round=1;
     int raise_limit=4;
+    int thread_number=1;
     float small_blind=0.5;
     float big_blind=1;
     float stack=20 + 5;

@@ -27,7 +27,8 @@ public:
             float small_blind,
             float big_blind,
             float stack,
-            GameTreeBuildingSettings buildingSettings
+            GameTreeBuildingSettings buildingSettings,
+            float allin_threshold
     );
     void train(
             string p1_range,

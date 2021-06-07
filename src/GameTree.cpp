@@ -36,9 +36,10 @@ GameTree::GameTree(Deck deck,
                    float small_blind,
                    float big_blind,
                    float stack,
-                   GameTreeBuildingSettings buildingSettings
+                   GameTreeBuildingSettings buildingSettings,
+                   float allin_threshold
 ){
-    Rule rule = Rule(deck,oop_commit,ip_commit,current_round,raise_limit,small_blind,big_blind,stack,buildingSettings);
+    Rule rule = Rule(deck,oop_commit,ip_commit,current_round,raise_limit,small_blind,big_blind,stack,buildingSettings,allin_threshold);
     int current_player = 1;
     this->deck = deck;
     GameTreeNode::GameRound round = GameTreeNode::intToGameRound(rule.current_round);
@@ -672,7 +673,7 @@ vector<double> GameTree::get_possible_bets(shared_ptr<ActionNode> root, int play
     for(float one_bet:bets_from_rule){
         bets_ratios.push_back((double) one_bet / 100);
     }
-    float pot = rule.ip_commit + rule.oop_commit;
+    float pot = max(rule.ip_commit,rule.oop_commit) * 2;
     vector<double> possible_amounts;
     for(double one_bet: bets_ratios){
         double amount;
@@ -688,7 +689,9 @@ vector<double> GameTree::get_possible_bets(shared_ptr<ActionNode> root, int play
             amount = one_bet * pot;
             amount = this->round_nearest(amount, (double) rule.big_blind);
         }
-        if(amount < rule.stack - rule.get_commit(player)) {
+        if(betType == BetType::RAISE)amount += (rule.get_commit(next_player) - rule.get_commit(player));
+        if(amount + rule.get_commit(player) > rule.initial_effective_stack * rule.allin_threshold)amount = -1;
+        if(amount < rule.stack - rule.get_commit(player) && amount > 0) {
             possible_amounts.push_back(amount);
         }
     }

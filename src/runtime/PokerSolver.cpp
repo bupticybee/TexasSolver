@@ -28,7 +28,8 @@ void PokerSolver::build_game_tree(
         float small_blind,
         float big_blind,
         float stack,
-        GameTreeBuildingSettings buildingSettings
+        GameTreeBuildingSettings buildingSettings,
+        float allin_threshold
 ){
 
     shared_ptr<GameTree> game_tree = make_shared<GameTree>(
@@ -40,8 +41,9 @@ void PokerSolver::build_game_tree(
             small_blind,
             big_blind,
             stack,
-            buildingSettings
-            );
+            buildingSettings,
+            allin_threshold
+    );
     this->game_tree = game_tree;
 }
 

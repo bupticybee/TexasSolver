@@ -23,6 +23,8 @@ public:
     float stack;
     GameTreeBuildingSettings build_settings;
     vector<int> players = {0,1};
+    float allin_threshold;
+    float initial_effective_stack;
     Rule(
             Deck deck,
             float oop_commit,
@@ -32,7 +34,8 @@ public:
             float small_blind,
             float big_blind,
             float stack,
-            GameTreeBuildingSettings build_settings
+            GameTreeBuildingSettings build_settings,
+            float allin_threshold
     ) ;
 
     float get_pot();

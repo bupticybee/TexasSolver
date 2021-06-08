@@ -85,6 +85,7 @@ public:
             string trainer,
             Solver::MonteCarolAlg monteCarolAlg,
             int warmup,
+            float accuracy,
             bool use_isomorphism,
             int num_threads
     );
@@ -114,6 +115,7 @@ private:
     GameTreeNode::GameRound root_round;
     GameTreeNode::GameRound split_round;
     bool distributing_task;
+    float accuracy;
     bool use_isomorphism;
 
     const vector<PrivateCards>& playerHands(int player);

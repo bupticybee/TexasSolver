@@ -39,6 +39,7 @@ public:
             int print_interval,
             string algorithm,
             int warmup,
+            float accuracy,
             bool use_isomorphism,
             int threads
             );

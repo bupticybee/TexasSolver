@@ -9,7 +9,7 @@
 
 PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, vector<PrivateCards> range2,
                      vector<int> initial_board, shared_ptr<Compairer> compairer, Deck deck, int iteration_number, bool debug,
-                     int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int warmup,bool use_isomorphism,int num_threads) :Solver(tree){
+                     int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int warmup,float accuracy,bool use_isomorphism,int num_threads) :Solver(tree){
     this->initial_board = initial_board;
     this->initial_board_long = Card::boardInts2long(initial_board);
     this->logfile = logfile;
@@ -41,6 +41,7 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
     this->debug = debug;
     this->print_interval = print_interval;
     this->monteCarolAlg = monteCarolAlg;
+    this->accuracy = accuracy;
     if(num_threads == -1){
         num_threads = omp_get_num_procs();
     }
@@ -728,7 +729,7 @@ void PCfrSolver::train() {
 
     vector<vector<float>> reach_probs = this->getReachProbs();
     ofstream fileWriter;
-    fileWriter.open(this->logfile);
+    if(!this->logfile.empty())fileWriter.open(this->logfile);
 
     uint64_t begintime = timeSinceEpochMillisec();
     uint64_t endtime = timeSinceEpochMillisec();
@@ -759,11 +760,16 @@ void PCfrSolver::train() {
                 jo["time_ms"] = time_ms;
                 fileWriter << jo << endl;
             }
+            if(expliotibility <= this->accuracy){
+                break;
+            }
             //begintime = timeSinceEpochMillisec();
         }
     }
-    fileWriter.flush();
-    fileWriter.close();
+    if(!this->logfile.empty()) {
+        fileWriter.flush();
+        fileWriter.close();
+    }
     // System.out.println(this.tree.dumps(false).toJSONString());
 
 }

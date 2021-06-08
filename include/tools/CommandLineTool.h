@@ -30,6 +30,9 @@ private:
     string range_oop;
     string board;
     float accuracy;
+    int max_iteration=100;
+    int use_isomorphism=0;
+    int print_interval=10;
     shared_ptr<GameTreeBuildingSettings> gtbs;
 };
 

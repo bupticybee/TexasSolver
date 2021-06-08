@@ -547,12 +547,13 @@ TEST(TestCase,test_poker_solver){
     );
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }
+ */
 
 TEST(TestCase,test_poker_solver_bench){
     string ranks = "A,K,Q,J,T,9,8,7,6,5,4,3,2";
     string suits = "h,s,d,c";
     string game_tree = "../resources/gametree/generated_tree.km";
-    game_tree = "../install/tree_new_c.km";
+    game_tree = "../install/tree.km";
     string logfile_name = "../resources/outputs/outputs_log.txt";
     PokerSolver ps = PokerSolver(ranks,suits,"../resources/compairer/card5_dic_sorted.txt",2598961);
     ps.load_game_tree(game_tree);
@@ -569,11 +570,14 @@ TEST(TestCase,test_poker_solver_bench){
             10,
             "discounted_cfr",
             -1,
+            0.5,
             true,
             8
     );
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }
+
+ /*
 
 TEST(TestCase,test_build_tree_and_solve){
     string ranks = "A,K,Q,J,T,9,8,7,6,5,4,3,2";
@@ -612,17 +616,18 @@ TEST(TestCase,test_build_tree_and_solve){
             10,
             "discounted_cfr",
             -1,
+            0.5,
             true,
             8
     );
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }
- */
 
 TEST(TestCase,test_command_line_tool){
     CommandLineTool clt = CommandLineTool();
     clt.startWorking();
 }
+ */
 
 
 int main(int argc, char **argv)

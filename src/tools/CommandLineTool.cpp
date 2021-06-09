@@ -117,7 +117,7 @@ void CommandLineTool::processCommand(string input) {
         this->print_interval = stoi(paramstr);
     }else if(command == "start_solve"){
         cout << "<<<START SOLVING>>>" << endl;
-        ps.train(
+        this->ps.train(
                 this->range_ip,
                 this->range_oop,
                 this->board,
@@ -130,6 +130,11 @@ void CommandLineTool::processCommand(string input) {
                 this->use_isomorphism,
                 this->thread_number
         );
+    }else if(command == "dump_result"){
+        string output_file = paramstr;
+        this->ps.dump_strategy(output_file,this->dump_rounds);
+    }else if(command == "set_dump_rounds"){
+        this->dump_rounds = stoi(paramstr);
     }else{
         cout << "command not recognized: " << command << endl;
     }

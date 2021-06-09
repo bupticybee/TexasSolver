@@ -43,7 +43,7 @@ public:
             bool use_isomorphism,
             int threads
             );
-    void dump_strategy(string dump_file);
+    void dump_strategy(string dump_file,int dump_rounds);
 private:
     shared_ptr<Dic5Compairer> compairer;
     Deck deck;

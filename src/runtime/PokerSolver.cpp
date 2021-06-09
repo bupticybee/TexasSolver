@@ -82,8 +82,8 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
     solver.train();
 }
 
-void PokerSolver::dump_strategy(string dump_file) {
-    json dump_json = this->game_tree->dumps(false);
+void PokerSolver::dump_strategy(string dump_file,int dump_rounds) {
+    json dump_json = this->game_tree->dumps(false,dump_rounds);
     ofstream fileWriter;
     fileWriter.open(dump_file);
     fileWriter << dump_json;

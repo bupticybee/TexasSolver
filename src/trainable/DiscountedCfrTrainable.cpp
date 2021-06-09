@@ -127,8 +127,10 @@ void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int ite
 json DiscountedCfrTrainable::dump_strategy(bool with_state) {
     if(with_state) throw runtime_error("state storage not implemented");
 
+    cout << __LINE__ << endl;
     json strategy;
-    const vector<float>& average_strategy = this->getcurrentStrategyNoCache();
+    cout << "private cards size1: " << this->privateCards->size() << endl;
+    const vector<float>& average_strategy = this->getAverageStrategy();
     vector<GameActions>& game_actions = action_node.getActions();
     vector<string> actions_str;
     for(GameActions& one_action:game_actions) {
@@ -136,8 +138,11 @@ json DiscountedCfrTrainable::dump_strategy(bool with_state) {
                 one_action.toString()
         );
     }
+    cout << __LINE__ << endl;
 
 
+    cout << "private cards size2: " << this->privateCards->size() << endl;
+    cout << "card number: " << this->card_number << endl;
     for(int i = 0;i < this->privateCards->size();i ++){
         PrivateCards& one_private_card = (*this->privateCards)[i];
         vector<float> one_strategy(this->action_number);
@@ -146,12 +151,14 @@ json DiscountedCfrTrainable::dump_strategy(bool with_state) {
             int strategy_index = j * this->privateCards->size() + i;
             one_strategy[j] = average_strategy[strategy_index];
         }
-        strategy[fmt::format("{}",one_private_card.toString())] = std::move(one_strategy);
+        strategy[fmt::format("{}",one_private_card.toString())] = one_strategy;
     }
+    cout << __LINE__ << endl;
 
     json retjson;
     retjson["actions"] = std::move(actions_str);
     retjson["strategy"] = std::move(strategy);
+    cout << __LINE__ << endl;
     return std::move(retjson);
 }
 

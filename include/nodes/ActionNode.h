@@ -19,7 +19,7 @@ public:
     vector<GameActions>& getActions();
     vector<shared_ptr<GameTreeNode>>& getChildrens();
     int getPlayer();
-    shared_ptr<Trainable> getTrainable(int i);
+    shared_ptr<Trainable> getTrainable(int i,bool create_on_site=true);
     void setTrainable(vector<shared_ptr<Trainable>> trainable,vector<PrivateCards>* player_privates);
     vector<PrivateCards>* player_privates;
 

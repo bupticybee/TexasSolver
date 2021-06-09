@@ -31,11 +31,11 @@ GameTreeNode::GameTreeNodeType ActionNode::getType() {
     return ACTION;
 }
 
-shared_ptr<Trainable> ActionNode::getTrainable(int i) {
+shared_ptr<Trainable> ActionNode::getTrainable(int i,bool create_on_site) {
     if(i > this->trainables.size()){
         throw runtime_error(fmt::format("size unacceptable {} > {} ",i,this->trainables.size()));
     }
-    if(this->trainables[i] == nullptr){
+    if(this->trainables[i] == nullptr && create_on_site){
         this->trainables[i] = make_shared<DiscountedCfrTrainable>(player_privates,*this);
     }
     return this->trainables[i];

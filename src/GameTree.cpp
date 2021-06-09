@@ -581,10 +581,12 @@ void GameTree::printTree(int depth) {
     if(depth < -1 || depth == 0){
         throw runtime_error("depth can only be -1 or positive");
     }
+    vector<string> prefix;
     this->recurrentPrintTree(this->root,0,depth);
 }
 
-void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key="") {
+void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix) {
+    if(depth >= max_depth) return;
     if(node->getType() == GameTreeNode::GameTreeNodeType::ACTION) {
         json* retval;
         if(key != ""){
@@ -608,13 +610,23 @@ void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy
         for(int i = 0;i < one_node->getActions().size();i ++){
             GameActions& one_action = one_node->getActions()[i];
             shared_ptr<GameTreeNode> one_child = one_node->getChildrens()[i];
-
-            this->reConvertJson(one_child,childrens,one_action.toString());
+            vector<string> new_prefix(prefix);
+            new_prefix.push_back(one_action.toString());
+            this->reConvertJson(one_child,childrens,one_action.toString(),depth + 1,max_depth,new_prefix);
         }
         if((*retval)["childrens"].empty()){
             (*retval).erase("childrens");
         }
-        (*retval)["strategy"] = one_node->getTrainable(0)->dump_strategy(false);
+        shared_ptr<Trainable> trainable = one_node->getTrainable(0,false);
+        if(trainable != nullptr) {
+            cout << "------------------------------" << endl;
+            for(string one_act:prefix)cout << one_act << "->";
+            cout << endl;
+            cout << "actionnode player_privates: " << one_node->player_privates->size() << endl;
+            cout << "actionnode player: " << one_node->getPlayer() << endl;
+            (*retval)["strategy"] = trainable->dump_strategy(false);
+            cout << "-----------******-------------" << endl;
+        }
         (*retval)["node_type"] = "action_node";
     }else if(node->getType() == GameTreeNode::GameTreeNodeType::SHOWDOWN) {
     }else if(node->getType() == GameTreeNode::GameTreeNodeType::TERMINAL) {
@@ -637,7 +649,9 @@ void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy
         json& dealcards = (*retval)["dealcards"];
         for(int i = 0;i < cards.size();i ++){
             Card& one_card = const_cast<Card &>(cards[i]);
-            this->reConvertJson(childerns,dealcards,one_card.toString());
+            vector<string> new_prefix(prefix);
+            new_prefix.push_back("Chance:" + one_card.toString());
+            this->reConvertJson(childerns,dealcards,one_card.toString(),depth + 1,max_depth,new_prefix);
         }
         if((*retval)["dealcards"].empty()){
             (*retval).erase("dealcards");
@@ -650,12 +664,12 @@ void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy
     }
 }
 
-json GameTree::dumps(bool with_status) {
+json GameTree::dumps(bool with_status,int depth) {
     if(with_status == true){
         throw runtime_error("");
     }
     json retjson;
-    this->reConvertJson(this->getRoot(),retjson);
+    this->reConvertJson(this->getRoot(),retjson,"",0,depth,vector<string>({"begin"}));
     return std::move(retjson);
 }
 

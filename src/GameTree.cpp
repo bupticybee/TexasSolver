@@ -612,20 +612,14 @@ void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy
             shared_ptr<GameTreeNode> one_child = one_node->getChildrens()[i];
             vector<string> new_prefix(prefix);
             new_prefix.push_back(one_action.toString());
-            this->reConvertJson(one_child,childrens,one_action.toString(),depth + 1,max_depth,new_prefix);
+            this->reConvertJson(one_child,childrens,one_action.toString(),depth,max_depth,new_prefix);
         }
         if((*retval)["childrens"].empty()){
             (*retval).erase("childrens");
         }
         shared_ptr<Trainable> trainable = one_node->getTrainable(0,false);
         if(trainable != nullptr) {
-            cout << "------------------------------" << endl;
-            for(string one_act:prefix)cout << one_act << "->";
-            cout << endl;
-            cout << "actionnode player_privates: " << one_node->player_privates->size() << endl;
-            cout << "actionnode player: " << one_node->getPlayer() << endl;
             (*retval)["strategy"] = trainable->dump_strategy(false);
-            cout << "-----------******-------------" << endl;
         }
         (*retval)["node_type"] = "action_node";
     }else if(node->getType() == GameTreeNode::GameTreeNodeType::SHOWDOWN) {

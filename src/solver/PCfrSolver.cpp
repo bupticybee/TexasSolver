@@ -770,10 +770,6 @@ void PCfrSolver::train() {
         fileWriter.flush();
         fileWriter.close();
     }
-    // System.out.println(this.tree.dumps(false).toJSONString());
-    cout << "range0 size: " << this->ranges[0].size() << endl;
-    cout << "range1 size: " << this->ranges[1].size() << endl;
-
 
 }
 

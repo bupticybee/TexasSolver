@@ -61,7 +61,7 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
     vector<PrivateCards> player1Range = PrivateRangeConverter::rangeStr2Cards(player1RangeStr,initialBoard);
     vector<PrivateCards> player2Range = PrivateRangeConverter::rangeStr2Cards(player2RangeStr,initialBoard);
     string logfile_name = log_file;
-    PCfrSolver solver = PCfrSolver(
+    this->solver = make_shared<PCfrSolver>(
             game_tree
             , player1Range
             , player2Range
@@ -79,7 +79,7 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
             , use_isomorphism
             , threads
     );
-    solver.train();
+    this->solver->train();
 }
 
 void PokerSolver::dump_strategy(string dump_file,int dump_rounds) {

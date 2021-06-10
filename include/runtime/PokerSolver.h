@@ -48,6 +48,7 @@ private:
     shared_ptr<Dic5Compairer> compairer;
     Deck deck;
     shared_ptr<GameTree> game_tree;
+    shared_ptr<Solver> solver;
 public:
     const shared_ptr<GameTree> &getGameTree() const;
 };

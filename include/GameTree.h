@@ -62,7 +62,7 @@ public:
     json dumps(bool with_status,int depth);
 private:
     int recurrentSetDepth(shared_ptr<GameTreeNode> node,int depth);
-    void reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix);
+    void reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix,int deal);
 };
 
 

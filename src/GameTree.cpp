@@ -585,7 +585,7 @@ void GameTree::printTree(int depth) {
     this->recurrentPrintTree(this->root,0,depth);
 }
 
-void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix) {
+void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix,int deal) {
     if(depth >= max_depth) return;
     if(node->getType() == GameTreeNode::GameTreeNodeType::ACTION) {
         json* retval;
@@ -612,12 +612,12 @@ void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy
             shared_ptr<GameTreeNode> one_child = one_node->getChildrens()[i];
             vector<string> new_prefix(prefix);
             new_prefix.push_back(one_action.toString());
-            this->reConvertJson(one_child,childrens,one_action.toString(),depth,max_depth,new_prefix);
+            this->reConvertJson(one_child,childrens,one_action.toString(),depth,max_depth,new_prefix,deal);
         }
         if((*retval)["childrens"].empty()){
             (*retval).erase("childrens");
         }
-        shared_ptr<Trainable> trainable = one_node->getTrainable(0,false);
+        shared_ptr<Trainable> trainable = one_node->getTrainable(deal,false);
         if(trainable != nullptr) {
             (*retval)["strategy"] = trainable->dump_strategy(false);
         }
@@ -645,7 +645,25 @@ void GameTree::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy
             Card& one_card = const_cast<Card &>(cards[i]);
             vector<string> new_prefix(prefix);
             new_prefix.push_back("Chance:" + one_card.toString());
-            this->reConvertJson(childerns,dealcards,one_card.toString(),depth + 1,max_depth,new_prefix);
+
+            int card = i;
+            int card_num = this->deck.getCards().size();
+            int new_deal;
+            if(deal == 0){
+                new_deal = card + 1;
+            } else if (deal > 0 && deal <= card_num){
+                int origin_deal = deal - 1;
+
+#ifdef DEBUG
+                if(origin_deal == card) throw runtime_error("deal should not be equal");
+#endif
+                new_deal = card_num * origin_deal + card;
+                new_deal += (1 + card_num);
+            } else{
+                throw runtime_error(fmt::format("deal out of range : {} ",deal));
+            }
+
+            this->reConvertJson(childerns,dealcards,one_card.toString(),depth + 1,max_depth,new_prefix,new_deal);
         }
         if((*retval)["dealcards"].empty()){
             (*retval).erase("dealcards");
@@ -663,7 +681,7 @@ json GameTree::dumps(bool with_status,int depth) {
         throw runtime_error("");
     }
     json retjson;
-    this->reConvertJson(this->getRoot(),retjson,"",0,depth,vector<string>({"begin"}));
+    this->reConvertJson(this->getRoot(),retjson,"",0,depth,vector<string>({"begin"}),0);
     return std::move(retjson);
 }
 

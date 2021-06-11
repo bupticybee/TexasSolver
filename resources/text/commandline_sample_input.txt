@@ -24,7 +24,7 @@ set_bet_sizes ip,river,raise,60,100
 set_bet_sizes ip,river,allin
 build_tree
 set_thread_num 8
-set_accuracy 20
+set_accuracy 0.5
 set_max_iteration 200
 set_print_interval 10
 set_use_isomorphism 1

@@ -122,12 +122,12 @@ private:
     vector<vector<float>> getReachProbs();
     static vector<PrivateCards> noDuplicateRange(const vector<PrivateCards>& private_range,uint64_t board_long);
     void setTrainable(shared_ptr<GameTreeNode> root);
-    vector<float> cfr(int player, shared_ptr<GameTreeNode> node, const vector<float>& reach_probs, int iter, uint64_t current_board,int deal);
+    vector<float> cfr(int player, shared_ptr<GameTreeNode> node,const vector<int>& reach_inds, const vector<float>& reach_probs, int iter, uint64_t current_board,int deal);
     vector<int> getAllAbstractionDeal(int deal);
-    vector<float> chanceUtility(int player,shared_ptr<ChanceNode> node,const vector<float>& reach_probs,int iter,uint64_t current_boardi,int deal);
-    vector<float> showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<float>& reach_probs,int iter,uint64_t current_board,int deal);
-    vector<float> actionUtility(int player,shared_ptr<ActionNode> node,const vector<float>& reach_probs,int iter,uint64_t current_board,int deal);
-    vector<float> terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<float>& reach_prob,int iter,uint64_t current_board,int deal);
+    vector<float> chanceUtility(int player,shared_ptr<ChanceNode> node,const vector<int>& reach_inds,const vector<float>& reach_probs,int iter,uint64_t current_boardi,int deal);
+    vector<float> showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<int>& reach_inds,const vector<float>& reach_probs,int iter,uint64_t current_board,int deal);
+    vector<float> actionUtility(int player,shared_ptr<ActionNode> node,const vector<int>& reach_inds,const vector<float>& reach_probs,int iter,uint64_t current_board,int deal);
+    vector<float> terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<int>& reach_inds,const vector<float>& reach_prob,int iter,uint64_t current_board,int deal);
     void findGameSpecificIsomorphisms();
     void purnTree();
 

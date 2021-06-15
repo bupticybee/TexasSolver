@@ -197,28 +197,28 @@ vector<int> PCfrSolver::getAllAbstractionDeal(int deal){
     return all_deal;
 }
 
-vector<float> PCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node, const vector<float> &reach_probs, int iter,
+vector<float> PCfrSolver::cfr(int player, shared_ptr<GameTreeNode> node,const vector<int>& value_inds,const vector<int>& reach_inds, const vector<float> &reach_probs, int iter,
                                     uint64_t current_board,int deal) {
     switch(node->getType()) {
         case GameTreeNode::ACTION: {
             shared_ptr<ActionNode> action_node = std::dynamic_pointer_cast<ActionNode>(node);
-            return actionUtility(player, action_node, reach_probs, iter, current_board,deal);
+            return actionUtility(player, action_node,value_inds,reach_inds, reach_probs, iter, current_board,deal);
         }case GameTreeNode::SHOWDOWN: {
             shared_ptr<ShowdownNode> showdown_node = std::dynamic_pointer_cast<ShowdownNode>(node);
-            return showdownUtility(player, showdown_node, reach_probs, iter, current_board,deal);
+            return showdownUtility(player, showdown_node,value_inds,reach_inds, reach_probs, iter, current_board,deal);
         }case GameTreeNode::TERMINAL: {
             shared_ptr<TerminalNode> terminal_node = std::dynamic_pointer_cast<TerminalNode>(node);
-            return terminalUtility(player, terminal_node, reach_probs, iter, current_board,deal);
+            return terminalUtility(player, terminal_node,value_inds,reach_inds, reach_probs, iter, current_board,deal);
         }case GameTreeNode::CHANCE: {
             shared_ptr<ChanceNode> chance_node = std::dynamic_pointer_cast<ChanceNode>(node);
-            return chanceUtility(player, chance_node, reach_probs, iter, current_board,deal);
+            return chanceUtility(player, chance_node,value_inds,reach_inds, reach_probs, iter, current_board,deal);
         }default:
             throw runtime_error("node type unknown");
     }
 }
 
 vector<float>
-PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<float> &reach_probs, int iter,
+PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node,const vector<int>& value_inds,const vector<int>& reach_inds, const vector<float> &reach_probs, int iter,
                          uint64_t current_board,int deal) {
     vector<Card>& cards = this->deck.getCards();
     //float[] cardWeights = getCardsWeights(player,reach_probs[1 - player],current_board);
@@ -308,7 +308,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         vector<PrivateCards> &oppoPrivateCards = (this->ranges[1 - player]);
 
 
-        vector<float> new_reach_probs = vector<float>(oppoPrivateCards.size());
+        vector<float> new_reach_probs = vector<float>(oppoPrivateCards.size(),0.0);
 
 
 
@@ -318,7 +318,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
 #endif
 
         int player_hand_len = this->ranges[oppo].size();
-        for (int player_hand = 0; player_hand < player_hand_len; player_hand++) {
+        for (int player_hand: reach_inds) {
             PrivateCards &one_private = this->ranges[oppo][player_hand];
             uint64_t privateBoardLong = one_private.toBoardLong();
             if (Card::boardsHasIntercept(card_long, privateBoardLong)) {
@@ -350,7 +350,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
             results[one_card->getCardInt()] = vector<float>(this->ranges[player].size());
             //TaskParams taskParams = TaskParams();
         }else {
-            vector<float> child_utility = this->cfr(player, one_child, new_reach_probs, iter, new_board_long, new_deal);
+            vector<float> child_utility = this->cfr(player, one_child,value_inds,reach_inds ,new_reach_probs, iter, new_board_long, new_deal);
             results[one_card->getCardInt()] = child_utility;
         }
     }
@@ -398,7 +398,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
 }
 
 vector<float>
-PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<float> &reach_probs, int iter,
+PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node,const vector<int>& value_inds,const vector<int>& reach_inds, const vector<float> &reach_probs, int iter,
                          uint64_t current_board,int deal) {
     int oppo = 1 - player;
     const vector<PrivateCards>& node_player_private_cards = this->ranges[node->getPlayer()];
@@ -450,17 +450,23 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
     for (int action_id = 0; action_id < actions.size(); action_id++) {
 
         if (node_player != player) {
-            vector<float> new_reach_prob = vector<float>(reach_probs.size());
-            for (int hand_id = 0; hand_id < new_reach_prob.size(); hand_id++) {
+            vector<float> new_reach_prob = vector<float>(reach_probs.size(),0.0);
+            vector<int> new_reach_ind;
+            new_reach_ind.reserve(reach_inds.size());
+            for (int hand_id:reach_inds) {
                 float strategy_prob = current_strategy[hand_id + action_id * node_player_private_cards.size()];
-                new_reach_prob[hand_id] = reach_probs[hand_id] * strategy_prob;
+                float one_reach_prob = reach_probs[hand_id] * strategy_prob;
+                if(one_reach_prob != 0){
+                    new_reach_prob[hand_id] = one_reach_prob;
+                    new_reach_ind.push_back(hand_id);
+                }
             }
             //#pragma omp task shared(results,action_id)
-            results[action_id] = this->cfr(player, children[action_id], new_reach_prob, iter,
+            results[action_id] = this->cfr(player, children[action_id],value_inds ,new_reach_ind , new_reach_prob, iter,
                                            current_board,deal);
         }else {
             //#pragma omp task shared(results,action_id)
-            results[action_id] = this->cfr(player, children[action_id], reach_probs, iter,
+            results[action_id] = this->cfr(player, children[action_id],value_inds,reach_inds , reach_probs, iter,
                                            current_board,deal);
         }
 
@@ -541,7 +547,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
 }
 
 vector<float>
-PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vector<float> &reach_probs,
+PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node,const vector<int>& value_inds,const vector<int>& reach_inds, const vector<float> &reach_probs,
                            int iter, uint64_t current_board,int deal) {
     // player win时候player的收益，player lose的时候收益明显为-player_payoff
     int oppo = 1 - player;
@@ -599,7 +605,7 @@ PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vec
 }
 
 vector<float>
-PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vector<float> &reach_prob, int iter,
+PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node,const vector<int>& value_inds,const vector<int>& reach_inds, const vector<float> &reach_prob, int iter,
                            uint64_t current_board,int deal) {
     float player_payoff = node->get_payoffs()[player];
 
@@ -742,7 +748,11 @@ void PCfrSolver::train() {
                 //#pragma omp single
                 {
                     //this->distributing_task = true;
-                    cfr(player_id, this->tree->getRoot(), reach_probs[1 - player_id], i, this->initial_board_long,0);
+                    vector<int> reach_inds = vector<int>(reach_probs[1 - player_id].size());
+                    for(int one_ind = 0;one_ind < reach_inds.size();one_ind ++)reach_inds[one_ind] = one_ind;
+                    vector<int> value_inds = vector<int>(reach_probs[player_id].size());
+                    for(int one_ind = 0;one_ind < value_inds.size();one_ind ++)value_inds[one_ind] = one_ind;
+                    cfr(player_id, this->tree->getRoot(),value_inds,reach_inds ,reach_probs[1 - player_id], i, this->initial_board_long,0);
                     //throw runtime_error("returning...");
                 }
             }

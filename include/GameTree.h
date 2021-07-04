@@ -59,10 +59,10 @@ public:
     static shared_ptr<ShowdownNode> generateShowdownNode(json meta, string round,shared_ptr<GameTreeNode> parent);
     shared_ptr<TerminalNode> generateTerminalNode(json meta, string round,shared_ptr<GameTreeNode> parent);
     void printTree(int depth);
-    json dumps(bool with_status,int depth);
+    //json dumps(bool with_status,int depth);
 private:
     int recurrentSetDepth(shared_ptr<GameTreeNode> node,int depth);
-    void reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix,int deal);
+    //void reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix,int deal);
 };
 
 

@@ -773,3 +773,143 @@ void PCfrSolver::train() {
 
 }
 
+void PCfrSolver::exchangeRange(json& strategy,int rank1,int rank2){
+    // TODO finish exchange ranget
+}
+
+void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix,int deal,vector<vector<int>> exchange_color_list) {
+    if(depth >= max_depth) return;
+    if(node->getType() == GameTreeNode::GameTreeNodeType::ACTION) {
+        json* retval;
+        if(key != ""){
+            strategy[key] = json();
+            retval = &(strategy[key]);
+        }else{
+            retval = &strategy;
+        }
+
+        shared_ptr<ActionNode> one_node = std::dynamic_pointer_cast<ActionNode>(node);
+
+        vector<string> actions_str;
+        for(GameActions one_action:one_node->getActions()) actions_str.push_back(one_action.toString());
+
+        (*retval)["actions"] = actions_str;
+        (*retval)["player"] = one_node->getPlayer();
+
+        (*retval)["childrens"] = json();
+        json& childrens = (*retval)["childrens"];
+
+        for(int i = 0;i < one_node->getActions().size();i ++){
+            GameActions& one_action = one_node->getActions()[i];
+            shared_ptr<GameTreeNode> one_child = one_node->getChildrens()[i];
+            vector<string> new_prefix(prefix);
+            new_prefix.push_back(one_action.toString());
+            this->reConvertJson(one_child,childrens,one_action.toString(),depth,max_depth,new_prefix,deal,exchange_color_list);
+        }
+        if((*retval)["childrens"].empty()){
+            (*retval).erase("childrens");
+        }
+        shared_ptr<Trainable> trainable = one_node->getTrainable(deal,false);
+        if(trainable != nullptr) {
+            (*retval)["strategy"] = trainable->dump_strategy(false);
+        }
+        (*retval)["node_type"] = "action_node";
+    }else if(node->getType() == GameTreeNode::GameTreeNodeType::SHOWDOWN) {
+    }else if(node->getType() == GameTreeNode::GameTreeNodeType::TERMINAL) {
+    }else if(node->getType() == GameTreeNode::GameTreeNodeType::CHANCE) {
+        json* retval;
+        if(key != ""){
+            strategy[key] = json();
+            retval = &(strategy[key]);
+        }else{
+            retval = &strategy;
+        }
+
+        shared_ptr<ChanceNode> chanceNode = std::dynamic_pointer_cast<ChanceNode>(node);
+        const vector<Card>& cards = chanceNode->getCards();
+        shared_ptr<GameTreeNode> childerns = chanceNode->getChildren();
+        vector<string> card_strs;
+        for(Card card:cards)
+            card_strs.push_back(card.toString());
+
+        json& dealcards = (*retval)["dealcards"];
+        for(int i = 0;i < cards.size();i ++){
+            vector<vector<int>> new_exchange_color_list(exchange_color_list);
+            Card& one_card = const_cast<Card &>(cards[i]);
+            vector<string> new_prefix(prefix);
+            new_prefix.push_back("Chance:" + one_card.toString());
+
+            int card = i;
+
+            int offset = this->color_iso_offset[deal][one_card.getCardInt() % 4];
+            if(offset != 0) {
+                for(int x = 0;x < cards.size();x ++){
+                    if(
+                            Card::card2int(cards[x]) ==
+                            (Card::card2int(cards[card]) + offset)
+                    ){
+                        card = x;
+                        break;
+                    }
+                }
+                if(card == i){
+                    throw runtime_error("isomorphism not found while dump strategy");
+                }
+                vector<int> one_exchange{i % 4,card % 4};
+                new_exchange_color_list.push_back(one_exchange);
+            }
+
+            int card_num = this->deck.getCards().size();
+            int new_deal;
+            if(deal == 0){
+                new_deal = card + 1;
+            } else if (deal > 0 && deal <= card_num){
+                int origin_deal = deal - 1;
+
+#ifdef DEBUG
+                if(origin_deal == card) throw runtime_error("deal should not be equal");
+#endif
+                new_deal = card_num * origin_deal + card;
+                new_deal += (1 + card_num);
+            } else{
+                throw runtime_error(fmt::format("deal out of range : {} ",deal));
+            }
+
+            if(exchange_color_list.size() > 1){
+                throw runtime_error("exchange color list shouldn't be exceed size 1 here");
+            }
+
+            string one_card_str = one_card.toString();
+            if(exchange_color_list.size() == 1) {
+                int rank1 = exchange_color_list[0][0];
+                int rank2 = exchange_color_list[0][1];
+                if(one_card.getCardInt() % 4 == rank1){
+                    one_card_str = Card::intCard2Str(one_card.getCardInt() - rank1 + rank2);
+                }else if(one_card.getCardInt() % 4 == rank2){
+                    one_card_str = Card::intCard2Str(one_card.getCardInt() - rank2 + rank1);
+                }
+
+            }
+
+            this->reConvertJson(childerns,dealcards,one_card_str,depth + 1,max_depth,new_prefix,new_deal,new_exchange_color_list);
+        }
+        if((*retval)["dealcards"].empty()){
+            (*retval).erase("dealcards");
+        }
+
+        (*retval)["deal_number"] = dealcards.size();
+        (*retval)["node_type"] = "chance_node";
+    }else{
+        throw runtime_error("node type unknown!!");
+    }
+}
+
+json PCfrSolver::dumps(bool with_status,int depth) {
+    if(with_status == true){
+        throw runtime_error("");
+    }
+    json retjson;
+    this->reConvertJson(this->tree->getRoot(),retjson,"",0,depth,vector<string>({"begin"}),0,vector<vector<int>>());
+    return std::move(retjson);
+}
+

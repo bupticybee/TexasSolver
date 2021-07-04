@@ -18,6 +18,7 @@ public:
     Solver(shared_ptr<GameTree> tree);
     shared_ptr<GameTree> getTree();
     virtual void train() = 0;
+    virtual json dumps(bool with_status,int depth) = 0;
     shared_ptr<GameTree> tree;
 };
 

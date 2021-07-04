@@ -90,6 +90,7 @@ public:
             int num_threads
     );
     void train() override;
+    json dumps(bool with_status,int depth);
 private:
     vector<vector<PrivateCards>> ranges;
     vector<PrivateCards> range1;
@@ -130,7 +131,8 @@ private:
     vector<float> terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<float>& reach_prob,int iter,uint64_t current_board,int deal);
     void findGameSpecificIsomorphisms();
     void purnTree();
-
+    void exchangeRange(json& strategy,int rank1,int rank2);
+    void reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix,int deal,vector<vector<int>> exchange_color_list);
 
 };
 

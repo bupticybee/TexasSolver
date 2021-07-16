@@ -131,7 +131,7 @@ private:
     vector<float> terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<float>& reach_prob,int iter,uint64_t current_board,int deal);
     void findGameSpecificIsomorphisms();
     void purnTree();
-    void exchangeRange(json& strategy,int rank1,int rank2);
+    void exchangeRange(json& strategy,int rank1,int rank2,shared_ptr<ActionNode> one_node);
     void reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix,int deal,vector<vector<int>> exchange_color_list);
 
 };

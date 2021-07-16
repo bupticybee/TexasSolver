@@ -21,14 +21,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4738a0c2-febf-47b1-900f-4b0a2f98224d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/GameTree.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/GameTree.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/solver/PCfrSolver.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/solver/PCfrSolver.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/solver/Solver.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/solver/Solver.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameTree.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameTree.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/runtime/PokerSolver.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/runtime/PokerSolver.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/tools/utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/tools/utils.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/solver/PCfrSolver.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/solver/PCfrSolver.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/utils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/tools/utils.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,6 +87,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="console_solver" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="true" REDIRECT_INPUT_PATH="../resources/text/commandline_sample_input.txt" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="bindSolver" TARGET_NAME="console_solver" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="bindSolver" RUN_TARGET_NAME="console_solver">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -107,11 +110,6 @@
     <configuration name="gtest_main" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="bindSolver" TARGET_NAME="gtest_main" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <list>
@@ -145,7 +143,8 @@
       <workItem from="1618980110561" duration="1012000" />
       <workItem from="1622551655725" duration="28046000" />
       <workItem from="1622949287600" duration="82106000" />
-      <workItem from="1624368052841" duration="10606000" />
+      <workItem from="1624368052841" duration="16403000" />
+      <workItem from="1626431779319" duration="903000" />
     </task>
     <servers />
   </component>

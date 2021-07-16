@@ -773,8 +773,32 @@ void PCfrSolver::train() {
 
 }
 
-void PCfrSolver::exchangeRange(json& strategy,int rank1,int rank2){
-    // TODO finish exchange ranget
+void PCfrSolver::exchangeRange(json& strategy,int rank1,int rank2,shared_ptr<ActionNode> one_node){
+    if(rank1 == rank2)return;
+    int player = one_node->getPlayer();
+    vector<string> range_strs;
+    vector<vector<float>> strategies;
+
+    for(int i = 0;i < this->ranges[player].size();i ++){
+        string one_range_str = this->ranges[player][i].toString();
+        if(!strategy.contains(one_range_str)){
+            for(auto one_key:strategy.items()){
+                cout << one_key.key() << endl;
+            }
+            cout << "strategy: " << strategy  << endl;
+            throw runtime_error(fmt::format("{} not exist in strategy",one_range_str));
+        }
+        vector<float> one_strategy = strategy[one_range_str];
+        range_strs.push_back(one_range_str);
+        strategies.push_back(one_strategy);
+    }
+    exchange_color(strategies,this->ranges[player],rank1,rank2);
+
+    for(int i = 0;i < this->ranges[player].size();i ++) {
+        string one_range_str = this->ranges[player][i].toString();
+        vector<float> one_strategy = strategies[i];
+        strategy[one_range_str] = one_strategy;
+    }
 }
 
 void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix,int deal,vector<vector<int>> exchange_color_list) {
@@ -812,8 +836,15 @@ void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strate
         shared_ptr<Trainable> trainable = one_node->getTrainable(deal,false);
         if(trainable != nullptr) {
             (*retval)["strategy"] = trainable->dump_strategy(false);
+            for(vector<int> one_exchange:exchange_color_list){
+                int rank1 = one_exchange[0];
+                int rank2 = one_exchange[1];
+                this->exchangeRange((*retval)["strategy"]["strategy"],rank1,rank2,one_node);
+
+            }
         }
         (*retval)["node_type"] = "action_node";
+
     }else if(node->getType() == GameTreeNode::GameTreeNodeType::SHOWDOWN) {
     }else if(node->getType() == GameTreeNode::GameTreeNodeType::TERMINAL) {
     }else if(node->getType() == GameTreeNode::GameTreeNodeType::CHANCE) {

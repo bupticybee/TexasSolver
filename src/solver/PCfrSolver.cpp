@@ -873,7 +873,7 @@ void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strate
             int card = i;
 
             int offset = this->color_iso_offset[deal][one_card.getCardInt() % 4];
-            if(offset != 0) {
+            if(offset < 0) {
                 for(int x = 0;x < cards.size();x ++){
                     if(
                             Card::card2int(cards[x]) ==
@@ -886,7 +886,7 @@ void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strate
                 if(card == i){
                     throw runtime_error("isomorphism not found while dump strategy");
                 }
-                vector<int> one_exchange{i % 4,card % 4};
+                vector<int> one_exchange{one_card.getCardInt() % 4,one_card.getCardInt() % 4 + offset};
                 new_exchange_color_list.push_back(one_exchange);
             }
 

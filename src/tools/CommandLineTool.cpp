@@ -105,6 +105,8 @@ void CommandLineTool::processCommand(string input) {
         }
     }else if(command == "set_accuracy"){
         this->accuracy = stof(paramstr);
+    }else if(command == "set_allin_threshold"){
+        this->allin_threshold = stof(paramstr);
     }else if(command == "set_thread_num"){
         this->thread_number = stoi(paramstr);
     }else if(command == "build_tree"){

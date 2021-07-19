@@ -22,6 +22,7 @@ set_bet_sizes oop,river,allin
 set_bet_sizes ip,river,bet,50
 set_bet_sizes ip,river,raise,60,100
 set_bet_sizes ip,river,allin
+set_allin_threshold 0.67
 build_tree
 set_thread_num 8
 set_accuracy 0.5

@@ -365,7 +365,6 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
 #ifdef DEBUG
             if(rank2 < 0) throw runtime_error("rank error");
 #endif
-            // TODO 这里需要调换一下颜色,根据offset
             child_utility = results[one_card->getCardInt() + offset];
             exchange_color(child_utility,this->pcm.getPreflopCards(player),rank1,rank2);
         }else{

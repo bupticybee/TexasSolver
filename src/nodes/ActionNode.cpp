@@ -31,11 +31,11 @@ GameTreeNode::GameTreeNodeType ActionNode::getType() {
     return ACTION;
 }
 
-shared_ptr<Trainable> ActionNode::getTrainable(int i) {
+shared_ptr<Trainable> ActionNode::getTrainable(int i,bool create_on_site) {
     if(i > this->trainables.size()){
         throw runtime_error(fmt::format("size unacceptable {} > {} ",i,this->trainables.size()));
     }
-    if(this->trainables[i] == nullptr){
+    if(this->trainables[i] == nullptr && create_on_site){
         this->trainables[i] = make_shared<DiscountedCfrTrainable>(player_privates,*this);
     }
     return this->trainables[i];
@@ -44,4 +44,12 @@ shared_ptr<Trainable> ActionNode::getTrainable(int i) {
 void ActionNode::setTrainable(vector<shared_ptr<Trainable>> trainables,vector<PrivateCards>* player_privates) {
     this->trainables = trainables;
     this->player_privates = player_privates;
+}
+
+void ActionNode::setActions(const vector<GameActions> &actions) {
+    ActionNode::actions = actions;
+}
+
+void ActionNode::setChildrens(const vector<shared_ptr<GameTreeNode>> &childrens) {
+    ActionNode::childrens = childrens;
 }

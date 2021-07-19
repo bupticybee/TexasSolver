@@ -26,6 +26,7 @@ class RulesBuilder():
                  stack = 10,
                  bet_sizes = ["1_pot"],
                  raise_sizes = ["1_pot"],
+                 allin_threshold = 0.67,
                  ):
         self.rule = rule
         self.parse_rules()
@@ -39,6 +40,8 @@ class RulesBuilder():
         self.stack = stack
         self.bet_sizes = bet_sizes
         self.raise_sizes = raise_sizes
+        self.allin_threshold = allin_threshold
+        self.initial_effective_stack = stack - self.current_commit[0]
 
     def parse_rules(self):
         for k,v in self.rule.items():
@@ -233,7 +236,7 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
             raise
         return root
 
-    def get_possible_betting_sizes(self,root,player,next_player,typeofbet):
+    def get_possible_betting_sizes(self,root,player,next_player,typeofbet,rule):
         committed = root.committed
         if typeofbet == "bet":
             illegal_bets = self.rule.bet_sizes
@@ -256,7 +259,7 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
         #     被call过)
         # pot = min(committed) * 2
         # 第二种计算方式，pod 值仅仅等于committed之和
-        pot = sum(committed)
+        pot = max(committed) * 2
 
         # 根据conf计算下注数额，比如3x pot,2x pot, 0.5x pot
         possible_amounts = []
@@ -281,10 +284,15 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
                     # 其他时候，下注数额 总是和pot有关(比如2x pot,0.5x pot这种)
                     amount = one_bet * pot
                     amount = round_nearest(amount,bb)
+                if typeofbet == "raise":
+                    amount += (committed[next_player] - committed[player])
+                if amount + committed[player] > rule.initial_effective_stack * rule.allin_threshold:
+                    amount = -1
             elif type(one_bet) == str:
                 assert(one_bet == 'all-in')
                 amount = self.rule.stack - committed[player]
-            possible_amounts.append(amount)
+            if amount > 0:
+                possible_amounts.append(amount)
 
         if committed[player] != sb: # 一开始的possible bet amount不能简单取整
             possible_amounts = [int(i) for i in possible_amounts if i > 0]
@@ -355,7 +363,7 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
                 self.__build(nextnode)
             elif one_action == 'bet':
                 #  赌注大小分两类：固定size (比如10$)赌注和 pot 的固定倍数 的size (比如pot的50%，100%，300%)
-                betting_sizes = self.get_possible_betting_sizes(root,player,next_player,"bet")
+                betting_sizes = self.get_possible_betting_sizes(root,player,next_player,"bet",self.rule)
                 for one_betting_size in betting_sizes:
                     committed = deepcopy(root.committed)
                     #committed[player] += self.rule.amounts[one_action]
@@ -400,7 +408,7 @@ class FiveCardTexasTreeBuilder(TreeBuilder):
                     continue
 
                 # 当第一个call 之后的raise需要特殊处理
-                betting_sizes = self.get_possible_betting_sizes(root,player,next_player,"raise")
+                betting_sizes = self.get_possible_betting_sizes(root,player,next_player,"raise",self.rule)
 
                 for one_betting_size in betting_sizes:
                     one_action_raise = one_action + "_" + str(one_betting_size)

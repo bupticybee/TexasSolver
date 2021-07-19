@@ -85,9 +85,12 @@ public:
             string trainer,
             Solver::MonteCarolAlg monteCarolAlg,
             int warmup,
+            float accuracy,
+            bool use_isomorphism,
             int num_threads
     );
     void train() override;
+    json dumps(bool with_status,int depth);
 private:
     vector<vector<PrivateCards>> ranges;
     vector<PrivateCards> range1;
@@ -113,6 +116,8 @@ private:
     GameTreeNode::GameRound root_round;
     GameTreeNode::GameRound split_round;
     bool distributing_task;
+    float accuracy;
+    bool use_isomorphism;
 
     const vector<PrivateCards>& playerHands(int player);
     vector<vector<float>> getReachProbs();
@@ -126,7 +131,8 @@ private:
     vector<float> terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<float>& reach_prob,int iter,uint64_t current_board,int deal);
     void findGameSpecificIsomorphisms();
     void purnTree();
-
+    void exchangeRange(json& strategy,int rank1,int rank2,shared_ptr<ActionNode> one_node);
+    void reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix,int deal,vector<vector<int>> exchange_color_list);
 
 };
 

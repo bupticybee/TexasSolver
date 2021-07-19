@@ -128,7 +128,7 @@ json DiscountedCfrTrainable::dump_strategy(bool with_state) {
     if(with_state) throw runtime_error("state storage not implemented");
 
     json strategy;
-    const vector<float>& average_strategy = this->getcurrentStrategyNoCache();
+    const vector<float>& average_strategy = this->getAverageStrategy();
     vector<GameActions>& game_actions = action_node.getActions();
     vector<string> actions_str;
     for(GameActions& one_action:game_actions) {
@@ -136,7 +136,6 @@ json DiscountedCfrTrainable::dump_strategy(bool with_state) {
                 one_action.toString()
         );
     }
-
 
     for(int i = 0;i < this->privateCards->size();i ++){
         PrivateCards& one_private_card = (*this->privateCards)[i];
@@ -146,7 +145,7 @@ json DiscountedCfrTrainable::dump_strategy(bool with_state) {
             int strategy_index = j * this->privateCards->size() + i;
             one_strategy[j] = average_strategy[strategy_index];
         }
-        strategy[fmt::format("{}",one_private_card.toString())] = std::move(one_strategy);
+        strategy[fmt::format("{}",one_private_card.toString())] = one_strategy;
     }
 
     json retjson;

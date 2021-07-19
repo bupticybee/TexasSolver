@@ -19,7 +19,7 @@ public:
     vector<GameActions>& getActions();
     vector<shared_ptr<GameTreeNode>>& getChildrens();
     int getPlayer();
-    shared_ptr<Trainable> getTrainable(int i);
+    shared_ptr<Trainable> getTrainable(int i,bool create_on_site=true);
     void setTrainable(vector<shared_ptr<Trainable>> trainable,vector<PrivateCards>* player_privates);
     vector<PrivateCards>* player_privates;
 
@@ -28,6 +28,12 @@ private:
 private:
     // TODO 这里可以减肥
     vector<GameActions> actions;
+public:
+    void setActions(const vector<GameActions> &actions);
+
+    void setChildrens(const vector<shared_ptr<GameTreeNode>> &childrens);
+
+private:
     // TODO 这里也可以减肥，不同chance node之后的节点都可以复用,可能通过记录一个id的形式区分不同分支,复用，复用，复用到极致
     vector<shared_ptr<GameTreeNode>> childrens;
     vector<shared_ptr<Trainable>> trainables;

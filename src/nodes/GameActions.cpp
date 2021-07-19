@@ -16,7 +16,7 @@ double GameActions::getAmount() {
 
 GameActions::GameActions(GameTreeNode::PokerActions action, double amount) {
     this->action = action;
-    if (action == GameTreeNode::PokerActions::RAISE || action == GameTreeNode::PokerActions::BET) {
+    if (action == GameTreeNode::PokerActions::RAISE || action == GameTreeNode::PokerActions::BET ) {
         if (amount == -1) throw runtime_error(fmt::format("raise/bet amount should not be -1, find {}",amount));
     } else {
         if (amount != -1) throw runtime_error(fmt::format("check/fold/call amount should be -1, find {}",amount));

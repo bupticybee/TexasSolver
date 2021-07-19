@@ -20,8 +20,35 @@ void PokerSolver::load_game_tree(string game_tree_file) {
     this->game_tree = game_tree;
 }
 
+void PokerSolver::build_game_tree(
+        float oop_commit,
+        float ip_commit,
+        int current_round,
+        int raise_limit,
+        float small_blind,
+        float big_blind,
+        float stack,
+        GameTreeBuildingSettings buildingSettings,
+        float allin_threshold
+){
+
+    shared_ptr<GameTree> game_tree = make_shared<GameTree>(
+            this->deck,
+            oop_commit,
+            ip_commit,
+            current_round,
+            raise_limit,
+            small_blind,
+            big_blind,
+            stack,
+            buildingSettings,
+            allin_threshold
+    );
+    this->game_tree = game_tree;
+}
+
 void PokerSolver::train(string p1_range, string p2_range, string boards, string log_file, int iteration_number,
-                        int print_interval, string algorithm,int warmup,int threads) {
+                        int print_interval, string algorithm,int warmup,float accuracy,bool use_isomorphism,int threads) {
     string player1RangeStr = p1_range;
     string player2RangeStr = p2_range;
 
@@ -34,7 +61,7 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
     vector<PrivateCards> player1Range = PrivateRangeConverter::rangeStr2Cards(player1RangeStr,initialBoard);
     vector<PrivateCards> player2Range = PrivateRangeConverter::rangeStr2Cards(player2RangeStr,initialBoard);
     string logfile_name = log_file;
-    PCfrSolver solver = PCfrSolver(
+    this->solver = make_shared<PCfrSolver>(
             game_tree
             , player1Range
             , player2Range
@@ -48,16 +75,22 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
             , algorithm
             , Solver::MonteCarolAlg::NONE
             , warmup
+            , accuracy
+            , use_isomorphism
             , threads
     );
-    solver.train();
+    this->solver->train();
 }
 
-void PokerSolver::dump_strategy(string dump_file) {
-    json dump_json = this->game_tree->dumps(false);
+void PokerSolver::dump_strategy(string dump_file,int dump_rounds) {
+    json dump_json = this->solver->dumps(false,dump_rounds);
     ofstream fileWriter;
     fileWriter.open(dump_file);
     fileWriter << dump_json;
     fileWriter.flush();
     fileWriter.close();
+}
+
+const shared_ptr<GameTree> &PokerSolver::getGameTree() const {
+    return game_tree;
 }

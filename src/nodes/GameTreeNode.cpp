@@ -13,7 +13,7 @@ GameTreeNode::GameTreeNode() {
 GameTreeNode::GameTreeNode(GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode> parent) {
     this->round = round;
     this->pot = pot;
-    //this->parent = std::move(parent);
+    this->parent = std::move(parent);
 }
 
 int GameTreeNode::gameRound2int(GameTreeNode::GameRound gameRound) {
@@ -30,11 +30,11 @@ int GameTreeNode::gameRound2int(GameTreeNode::GameRound gameRound) {
 }
 
 shared_ptr<GameTreeNode>GameTreeNode::getParent() {
-    return nullptr;//this->parent;
+    return this->parent;
 }
 
 void GameTreeNode::setParent(shared_ptr<GameTreeNode>parent) {
-    //this->parent = parent;
+    this->parent = parent;
 }
 
 GameTreeNode::GameRound GameTreeNode::getRound() {
@@ -47,6 +47,32 @@ double GameTreeNode::getPot() {
 
 void GameTreeNode::printHistory() {
     //GameTreeNode::printNodeHistory(this);
+}
+
+GameTreeNode::GameRound GameTreeNode::intToGameRound(int round){
+    GameTreeNode::GameRound game_round;
+    switch(round){
+        case 0:{
+            game_round = GameTreeNode::GameRound::PREFLOP;
+            break;
+        }
+        case 1:{
+            game_round = GameTreeNode::GameRound::FLOP;
+            break;
+        }
+        case 2:{
+            game_round = GameTreeNode::GameRound::TURN;
+            break;
+        }
+        case 3:{
+            game_round = GameTreeNode::GameRound::RIVER;
+            break;
+        }
+        default:{
+            throw runtime_error(fmt::format("round %s not found",round));
+        }
+    }
+    return game_round;
 }
 
 void GameTreeNode::printNodeHistory(GameTreeNode* node) {

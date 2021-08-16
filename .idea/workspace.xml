@@ -5,8 +5,8 @@
   </component>
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated>
-      <config projectName="bindSolver" targetName="test" />
       <config projectName="bindSolver" targetName="TexasSolver" />
+      <config projectName="bindSolver" targetName="test" />
       <config projectName="bindSolver" targetName="gtest" />
       <config projectName="bindSolver" targetName="console_solver" />
       <config projectName="bindSolver" targetName="gtest_main" />
@@ -23,10 +23,17 @@
     <list default="true" id="4738a0c2-febf-47b1-900f-4b0a2f98224d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/solver/PCfrSolver.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/solver/PCfrSolver.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/tools/utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/tools/utils.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/solver/PCfrSolver.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/solver/PCfrSolver.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tools/utils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/tools/utils.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/tools/CommandLineTool.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/tools/CommandLineTool.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/install/card5_dic_sorted_shortdeck.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/install/general_rule.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/install/python/TreeBuilder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/install/python/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/include/tools/argparse.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/install/python/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/install/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/install/tree.km" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/outputs/outputs_log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/resources/outputs/outputs_log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/console.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/console.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/CommandLineTool.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/tools/CommandLineTool.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +82,12 @@
       <recent name="$PROJECT_DIR$/resources/text" />
     </key>
   </component>
-  <component name="RunManager" selected="CMake Application.console_solver">
+  <component name="RunManager" selected="CMake Application.console_solver from file">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="test" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="bindSolver" TARGET_NAME="test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="bindSolver" RUN_TARGET_NAME="test" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -87,14 +99,16 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="console_solver from file" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-i ../resources/text/commandline_sample_input.txt -r ../resources" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="bindSolver" TARGET_NAME="console_solver" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="bindSolver" RUN_TARGET_NAME="console_solver">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CMake.Install" enabled="true" />
       </method>
     </configuration>
-    <configuration name="console_solver" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="true" REDIRECT_INPUT_PATH="../resources/text/commandline_sample_input.txt" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="bindSolver" TARGET_NAME="console_solver" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="bindSolver" RUN_TARGET_NAME="console_solver">
+    <configuration name="console_solver" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS=" -r ../resources" REDIRECT_INPUT="true" REDIRECT_INPUT_PATH="../resources/text/commandline_sample_input.txt" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="bindSolver" TARGET_NAME="console_solver" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="bindSolver" RUN_TARGET_NAME="console_solver">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CMake.Install" enabled="true" />
       </method>
     </configuration>
     <configuration name="fmt" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="bindSolver" TARGET_NAME="fmt" CONFIG_NAME="Debug">
@@ -112,12 +126,18 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <list>
       <item itemvalue="CMake Application.TexasSolver" />
       <item itemvalue="CMake Application.fmt" />
       <item itemvalue="CMake Application.gtest" />
       <item itemvalue="CMake Application.gtest_main" />
       <item itemvalue="CMake Application.console_solver" />
+      <item itemvalue="CMake Application.console_solver from file" />
       <item itemvalue="Google Test.test" />
     </list>
   </component>
@@ -144,7 +164,8 @@
       <workItem from="1622551655725" duration="28046000" />
       <workItem from="1622949287600" duration="82106000" />
       <workItem from="1624368052841" duration="16403000" />
-      <workItem from="1626431779319" duration="903000" />
+      <workItem from="1626431779319" duration="16403000" />
+      <workItem from="1627958552020" duration="11949000" />
     </task>
     <servers />
   </component>

@@ -7,15 +7,23 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include "runtime/PokerSolver.h"
 
 using namespace std;
 class CommandLineTool{
 public:
-    CommandLineTool();
+    CommandLineTool(string mode,string resource_dir);
     void startWorking();
+    void execFromFile(string input_file);
     void processCommand(string input);
 private:
+    enum Mode{
+        HOLDEM,
+        SHORTDECK
+    };
+    Mode mode;
+    string resource_dir;
     PokerSolver ps;
     float oop_commit=5;
     float ip_commit=5;

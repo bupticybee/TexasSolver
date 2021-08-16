@@ -107,9 +107,6 @@ target_link_libraries(console_solver TexasSolver)
 #set_target_properties(PokerSolver PROPERTIES LIBRARY_OUTPUT_DIRECTORY ./output)
 ##SWIG_ADD_MODULE(PokerSolver python PokerSolver.i ${lib_src})
 #SWIG_LINK_LIBRARIES(PokerSolver TexasSolver ${PYTHON_LIBRARIES})
-#
 
-INSTALL(DIRECTORY "${PROJECT_SOURCE_DIR}/resources/python" DESTINATION "${PROJECT_SOURCE_DIR}/install" OPTIONAL)
-INSTALL(FILES "${PROJECT_SOURCE_DIR}/resources/python/test.py" DESTINATION "${PROJECT_SOURCE_DIR}/install" OPTIONAL)
-INSTALL(FILES "${PROJECT_SOURCE_DIR}/resources/yamls/general_rule.yaml" DESTINATION "${PROJECT_SOURCE_DIR}/install" OPTIONAL)
-INSTALL(FILES "${PROJECT_SOURCE_DIR}/resources/compairer/card5_dic_sorted_shortdeck.txt" DESTINATION "${PROJECT_SOURCE_DIR}/install" OPTIONAL)
+INSTALL(DIRECTORY "${PROJECT_SOURCE_DIR}/resources" DESTINATION "${PROJECT_SOURCE_DIR}/install" OPTIONAL)
+INSTALL(TARGETS console_solver DESTINATION "${PROJECT_SOURCE_DIR}/install")

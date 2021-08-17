@@ -1,6 +1,6 @@
 # CPP Texas Solver
 
-[![release](https://img.shields.io/github/v/release/bupticybee/TexasSolver?label=release&style=flat-square)](https://github.com/bupticybee/TexasSolver/releases)
+[![release](https://img.shields.io/github/v/release/bupticybee/TexasSolver?style=flat-square)](https://github.com/bupticybee/TexasSolver/releases)
 [![license](https://img.shields.io/github/license/bupticybee/TexasSolver?style=flat-square)](https://github.com/bupticybee/TexasSolver/blob/master/LICENSE)
 
 README [English](README.md) | [中文](README.zh-CN.md)
@@ -22,7 +22,7 @@ Features:
 
 ## Install
 
-Download the [release package](https://github.com/bupticybee/TexasSolver/release), unzip it, you will get a folder look like this:
+Download the [release package](https://github.com/bupticybee/TexasSolver/releases), unzip it, you will get a folder look like this:
 
 ```text
 --- Solver

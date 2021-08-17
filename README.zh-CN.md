@@ -1,28 +1,28 @@
-# CPP Texas Solver
+# c++ 德州扑克/短牌 solver
 
 [![release](https://img.shields.io/github/v/release/bupticybee/TexasSolver?label=release&style=flat-square)](https://github.com/bupticybee/TexasSolver/releases)
 [![license](https://img.shields.io/github/license/bupticybee/TexasSolver?style=flat-square)](https://github.com/bupticybee/TexasSolver/blob/master/LICENSE)
 
 README [English](README.md) | [中文](README.zh-CN.md)
 
-## Introduction
+## 项目介绍
 
-A open sourced, extremely efficient Texas Hold'em and short deck solver.
+一个开源的，极其高效的德州扑克和短牌solver
 
 ![solving](imgs/solving.gif)
 
 Features:
-- Optimized to run on turn
-- With a tree size not too large (1~2bets + allin) it's speed sometimes even exceeds piosolver on flop
-- Support cross language calls
-- Support dump strategy to json file
-- Support Mac, Linux and Windows
-- Support texas holdem and shortdeck
-- It's the c++ version of [TexasHoldemSolverJava](https://github.com/bupticybee/TexasHoldemSolverJava) with a ton of optimization, it's 5x faster than the jave version and takes less then 1/3 memory.
+- 对求解德州扑克的turn做了很多优化
+- 对于不是特别大的游戏树 (1~2bet + allin) 很多时候速度能超过piosolver 
+- 支持跨语言调用，支持console调用 
+- 支持将最优策略保存为json文件
+- 支持 Mac, Linux and Windows平台
+- 支持德州扑克和短牌
+- 是 [TexasHoldemSolverJava](https://github.com/bupticybee/TexasHoldemSolverJava) 的c++版本,速度是前者的5倍以上，而内存使用仅有前者的1/3不到
 
-## Install
+## 安装
 
-Download the [release package](https://github.com/bupticybee/TexasSolver/release), unzip it, you will get a folder look like this:
+下载 [release包](https://github.com/bupticybee/TexasSolver/release), 解压缩，你会看到类似如下的目录结构：
 
 ```text
 --- Solver
@@ -30,31 +30,31 @@ Download the [release package](https://github.com/bupticybee/TexasSolver/release
  |- console_solver.exe
 ```
 
-If you download MacOs version, ```console_solver.exe``` should be replaced by a ```console_solver``` executable file.
+如果你下载的是MacOs版本，那么, ```console_solver.exe``` 会被一个 ```console_solver``` 的可执行文件替代.
 
-Put the folder wherever you like, and the installation is done! It's that simple.
+把下载好的solver放在任意目录，安装就已经结束了，就是这么简单！
 
-If you are using Linux system or the release didn't work on your computer, you should [Compile the release package](#compile-from-source) first.
+如果你使用Linux系统或者release包在你的计算机上无法正常运行，你可能需要 [重新编译](#编译源码)
 
-## Usage
+## 使用
 
-### command line solver
+### 命令行solver
 
-You can easily call the solver using command line tools from Windows(cwd), Linux(bash), and mac(terminal).
+你可以很轻松的在命令行 (Windows的cwd, Linux的bash,  mac的terminal) 中使用solver.
 
-For example, if you are using Windows, enter windows cwd terminal (press windows button, input cwd, press enter), go to the install directory, and you can run an example by a simple command:
+比如, 如果你在使用windows, 进入windows cwd 命令行 (按下 windows，输入cwd, 然后回车), 进入solver路径，然后使用下面这个简单的命令:
 
 ```text
 ./console_solver.exe -i resources/text/commandline_sample_input.txt 
 ```
 
-And MacOs and Linux users should use this command:
+MacOs 和 Linux 用户则使用如下命令:
 
 ```text
 ./console_solver -i resources/text/commandline_sample_input.txt 
 ```
 
-You will see something like the following log:
+如果一切顺利，你会看到类似下面的log：
 
 ```text
 EXEC FROM FILE
@@ -75,9 +75,9 @@ time used: 6.871
 ....
 ```
 
-and after the solving process is done, a ```output_result.json``` file should be generated. It contains the optimal strategy that was calculated.
+当求解完成时， 一个 ```output_result.json``` 文件会被生成，这个文件包含了solver产生的最优策略
 
-The input file, above mentioned ```resources/text/commandline_sample_input.txt``` contains parameters controls the tree building and solving process. A typical such file look like this:
+上面提到的输入文件 ```resources/text/commandline_sample_input.txt``` 包含了一系列建树和求解的指令，一个典型的输入文件如下：
 
 ```text
 set_pot 50
@@ -116,21 +116,21 @@ set_dump_rounds 2
 dump_result output_result.json
 ```
 
-Modify the file to control the game tree details and parallelism, etc. By default the input file contains a flop situation where game tree is constructed using 1bet/raise+allin in flop and turn, using 2bet/raise+allin in river.
+修改这个文件来控制德州扑克游戏树的参数，算法的并行度，等等。 默认提供的输入文件中包含了一个典型的flop游戏树。
 
-## Reading the Solver's output strategy
+## 分析求解器产生的结果
 
-Please refer to [This section](https://github.com/bupticybee/TexasHoldemSolverJava#reading-the-solvers-output) in java version. C++ version and java version's output file are exactly the same.
+结果的分析参考 [This section](https://github.com/bupticybee/TexasHoldemSolverJava#reading-the-solvers-output) java版本. C++ 版本和java版本的输出json格式是完全一致的。
 
 ![solving](imgs/see_result.gif)
 
-It's very simple, just open firefox and drag the result json file in.
+在本地查看结果非常简单，只需要打开firefox（浏览器），然后把求解结果文件拖拽进去就可以。
 
-## Compile from source
+## 编译源码
 
-Normally compile from source is not required during install. However if you intend to modify this project, recompiling is required. This project is a cmake project. Install Cmake>=3.15 and following the following instructions.
+通常来说在安装本软件时不需要从头编译. 但是如果release包不能在你的电脑上运行，或者你想要更改本项目的源码，那么就需要重新编译，按照下面的指令重新编译：
 
-If you really want to compile from scratch, you can also reference the following google colab: https://colab.research.google.com/drive/1NWDb53ypcKpkb3g3orzEBDeHAEkAIC7y
+你可以参考下面这个colab来进行编译 https://colab.research.google.com/drive/1NWDb53ypcKpkb3g3orzEBDeHAEkAIC7y
 
 ### Linux
 
@@ -153,7 +153,7 @@ make install
 ```
 
 ### Windows
-build with visual studio 2019
+使用visual studio 2019编译
 ```
 mkdir vsbuild
 cd vsbuild
@@ -163,7 +163,7 @@ nmake install
 test.exe
 ```
 
-After compile the release package can be found in the ```install``` folder in project root
+编译之后的release包可以在工程根目录的 ```install``` 目录下被找到. 
 
 # License
 

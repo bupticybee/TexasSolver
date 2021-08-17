@@ -10,6 +10,9 @@ README [English](README.md) | [中文](README.zh-CN.md)
 
 一个开源的，极其高效的德州扑克和短牌solver
 
+你可以通过 [google colab demo](https://colab.research.google.com/github/bupticybee/TexasSolver/blob/master/TexasSolverTechDemo.ipynb) 体验这个solver。
+
+
 ![solving](imgs/solving.gif)
 
 Features:

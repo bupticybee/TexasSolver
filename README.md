@@ -10,6 +10,8 @@ README [English](README.md) | [中文](README.zh-CN.md)
 
 A open sourced, extremely efficient Texas Hold'em and short deck solver.
 
+Feel free to mess with a toy solver [in google colab](https://colab.research.google.com/github/bupticybee/TexasSolver/blob/master/TexasSolverTechDemo.ipynb)
+
 ![solving](imgs/solving.gif)
 
 Features:

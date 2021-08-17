@@ -4,6 +4,8 @@
 
 A open sourced, extremely efficient Texas Hold'em and short deck solver.
 
+![solving](imgs/solving.gif)
+
 Features:
 - Optimized to run on turn
 - With a tree size not too large (1~2bets + allin) it's speed sometimes even exceeds piosolver on flop
@@ -27,7 +29,7 @@ If you download MacOs version, ```console_solver.exe``` should be replaced by a 
 
 Put the folder wherever you like, and the installation is done! It's that simple.
 
-If you are using Linux system, you should compile from source first.
+If you are using Linux system or the release didn't work on your computer, you should [Compile the release package](#compile-from-source) first.
 
 ## Usage
 
@@ -115,6 +117,10 @@ Modify the file to control the game tree details and parallelism, etc. By defaul
 
 Please refer to [This section](https://github.com/bupticybee/TexasHoldemSolverJava#reading-the-solvers-output) in java version. C++ version and java version's output file are exactly the same.
 
+![solving](imgs/see_result.gif)
+
+It's very simple, just open firefox and drag the result json file in.
+
 ## Compile from source
 
 Normally compile from source is not required during install. However if you intend to modify this project, recompiling is required. This project is a cmake project. Install Cmake>=3.15 and following the following instructions.
@@ -149,6 +155,8 @@ cmake .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
 nmake install
 test.exe
 ```
+
+After compile the release package can be found in the ```install``` folder in project root
 
 # License
 

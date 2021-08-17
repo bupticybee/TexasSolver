@@ -1,6 +1,6 @@
 # c++ 德州扑克/短牌 solver
 
-[![release](https://img.shields.io/github/v/release/bupticybee/TexasSolver?label=release&style=flat-square)](https://github.com/bupticybee/TexasSolver/releases)
+[![release](https://img.shields.io/github/v/release/bupticybee/TexasSolver?style=flat-square)](https://github.com/bupticybee/TexasSolver/releases)
 [![license](https://img.shields.io/github/license/bupticybee/TexasSolver?style=flat-square)](https://github.com/bupticybee/TexasSolver/blob/master/LICENSE)
 
 README [English](README.md) | [中文](README.zh-CN.md)
@@ -22,7 +22,7 @@ Features:
 
 ## 安装
 
-下载 [release包](https://github.com/bupticybee/TexasSolver/release), 解压缩，你会看到类似如下的目录结构：
+下载 [release包](https://github.com/bupticybee/TexasSolver/releases), 解压缩，你会看到类似如下的目录结构：
 
 ```text
 --- Solver

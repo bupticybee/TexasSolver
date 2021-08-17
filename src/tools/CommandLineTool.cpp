@@ -3,11 +3,25 @@
 //
 #include "tools/CommandLineTool.h"
 
-CommandLineTool::CommandLineTool() {
-    string ranks = "A,K,Q,J,T,9,8,7,6,5,4,3,2";
+CommandLineTool::CommandLineTool(string mode,string resource_dir) {
     string suits = "h,s,d,c";
+    string ranks;
+    this->resource_dir = resource_dir;
+    string compairer_file;
+    int lines;
+    if(mode == "holdem"){
+        ranks = "A,K,Q,J,T,9,8,7,6,5,4,3,2";
+        compairer_file = this->resource_dir + "/compairer/card5_dic_sorted.txt";
+        lines = 2598961;
+    }else if(mode == "shortdeck"){
+        ranks = "A,K,Q,J,T,9,8,7,6";
+        compairer_file = this->resource_dir + "/compairer/card5_dic_sorted_shortdeck.txt";
+        lines = 376993;
+    }else{
+        throw runtime_error(fmt::format("mode not recognized : ",mode));
+    }
     string logfile_name = "../resources/outputs/outputs_log.txt";
-    this->ps = PokerSolver(ranks,suits,"../resources/compairer/card5_dic_sorted.txt",2598961);
+    this->ps = PokerSolver(ranks,suits,compairer_file,lines);
 
     StreetSetting gbs_flop_ip = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
     StreetSetting gbs_turn_ip = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
@@ -45,6 +59,16 @@ void CommandLineTool::startWorking() {
         getline(cin, input_line);
         this->processCommand(input_line);
     };
+}
+
+void CommandLineTool::execFromFile(string input_file){
+    std::ifstream infile(input_file);
+    std::string input_line;
+    while (std::getline(infile, input_line))
+    {
+        this->processCommand(input_line);
+    }
+
 }
 
 void split(const string& s, char c,

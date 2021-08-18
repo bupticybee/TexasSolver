@@ -1,0 +1,102 @@
+<<<START SOLVING>>>
+Using 6 threads
+Iter: 0
+player 0 exploitability 21.711515
+player 1 exploitability 13.402059
+Total exploitability 175.56787 precent
+-------------------
+Iter: 11
+player 0 exploitability 4.472554
+player 1 exploitability 2.167856
+Total exploitability 33.202053 precent
+time used: 10.822
+-------------------
+Iter: 21
+player 0 exploitability 2.8754113
+player 1 exploitability 0.3449202
+Total exploitability 16.101656 precent
+time used: 21.685
+-------------------
+Iter: 31
+player 0 exploitability 2.2637882
+player 1 exploitability -0.4290214
+Total exploitability 9.173834 precent
+time used: 32.648
+-------------------
+Iter: 41
+player 0 exploitability 1.8528033
+player 1 exploitability -0.8319225
+Total exploitability 5.1044044 precent
+time used: 43.626
+-------------------
+Iter: 51
+player 0 exploitability 1.6068894
+player 1 exploitability -1.0109051
+Total exploitability 2.979921 precent
+time used: 54.739
+-------------------
+Iter: 61
+player 0 exploitability 1.4686387
+player 1 exploitability -1.0971403
+Total exploitability 1.8574917 precent
+time used: 65.796
+-------------------
+Iter: 71
+player 0 exploitability 1.3917459
+player 1 exploitability -1.1389399
+Total exploitability 1.2640303 precent
+time used: 76.718
+-------------------
+Iter: 81
+player 0 exploitability 1.3625666
+player 1 exploitability -1.1553311
+Total exploitability 1.0361773 precent
+time used: 87.693
+-------------------
+Iter: 91
+player 0 exploitability 1.3253464
+player 1 exploitability -1.1739303
+Total exploitability 0.7570803 precent
+time used: 98.706
+-------------------
+Iter: 101
+player 0 exploitability 1.3053703
+player 1 exploitability -1.1834959
+Total exploitability 0.60937226 precent
+time used: 109.627
+-------------------
+Iter: 111
+player 0 exploitability 1.2943081
+player 1 exploitability -1.1886953
+Total exploitability 0.5280638 precent
+time used: 120.563
+-------------------
+Iter: 121
+player 0 exploitability 1.2816586
+player 1 exploitability -1.1949816
+Total exploitability 0.43338537 precent
+time used: 131.513
+-------------------
+Iter: 131
+player 0 exploitability 1.2730395
+player 1 exploitability -1.199643
+Total exploitability 0.36698222 precent
+time used: 142.46
+-------------------
+Iter: 141
+player 0 exploitability 1.2671945
+player 1 exploitability -1.2029206
+Total exploitability 0.32136977 precent
+time used: 153.394
+-------------------
+Iter: 151
+player 0 exploitability 1.2665361
+player 1 exploitability -1.2038263
+Total exploitability 0.31354904 precent
+time used: 164.348
+-------------------
+Iter: 161
+player 0 exploitability 1.2628257
+player 1 exploitability -1.2076665
+Total exploitability 0.27579606 precent
+time used: 175.312

@@ -128,6 +128,17 @@ Please refer to [This section](https://github.com/bupticybee/TexasHoldemSolverJa
 
 It's very simple, just open firefox and drag the result json file in.
 
+## Speed benchmark with piosolver
+
+Piosolver and my TexasSolver run use the same settings (spr=10) and their result are aligned.
+
+|                   | Input config                                            | log                                                                | thread number | memory usage | accuracy | converge time |
+| ----------------- | ------------------------------------------------------- | ------------------------------------------------------------------ | ------------- | ------------ | -------- | ------------- |
+| piosolver 1.0     | [config_piosolver](benchmark/benchmark_piosolver.txt)   | [log_piosolver](benchmark/benchmark_outputs/piosolver_log.txt)     | 6             | 492Mb        | 0.29%    | 242s          |
+| TexasSolver 0.1.0 (Our solver) | [config_texassolver](benchmark/benchmark_texassolver.txt) | [log_texassolver](benchmark/benchmark_outputs/texassolver_log.txt) | 6             | 1600Mb       | 0.288%   | 172s          |
+
+The comapir their results is  [here](benchmark/benchmark_outputs/result_compair.png)
+
 ## Compile from source
 
 Normally compile from source is not required during install. However if you intend to modify this project, recompiling is required. This project is a cmake project. Install Cmake>=3.15 and following the following instructions.

@@ -130,6 +130,17 @@ dump_result output_result.json
 
 在本地查看结果非常简单，只需要打开firefox（浏览器），然后把求解结果文件拖拽进去就可以。
 
+## 和piosolver的速度对比
+
+两者均在一个spr=10的局面上进行计算，结果对齐。
+
+|                   | 输入配置                                            | 运行日志                                                       | 线程数 | 内存 | 结束精度 | 运行时间 |
+| ----------------- | ------------------------------------------------------- | ------------------------------------------------------------------ | ------ | ------ | -------- | -------- |
+| piosolver 1.0     | [config_piosolver](benchmark/benchmark_piosolver.txt)   | [log_piosolver](benchmark/benchmark_outputs/piosolver_log.txt)     | 6      | 492Mb  | 0.29%    | 242s     |
+| TexasSolver 0.1.0 (Our solver) | [config_texassolver](benchmark/benchmark_texassolver.txt) | [log_texassolver](benchmark/benchmark_outputs/texassolver_log.txt) | 6      | 1600Mb | 0.275%   | 175s     |
+
+对齐结果的图片见 [result_compair](benchmark/benchmark_outputs/result_compair.png)
+
 ## 编译源码
 
 通常来说在安装本软件时不需要从头编译. 但是如果release包不能在你的电脑上运行，或者你想要更改本项目的源码，那么就需要重新编译，按照下面的指令重新编译：

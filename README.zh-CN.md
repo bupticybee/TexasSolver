@@ -44,12 +44,12 @@ Features:
 
 ### 命令行solver
 
-你可以很轻松的在命令行 (Windows的cwd, Linux的bash,  mac的terminal) 中使用solver.
+你可以很轻松的在命令行 (Windows的cmd, Linux的bash,  mac的terminal) 中使用solver.
 
-比如, 如果你在使用windows, 进入windows cwd 命令行 (按下 windows，输入cwd, 然后回车), 进入solver路径，然后使用下面这个简单的命令:
+比如, 如果你在使用windows, 进入windows cmd 命令行 (按下 windows，输入cmd, 然后回车), 进入solver路径，然后使用下面这个简单的命令:
 
 ```text
-./console_solver.exe -i resources/text/commandline_sample_input.txt 
+console_solver.exe -i resources/text/commandline_sample_input.txt 
 ```
 
 MacOs 和 Linux 用户则使用如下命令:

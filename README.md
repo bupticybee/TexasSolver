@@ -6,8 +6,7 @@
 
 README [English](README.md) | [中文](README.zh-CN.md)
 
-## Introduction
-
+## Introduction 
 A open sourced, extremely efficient Texas Hold'em and short deck solver.
 
 Feel free to mess with a toy solver [in google colab](https://colab.research.google.com/github/bupticybee/TexasSolver/blob/master/TexasSolverTechDemo.ipynb)
@@ -43,12 +42,12 @@ If you are using Linux system or the release didn't work on your computer, you s
 
 ### command line solver
 
-You can easily call the solver using command line tools from Windows(cwd), Linux(bash), and mac(terminal).
+You can easily call the solver using command line tools from Windows(cmd), Linux(bash), and mac(terminal).
 
-For example, if you are using Windows, enter windows cwd terminal (press windows button, input cwd, press enter), go to the install directory, and you can run an example by a simple command:
+For example, if you are using Windows, enter windows cmd terminal (press windows button, input cmd, press enter), go to the install directory, and you can run an example by a simple command:
 
 ```text
-./console_solver.exe -i resources/text/commandline_sample_input.txt 
+console_solver.exe -i resources/text/commandline_sample_input.txt 
 ```
 
 And MacOs and Linux users should use this command:

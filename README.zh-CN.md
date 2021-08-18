@@ -8,21 +8,29 @@ README [English](README.md) | [中文](README.zh-CN.md)
 
 ## 项目介绍
 
-一个开源的，极其高效的德州扑克和短牌solver
+一个开源的，极其高效的德州扑克和短牌solver。
+
+Features:
+- 对于1~2bet+allin的游戏树求解速度超过piosolver 
+- 支持 Mac, Linux and Windows平台
+- 支持德州扑克和短牌
+- 支持跨语言调用，支持console调用 
+- 支持将最优策略保存为json文件
+- 是 [TexasHoldemSolverJava](https://github.com/bupticybee/TexasHoldemSolverJava) 的c++版本,速度是前者的5倍以上，而内存使用仅有前者的1/3不到
 
 你可以通过 [google colab demo](https://colab.research.google.com/github/bupticybee/TexasSolver/blob/master/TexasSolverTechDemo.ipynb) 体验这个solver。
 
+## 和piosolver的速度对比
 
-![solving](imgs/solving.gif)
+两者均在一个spr=10的flop局面上进行计算，结果对齐。
 
-Features:
-- 对求解德州扑克的turn做了很多优化
-- 对于不是特别大的游戏树 (1~2bet + allin) 很多时候速度能超过piosolver 
-- 支持跨语言调用，支持console调用 
-- 支持将最优策略保存为json文件
-- 支持 Mac, Linux and Windows平台
-- 支持德州扑克和短牌
-- 是 [TexasHoldemSolverJava](https://github.com/bupticybee/TexasHoldemSolverJava) 的c++版本,速度是前者的5倍以上，而内存使用仅有前者的1/3不到
+|                   | 输入配置                                            | 运行日志                                                       | 线程数 | 内存 | 结束精度 | 运行时间 |
+| ----------------- | ------------------------------------------------------- | ------------------------------------------------------------------ | ------ | ------ | -------- | -------- |
+| piosolver 1.0     | [config_piosolver](benchmark/benchmark_piosolver.txt)   | [log_piosolver](benchmark/benchmark_outputs/piosolver_log.txt)     | 6      | 492Mb  | 0.29%    | 242s     |
+| TexasSolver 0.1.0 (Our solver) | [config_texassolver](benchmark/benchmark_texassolver.txt) | [log_texassolver](benchmark/benchmark_outputs/texassolver_log.txt) | 6      | 1600Mb | 0.275%   | 175s     |
+
+对齐结果的图片见 [result_compair](benchmark/benchmark_outputs/result_compair.png). 如你所见，两者的结果非常接近。
+
 
 ## 安装
 
@@ -57,6 +65,8 @@ MacOs 和 Linux 用户则使用如下命令:
 ```text
 ./console_solver -i resources/text/commandline_sample_input.txt 
 ```
+
+![solving](imgs/solving.gif)
 
 如果一切顺利，你会看到类似下面的log：
 
@@ -130,16 +140,6 @@ dump_result output_result.json
 
 在本地查看结果非常简单，只需要打开firefox（浏览器），然后把求解结果文件拖拽进去就可以。
 
-## 和piosolver的速度对比
-
-两者均在一个spr=10的flop局面上进行计算，结果对齐。
-
-|                   | 输入配置                                            | 运行日志                                                       | 线程数 | 内存 | 结束精度 | 运行时间 |
-| ----------------- | ------------------------------------------------------- | ------------------------------------------------------------------ | ------ | ------ | -------- | -------- |
-| piosolver 1.0     | [config_piosolver](benchmark/benchmark_piosolver.txt)   | [log_piosolver](benchmark/benchmark_outputs/piosolver_log.txt)     | 6      | 492Mb  | 0.29%    | 242s     |
-| TexasSolver 0.1.0 (Our solver) | [config_texassolver](benchmark/benchmark_texassolver.txt) | [log_texassolver](benchmark/benchmark_outputs/texassolver_log.txt) | 6      | 1600Mb | 0.275%   | 175s     |
-
-对齐结果的图片见 [result_compair](benchmark/benchmark_outputs/result_compair.png). 如你所见，两者的结果非常接近。
 
 ## 编译源码
 

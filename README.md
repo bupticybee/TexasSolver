@@ -9,18 +9,28 @@ README [English](README.md) | [中文](README.zh-CN.md)
 ## Introduction 
 A open sourced, extremely efficient Texas Hold'em and short deck solver.
 
-Feel free to mess with a toy solver [in google colab](https://colab.research.google.com/github/bupticybee/TexasSolver/blob/master/TexasSolverTechDemo.ipynb)
-
-![solving](imgs/solving.gif)
-
 Features:
-- Optimized to run on turn
-- With a tree size not too large (1~2bets + allin) it's speed sometimes even exceeds piosolver on flop
-- Support cross language calls
-- Support dump strategy to json file
+- In a tree with 1~2bets + allin, it's speed exceeds piosolver on flop
 - Support Mac, Linux and Windows
 - Support texas holdem and shortdeck
+- Support cross language calls
+- Support dump strategy to json file
 - It's the c++ version of [TexasHoldemSolverJava](https://github.com/bupticybee/TexasHoldemSolverJava) with a ton of optimization, it's 5x faster than the jave version and takes less then 1/3 memory.
+
+Feel free to mess with a toy solver [in google colab](https://colab.research.google.com/github/bupticybee/TexasSolver/blob/master/TexasSolverTechDemo.ipynb)
+
+
+## Speed benchmark with piosolver
+
+Piosolver and my TexasSolver run use the same settings (spr=10,flop game) and their result are aligned.
+
+|                   | Input config                                            | log                                                                | thread number | memory usage | accuracy | converge time |
+| ----------------- | ------------------------------------------------------- | ------------------------------------------------------------------ | ------------- | ------------ | -------- | ------------- |
+| piosolver 1.0     | [config_piosolver](benchmark/benchmark_piosolver.txt)   | [log_piosolver](benchmark/benchmark_outputs/piosolver_log.txt)     | 6             | 492Mb        | 0.29%    | 242s          |
+| TexasSolver 0.1.0 (Our solver) | [config_texassolver](benchmark/benchmark_texassolver.txt) | [log_texassolver](benchmark/benchmark_outputs/texassolver_log.txt) | 6             | 1600Mb       | 0.288%   | 172s          |
+
+The compare image of their results is  [here](benchmark/benchmark_outputs/result_compair.png). As you can see their result are very close.
+
 
 ## Install
 
@@ -55,6 +65,8 @@ And MacOs and Linux users should use this command:
 ```text
 ./console_solver -i resources/text/commandline_sample_input.txt 
 ```
+
+![solving](imgs/solving.gif)
 
 You will see something like the following log:
 
@@ -127,17 +139,6 @@ Please refer to [This section](https://github.com/bupticybee/TexasHoldemSolverJa
 ![solving](imgs/see_result.gif)
 
 It's very simple, just open firefox and drag the result json file in.
-
-## Speed benchmark with piosolver
-
-Piosolver and my TexasSolver run use the same settings (spr=10,flop game) and their result are aligned.
-
-|                   | Input config                                            | log                                                                | thread number | memory usage | accuracy | converge time |
-| ----------------- | ------------------------------------------------------- | ------------------------------------------------------------------ | ------------- | ------------ | -------- | ------------- |
-| piosolver 1.0     | [config_piosolver](benchmark/benchmark_piosolver.txt)   | [log_piosolver](benchmark/benchmark_outputs/piosolver_log.txt)     | 6             | 492Mb        | 0.29%    | 242s          |
-| TexasSolver 0.1.0 (Our solver) | [config_texassolver](benchmark/benchmark_texassolver.txt) | [log_texassolver](benchmark/benchmark_outputs/texassolver_log.txt) | 6             | 1600Mb       | 0.288%   | 172s          |
-
-The compare image of their results is  [here](benchmark/benchmark_outputs/result_compair.png). As you can see their result are very close.
 
 ## Compile from source
 

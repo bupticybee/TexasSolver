@@ -137,7 +137,7 @@ Piosolver and my TexasSolver run use the same settings (spr=10) and their result
 | piosolver 1.0     | [config_piosolver](benchmark/benchmark_piosolver.txt)   | [log_piosolver](benchmark/benchmark_outputs/piosolver_log.txt)     | 6             | 492Mb        | 0.29%    | 242s          |
 | TexasSolver 0.1.0 (Our solver) | [config_texassolver](benchmark/benchmark_texassolver.txt) | [log_texassolver](benchmark/benchmark_outputs/texassolver_log.txt) | 6             | 1600Mb       | 0.288%   | 172s          |
 
-The comapir their results is  [here](benchmark/benchmark_outputs/result_compair.png)
+The compare image of their results is  [here](benchmark/benchmark_outputs/result_compair.png). As you can see their result are very close.
 
 ## Compile from source
 

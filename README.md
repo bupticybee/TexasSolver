@@ -130,7 +130,7 @@ It's very simple, just open firefox and drag the result json file in.
 
 ## Speed benchmark with piosolver
 
-Piosolver and my TexasSolver run use the same settings (spr=10) and their result are aligned.
+Piosolver and my TexasSolver run use the same settings (spr=10,flop game) and their result are aligned.
 
 |                   | Input config                                            | log                                                                | thread number | memory usage | accuracy | converge time |
 | ----------------- | ------------------------------------------------------- | ------------------------------------------------------------------ | ------------- | ------------ | -------- | ------------- |

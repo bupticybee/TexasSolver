@@ -14,7 +14,8 @@ Features:
 - 对于1~2bet+allin的游戏树求解速度超过piosolver 
 - 支持 Mac, Linux and Windows平台
 - 支持德州扑克和短牌
-- 支持跨语言调用，支持console调用 
+- 支持跨语言调用，支持console调用
+- 结果和piosolver对齐
 - 支持将最优策略保存为json文件
 - 是 [TexasHoldemSolverJava](https://github.com/bupticybee/TexasHoldemSolverJava) 的c++版本,速度是前者的5倍以上，而内存使用仅有前者的1/3不到
 

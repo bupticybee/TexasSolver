@@ -8,7 +8,7 @@ README [English](README.md) | [中文](README.zh-CN.md)
 
 ## 项目介绍
 
-一个开源的，极其高效的德州扑克和短牌solver。
+一个开源的，极其高效的德州扑克和短牌solver, 看看这个 [介绍视频](https://www.youtube.com/watch?v=S6LXa6w4PMs) 了解更多。
 
 Features:
 - 对于1~2bet+allin的游戏树求解速度超过piosolver 

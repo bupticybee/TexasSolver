@@ -7,7 +7,7 @@
 README [English](README.md) | [中文](README.zh-CN.md)
 
 ## Introduction 
-A open sourced, extremely efficient Texas Hold'em and short deck solver.
+A open sourced, extremely efficient Texas Hold'em and short deck solver. See this [Introduction video](https://www.youtube.com/watch?v=MydczBwSfWc) for more.
 
 Features:
 - In a tree with 1~2bets + allin, it's speed exceeds piosolver on flop

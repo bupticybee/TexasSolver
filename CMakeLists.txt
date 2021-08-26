@@ -12,6 +12,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_CXX_FLAGS "-fPIC")
 set(CMAKE_C_FLAGS "-fopenmp")
 set(LINKFLAGS "-fopenmp")
+set(CMAKE_EXE_LINKER_FLAGS "-static")
 
 #openmp
 FIND_PACKAGE(OpenMP REQUIRED)

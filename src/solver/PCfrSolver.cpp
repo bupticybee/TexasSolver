@@ -347,11 +347,11 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
             throw runtime_error(fmt::format("deal out of range : {} ",deal));
         }
         if(this->distributing_task && node->getRound() == this->split_round) {
-            results[one_card->getCardInt()] = vector<float>(this->ranges[player].size());
+            results[one_card->getNumberInDeckInt()] = vector<float>(this->ranges[player].size());
             //TaskParams taskParams = TaskParams();
         }else {
             vector<float> child_utility = this->cfr(player, one_child, new_reach_probs, iter, new_board_long, new_deal);
-            results[one_card->getCardInt()] = child_utility;
+            results[one_card->getNumberInDeckInt()] = child_utility;
         }
     }
 
@@ -365,10 +365,10 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
 #ifdef DEBUG
             if(rank2 < 0) throw runtime_error("rank error");
 #endif
-            child_utility = results[one_card->getCardInt() + offset];
+            child_utility = results[one_card->getNumberInDeckInt() + offset];
             exchange_color(child_utility,this->pcm.getPreflopCards(player),rank1,rank2);
         }else{
-            child_utility = results[one_card->getCardInt()];
+            child_utility = results[one_card->getNumberInDeckInt()];
         }
         if(child_utility.empty())
             continue;

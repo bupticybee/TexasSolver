@@ -5,9 +5,16 @@
 #include "Card.h"
 
 Card::Card(){}
+Card::Card(string card,int card_num_in_deck){
+    this->card = card;
+    this->card_int = Card::strCard2int(this->card);
+    this->card_number_in_deck = card_num_in_deck;
+}
+
 Card::Card(string card){
     this->card = card;
     this->card_int = Card::strCard2int(this->card);
+    this->card_number_in_deck = -1;
 }
 
 string Card::getCard() {
@@ -16,6 +23,11 @@ string Card::getCard() {
 
 int Card::getCardInt() {
     return this->card_int;
+}
+
+int Card::getNumberInDeckInt(){
+    if(this->card_number_in_deck == -1)throw runtime_error("card number in deck cannot be -1");
+    return this->card_number_in_deck;
 }
 
 int Card::card2int(Card card) {

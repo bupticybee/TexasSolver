@@ -1,0 +1,34 @@
+set_pot 50
+set_effective_stack 200
+set_board Qs,Jh,6h
+set_range_ip AA,KK,QQ,JJ,TT,99:0.75
+set_range_oop QQ:0.5,JJ:0.75,TT,99,88,77,66
+set_bet_sizes oop,flop,bet,50
+set_bet_sizes oop,flop,raise,60
+set_bet_sizes oop,flop,allin
+set_bet_sizes ip,flop,bet,50
+set_bet_sizes ip,flop,raise,60
+set_bet_sizes ip,flop,allin
+set_bet_sizes oop,turn,bet,50
+set_bet_sizes oop,turn,raise,60
+set_bet_sizes oop,turn,allin
+set_bet_sizes ip,turn,bet,50
+set_bet_sizes ip,turn,raise,60
+set_bet_sizes ip,turn,allin
+set_bet_sizes oop,river,bet,50
+set_bet_sizes oop,river,donk,50
+set_bet_sizes oop,river,raise,60,100
+set_bet_sizes oop,river,allin
+set_bet_sizes ip,river,bet,50
+set_bet_sizes ip,river,raise,60,100
+set_bet_sizes ip,river,allin
+set_allin_threshold 0.67
+build_tree
+set_thread_num 8
+set_accuracy 0.5
+set_max_iteration 200
+set_print_interval 10
+set_use_isomorphism 1
+start_solve
+set_dump_rounds 2
+dump_result output_result.json

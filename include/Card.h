@@ -15,11 +15,14 @@ class Card {
     private:
         string card;
         int card_int;
+        int card_number_in_deck;
     public:
         Card();
-        explicit Card(string card);
+        explicit Card(string card,int card_number_in_deck);
+        Card(string card);
         string getCard();
         int getCardInt();
+        int getNumberInDeckInt();
         static int card2int(Card card);
         static int strCard2int(string card);
         static string intCard2Str(int card);

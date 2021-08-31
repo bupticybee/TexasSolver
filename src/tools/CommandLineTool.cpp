@@ -4,17 +4,17 @@
 #include "tools/CommandLineTool.h"
 
 CommandLineTool::CommandLineTool(string mode,string resource_dir) {
-    string suits = "h,s,d,c";
+    string suits = "c,d,h,s";
     string ranks;
     this->resource_dir = resource_dir;
     string compairer_file;
     int lines;
     if(mode == "holdem"){
-        ranks = "A,K,Q,J,T,9,8,7,6,5,4,3,2";
+        ranks = "2,3,4,5,6,7,8,9,T,J,Q,K,A";
         compairer_file = this->resource_dir + "/compairer/card5_dic_sorted.txt";
         lines = 2598961;
     }else if(mode == "shortdeck"){
-        ranks = "A,K,Q,J,T,9,8,7,6";
+        ranks = "6,7,8,9,T,J,Q,K,A";
         compairer_file = this->resource_dir + "/compairer/card5_dic_sorted_shortdeck.txt";
         lines = 376993;
     }else{

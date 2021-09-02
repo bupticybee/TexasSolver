@@ -35,6 +35,6 @@ jobs:
       run: cd build && make && make install
 
     - name: Test
-      working-directory: ${{github.workspace}}/build
-      run: ./test
+      working-directory: ${{github.workspace}}/install
+      run: ./console_solver -i resources/text/commandline_sample_input.txt
       

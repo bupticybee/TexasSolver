@@ -16,6 +16,7 @@
 #include "tools/lookup8.h"
 #include "tools/utils.h"
 #include <queue>
+#include <optional>
 
 template<typename T>
 class ThreadsafeQueue {

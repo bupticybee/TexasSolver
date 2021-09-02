@@ -191,7 +191,7 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
             throw runtime_error(fmt::format("deal out of range : {} ",deal));
         }
         vector<float> child_utility = this->bestResponse(one_child, player, new_reach_probs, new_board_long,new_deal);
-        results[one_card.getCardInt()] = child_utility;
+        results[one_card.getNumberInDeckInt()] = child_utility;
     }
 
     for(int card = 0;card < node->getCards().size();card ++) {
@@ -205,10 +205,10 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
             if(rank2 < 0) throw runtime_error("rank error");
 #endif
             // TODO 这里需要调换一下颜色,根据offset
-            child_utility = results[one_card->getCardInt() + offset];
+            child_utility = results[one_card->getNumberInDeckInt() + offset];
             exchange_color(child_utility,private_combos[player],rank1,rank2);
         }else{
-            child_utility = results[one_card->getCardInt()];
+            child_utility = results[one_card->getNumberInDeckInt()];
         }
 
         if(child_utility.empty())

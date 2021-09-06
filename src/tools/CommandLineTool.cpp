@@ -101,6 +101,16 @@ void CommandLineTool::processCommand(string input) {
         this->stack = stof(paramstr) + this->ip_commit;
     }else if(command == "set_board"){
         this->board = paramstr;
+        vector<string> board_str_arr = string_split(board,',');
+        if(board_str_arr.size() == 3){
+            this->current_round = 1;
+        }else if(board_str_arr.size() == 4){
+            this->current_round = 2;
+        }else if(board_str_arr.size() == 5){
+            this->current_round = 3;
+        }else{
+            throw runtime_error(fmt::format("board {} not recognized",this->board));
+        }
     }else if(command == "set_range_ip"){
         this->range_ip = paramstr;
     }else if(command == "set_range_oop"){

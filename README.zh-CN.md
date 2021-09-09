@@ -155,7 +155,8 @@ mkdir build
 cd build
 cmake ..
 make install
-./test
+cd ../install
+./console_solver -i resources/text/commandline_sample_input.txt
 ```
 
 ### Mac
@@ -165,7 +166,8 @@ mkdir build
 cd build
 cmake ..
 make install
-./test
+cd ../install
+./console_solver -i resources/text/commandline_sample_input.txt
 ```
 
 ### Windows
@@ -176,7 +178,8 @@ cd vsbuild
 "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
 cmake .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
 nmake install
-test.exe
+cd ../install
+./console_solver.exe -i resources/text/commandline_sample_input.txt
 ```
 
 编译之后的release包可以在工程根目录的 ```install``` 目录下被找到. 

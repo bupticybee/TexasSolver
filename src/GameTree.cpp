@@ -281,7 +281,7 @@ shared_ptr<GameTreeNode> GameTree::recurrentGenerateTreeNode(json node_json, con
           || round == "river"
           )
             ){
-        throw runtime_error(tfm::format("round {} not found",round));
+        throw runtime_error(tfm::format("round %s not found",round));
     }
 
     string node_type = meta["node_type"];
@@ -294,7 +294,7 @@ shared_ptr<GameTreeNode> GameTree::recurrentGenerateTreeNode(json node_json, con
            || node_type ==  "Chance"
     )
             ){
-        throw runtime_error(tfm::format("node type {} not found",node_type));
+        throw runtime_error(tfm::format("node type %s not found",node_type));
     }
 
     if(node_type == "Action") {
@@ -329,7 +329,7 @@ GameTree::generateActionNode(json meta, vector<string> childrens_actions, vector
     if(childrens_actions.size() != childrens_nodes.size()){
         throw runtime_error(
                 tfm::format(
-                        "mismatch when generate ActionNode, childrens_action length {} children_nodes length {}",
+                        "mismatch when generate ActionNode, childrens_action length %s children_nodes length %s",
                         childrens_actions.size(),
                         childrens_nodes.size()
                 ));
@@ -341,7 +341,7 @@ GameTree::generateActionNode(json meta, vector<string> childrens_actions, vector
           || round == "river"
           )
             ){
-        throw runtime_error(tfm::format("round {} not found",round));
+        throw runtime_error(tfm::format("round %s not found",round));
     }
 
     vector<GameActions> actions;
@@ -368,23 +368,23 @@ GameTree::generateActionNode(json meta, vector<string> childrens_actions, vector
             if(one_action.find("bet")  != string::npos){
                 vector<string> action_sp = string_split(one_action,'_');
                 if(action_sp.size() != 2)
-                    throw runtime_error(tfm::format("bet action sp length {}",action_sp.size()));
+                    throw runtime_error(tfm::format("bet action sp length %s",action_sp.size()));
                 string action_str = action_sp[0];
                 action = GameTreeNode::PokerActions::BET;
-                if(!(action_str == "bet")) throw runtime_error(tfm::format("Action {} not found",action_str));
+                if(!(action_str == "bet")) throw runtime_error(tfm::format("Action %s not found",action_str));
                 amount = stod(action_sp[1]);
 
             }else if (one_action.find("raise") != string::npos){
                 vector<string> action_sp = string_split(one_action,'_');
                 if(action_sp.size() != 2)
-                    throw runtime_error(tfm::format("raise action sp length {}",action_sp.size()));
+                    throw runtime_error(tfm::format("raise action sp length %s",action_sp.size()));
                 string action_str = action_sp[0];
                 action = GameTreeNode::PokerActions::RAISE;
                 if(!(action_str == "raise"))
-                    throw runtime_error(tfm::format("Action {} not found",action_str));
+                    throw runtime_error(tfm::format("Action %s not found",action_str));
                 amount = stod(action_sp[1]);
             }else{
-                throw runtime_error(tfm::format("{} action not found",one_action));
+                throw runtime_error(tfm::format("%s action not found",one_action));
             }
         }
         shared_ptr<GameTreeNode> one_children_node = recurrentGenerateTreeNode(one_children_map,parent);
@@ -396,7 +396,7 @@ GameTree::generateActionNode(json meta, vector<string> childrens_actions, vector
     int player = meta["player"];
     double pot = meta["pot"];
     if(childrens.size() != actions.size()){
-        throw runtime_error(tfm::format("childrens length {}, actions length {}"
+        throw runtime_error(tfm::format("childrens length %s, actions length %s"
                 ,childrens.size()
                 ,actions.size()));
     }
@@ -491,7 +491,7 @@ GameTreeNode::GameRound GameTree::strToGameRound(const string& round) {
         game_round = GameTreeNode::GameRound::RIVER;
     }
     else{
-        throw runtime_error(tfm::format("game round not found: {}",round));
+        throw runtime_error(tfm::format("game round not found: %s",round));
     }
     return game_round;
 }
@@ -513,7 +513,7 @@ void GameTree::recurrentPrintTree(const shared_ptr<GameTreeNode>& node, int dept
             string prefix;
             for(int j = 0;j < depth;j++) prefix += "\t";
             cout << (tfm::format(
-                    "{}p{}: {}",prefix,action_node->getPlayer(),one_action.toString()
+                    "%sp%s: %s",prefix,action_node->getPlayer(),one_action.toString()
             )) << endl;
             recurrentPrintTree(one_child,depth + 1,depth_limit);
         }
@@ -522,27 +522,27 @@ void GameTree::recurrentPrintTree(const shared_ptr<GameTreeNode>& node, int dept
         string prefix;
         for(int j = 0;j < depth;j++) prefix += "\t";
         cout << (tfm::format(
-                "{} SHOWDOWN pot {} ",prefix,showdown_node->getPot()
+                "%s SHOWDOWN pot %s ",prefix,showdown_node->getPot()
         )) << endl;
 
         prefix += "\t";
         for(int i = 0;i < showdown_node->get_payoffs(ShowdownNode::ShowDownResult::TIE,-1).size();i++) {
-            cout << (tfm::format("{}if player {} wins, payoff :", prefix,i));
+            cout << (tfm::format("%sif player %s wins, payoff :", prefix,i));
             vector<double> payoffs = showdown_node->get_payoffs(ShowdownNode::ShowDownResult::NOTTIE, i);
 
             for (int player_id = 0; player_id < payoffs.size(); player_id++) {
                 cout << (
-                        tfm::format(" p{} {} ", player_id, payoffs[player_id])
+                        tfm::format(" p%s %s ", player_id, payoffs[player_id])
                 );
             }
             cout << endl;
         }
-        cout << (tfm::format("{}if Tie, payoff :", prefix));
+        cout << (tfm::format("%sif Tie, payoff :", prefix));
         vector<double> payoffs = showdown_node->get_payoffs(ShowdownNode::ShowDownResult::TIE, -1);
 
         for (int player_id = 0; player_id < payoffs.size(); player_id++) {
             cout << (
-                    tfm::format(" p{} {} ", player_id, payoffs[player_id])
+                    tfm::format(" p%s %s ", player_id, payoffs[player_id])
             );
         }
         cout << endl;
@@ -551,16 +551,16 @@ void GameTree::recurrentPrintTree(const shared_ptr<GameTreeNode>& node, int dept
         string prefix;
         for(int j = 0;j < depth;j++) prefix += "\t";
         cout << (tfm::format(
-                "{} TERMINAL pot {} ",prefix,terminal_node->getPot()
+                "%s TERMINAL pot %s ",prefix,terminal_node->getPot()
         )) << endl;
 
         prefix += "\t";
-        cout << (tfm::format("{}Terminal payoff :", prefix));
+        cout << (tfm::format("%sTerminal payoff :", prefix));
         vector<double> payoffs = terminal_node->get_payoffs();
 
         for (int player_id = 0; player_id < payoffs.size(); player_id++) {
             cout <<(
-                    tfm::format("p{} {} ", player_id, payoffs[player_id])
+                    tfm::format("p%s %s ", player_id, payoffs[player_id])
             );
         }
         cout << endl;
@@ -571,7 +571,7 @@ void GameTree::recurrentPrintTree(const shared_ptr<GameTreeNode>& node, int dept
         string prefix;
         for(int j = 0;j < depth;j++) prefix += "\t";
         cout << (tfm::format(
-                "{}{}",prefix,"CHANCE"
+                "%s%s",prefix,"CHANCE"
         )) << endl;
         recurrentPrintTree(children,depth + 1,depth_limit);
     }

@@ -30,7 +30,7 @@ vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vec
             if(one_range.at(2) == 's'){
                 char rank1 = one_range.at(0);
                 char rank2 = one_range.at(1);
-                if(rank1 == rank2) throw runtime_error(tfm::format("{}{}s is not a valid card desc",rank1,rank2));
+                if(rank1 == rank2) throw runtime_error(tfm::format("%s%ss is not a valid card desc",rank1,rank2));
                 for(const string& one_suit :Card::getSuits()){
                     int card1 = Card::strCard2int(rank1 + one_suit);
                     int card2 = Card::strCard2int(rank2 + one_suit);
@@ -91,7 +91,7 @@ vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vec
                 }
             }
 
-        }else throw runtime_error(tfm::format(" range str {} len not valid ",one_range));
+        }else throw runtime_error(tfm::format(" range str %s len not valid ",one_range));
     }
 
     // 排除初试range中重复的情况
@@ -100,13 +100,13 @@ vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vec
             PrivateCards one_cards = private_cards[i];
             PrivateCards another_cards = private_cards[j];
             if (one_cards.card1 == another_cards.card1 && one_cards.card2 == another_cards.card2){
-                throw runtime_error(tfm::format("card {} {} duplicate"
+                throw runtime_error(tfm::format("card %s %s duplicate"
                         , Card::intCard2Str(one_cards.card1)
                         , Card::intCard2Str(one_cards.card2)
                 ));
             }
             if(one_cards.card1 == another_cards.card2 && one_cards.card2 == another_cards.card1) {
-                throw runtime_error(tfm::format("card {} {} duplicate"
+                throw runtime_error(tfm::format("card %s %s duplicate"
                         , Card::intCard2Str(one_cards.card1)
                         , Card::intCard2Str(one_cards.card2)
                 ));

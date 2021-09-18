@@ -141,7 +141,7 @@ json CfrPlusTrainable::dump_strategy(bool with_state) {
             int strategy_index = j * this->privateCards.size() + i;
             one_strategy[j] = average_strategy[strategy_index];
         }
-        strategy[tfm::format("{}",one_private_card.toString())] = one_strategy;
+        strategy[tfm::format("%s",one_private_card.toString())] = one_strategy;
     }
 
     json retjson;

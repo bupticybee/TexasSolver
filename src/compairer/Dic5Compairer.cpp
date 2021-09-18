@@ -15,7 +15,7 @@ Dic5Compairer::Dic5Compairer(string dic_dir,int lines):Compairer(std::move(dic_d
     while (std::getline(infile, line))
     {
         vector<string> linesp = string_split(line,',');
-        if(linesp.size() != 2)throw runtime_error(tfm::format("linesp not correct: {}",line));
+        if(linesp.size() != 2)throw runtime_error(tfm::format("linesp not correct: %s",line));
 
 
         string cards_str = linesp[0];
@@ -25,7 +25,7 @@ Dic5Compairer::Dic5Compairer(string dic_dir,int lines):Compairer(std::move(dic_d
         if(cards.size() != 5)
             throw runtime_error(
                     tfm::format(
-                            "cards not correct: {} length {}",cards_str,cards.size()));
+                            "cards not correct: %s length %s",cards_str,cards.size()));
 
         //set<string> cards_set;
         //for(string one_card:cards) cards_set.insert(one_card);
@@ -33,7 +33,7 @@ Dic5Compairer::Dic5Compairer(string dic_dir,int lines):Compairer(std::move(dic_d
 
         if(this->cardslong2rank.find(Card::boardCards2long(cards)) != this->cardslong2rank.end()){
             throw runtime_error(
-                    tfm::format("key repeated: {}",cards_str)
+                    tfm::format("key repeated: %s",cards_str)
                     );
         }
 
@@ -63,15 +63,15 @@ Compairer::CompairResult
 Dic5Compairer::compair(vector<Card> private_former, vector<Card> private_latter, vector<Card> public_board) {
     if(private_former.size() != 2)
         throw runtime_error(
-                tfm::format("private former size incorrect,excepted 2, actually {}",private_former.size())
+                tfm::format("private former size incorrect,excepted 2, actually %s",private_former.size())
                 );
     if(private_latter.size() != 2)
         throw runtime_error(
-                tfm::format("private latter size incorrect,excepted 2, actually {}",private_latter.size())
+                tfm::format("private latter size incorrect,excepted 2, actually %s",private_latter.size())
         );
     if(public_board.size() != 5)
         throw runtime_error(
-                tfm::format("public board size incorrect,excepted 2, actually {}",public_board.size())
+                tfm::format("public board size incorrect,excepted 2, actually %s",public_board.size())
         );
 
     vector<Card> former_cards(private_former);
@@ -89,15 +89,15 @@ Compairer::CompairResult
 Dic5Compairer::compair(vector<int> private_former, vector<int> private_latter, vector<int> public_board) {
     if(private_former.size() != 2)
         throw runtime_error(
-                tfm::format("private former size incorrect,excepted 2, actually {}",private_former.size())
+                tfm::format("private former size incorrect,excepted 2, actually %s",private_former.size())
         );
     if(private_latter.size() != 2)
         throw runtime_error(
-                tfm::format("private latter size incorrect,excepted 2, actually {}",private_latter.size())
+                tfm::format("private latter size incorrect,excepted 2, actually %s",private_latter.size())
         );
     if(public_board.size() != 5)
         throw runtime_error(
-                tfm::format("public board size incorrect,excepted 2, actually {}",public_board.size())
+                tfm::format("public board size incorrect,excepted 2, actually %s",public_board.size())
         );
 
     vector<int> former_cards(private_former);
@@ -124,7 +124,7 @@ int Dic5Compairer::getRank(vector<int> cards) {
     int min_rank = numeric_limits<int>::max();
     for (const vector<int>& one_comb : comb_cards)
     {
-        if(one_comb.size() != 5)throw runtime_error(tfm::format("card size incorrect: {} should be 5",one_comb.size()));
+        if(one_comb.size() != 5)throw runtime_error(tfm::format("card size incorrect: %s should be 5",one_comb.size()));
         uint64_t comb_uint64 = Card::boardInts2long(one_comb);
         int rank = this->cardslong2rank[comb_uint64];
         min_rank = min(rank,min_rank);

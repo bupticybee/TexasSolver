@@ -83,7 +83,8 @@ SOURCES += \
     src/tools/utils.cpp \
     src/trainable/CfrPlusTrainable.cpp \
     src/trainable/DiscountedCfrTrainable.cpp \
-    src/trainable/Trainable.cpp
+    src/trainable/Trainable.cpp \
+    src/runtime/qsolverjob.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -122,7 +123,9 @@ HEADERS += \
     include/ranges/PrivateCardsManager.h \
     include/ranges/RiverCombs.h \
     include/ranges/RiverRangeManager.h \
-    include/tools/tinyformat.h
+    include/tools/tinyformat.h \
+    include/tools/qdebugstream.h \
+    include/runtime/qsolverjob.h
 
 FORMS += \
         mainwindow.ui

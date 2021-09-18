@@ -28,7 +28,7 @@ RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &preflo
     else if (player == 1)
         riverRanges = &p2RiverRanges;
     else
-        throw runtime_error(tfm::format("player {} not found",player));
+        throw runtime_error(tfm::format("player %s not found",player));
 
     uint64_t key = board_long;
 

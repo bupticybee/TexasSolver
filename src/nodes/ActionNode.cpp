@@ -33,7 +33,7 @@ GameTreeNode::GameTreeNodeType ActionNode::getType() {
 
 shared_ptr<Trainable> ActionNode::getTrainable(int i,bool create_on_site) {
     if(i > this->trainables.size()){
-        throw runtime_error(tfm::format("size unacceptable {} > {} ",i,this->trainables.size()));
+        throw runtime_error(tfm::format("size unacceptable %s > %s ",i,this->trainables.size()));
     }
     if(this->trainables[i] == nullptr && create_on_site){
         this->trainables[i] = make_shared<DiscountedCfrTrainable>(player_privates,*this);

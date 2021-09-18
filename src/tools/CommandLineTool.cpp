@@ -91,7 +91,7 @@ void CommandLineTool::processCommand(string input) {
     vector<string> contents;
     split(input,' ',contents);
     if(contents.size() == 0) contents = {input};
-    if(contents.size() > 2 || contents.size() < 1)throw runtime_error(tfm::format("command not valid: {}",input));
+    if(contents.size() > 2 || contents.size() < 1)throw runtime_error(tfm::format("command not valid: %s",input));
     string command = contents[0];
     string paramstr = contents.size() == 1 ? "" : contents[1];
     if(command == "set_pot"){
@@ -109,7 +109,7 @@ void CommandLineTool::processCommand(string input) {
         }else if(board_str_arr.size() == 5){
             this->current_round = 3;
         }else{
-            throw runtime_error(tfm::format("board {} not recognized",this->board));
+            throw runtime_error(tfm::format("board %s not recognized",this->board));
         }
     }else if(command == "set_range_ip"){
         this->range_ip = paramstr;

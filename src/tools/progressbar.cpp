@@ -40,7 +40,7 @@ void progressbar::set_niter(int niter) {
 }
 
 void progressbar::update() {
-
+    return;
     if (n_cycles == 0) throw std::runtime_error(
                 "progressbar::update: number of cycles not set");
 

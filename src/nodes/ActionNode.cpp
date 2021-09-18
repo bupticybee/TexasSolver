@@ -2,10 +2,10 @@
 // Created by Xuefeng Huang on 2020/1/30.
 //
 
-#include "nodes/ActionNode.h"
+#include "include/nodes/ActionNode.h"
 
 #include <utility>
-#include <trainable/DiscountedCfrTrainable.h>
+#include <include/trainable/DiscountedCfrTrainable.h>
 
 ActionNode::ActionNode(vector<GameActions> actions, vector<shared_ptr<GameTreeNode>> childrens, int player,
                        GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode> parent) :GameTreeNode(round,pot,std::move(parent)){
@@ -33,7 +33,7 @@ GameTreeNode::GameTreeNodeType ActionNode::getType() {
 
 shared_ptr<Trainable> ActionNode::getTrainable(int i,bool create_on_site) {
     if(i > this->trainables.size()){
-        throw runtime_error(fmt::format("size unacceptable {} > {} ",i,this->trainables.size()));
+        throw runtime_error(tfm::format("size unacceptable {} > {} ",i,this->trainables.size()));
     }
     if(this->trainables[i] == nullptr && create_on_site){
         this->trainables[i] = make_shared<DiscountedCfrTrainable>(player_privates,*this);

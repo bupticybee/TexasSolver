@@ -2,8 +2,8 @@
 // Created by Xuefeng Huang on 2020/1/31.
 //
 
-#include <solver/BestResponse.h>
-#include "solver/PCfrSolver.h"
+#include <include/solver/BestResponse.h>
+#include "include/solver/PCfrSolver.h"
 
 //#define DEBUG;
 
@@ -45,7 +45,7 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
     if(num_threads == -1){
         num_threads = omp_get_num_procs();
     }
-    cout << fmt::format("Using {} threads",num_threads) << endl;
+    cout << tfm::format("Using {} threads",num_threads) << endl;
     this->num_threads = num_threads;
     this->distributing_task = false;
     omp_set_num_threads(this->num_threads);
@@ -92,7 +92,7 @@ PCfrSolver::noDuplicateRange(const vector<PrivateCards> &private_range, uint64_t
     unordered_map<int,bool> rangekv;
     for(PrivateCards one_range:private_range){
         if(rangekv.find(one_range.hashCode()) != rangekv.end())
-            throw runtime_error(fmt::format("duplicated key {}",one_range.toString()));
+            throw runtime_error(tfm::format("duplicated key {}",one_range.toString()));
         rangekv[one_range.hashCode()] = true;
         uint64_t hand_long = Card::boardInts2long(one_range.get_hands());
         if(!Card::boardsHasIntercept(hand_long,board_long)){
@@ -112,7 +112,7 @@ void PCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
         if(this->trainer == "cfr_plus"){
             //vector<PrivateCards> player_privates = this->ranges[player];
             //action_node->setTrainable(make_shared<CfrPlusTrainable>(action_node,player_privates));
-            throw runtime_error(fmt::format("trainer {} not supported",this->trainer));
+            throw runtime_error(tfm::format("trainer {} not supported",this->trainer));
         }else if(this->trainer == "discounted_cfr"){
             vector<PrivateCards>* player_privates = &this->ranges[player];
             //action_node->setTrainable(make_shared<DiscountedCfrTrainable>(action_node,player_privates));
@@ -134,7 +134,7 @@ void PCfrSolver::setTrainable(shared_ptr<GameTreeNode> root) {
             }
             action_node->setTrainable(vector<shared_ptr<Trainable>>(num),player_privates);
         }else{
-            throw runtime_error(fmt::format("trainer {} not found",this->trainer));
+            throw runtime_error(tfm::format("trainer {} not found",this->trainer));
         }
 
         vector<shared_ptr<GameTreeNode>> childrens =  action_node->getChildrens();
@@ -344,7 +344,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
             new_deal = card_num * origin_deal + card;
             new_deal += (1 + card_num);
         } else{
-            throw runtime_error(fmt::format("deal out of range : {} ",deal));
+            throw runtime_error(tfm::format("deal out of range : {} ",deal));
         }
         if(this->distributing_task && node->getRound() == this->split_round) {
             results[one_card->getNumberInDeckInt()] = vector<float>(this->ranges[player].size());
@@ -429,7 +429,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
 #ifdef DEBUG
     if (current_strategy.size() != actions.size() * node_player_private_cards.size()) {
         node->printHistory();
-        throw runtime_error(fmt::format(
+        throw runtime_error(tfm::format(
                 "length not match {} - {} \n action size {} private_card size {}"
                 ,current_strategy.size()
                 ,actions.size() * node_player_private_cards.size()
@@ -477,10 +477,10 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
 #ifdef DEBUG
         if (action_utilities.size() != payoffs.size()) {
             cout << ("errmsg") << endl;
-            cout << (fmt::format("node player {} ", node->getPlayer())) << endl;
+            cout << (tfm::format("node player {} ", node->getPlayer())) << endl;
             node->printHistory();
             throw runtime_error(
-                    fmt::format(
+                    tfm::format(
                             "action and payoff length not match {} - {}", action_utilities.size(),
                             payoffs.size()
                     )
@@ -785,7 +785,7 @@ void PCfrSolver::exchangeRange(json& strategy,int rank1,int rank2,shared_ptr<Act
                 cout << one_key.key() << endl;
             }
             cout << "strategy: " << strategy  << endl;
-            throw runtime_error(fmt::format("{} not exist in strategy",one_range_str));
+            throw runtime_error(tfm::format("{} not exist in strategy",one_range_str));
         }
         vector<float> one_strategy = strategy[one_range_str];
         range_strs.push_back(one_range_str);
@@ -902,7 +902,7 @@ void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strate
                 new_deal = card_num * origin_deal + card;
                 new_deal += (1 + card_num);
             } else{
-                throw runtime_error(fmt::format("deal out of range : {} ",deal));
+                throw runtime_error(tfm::format("deal out of range : {} ",deal));
             }
 
             if(exchange_color_list.size() > 1){

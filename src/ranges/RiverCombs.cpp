@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/1/31.
 //
 
-#include "ranges/RiverCombs.h"
+#include "include/ranges/RiverCombs.h"
 
 RiverCombs::RiverCombs() {
 

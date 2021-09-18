@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/1/31.
 //
 
-#include "ranges/RiverRangeManager.h"
+#include "include/ranges/RiverRangeManager.h"
 
 #include <utility>
 
@@ -28,7 +28,7 @@ RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &preflo
     else if (player == 1)
         riverRanges = &p2RiverRanges;
     else
-        throw runtime_error(fmt::format("player {} not found",player));
+        throw runtime_error(tfm::format("player {} not found",player));
 
     uint64_t key = board_long;
 

@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/1/31.
 //
 
-#include "solver/Solver.h"
+#include "include/solver/Solver.h"
 
 Solver::Solver() {
 

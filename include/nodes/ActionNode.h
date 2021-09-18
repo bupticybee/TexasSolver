@@ -6,12 +6,12 @@
 #define TEXASSOLVER_ACTIONNODE_H
 
 
-#include <trainable/Trainable.h>
+#include <include/trainable/Trainable.h>
 #include <thread>
 #include <mutex>
-#include <ranges/PrivateCards.h>
-#include "GameTreeNode.h"
-#include "GameActions.h"
+#include <include/ranges/PrivateCards.h>
+#include "include/nodes/GameTreeNode.h"
+#include "include/nodes/GameActions.h"
 
 class ActionNode :public GameTreeNode {
 public:

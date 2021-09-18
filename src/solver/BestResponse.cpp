@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/2/1.
 //
 
-#include "solver/BestResponse.h"
+#include "include/solver/BestResponse.h"
 //#define DEBUG;
 
 BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int player_number,
@@ -14,7 +14,7 @@ BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int pla
 #ifdef DEBUG
     if(private_combos.size() != player_number)
         throw runtime_error(
-                fmt::format("river combo length NE player nunber: {} -- {}",private_combos.size(),player_number)
+                tfm::format("river combo length NE player nunber: {} -- {}",private_combos.size(),player_number)
         );
 #endif
     player_hands = vector<int>(player_number);
@@ -36,7 +36,7 @@ float BestResponse::printExploitability(shared_ptr<GameTreeNode> root, int itera
     if(this->reach_probs.empty())
         this->reach_probs = vector<vector<float>> (this->player_number);
 
-    cout << (fmt::format("Iter: {}",iterationCount)) << endl;
+    cout << (tfm::format("Iter: {}",iterationCount)) << endl;
     float exploitible = 0;
     // 构造双方初始reach probs(按照手牌weights)
     for (int player_id = 0; player_id < this->player_number; player_id++) {
@@ -50,10 +50,10 @@ float BestResponse::printExploitability(shared_ptr<GameTreeNode> root, int itera
     for (int player_id = 0; player_id < this->player_number; player_id++) {
         float player_exploitability = getBestReponseEv(root, player_id, reach_probs, initialBoard, 0);
         exploitible += player_exploitability;
-        cout << (fmt::format("player {} exploitability {}", player_id, player_exploitability)) << endl;
+        cout << (tfm::format("player {} exploitability {}", player_id, player_exploitability)) << endl;
     }
     float total_exploitability = exploitible / this->player_number / initial_pot * 100;
-    cout << (fmt::format("Total exploitability {} precent", total_exploitability)) << endl;
+    cout << (tfm::format("Total exploitability {} precent", total_exploitability)) << endl;
     return total_exploitability;
 }
 
@@ -188,7 +188,7 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
             new_deal = card_num * origin_deal + card;
             new_deal += (1 + card_num);
         } else{
-            throw runtime_error(fmt::format("deal out of range : {} ",deal));
+            throw runtime_error(tfm::format("deal out of range : {} ",deal));
         }
         vector<float> child_utility = this->bestResponse(one_child, player, new_reach_probs, new_board_long,new_deal);
         results[one_card.getNumberInDeckInt()] = child_utility;
@@ -262,7 +262,7 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
         const vector<float>& node_strategy = trainable->getAverageStrategy();
 #ifdef DEBUG
         if(node_strategy.size() != node->getChildrens().size() * reach_probs[node->getPlayer()].size()) {
-            throw runtime_error(fmt::format("strategy size not match {} - {}",
+            throw runtime_error(tfm::format("strategy size not match {} - {}",
                                                      node_strategy.size(), node->getChildrens().size() * reach_probs[node->getPlayer()].size()));
         }
 #endif
@@ -303,7 +303,7 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
 #ifdef DEBUG
             if (action_payoffs.size() != total_payoffs.size())
                 throw runtime_error(
-                        fmt::format(
+                        tfm::format(
                                 "length not match between action payoffs and total payoffs {} -- {}",
                                 action_payoffs.size(),total_payoffs.size()
                         )

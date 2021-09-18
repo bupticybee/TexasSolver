@@ -5,7 +5,7 @@
 #ifndef TEXASSOLVER_TRAINABLE_H
 #define TEXASSOLVER_TRAINABLE_H
 #include <vector>
-#include "json.hpp"
+#include "include/json.hpp"
 using namespace std;
 using json = nlohmann::json;
 

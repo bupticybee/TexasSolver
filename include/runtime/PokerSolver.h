@@ -7,11 +7,11 @@
 
 #include <string>
 #include <vector>
-#include "compairer/Dic5Compairer.h"
-#include "tools/PrivateRangeConverter.h"
-#include "solver/CfrSolver.h"
-#include "solver/PCfrSolver.h"
-#include "library.h"
+#include "include/compairer/Dic5Compairer.h"
+#include "include/tools/PrivateRangeConverter.h"
+#include "include/solver/CfrSolver.h"
+#include "include/solver/PCfrSolver.h"
+#include "include/library.h"
 using namespace std;
 
 class PokerSolver {

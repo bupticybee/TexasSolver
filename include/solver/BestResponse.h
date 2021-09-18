@@ -5,17 +5,17 @@
 #ifndef TEXASSOLVER_BESTRESPONSE_H
 #define TEXASSOLVER_BESTRESPONSE_H
 #include <omp.h>
-#include <ranges/PrivateCards.h>
-#include <compairer/Compairer.h>
-#include <Deck.h>
-#include <ranges/RiverRangeManager.h>
-#include <ranges/PrivateCardsManager.h>
-#include <trainable/CfrPlusTrainable.h>
-#include <trainable/DiscountedCfrTrainable.h>
-#include <nodes/ChanceNode.h>
-#include <nodes/TerminalNode.h>
-#include <nodes/ShowdownNode.h>
-#include <tools/utils.h>
+#include <include/ranges/PrivateCards.h>
+#include <include/compairer/Compairer.h>
+#include <include/Deck.h>
+#include <include/ranges/RiverRangeManager.h>
+#include <include/ranges/PrivateCardsManager.h>
+#include <include/trainable/CfrPlusTrainable.h>
+#include <include/trainable/DiscountedCfrTrainable.h>
+#include <include/nodes/ChanceNode.h>
+#include <include/nodes/TerminalNode.h>
+#include <include/nodes/ShowdownNode.h>
+#include <include/tools/utils.h>
 
 using namespace std;
 

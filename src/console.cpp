@@ -1,10 +1,10 @@
 //
 // Created by bytedance on 9.6.21.
 //
-#include "tools/CommandLineTool.h"
-#include "tools/argparse.hpp"
+#include "include/tools/CommandLineTool.h"
+#include "include/tools/argparse.hpp"
 
-int main(int argc,const char **argv) {
+int main_backup(int argc,const char **argv) {
     ArgumentParser parser;
 
     parser.addArgument("-i", "--input_file", 1, true);
@@ -21,7 +21,7 @@ int main(int argc,const char **argv) {
     string mode = parser.retrieve<string>("mode");
     if(mode.empty()){mode = "holdem";}
     if(mode != "holdem" && mode != "shortdeck")
-        throw runtime_error(fmt::format("mode {} error, not in ['holdem','shortdeck']",mode));
+        throw runtime_error(tfm::format("mode %s error, not in ['holdem','shortdeck']",mode));
 
     if(input_file.empty()) {
         CommandLineTool clt = CommandLineTool(mode,resource_dir);

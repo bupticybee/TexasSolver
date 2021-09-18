@@ -4,15 +4,15 @@
 
 #ifndef TEXASSOLVER_TCFRSOLVER_H
 #define TEXASSOLVER_TCFRSOLVER_H
-#include <solver/BestResponse.h>
-#include <ranges/PrivateCards.h>
-#include <compairer/Compairer.h>
-#include <Deck.h>
-#include <ranges/RiverRangeManager.h>
-#include <ranges/PrivateCardsManager.h>
-#include <trainable/CfrPlusTrainable.h>
-#include <trainable/DiscountedCfrTrainable.h>
-#include "solver/Solver.h"
+#include <include/solver/BestResponse.h>
+#include <include/ranges/PrivateCards.h>
+#include <include/compairer/Compairer.h>
+#include <include/Deck.h>
+#include <include/ranges/RiverRangeManager.h>
+#include <include/ranges/PrivateCardsManager.h>
+#include <include/trainable/CfrPlusTrainable.h>
+#include <include/trainable/DiscountedCfrTrainable.h>
+#include "include/solver/Solver.h"
 //#include <boost/thread/executors/basic_thread_pool.hpp>
 //#include <boost/thread/future.hpp>
 //#include <boost/thread.hpp>

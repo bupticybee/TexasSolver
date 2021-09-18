@@ -4,7 +4,7 @@
 
 #ifndef TEXASSOLVER_PRIVATECARDS_H
 #define TEXASSOLVER_PRIVATECARDS_H
-#include "Card.h"
+#include "include/Card.h"
 
 class PrivateCards {
 public:

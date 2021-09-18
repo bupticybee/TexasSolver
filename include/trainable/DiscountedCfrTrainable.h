@@ -4,8 +4,8 @@
 
 #ifndef TEXASSOLVER_DISCOUNTEDCFRTRAINABLE_H
 #define TEXASSOLVER_DISCOUNTEDCFRTRAINABLE_H
-#include <nodes/ActionNode.h>
-#include <ranges/PrivateCards.h>
+#include <include/nodes/ActionNode.h>
+#include <include/ranges/PrivateCards.h>
 #include "Trainable.h"
 using namespace std;
 

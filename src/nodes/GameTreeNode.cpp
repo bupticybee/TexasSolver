@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/1/29.
 //
 
-#include "nodes/GameTreeNode.h"
+#include "include/nodes/GameTreeNode.h"
 
 #include <utility>
 
@@ -69,7 +69,7 @@ GameTreeNode::GameRound GameTreeNode::intToGameRound(int round){
             break;
         }
         default:{
-            throw runtime_error(fmt::format("round %s not found",round));
+            throw runtime_error(tfm::format("round %s not found",round));
         }
     }
     return game_round;

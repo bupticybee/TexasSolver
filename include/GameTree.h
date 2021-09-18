@@ -6,16 +6,16 @@
 #define TEXASSOLVER_GAMETREE_H
 
 
-#include <nodes/GameTreeNode.h>
-#include "Deck.h"
-#include "json.hpp"
+#include <include/nodes/GameTreeNode.h>
+#include "include/Deck.h"
+#include "include/json.hpp"
 #include <fstream>
-#include <nodes/ActionNode.h>
-#include <nodes/ShowdownNode.h>
-#include <nodes/TerminalNode.h>
-#include <nodes/ChanceNode.h>
-#include "library.h"
-#include "tools/Rule.h"
+#include <include/nodes/ActionNode.h>
+#include <include/nodes/ShowdownNode.h>
+#include <include/nodes/TerminalNode.h>
+#include <include/nodes/ChanceNode.h>
+#include "include/library.h"
+#include "include/tools/Rule.h"
 
 using json = nlohmann::json;
 

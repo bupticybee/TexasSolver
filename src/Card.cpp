@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/1/28.
 //
 
-#include "Card.h"
+#include "include/Card.h"
 
 Card::Card(){}
 Card::Card(string card,int card_num_in_deck){
@@ -38,7 +38,7 @@ int Card::strCard2int(string card) {
     char rank = card.at(0);
     char suit = card.at(1);
     if(card.length() != 2){
-        throw runtime_error( fmt::format("card {} not found",card));
+        throw runtime_error( tfm::format("card %s not found",card));
     }
     return (rankToInt(rank) - 2) * 4 + suitToInt(suit);
 }
@@ -72,7 +72,7 @@ uint64_t Card::boardCards2long(vector<Card>& cards){
 uint64_t Card::boardInt2long(int board){
     // 这里hard code了一副扑克牌是52张
     if(board < 0 || board >= 52){
-        throw runtime_error(fmt::format("Card with id {} not found",board));
+        throw runtime_error(tfm::format("Card with id %s not found",board));
     }
     // uint64_7 的range 在0 ~ + 2^ 64之间,所以不用太担心溢出问题
     return ((uint64_t)(1) << board);
@@ -80,13 +80,13 @@ uint64_t Card::boardInt2long(int board){
 
 uint64_t Card::boardInts2long(const vector<int>& board){
     if(board.size() < 1 || board.size() > 7){
-        throw runtime_error(fmt::format("Card length incorrect: {}",board.size()));
+        throw runtime_error(tfm::format("Card length incorrect: %s",board.size()));
     }
     uint64_t board_long = 0;
     for(int one_card: board){
         // 这里hard code了一副扑克牌是52张
         if(one_card < 0 || one_card >= 52){
-            throw runtime_error(fmt::format("Card with id {} not found",one_card));
+            throw runtime_error(tfm::format("Card with id %s not found",one_card));
         }
         // uint64_7 的range 在0 ~ + 2^ 64之间,所以不用太担心溢出问题
         board_long += ((uint64_t)(1) << one_card);
@@ -111,7 +111,7 @@ vector<int> Card::long2board(uint64_t board_long) {
         board_long = board_long >> 1;
     }
     if (board.size() < 1 || board.size() > 7){
-        throw runtime_error(fmt::format("board length not correct, board length {}",board.size()));
+        throw runtime_error(tfm::format("board length not correct, board length %s",board.size()));
     }
     return board;
 }
@@ -124,7 +124,7 @@ vector<Card> Card::long2boardCards(uint64_t board_long){
             board_cards[i] = Card(intCard2Str(one_board));
         }
         if (board_cards.size() < 1 || board_cards.size() > 7){
-            throw runtime_error(fmt::format("board length not correct, board length {}",board_cards.size()));
+            throw runtime_error(tfm::format("board length not correct, board length %s",board_cards.size()));
         }
         vector<Card> retval(board_cards.size());
         for(int i = 0;i < board_cards.size();i ++){

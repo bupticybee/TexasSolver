@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/1/31.
 //
 
-#include "ranges/PrivateCardsManager.h"
+#include "include/ranges/PrivateCardsManager.h"
 
 PrivateCardsManager::PrivateCardsManager() {
 

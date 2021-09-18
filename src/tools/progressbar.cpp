@@ -1,7 +1,7 @@
 //
 // Created by Xuefeng Huang on 2020/1/29.
 //
-#include "tools/progressbar.h"
+#include "include/tools/progressbar.h"
 
 progressbar::progressbar() :
         progress(0),

@@ -1,7 +1,7 @@
 //
 // Created by bytedance on 7.6.21.
 //
-#include "tools/CommandLineTool.h"
+#include "include/tools/CommandLineTool.h"
 
 CommandLineTool::CommandLineTool(string mode,string resource_dir) {
     string suits = "c,d,h,s";
@@ -18,7 +18,7 @@ CommandLineTool::CommandLineTool(string mode,string resource_dir) {
         compairer_file = this->resource_dir + "/compairer/card5_dic_sorted_shortdeck.txt";
         lines = 376993;
     }else{
-        throw runtime_error(fmt::format("mode not recognized : ",mode));
+        throw runtime_error(tfm::format("mode not recognized : ",mode));
     }
     string logfile_name = "../resources/outputs/outputs_log.txt";
     this->ps = PokerSolver(ranks,suits,compairer_file,lines);
@@ -91,7 +91,7 @@ void CommandLineTool::processCommand(string input) {
     vector<string> contents;
     split(input,' ',contents);
     if(contents.size() == 0) contents = {input};
-    if(contents.size() > 2 || contents.size() < 1)throw runtime_error(fmt::format("command not valid: {}",input));
+    if(contents.size() > 2 || contents.size() < 1)throw runtime_error(tfm::format("command not valid: {}",input));
     string command = contents[0];
     string paramstr = contents.size() == 1 ? "" : contents[1];
     if(command == "set_pot"){
@@ -109,7 +109,7 @@ void CommandLineTool::processCommand(string input) {
         }else if(board_str_arr.size() == 5){
             this->current_round = 3;
         }else{
-            throw runtime_error(fmt::format("board {} not recognized",this->board));
+            throw runtime_error(tfm::format("board {} not recognized",this->board));
         }
     }else if(command == "set_range_ip"){
         this->range_ip = paramstr;

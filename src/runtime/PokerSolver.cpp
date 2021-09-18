@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/2/6.
 //
 
-#include "runtime/PokerSolver.h"
+#include "include/runtime/PokerSolver.h"
 
 PokerSolver::PokerSolver() {
 

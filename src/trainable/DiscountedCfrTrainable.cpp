@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/1/31.
 //
 
-#include "trainable/DiscountedCfrTrainable.h"
+#include "include/trainable/DiscountedCfrTrainable.h"
 //#define DEBUG;
 
 DiscountedCfrTrainable::DiscountedCfrTrainable(vector<PrivateCards> *privateCards,
@@ -145,7 +145,7 @@ json DiscountedCfrTrainable::dump_strategy(bool with_state) {
             int strategy_index = j * this->privateCards->size() + i;
             one_strategy[j] = average_strategy[strategy_index];
         }
-        strategy[fmt::format("{}",one_private_card.toString())] = one_strategy;
+        strategy[tfm::format("{}",one_private_card.toString())] = one_strategy;
     }
 
     json retjson;

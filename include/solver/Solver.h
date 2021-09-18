@@ -6,7 +6,7 @@
 #define TEXASSOLVER_SOLVER_H
 
 
-#include <GameTree.h>
+#include <include/GameTree.h>
 
 class Solver {
 public:

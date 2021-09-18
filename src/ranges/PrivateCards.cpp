@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/1/31.
 //
 
-#include "ranges/PrivateCards.h"
+#include "include/ranges/PrivateCards.h"
 
 PrivateCards::PrivateCards() {
 }

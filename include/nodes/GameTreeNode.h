@@ -6,7 +6,7 @@
 #define TEXASSOLVER_GAMETREENODE_H
 #include <string>
 #include <vector>
-#include "fmt/format.h"
+#include "include/tools/tinyformat.h"
 using namespace std;
 
 class GameTreeNode {

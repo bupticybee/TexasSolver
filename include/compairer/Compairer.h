@@ -8,9 +8,8 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <Card.h>
-#include "fmt/format.h"
-#include "Card.h"
+#include <include/Card.h>
+#include "include/tools/tinyformat.h"
 
 class Compairer {
 public:

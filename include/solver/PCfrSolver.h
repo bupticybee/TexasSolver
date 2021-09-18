@@ -4,17 +4,17 @@
 
 #ifndef TEXASSOLVER_PCFRSOLVER_H
 #define TEXASSOLVER_PCFRSOLVER_H
-#include <ranges/PrivateCards.h>
-#include <compairer/Compairer.h>
-#include <Deck.h>
-#include <ranges/RiverRangeManager.h>
-#include <ranges/PrivateCardsManager.h>
-#include <trainable/CfrPlusTrainable.h>
-#include <trainable/DiscountedCfrTrainable.h>
-#include "Solver.h"
+#include <include/ranges/PrivateCards.h>
+#include <include/compairer/Compairer.h>
+#include <include/Deck.h>
+#include <include/ranges/RiverRangeManager.h>
+#include <include/ranges/PrivateCardsManager.h>
+#include <include/trainable/CfrPlusTrainable.h>
+#include <include/trainable/DiscountedCfrTrainable.h>
+#include "include/solver/Solver.h"
 #include <omp.h>
-#include "tools/lookup8.h"
-#include "tools/utils.h"
+#include "include/tools/lookup8.h"
+#include "include/tools/utils.h"
 #include <queue>
 #include <optional>
 

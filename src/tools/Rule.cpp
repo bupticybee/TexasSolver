@@ -1,7 +1,7 @@
 //
 // Created by icybee&freezer on 2021/6/1.
 //
-#include "tools/Rule.h"
+#include "include/tools/Rule.h"
 
 Rule::Rule(Deck deck, float oop_commit, float ip_commit, int current_round, int raise_limit, float small_blind,
            float big_blind, float stack, GameTreeBuildingSettings build_settings,float allin_threshold):

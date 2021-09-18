@@ -6,8 +6,8 @@
 #define TEXASSOLVER_CHANCENODE_H
 
 
-#include <Card.h>
-#include "GameTreeNode.h"
+#include <include/Card.h>
+#include "include/nodes/GameTreeNode.h"
 
 class ChanceNode:public GameTreeNode {
 public:

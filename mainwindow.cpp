@@ -8,7 +8,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    connect(this->ui->actionChinese, SIGNAL(triggered()), this, SLOT(on_chinese_local()));
+    connect(this->ui->actionEng, SIGNAL(triggered()), this, SLOT(on_en_local()));
     qSolverJob.setContext(this->getLogArea());
+    this->setWindowTitle("TexasSolver");
 }
 
 MainWindow::~MainWindow()
@@ -27,4 +30,17 @@ Ui::MainWindow * MainWindow::getPriUi(){
 
 QTextEdit * MainWindow::getLogArea(){
     return this->ui->logOutput;
+}
+
+void MainWindow::on_clearLogButtom_clicked()
+{
+    this->ui->logOutput->clear();
+}
+
+void MainWindow::on_chinese_local(){
+
+}
+
+void MainWindow::on_en_local(){
+
 }

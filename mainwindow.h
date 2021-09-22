@@ -22,6 +22,9 @@ public:
 
 private slots:
     void on_buttomSolve_clicked();
+    void on_clearLogButtom_clicked();
+    void on_chinese_local();
+    void on_en_local();
 
 private:
     Ui::MainWindow *ui;

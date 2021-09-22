@@ -11,7 +11,7 @@ void QSolverJob::run()
 {
     QDebugStream qout(std::cout, this->textEdit);
     //this->ui->logOutput->setText(this->ui->logOutput->toPlainText() + "wow");
-    std::cout << "Start Solving YesYes.." << std::endl;
+    std::cout << "Start Solving.." << std::endl;
 
     string input_file = "/Users/bytedance/TexasSolverGui/resources/text/commandline_sample_input.txt";
     string resource_dir = "/Users/bytedance/TexasSolverGui/resources";

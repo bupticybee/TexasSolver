@@ -5,6 +5,7 @@
 #include <QThread>
 #include "include/tools/CommandLineTool.h"
 #include <QTextEdit>
+#include <QPlainTextEdit>
 
 class QSolverJob : public QThread
 {

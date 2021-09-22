@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     qSolverJob.setContext(this->getLogArea());
-    // QDebugStream qout(std::cout, this->ui->logOutput);
 }
 
 MainWindow::~MainWindow()

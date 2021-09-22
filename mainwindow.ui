@@ -6,47 +6,79 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>593</width>
-    <height>475</height>
+    <width>894</width>
+    <height>630</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="buttomSolve">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>150</y>
-      <width>151</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Do it!</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="logOutput">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>10</y>
-      <width>301</width>
-      <height>391</height>
-     </rect>
-    </property>
-   </widget>
+   <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="4,2">
+    <item>
+     <layout class="QVBoxLayout" name="inputLayout">
+      <item>
+       <layout class="QVBoxLayout" name="inputStaticsLayout"/>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="6,2">
+          <item>
+           <widget class="QPushButton" name="buttomSolve">
+            <property name="text">
+             <string>start solving</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>PushButton</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="infoLayout">
+      <item>
+       <widget class="QTextEdit" name="logOutput"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>593</width>
-     <height>22</height>
+     <width>894</width>
+     <height>24</height>
     </rect>
    </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="nativeMenuBar">
+    <bool>false</bool>
+   </property>
+   <widget class="QMenu" name="menusolver">
+    <property name="title">
+     <string>solver</string>
+    </property>
+    <addaction name="actionabout"/>
+    <addaction name="actionversion"/>
+   </widget>
+   <addaction name="menusolver"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -57,6 +89,16 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionabout">
+   <property name="text">
+    <string>about</string>
+   </property>
+  </action>
+  <action name="actionversion">
+   <property name="text">
+    <string>version</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

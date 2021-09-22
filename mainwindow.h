@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTextEdit>
+#include <QPlainTextEdit>
 #include "include/runtime/qsolverjob.h"
 
 namespace Ui {

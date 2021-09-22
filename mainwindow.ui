@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1032</width>
-    <height>636</height>
+    <width>1000</width>
+    <height>738</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,14 +16,80 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="4,2">
     <item>
-     <layout class="QVBoxLayout" name="inputLayout">
+     <layout class="QVBoxLayout" name="inputLayout" stretch="2,2,8,1">
       <property name="spacing">
        <number>0</number>
       </property>
       <item>
-       <layout class="QVBoxLayout" name="inputStaticsLayout">
+       <layout class="QVBoxLayout" name="rangeLayout">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <widget class="QTabWidget" name="tabWidget">
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <widget class="QWidget" name="IpRange">
+           <attribute name="title">
+            <string>IP Range</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QTextEdit" name="textEdit_2"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_3">
+              <property name="text">
+               <string>Select IP Range</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="OopRange">
+           <attribute name="title">
+            <string>OOp range</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QTextEdit" name="textEdit_3"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_4">
+              <property name="text">
+               <string>Select OOP Range</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="boardLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Board</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="textEdit"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="text">
+           <string>Select Board Card</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="inputStaticsLayout" stretch="3,4,0">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,1,1">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
@@ -31,193 +97,127 @@
               <property name="title">
                <string>Flop IP</string>
               </property>
-              <widget class="QLabel" name="flopBetSizeText">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>30</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>BetSize</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="flopIpBets">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>30</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_2">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>30</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_7">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>60</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="flopIpBets_4">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>60</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_8">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>60</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>RaiseSize</string>
-               </property>
-              </widget>
-              <widget class="QCheckBox" name="checkBox">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>90</y>
-                 <width>86</width>
-                 <height>22</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Add allin</string>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_3">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <item>
+                  <widget class="QLabel" name="label_2">
+                   <property name="text">
+                    <string>Bet Sizes : </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_3">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_7">
+                 <item>
+                  <widget class="QLabel" name="label_4">
+                   <property name="text">
+                    <string>Raise Sizes: </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_2"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_5">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <item>
+                  <widget class="QCheckBox" name="checkBox">
+                   <property name="text">
+                    <string>Add Allin</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
              <widget class="QGroupBox" name="groupBox_2">
               <property name="title">
                <string>Turn IP</string>
               </property>
-              <widget class="QLabel" name="flopBetSizeText_4">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>30</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>BetSize</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="flopIpBets_5">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>60</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-              <widget class="QCheckBox" name="checkBox_2">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>90</y>
-                 <width>86</width>
-                 <height>22</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Add allin</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="flopIpBets_2">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>30</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_9">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>60</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>RaiseSize</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_10">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>60</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_3">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>30</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_5">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                 <item>
+                  <widget class="QLabel" name="label_6">
+                   <property name="text">
+                    <string>Bet Sizes : </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_3"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_7">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_14">
+                 <item>
+                  <widget class="QLabel" name="label_8">
+                   <property name="text">
+                    <string>Raise Sizes: </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_4"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_9">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_15">
+                 <item>
+                  <widget class="QCheckBox" name="checkBox_2">
+                   <property name="text">
+                    <string>Add Allin</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
@@ -229,94 +229,61 @@
               <property name="title">
                <string>River IP</string>
               </property>
-              <widget class="QLineEdit" name="flopIpBets_6">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>60</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-              <widget class="QCheckBox" name="checkBox_3">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>90</y>
-                 <width>86</width>
-                 <height>22</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Add allin</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_11">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>60</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>RaiseSize</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="flopIpBets_3">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>30</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_12">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>60</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_5">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>30</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>BetSize</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_6">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>30</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_6">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_17">
+                 <item>
+                  <widget class="QLabel" name="label_12">
+                   <property name="text">
+                    <string>Bet Sizes : </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_6"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_13">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_16">
+                 <item>
+                  <widget class="QLabel" name="label_10">
+                   <property name="text">
+                    <string>Raise Sizes: </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_5"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_11">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_18">
+                 <item>
+                  <widget class="QCheckBox" name="checkBox_3">
+                   <property name="text">
+                    <string>Add Allin</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
@@ -324,7 +291,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,1,1">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_13">
             <item>
@@ -332,133 +299,61 @@
               <property name="title">
                <string>Flop OOP</string>
               </property>
-              <widget class="QLineEdit" name="flopIpBets_11">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>60</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-              <widget class="QCheckBox" name="checkBox_6">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>110</y>
-                 <width>86</width>
-                 <height>22</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Add allin</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_21">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>60</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>RaiseSize</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="flopIpBets_12">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>30</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_22">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>60</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_23">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>30</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>BetSize</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_24">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>30</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_25">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>90</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_26">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>90</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>DonkSize</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="flopIpBets_13">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>90</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_20">
+                 <item>
+                  <widget class="QLabel" name="label_16">
+                   <property name="text">
+                    <string>Bet Sizes : </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_8"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_17">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_19">
+                 <item>
+                  <widget class="QLabel" name="label_14">
+                   <property name="text">
+                    <string>Raise Sizes: </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_7"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_15">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_21">
+                 <item>
+                  <widget class="QCheckBox" name="checkBox_4">
+                   <property name="text">
+                    <string>Add Allin</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
@@ -470,133 +365,82 @@
               <property name="title">
                <string>Turn OOP</string>
               </property>
-              <widget class="QLineEdit" name="flopIpBets_17">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>60</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-              <widget class="QCheckBox" name="checkBox_8">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>110</y>
-                 <width>86</width>
-                 <height>22</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Add allin</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_33">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>60</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>RaiseSize</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="flopIpBets_18">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>30</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_34">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>60</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_35">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>30</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>BetSize</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_36">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>30</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_37">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>90</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_38">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>90</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>DonkSize</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="flopIpBets_19">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>90</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_8">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_42">
+                 <item>
+                  <widget class="QLabel" name="label_58">
+                   <property name="text">
+                    <string>Bet Sizes : </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_29"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_59">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_41">
+                 <item>
+                  <widget class="QLabel" name="label_56">
+                   <property name="text">
+                    <string>Raise Sizes: </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_28"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_57">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_43">
+                 <item>
+                  <widget class="QLabel" name="label_60">
+                   <property name="text">
+                    <string>Donk Sizes: </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_30"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_61">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_44">
+                 <item>
+                  <widget class="QCheckBox" name="checkBox_5">
+                   <property name="text">
+                    <string>Add Allin</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
@@ -608,133 +452,159 @@
               <property name="title">
                <string>River OOP</string>
               </property>
-              <widget class="QLineEdit" name="flopIpBets_20">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>60</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_9">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_46">
+                 <item>
+                  <widget class="QLabel" name="label_64">
+                   <property name="text">
+                    <string>Bet Sizes : </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_32"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_65">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_45">
+                 <item>
+                  <widget class="QLabel" name="label_62">
+                   <property name="text">
+                    <string>Raise Sizes: </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_31"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_63">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_47">
+                 <item>
+                  <widget class="QLabel" name="label_66">
+                   <property name="text">
+                    <string>Donk Sizes: </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_33"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_67">
+                   <property name="text">
+                    <string>%</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_48">
+                 <item>
+                  <widget class="QCheckBox" name="checkBox_6">
+                   <property name="text">
+                    <string>Add Allin</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_15">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_49">
+            <item>
+             <widget class="QLabel" name="label_68">
+              <property name="text">
+               <string>raise limit: </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_34"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_69">
+              <property name="text">
+               <string>times.      Pot: </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_35"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_70">
+              <property name="text">
+               <string>Effective Stack: </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_36"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_71">
+              <property name="text">
+               <string>  Mode: </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox">
+              <item>
                <property name="text">
-                <string/>
+                <string>texas holdem</string>
                </property>
-              </widget>
-              <widget class="QCheckBox" name="checkBox_9">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>110</y>
-                 <width>86</width>
-                 <height>22</height>
-                </rect>
-               </property>
+              </item>
+              <item>
                <property name="text">
-                <string>Add allin</string>
+                <string>shortdeck</string>
                </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_39">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>60</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>RaiseSize</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="flopIpBets_21">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>30</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_40">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>60</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_41">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>30</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>BetSize</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_42">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>30</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_43">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>90</y>
-                 <width>21</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>%</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="flopBetSizeText_44">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>90</y>
-                 <width>58</width>
-                 <height>20</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>DonkSize</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="flopIpBets_22">
-               <property name="geometry">
-                <rect>
-                 <x>70</x>
-                 <y>90</y>
-                 <width>100</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_50" stretch="6,3">
+            <item>
+             <widget class="QPushButton" name="pushButton_6">
+              <property name="text">
+               <string>Build Tree</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_5">
+              <property name="text">
+               <string>Show Tree</string>
+              </property>
              </widget>
             </item>
            </layout>
@@ -746,22 +616,99 @@
       <item>
        <layout class="QVBoxLayout" name="SolverOptionsLayout">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="6,2">
-          <item>
-           <widget class="QPushButton" name="buttomSolve">
-            <property name="text">
-             <string>start solving</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>ShowResult</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QGroupBox" name="groupBox_7">
+          <property name="title">
+           <string>Solver Options</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_16">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_22">
+             <item>
+              <widget class="QLabel" name="label_18">
+               <property name="text">
+                <string>iterations: </string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_9"/>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_19">
+               <property name="text">
+                <string>times.    stop solving when reach </string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_37"/>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_72">
+               <property name="text">
+                <string>% exploitability</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_51">
+             <item>
+              <widget class="QLabel" name="label_73">
+               <property name="text">
+                <string>log interval:  </string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_38"/>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_74">
+               <property name="text">
+                <string>threads: </string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_39"/>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout" stretch="6,2">
+             <item>
+              <widget class="QPushButton" name="buttomSolve">
+               <property name="text">
+                <string>start solving</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton">
+               <property name="text">
+                <string>ShowResult</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </item>
@@ -791,7 +738,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1032</width>
+     <width>1000</width>
      <height>24</height>
     </rect>
    </property>

@@ -49,6 +49,11 @@ GameTree::GameTree(Deck deck,
     this->root = node;
 }
 
+GameTree::~GameTree(){
+    //cout << "root use count: " << this->root.use_count() << endl;
+    //cout << "game tree destroyed" << endl;
+}
+
 shared_ptr<GameTreeNode> GameTree::__build(shared_ptr<GameTreeNode> node, Rule rule) {
     return this->__build(node,rule,"roundbegin",0,0);
 }

@@ -42,6 +42,7 @@ public:
             GameTreeBuildingSettings buildingSettings,
             float allin_threshold
     );
+    ~GameTree();
     shared_ptr<GameTreeNode> __build(shared_ptr<GameTreeNode> node,Rule rule);
     shared_ptr<GameTreeNode> __build(shared_ptr<GameTreeNode> node,Rule rule,string last_action,int check_times,int raise_times);
     void buildChance(shared_ptr<ChanceNode> root,Rule rule);

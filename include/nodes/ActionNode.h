@@ -16,6 +16,7 @@
 class ActionNode :public GameTreeNode {
 public:
     ActionNode(vector<GameActions> actions, vector<shared_ptr<GameTreeNode>> childrens, int player, GameRound round,double pot,shared_ptr<GameTreeNode> parent);
+    ~ActionNode();
     vector<GameActions>& getActions();
     vector<shared_ptr<GameTreeNode>>& getChildrens();
     int getPlayer();

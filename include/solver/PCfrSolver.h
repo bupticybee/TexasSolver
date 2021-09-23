@@ -90,6 +90,7 @@ public:
             bool use_isomorphism,
             int num_threads
     );
+    ~PCfrSolver();
     void train() override;
     json dumps(bool with_status,int depth);
 private:

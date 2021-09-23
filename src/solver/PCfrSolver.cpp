@@ -10,6 +10,10 @@
 
 //#define DEBUG;
 
+PCfrSolver::~PCfrSolver(){
+    //cout << "Pcfr destroyed" << endl;
+}
+
 PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, vector<PrivateCards> range2,
                      vector<int> initial_board, shared_ptr<Compairer> compairer, Deck deck, int iteration_number, bool debug,
                      int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int warmup,float accuracy,bool use_isomorphism,int num_threads) :Solver(tree){

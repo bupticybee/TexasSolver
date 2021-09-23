@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>1003</width>
-    <height>870</height>
+    <height>934</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
+   <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="3,1">
     <item>
      <layout class="QVBoxLayout" name="inputLayout" stretch="2,2,8,1">
       <property name="spacing">

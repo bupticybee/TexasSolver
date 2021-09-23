@@ -7,12 +7,16 @@
 #include <utility>
 #include <include/trainable/DiscountedCfrTrainable.h>
 
+ActionNode::~ActionNode(){
+    //cout << "ActionNode destroyed" << endl;
+}
+
 ActionNode::ActionNode(vector<GameActions> actions, vector<shared_ptr<GameTreeNode>> childrens, int player,
                        GameTreeNode::GameRound round, double pot, shared_ptr<GameTreeNode> parent) :GameTreeNode(round,pot,std::move(parent)){
     this->actions = std::move(actions);
     this->player = player;
     this->childrens = std::move(childrens);
-
+    //cout << "ActionNode created" << endl;
 }
 
 vector<GameActions>& ActionNode::getActions() {

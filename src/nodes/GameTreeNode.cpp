@@ -30,7 +30,7 @@ int GameTreeNode::gameRound2int(GameTreeNode::GameRound gameRound) {
 }
 
 shared_ptr<GameTreeNode>GameTreeNode::getParent() {
-    return this->parent;
+    return this->parent.lock();
 }
 
 void GameTreeNode::setParent(shared_ptr<GameTreeNode>parent) {

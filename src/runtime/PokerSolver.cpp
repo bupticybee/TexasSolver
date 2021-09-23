@@ -31,7 +31,6 @@ void PokerSolver::build_game_tree(
         GameTreeBuildingSettings buildingSettings,
         float allin_threshold
 ){
-
     shared_ptr<GameTree> game_tree = make_shared<GameTree>(
             this->deck,
             oop_commit,

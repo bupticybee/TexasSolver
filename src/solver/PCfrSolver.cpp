@@ -4,6 +4,9 @@
 
 #include <include/solver/BestResponse.h>
 #include "include/solver/PCfrSolver.h"
+#include <QtCore>
+#include <QObject>
+#include <QTranslator>
 
 //#define DEBUG;
 
@@ -45,7 +48,7 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
     if(num_threads == -1){
         num_threads = omp_get_num_procs();
     }
-    cout << tfm::format("Using %s threads",num_threads) << endl;
+    cout << tfm::format(QObject::tr("Using %s threads").toStdString().c_str(),num_threads) << endl;
     this->num_threads = num_threads;
     this->distributing_task = false;
     omp_set_num_threads(this->num_threads);
@@ -751,7 +754,7 @@ void PCfrSolver::train() {
             long time_ms = endtime - begintime;
             cout << ("-------------------") << endl;
             float expliotibility = br.printExploitability(tree->getRoot(), i + 1, tree->getRoot()->getPot(), initial_board_long);
-            cout << "time used: " << float(time_ms) / 1000 << endl;
+            cout << QObject::tr("time used: ").toStdString() << float(time_ms) / 1000 << QObject::tr(" second.").toStdString() << endl;
             if(!this->logfile.empty()){
                 json jo;
                 jo["iteration"] = i;

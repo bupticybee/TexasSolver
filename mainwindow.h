@@ -25,10 +25,11 @@ private slots:
     void on_clearLogButtom_clicked();
     void on_chinese_local();
     void on_en_local();
+    void on_buildTreeButtom_clicked();
 
 private:
     Ui::MainWindow *ui;
-    QSolverJob qSolverJob;
+    QSolverJob* qSolverJob;
 };
 
 #endif // MAINWINDOW_H

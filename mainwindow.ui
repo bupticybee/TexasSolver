@@ -33,7 +33,7 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
-             <widget class="QTextEdit" name="textEdit_2">
+             <widget class="QTextEdit" name="ipRangeText">
               <property name="html">
                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -58,7 +58,7 @@ p, li { white-space: pre-wrap; }
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QTextEdit" name="textEdit_3">
+             <widget class="QTextEdit" name="oopRangeText">
               <property name="html">
                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -91,7 +91,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <widget class="QTextEdit" name="textEdit">
+         <widget class="QTextEdit" name="boardText">
           <property name="html">
            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -132,7 +132,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit">
+                  <widget class="QLineEdit" name="flop_ip_bet">
                    <property name="text">
                     <string>50</string>
                    </property>
@@ -157,7 +157,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_2">
+                  <widget class="QLineEdit" name="flop_ip_raise">
                    <property name="text">
                     <string>60</string>
                    </property>
@@ -175,7 +175,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_5">
                  <item>
-                  <widget class="QCheckBox" name="checkBox">
+                  <widget class="QCheckBox" name="flop_ip_allin">
                    <property name="text">
                     <string>Add Allin</string>
                    </property>
@@ -209,7 +209,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_3">
+                  <widget class="QLineEdit" name="turn_ip_bet">
                    <property name="text">
                     <string>50</string>
                    </property>
@@ -234,7 +234,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_4">
+                  <widget class="QLineEdit" name="turn_ip_raise">
                    <property name="text">
                     <string>60</string>
                    </property>
@@ -252,7 +252,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_15">
                  <item>
-                  <widget class="QCheckBox" name="checkBox_2">
+                  <widget class="QCheckBox" name="turn_ip_allin">
                    <property name="text">
                     <string>Add Allin</string>
                    </property>
@@ -286,7 +286,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_6">
+                  <widget class="QLineEdit" name="river_ip_bet">
                    <property name="text">
                     <string>50</string>
                    </property>
@@ -311,9 +311,9 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_5">
+                  <widget class="QLineEdit" name="river_ip_raise">
                    <property name="text">
-                    <string>60,100</string>
+                    <string>60 100</string>
                    </property>
                   </widget>
                  </item>
@@ -329,7 +329,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_18">
                  <item>
-                  <widget class="QCheckBox" name="checkBox_3">
+                  <widget class="QCheckBox" name="river_ip_allin">
                    <property name="text">
                     <string>Add Allin</string>
                    </property>
@@ -367,7 +367,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_8">
+                  <widget class="QLineEdit" name="flop_oop_bet">
                    <property name="text">
                     <string>50</string>
                    </property>
@@ -392,7 +392,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_7">
+                  <widget class="QLineEdit" name="flop_oop_raise">
                    <property name="text">
                     <string>60</string>
                    </property>
@@ -410,7 +410,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_21">
                  <item>
-                  <widget class="QCheckBox" name="checkBox_4">
+                  <widget class="QCheckBox" name="flop_oop_allin">
                    <property name="text">
                     <string>Add Allin</string>
                    </property>
@@ -444,7 +444,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_29">
+                  <widget class="QLineEdit" name="turn_oop_bet">
                    <property name="text">
                     <string>50</string>
                    </property>
@@ -469,7 +469,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_28">
+                  <widget class="QLineEdit" name="turn_oop_raise">
                    <property name="text">
                     <string>60</string>
                    </property>
@@ -494,7 +494,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_30">
+                  <widget class="QLineEdit" name="turn_oop_donk">
                    <property name="text">
                     <string>50</string>
                    </property>
@@ -512,7 +512,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_44">
                  <item>
-                  <widget class="QCheckBox" name="checkBox_5">
+                  <widget class="QCheckBox" name="turn_oop_allin">
                    <property name="text">
                     <string>Add Allin</string>
                    </property>
@@ -546,7 +546,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_32">
+                  <widget class="QLineEdit" name="river_oop_bet">
                    <property name="text">
                     <string>50</string>
                    </property>
@@ -571,9 +571,9 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_31">
+                  <widget class="QLineEdit" name="river_oop_raise">
                    <property name="text">
-                    <string>50,100</string>
+                    <string>50 100</string>
                    </property>
                   </widget>
                  </item>
@@ -596,7 +596,7 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_33">
+                  <widget class="QLineEdit" name="river_oop_donk">
                    <property name="text">
                     <string>50</string>
                    </property>
@@ -614,7 +614,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_48">
                  <item>
-                  <widget class="QCheckBox" name="checkBox_6">
+                  <widget class="QCheckBox" name="river_oop_allin">
                    <property name="text">
                     <string>Add Allin</string>
                    </property>
@@ -644,7 +644,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEdit_34">
+             <widget class="QLineEdit" name="raiseLimitText">
               <property name="text">
                <string>3</string>
               </property>
@@ -658,7 +658,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEdit_35">
+             <widget class="QLineEdit" name="potText">
               <property name="text">
                <string>50</string>
               </property>
@@ -672,7 +672,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEdit_36">
+             <widget class="QLineEdit" name="effectiveStackText">
               <property name="text">
                <string>200</string>
               </property>
@@ -686,7 +686,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="comboBox">
+             <widget class="QComboBox" name="mode_box">
               <item>
                <property name="text">
                 <string>texas holdem</string>
@@ -704,7 +704,7 @@ p, li { white-space: pre-wrap; }
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_50" stretch="6,3">
             <item>
-             <widget class="QPushButton" name="pushButton_6">
+             <widget class="QPushButton" name="buildTreeButtom">
               <property name="text">
                <string>Build Tree</string>
               </property>
@@ -741,7 +741,7 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_9">
+              <widget class="QLineEdit" name="iterationText">
                <property name="text">
                 <string>200</string>
                </property>
@@ -755,7 +755,7 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_37">
+              <widget class="QLineEdit" name="exploitabilityText">
                <property name="text">
                 <string>0.5</string>
                </property>
@@ -767,6 +767,19 @@ p, li { white-space: pre-wrap; }
                 <string>% exploitability</string>
                </property>
               </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </item>
@@ -780,7 +793,7 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_38">
+              <widget class="QLineEdit" name="logIntervalText">
                <property name="text">
                 <string>10</string>
                </property>
@@ -794,7 +807,7 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_39">
+              <widget class="QLineEdit" name="threadsText">
                <property name="text">
                 <string>8</string>
                </property>
@@ -890,11 +903,32 @@ p, li { white-space: pre-wrap; }
      <addaction name="actionEng"/>
      <addaction name="actionChinese"/>
     </widget>
-    <addaction name="actionabout"/>
-    <addaction name="actionversion"/>
     <addaction name="menuLanguage"/>
    </widget>
+   <widget class="QMenu" name="menustrategy">
+    <property name="title">
+     <string>range</string>
+    </property>
+    <widget class="QMenu" name="menuimport">
+     <property name="title">
+      <string>import</string>
+     </property>
+     <addaction name="actionimport_IP_range"/>
+     <addaction name="actionimport_OOP_range"/>
+    </widget>
+    <widget class="QMenu" name="menuexport">
+     <property name="title">
+      <string>export</string>
+     </property>
+     <addaction name="actionexport_IP_range"/>
+     <addaction name="actionexport_OOP_range"/>
+    </widget>
+    <addaction name="separator"/>
+    <addaction name="menuimport"/>
+    <addaction name="menuexport"/>
+   </widget>
    <addaction name="menusolver"/>
+   <addaction name="menustrategy"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -907,12 +941,12 @@ p, li { white-space: pre-wrap; }
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionabout">
    <property name="text">
-    <string>About</string>
+    <string>import setting</string>
    </property>
   </action>
   <action name="actionversion">
    <property name="text">
-    <string>Version</string>
+    <string>export current setting</string>
    </property>
   </action>
   <action name="actionZN_CH">
@@ -933,6 +967,26 @@ p, li { white-space: pre-wrap; }
   <action name="actionChinese">
    <property name="text">
     <string>Chinese</string>
+   </property>
+  </action>
+  <action name="actionimport_IP_range">
+   <property name="text">
+    <string>import IP range</string>
+   </property>
+  </action>
+  <action name="actionimport_OOP_range">
+   <property name="text">
+    <string>import OOP range</string>
+   </property>
+  </action>
+  <action name="actionexport_IP_range">
+   <property name="text">
+    <string>export IP range</string>
+   </property>
+  </action>
+  <action name="actionexport_OOP_range">
+   <property name="text">
+    <string>export OOP range</string>
    </property>
   </action>
  </widget>

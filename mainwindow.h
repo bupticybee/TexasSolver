@@ -28,6 +28,8 @@ private slots:
     void on_buildTreeButtom_clicked();
     void on_save_json();
 
+    void on_copyButtom_clicked();
+
 private:
     Ui::MainWindow *ui;
     QSolverJob* qSolverJob;

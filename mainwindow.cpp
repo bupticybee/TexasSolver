@@ -84,6 +84,8 @@ void MainWindow::on_buildTreeButtom_clicked()
     qSolverJob->oop_commit = this->ui->potText->text().toFloat() / 2;
     qSolverJob->stack = this->ui->effectiveStackText->text().toFloat() + qSolverJob->ip_commit;
     qSolverJob->mode = this->ui->mode_box->currentIndex() == 0 ? QSolverJob::Mode::HOLDEM:QSolverJob::Mode::SHORTDECK;
+    qSolverJob->allin_threshold = this->ui->allinThresholdText->text().toFloat();
+    qSolverJob->use_isomorphism = this->ui->useIsoCheck->isChecked();
 
     StreetSetting gbs_flop_ip = StreetSetting(sizes_convert(ui->flop_ip_bet->text()),
                                               sizes_convert(ui->flop_ip_raise->text()),
@@ -120,4 +122,19 @@ void MainWindow::on_buildTreeButtom_clicked()
     qSolverJob->gtbs = make_shared<GameTreeBuildingSettings>(gbs_flop_ip,gbs_turn_ip,gbs_river_ip,gbs_flop_oop,gbs_turn_oop,gbs_river_oop);
     qSolverJob->current_mission = QSolverJob::MissionType::BUILDTREE;
     qSolverJob->start();
+}
+
+void MainWindow::on_copyButtom_clicked()
+{
+    ui->flop_oop_bet->setText(ui->flop_ip_bet->text());
+    ui->flop_oop_raise->setText(ui->flop_ip_raise->text());
+    ui->flop_oop_allin->setChecked(ui->flop_ip_allin->isChecked());
+
+    ui->turn_oop_bet->setText(ui->turn_ip_bet->text());
+    ui->turn_oop_raise->setText(ui->turn_ip_raise->text());
+    ui->turn_oop_allin->setChecked(ui->turn_ip_allin->isChecked());
+
+    ui->river_oop_bet->setText(ui->river_ip_bet->text());
+    ui->river_oop_raise->setText(ui->river_ip_raise->text());
+    ui->river_oop_allin->setChecked(ui->river_ip_allin->isChecked());
 }

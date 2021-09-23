@@ -26,6 +26,7 @@ private slots:
     void on_chinese_local();
     void on_en_local();
     void on_buildTreeButtom_clicked();
+    void on_save_json();
 
 private:
     Ui::MainWindow *ui;

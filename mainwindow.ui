@@ -573,7 +573,7 @@ p, li { white-space: pre-wrap; }
                  <item>
                   <widget class="QLineEdit" name="river_oop_raise">
                    <property name="text">
-                    <string>50 100</string>
+                    <string>60 100</string>
                    </property>
                   </widget>
                  </item>
@@ -927,8 +927,21 @@ p, li { white-space: pre-wrap; }
     <addaction name="menuimport"/>
     <addaction name="menuexport"/>
    </widget>
+   <widget class="QMenu" name="menustrategy_2">
+    <property name="title">
+     <string>strategy</string>
+    </property>
+    <widget class="QMenu" name="menuexport_to_file">
+     <property name="title">
+      <string>export to file</string>
+     </property>
+     <addaction name="actionjson"/>
+    </widget>
+    <addaction name="menuexport_to_file"/>
+   </widget>
    <addaction name="menusolver"/>
    <addaction name="menustrategy"/>
+   <addaction name="menustrategy_2"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -987,6 +1000,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionexport_OOP_range">
    <property name="text">
     <string>export OOP range</string>
+   </property>
+  </action>
+  <action name="actionjson">
+   <property name="text">
+    <string>json</string>
    </property>
   </action>
  </widget>

@@ -18,6 +18,8 @@ void QSolverJob::run()
         this->loading();
     }else if(this->current_mission == MissionType::BUILDTREE){
         this->build_tree();
+    }else if(this->current_mission == MissionType::SAVING){
+        this->saving();
     }else{
         throw runtime_error("unsupported mission type");
     }
@@ -44,6 +46,17 @@ void QSolverJob::loading(){
     lines = 376993;
     this->ps_shortdeck = PokerSolver(ranks,suits,compairer_file,lines);
     cout << tr("Loading finished. Good to go.").toStdString() << endl;
+}
+
+
+void QSolverJob::saving(){
+    std::cout << tr("Saving json file..").toStdString() << std::endl;
+    if(this->mode == Mode::HOLDEM){
+        this->ps_holdem.dump_strategy(this->savefile,this->dump_rounds);
+    }else if(this->mode == Mode::SHORTDECK){
+        this->ps_shortdeck.dump_strategy(this->savefile,this->dump_rounds);
+    }
+    std::cout << tr("Saving done.").toStdString() << std::endl;
 }
 
 void QSolverJob::solving(){

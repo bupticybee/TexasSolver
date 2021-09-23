@@ -22,7 +22,8 @@ public:
     enum MissionType{
         LOADING,
         SOLVING,
-        BUILDTREE
+        BUILDTREE,
+        SAVING
     };
     MissionType current_mission = MissionType::LOADING;
     string resource_dir;
@@ -41,15 +42,17 @@ public:
     string board;
     float accuracy;
     int max_iteration=100;
-    int use_isomorphism=0;
+    int use_isomorphism=1;
     int print_interval=10;
-    int dump_rounds = 1;
+    int dump_rounds = 2;
     shared_ptr<GameTreeBuildingSettings> gtbs;
 
     void run();
     void loading();
     void solving();
+    void saving();
     void build_tree();
     void setContext(QTextEdit * textEdit);
+    string savefile;
 };
 #endif // QSOLVERJOB_H

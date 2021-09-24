@@ -6,12 +6,13 @@
 #include "include/tools/CommandLineTool.h"
 #include <QTextEdit>
 #include <QPlainTextEdit>
+#include "qstextedit.h"
 
 class QSolverJob : public QThread
 {
     Q_OBJECT
 private:
-    QTextEdit * textEdit;
+    QSTextEdit * textEdit;
 public:
     enum Mode{
         HOLDEM,
@@ -52,7 +53,7 @@ public:
     void solving();
     void saving();
     void build_tree();
-    void setContext(QTextEdit * textEdit);
+    void setContext(QSTextEdit * textEdit);
     string savefile;
 };
 #endif // QSOLVERJOB_H

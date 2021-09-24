@@ -5,6 +5,7 @@
 #include <QTextEdit>
 #include <QPlainTextEdit>
 #include "include/runtime/qsolverjob.h"
+#include "qstextedit.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,7 +19,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     Ui::MainWindow * getPriUi();
-    QTextEdit * getLogArea();
+    QSTextEdit * getLogArea();
 
 private slots:
     void on_buttomSolve_clicked();

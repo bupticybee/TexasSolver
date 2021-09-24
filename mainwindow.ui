@@ -937,7 +937,7 @@ p, li { white-space: pre-wrap; }
        <number>0</number>
       </property>
       <item>
-       <widget class="QTextEdit" name="logOutput"/>
+       <widget class="QSTextEdit" name="logOutput"/>
       </item>
       <item>
        <widget class="QPushButton" name="clearLogButtom">
@@ -1087,6 +1087,13 @@ p, li { white-space: pre-wrap; }
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QSTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header location="global">qstextedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

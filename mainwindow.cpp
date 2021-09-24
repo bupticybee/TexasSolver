@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qSolverJob->setContext(this->getLogArea());
     qSolverJob->current_mission = QSolverJob::MissionType::LOADING;
     qSolverJob->start();
-    this->setWindowTitle("TexasSolver");
+    this->setWindowTitle(tr("TexasSolver"));
 }
 
 MainWindow::~MainWindow()
@@ -48,7 +48,7 @@ Ui::MainWindow * MainWindow::getPriUi(){
     return this->ui;
 }
 
-QTextEdit * MainWindow::getLogArea(){
+QSTextEdit * MainWindow::getLogArea(){
     return this->ui->logOutput;
 }
 

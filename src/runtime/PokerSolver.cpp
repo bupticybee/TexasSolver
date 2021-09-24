@@ -79,8 +79,6 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
             , threads
     );
     this->solver->train();
-    this->solver.reset();
-    this->game_tree.reset();
 }
 
 void PokerSolver::dump_strategy(string dump_file,int dump_rounds) {

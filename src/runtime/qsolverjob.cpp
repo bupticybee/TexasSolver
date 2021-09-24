@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void QSolverJob:: setContext(QTextEdit * textEdit){
+void QSolverJob:: setContext(QSTextEdit * textEdit){
     this->textEdit = textEdit;
     QDebugStream qout(std::cout, this->textEdit);
 

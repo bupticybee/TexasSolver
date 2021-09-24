@@ -87,7 +87,8 @@ SOURCES += \
     src/trainable/CfrPlusTrainable.cpp \
     src/trainable/DiscountedCfrTrainable.cpp \
     src/trainable/Trainable.cpp \
-    src/runtime/qsolverjob.cpp
+    src/runtime/qsolverjob.cpp \
+    qstextedit.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -128,7 +129,8 @@ HEADERS += \
     include/ranges/RiverRangeManager.h \
     include/tools/tinyformat.h \
     include/tools/qdebugstream.h \
-    include/runtime/qsolverjob.h
+    include/runtime/qsolverjob.h \
+    qstextedit.h
 
 FORMS += \
         mainwindow.ui

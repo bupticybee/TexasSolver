@@ -12,16 +12,23 @@ void QSolverJob:: setContext(QSTextEdit * textEdit){
 void QSolverJob::run()
 {
     QDebugStream qout(std::cout, this->textEdit);
-    if(this->current_mission == MissionType::SOLVING){
-        this->solving();
-    }else if(this->current_mission == MissionType::LOADING){
-        this->loading();
-    }else if(this->current_mission == MissionType::BUILDTREE){
-        this->build_tree();
-    }else if(this->current_mission == MissionType::SAVING){
-        this->saving();
-    }else{
-        throw runtime_error("unsupported mission type");
+    try{
+        if(this->current_mission == MissionType::SOLVING){
+            this->solving();
+        }else if(this->current_mission == MissionType::LOADING){
+            this->loading();
+        }else if(this->current_mission == MissionType::BUILDTREE){
+            this->build_tree();
+        }else if(this->current_mission == MissionType::SAVING){
+            this->saving();
+        }else{
+            throw runtime_error("unsupported mission type");
+        }
+    }
+    catch (const runtime_error& error)
+    {
+        cout << tr("Encountering error:").toStdString() << endl;
+        cout << error.what() << "\n";
     }
 }
 

@@ -3,6 +3,7 @@
 #include "stdio.h"
 #include "include/runtime/qsolverjob.h"
 #include <QFileDialog>
+#include "include/library.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -79,6 +80,18 @@ void MainWindow::on_buildTreeButtom_clicked()
     qSolverJob->range_ip = this->ui->ipRangeText->toPlainText().toStdString();
     qSolverJob->range_oop = this->ui->oopRangeText->toPlainText().toStdString();
     qSolverJob->board = this->ui->boardText->toPlainText().toStdString();
+
+    vector<string> board_str_arr = string_split(qSolverJob->board,',');
+    if(board_str_arr.size() == 3){
+        qSolverJob->current_round = 1;
+    }else if(board_str_arr.size() == 4){
+        qSolverJob->current_round = 2;
+    }else if(board_str_arr.size() == 5){
+        qSolverJob->current_round = 3;
+    }else{
+        this->ui->logOutput->log_with_signal(tfm::format("Error : board %s not recognized",qSolverJob->board));
+        return;
+    }
     qSolverJob->raise_limit = this->ui->raiseLimitText->text().toInt();
     qSolverJob->ip_commit = this->ui->potText->text().toFloat() / 2;
     qSolverJob->oop_commit = this->ui->potText->text().toFloat() / 2;

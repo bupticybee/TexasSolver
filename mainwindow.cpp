@@ -151,3 +151,9 @@ void MainWindow::on_copyButtom_clicked()
     ui->river_oop_raise->setText(ui->river_ip_raise->text());
     ui->river_oop_allin->setChecked(ui->river_ip_allin->isChecked());
 }
+
+void MainWindow::on_showResultButton_clicked()
+{
+    this->strategyExplorer = new StrategyExplorer(this,this->qSolverJob);
+    strategyExplorer->show();
+}

@@ -88,7 +88,11 @@ SOURCES += \
     src/trainable/DiscountedCfrTrainable.cpp \
     src/trainable/Trainable.cpp \
     src/runtime/qsolverjob.cpp \
-    qstextedit.cpp
+    qstextedit.cpp \
+    strategyexplorer.cpp \
+    qstreeview.cpp \
+    src/ui/treeitem.cpp \
+    src/ui/treemodel.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -130,10 +134,15 @@ HEADERS += \
     include/tools/tinyformat.h \
     include/tools/qdebugstream.h \
     include/runtime/qsolverjob.h \
-    qstextedit.h
+    qstextedit.h \
+    strategyexplorer.h \
+    qstreeview.h \
+    include/ui/treeitem.h \
+    include/ui/treemodel.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    strategyexplorer.ui
 
 RESOURCES += \
     translations.qrc

@@ -4,6 +4,10 @@
 #include <QVector>
 #include <QVariant>
 #include "include/nodes/GameTreeNode.h"
+#include "include/nodes/ActionNode.h"
+#include "include/nodes/ChanceNode.h"
+#include "include/nodes/TerminalNode.h"
+#include "include/nodes/ShowdownNode.h"
 
 class TreeItem
 {

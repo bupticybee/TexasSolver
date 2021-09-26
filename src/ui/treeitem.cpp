@@ -18,6 +18,14 @@ bool TreeItem::insertChild(TreeItem *child,int i)
 
 QVariant TreeItem::data() const
 {
+    shared_ptr<GameTreeNode> gameTreeNode = this->m_treedata.lock()->getParent();
+    shared_ptr<GameTreeNode> currentNode = this->m_treedata.lock();
+    if(gameTreeNode == nullptr){
+        return "begin";
+    }
+    if(gameTreeNode->getType() == GameTreeNode::GameTreeNodeType::ACTION){
+        shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(gameTreeNode);
+    }
     return "TEST";
 }
 

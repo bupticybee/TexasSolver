@@ -95,14 +95,41 @@ int TreeModel::rowCount(const QModelIndex &parent) const
     return parentItem->childCount();
 }
 
+void TreeModel::reGenerateTreeItem(GameTreeNode::GameRound round,TreeItem* node_to_process){
+    const shared_ptr<GameTreeNode> gameTreeNode = node_to_process->m_treedata.lock();
+    if(gameTreeNode->getType() == GameTreeNode::GameTreeNodeType::ACTION){
+        shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(gameTreeNode);
+        vector<shared_ptr<GameTreeNode>>& childrens = actionNode->getChildrens();
+        for(shared_ptr<GameTreeNode> one_child:childrens){
+            if(one_child->getRound() != round){
+                continue;
+            }
+            TreeItem * child_node = new TreeItem(one_child,node_to_process);
+            node_to_process->insertChild(child_node);
+            this->reGenerateTreeItem(round,child_node);
+        }
+    }
+}
+
 void TreeModel::setupModelData()
 {
-    this->rootItem = new TreeItem(this->qSolverJob->ps_holdem.get_game_tree()->getRoot());
-    TreeItem* t1 = new TreeItem(this->qSolverJob->ps_holdem.get_game_tree()->getRoot(),this->rootItem);
-    TreeItem* t2 = new TreeItem(this->qSolverJob->ps_holdem.get_game_tree()->getRoot(),this->rootItem);
-    rootItem->insertChild(t1);
-    rootItem->insertChild(t2);
+    PokerSolver * solver;
+    if(this->qSolverJob->mode == QSolverJob::Mode::HOLDEM){
+        solver = &(this->qSolverJob->ps_holdem);
+    }else if(this->qSolverJob->mode == QSolverJob::Mode::SHORTDECK){
+        solver = &(this->qSolverJob->ps_shortdeck);
+    }else{
+        throw runtime_error("holdem mode incorrect");
+    }
 
-    TreeItem* t3 = new TreeItem(this->qSolverJob->ps_holdem.get_game_tree()->getRoot(),t1);
-    t1->insertChild(t3);
+    if(solver->get_game_tree() == nullptr || solver->get_game_tree()->getRoot() == nullptr){
+        return;
+    }
+
+    GameTreeNode::GameRound round =	solver->get_game_tree()->getRoot()->getRound();
+
+    this->rootItem = new TreeItem(solver->get_game_tree()->getRoot());
+    TreeItem* ti = new TreeItem(solver->get_game_tree()->getRoot(),this->rootItem);
+    rootItem->insertChild(ti);
+    this->reGenerateTreeItem(round,ti);
 }

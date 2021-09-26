@@ -9,6 +9,8 @@ class TreeItem
 {
 
 public:
+    weak_ptr<GameTreeNode> m_treedata;
+
     explicit TreeItem(const weak_ptr<GameTreeNode> tree_node_data,TreeItem *parentItem = 0);
     ~TreeItem() { qDeleteAll(m_childItems); }
 
@@ -26,9 +28,7 @@ public:
 
 private:
     QList<TreeItem*> m_childItems;
-    weak_ptr<GameTreeNode> m_treedata;
     TreeItem *m_parentItem;
-    QString childrenPath;
 };
 
 #endif // TREEITEM_H

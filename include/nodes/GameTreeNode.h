@@ -46,6 +46,7 @@ public:
     GameRound getRound();
     double getPot();
     void printHistory();
+    string toString();
     static void printNodeHistory(GameTreeNode* node);
     virtual GameTreeNodeType getType() = 0;
 

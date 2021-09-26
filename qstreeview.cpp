@@ -1,7 +1,9 @@
 #include "qstreeview.h"
+#include "qstylefactory.h"
 
 QSTreeView::QSTreeView(QWidget *parent) : QTreeView(parent)
 {
+    this->setStyle(QStyleFactory::create("windows"));
 }
 
 QSTreeView::~QSTreeView(){

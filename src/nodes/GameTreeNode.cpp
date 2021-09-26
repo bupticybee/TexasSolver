@@ -75,6 +75,33 @@ GameTreeNode::GameRound GameTreeNode::intToGameRound(int round){
     return game_round;
 }
 
+string GameTreeNode::toString(){
+    /*
+    shared_ptr<GameTreeNode>parent_node = node->parent;
+    string round;
+    if (parent_node == nullptr) return tfm::format("%s begin",round);
+    if(parent_node->getType() == GameTreeNodeType::ACTION){
+        ActionNode action_node = (ActionNode)parent_node;
+        for(int i = 0;i < action_node.getActions().size();i ++){
+            if(action_node.getChildrens().get(i) == node){
+                System.out.print(String.format("<- (player %s %s)",
+                           action_node.getPlayer(),
+                           action_node.getActions().get(i).toString()
+                    ));
+        }
+        }
+    }else if(parent_node->getType() == GameTreeNodeType::CHANCE){
+        ChanceNode chance_node = (ChanceNode)parent_node;
+        for(int i = 0;i < chance_node.getChildrens().size();i ++){
+            if(chance_node.getChildrens().get(i) == node){
+                System.out.print(String.format("<- (deal card %s)",
+                       chance_node.getCards().get(i).toString()
+            ));
+        }
+    }
+    */
+}
+
 void GameTreeNode::printNodeHistory(GameTreeNode* node) {
     /*
     while(node != nullptr) {

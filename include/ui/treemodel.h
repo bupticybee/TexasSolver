@@ -6,6 +6,10 @@
 #include <QModelIndex>
 #include <QVariant>
 #include "include/runtime/qsolverjob.h"
+#include "include/nodes/ActionNode.h"
+#include "include/nodes/ChanceNode.h"
+#include "include/nodes/TerminalNode.h"
+#include "include/nodes/ShowdownNode.h"
 
 //! [0]
 class TreeModel : public QAbstractItemModel
@@ -29,7 +33,7 @@ public:
 private:
     QSolverJob* qSolverJob;
     void setupModelData();
-
+    void reGenerateTreeItem(GameTreeNode::GameRound round,TreeItem* node_to_process);
     TreeItem *rootItem;
 };
 

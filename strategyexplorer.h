@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "include/runtime/qsolverjob.h"
+#include "QItemSelection"
 
 namespace Ui {
 class StrategyExplorer;
@@ -19,6 +20,10 @@ public:
 private:
     Ui::StrategyExplorer *ui;
     QSolverJob * qSolverJob;
+public slots:
+    void item_clicked(const QModelIndex& index);
+    void selection_changed(const QItemSelection &selected,
+                                            const QItemSelection &deselected);
 };
 
 #endif // STRATEGYEXPLORER_H

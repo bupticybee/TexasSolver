@@ -29,12 +29,15 @@ public:
     QModelIndex parent(const QModelIndex &index) const override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    void reGenerateTreeItem(GameTreeNode::GameRound round,TreeItem* node_to_process);
 
 private:
     QSolverJob* qSolverJob;
     void setupModelData();
-    void reGenerateTreeItem(GameTreeNode::GameRound round,TreeItem* node_to_process);
     TreeItem *rootItem;
+
+public slots:
+    void clicked_event(const QModelIndex & index);
 };
 
 #endif // TREEMODEL_H

@@ -64,12 +64,15 @@ QVariant TreeItem::data() const
         for(int i = 0;i < childrens.size();i ++){
             if(childrens[i] == currentNode){
                 float amount = childrens[i]->getPot() - parentNode->getPot();
-                return (parentActionNode->getPlayer() == 1 ? QObject::tr("IP "):QObject::tr("OOP ")) + \
+                return (parentActionNode->getPlayer() == 0 ? QObject::tr("IP "):QObject::tr("OOP ")) + \
                        TreeItem::get_game_action_str(actions[i].getAction(),actions[i].getAmount());
             }
         }
+    }if(parentNode->getType() == GameTreeNode::GameTreeNodeType::CHANCE){
+        shared_ptr<ChanceNode> chanceNode = dynamic_pointer_cast<ChanceNode>(parentNode);
+        return QObject::tr("DEAL CARD");
     }
-    return "TEST";
+    return "NodeError";
 }
 
 bool TreeItem::setParentItem(TreeItem *item)

@@ -1,6 +1,7 @@
 #ifndef QSTREEVIEW_H
 #define QSTREEVIEW_H
 #include "QTreeView"
+#include "QObject"
 #include "include/runtime/qsolverjob.h"
 #include "include/ui/treemodel.h"
 

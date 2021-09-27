@@ -101,13 +101,19 @@ void TreeModel::reGenerateTreeItem(GameTreeNode::GameRound round,TreeItem* node_
         shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(gameTreeNode);
         vector<shared_ptr<GameTreeNode>>& childrens = actionNode->getChildrens();
         for(shared_ptr<GameTreeNode> one_child:childrens){
-            /*if(one_child->getRound() != round){
-                continue;
-            }*/
             TreeItem * child_node = new TreeItem(one_child,node_to_process);
             node_to_process->insertChild(child_node);
+            if(one_child->getRound() != round){
+                continue;
+            }
             this->reGenerateTreeItem(round,child_node);
         }
+    }
+    else if(gameTreeNode->getType() == GameTreeNode::GameTreeNodeType::CHANCE){
+        shared_ptr<ChanceNode> chanceNode = dynamic_pointer_cast<ChanceNode>(gameTreeNode);
+        TreeItem * child_node = new TreeItem(chanceNode->getChildren(),node_to_process);
+        node_to_process->insertChild(child_node);
+        this->reGenerateTreeItem(round,child_node);
     }
 }
 
@@ -132,4 +138,8 @@ void TreeModel::setupModelData()
     TreeItem* ti = new TreeItem(solver->get_game_tree()->getRoot(),this->rootItem);
     rootItem->insertChild(ti);
     this->reGenerateTreeItem(round,ti);
+}
+
+
+void TreeModel::clicked_event(const QModelIndex & index){
 }

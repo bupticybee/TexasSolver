@@ -1,4 +1,4 @@
-#ifndef QDEBUGSTREAM_H
+﻿#ifndef QDEBUGSTREAM_H
 #define QDEBUGSTREAM_H
 
 #include <iostream>

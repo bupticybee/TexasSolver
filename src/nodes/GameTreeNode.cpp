@@ -100,6 +100,7 @@ string GameTreeNode::toString(){
         }
     }
     */
+    return "";
 }
 
 void GameTreeNode::printNodeHistory(GameTreeNode* node) {

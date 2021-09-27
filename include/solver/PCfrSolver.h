@@ -17,7 +17,7 @@
 #include "include/tools/utils.h"
 #include <queue>
 #include <optional>
-
+/*
 template<typename T>
 class ThreadsafeQueue {
     std::queue<T> queue_;
@@ -70,6 +70,7 @@ struct TaskParams{
     uint64_t current_board;
     int deal;
 };
+*/
 
 class PCfrSolver:public Solver {
 public:

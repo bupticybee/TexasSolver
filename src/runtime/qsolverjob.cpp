@@ -1,4 +1,4 @@
-#include "include/runtime/qsolverjob.h"
+﻿#include "include/runtime/qsolverjob.h"
 
 
 using namespace std;
@@ -11,7 +11,7 @@ void QSolverJob:: setContext(QSTextEdit * textEdit){
 
 void QSolverJob::run()
 {
-    QDebugStream qout(std::cout, this->textEdit);
+    //QDebugStream qout(std::cout, this->textEdit);
     try{
         if(this->current_mission == MissionType::SOLVING){
             this->solving();

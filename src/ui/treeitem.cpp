@@ -23,7 +23,7 @@ QString TreeItem::get_round_str(GameTreeNode::GameRound round) const{
     else if(round == GameTreeNode::GameRound::TURN){
         return QObject::tr("TURN");
     }
-    else if(round == GameTreeNode::GameRound::FLOP){
+    else if(round == GameTreeNode::GameRound::RIVER){
         return QObject::tr("RIVER");
     }
     else throw runtime_error("round not recognized, must be in flop,turn,river");

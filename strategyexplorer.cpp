@@ -1,4 +1,4 @@
-#include "strategyexplorer.h"
+﻿#include "strategyexplorer.h"
 #include "ui_strategyexplorer.h"
 #include "qstandarditemmodel.h"
 #include <QBrush>
@@ -38,8 +38,8 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
         this->ui->turnCardBox->addItem(card_str_formatted);
         this->ui->riverCardBox->addItem(card_str_formatted);
 
-        if(card_str_formatted.contains("♦️") ||
-                card_str_formatted.contains("♥️️")){
+        if(card_str_formatted.contains(QString::fromLocal8Bit("♦️")) ||
+                card_str_formatted.contains(QString::fromLocal8Bit("♥️️"))){
             this->ui->turnCardBox->setItemData(0, QBrush(Qt::red),Qt::ForegroundRole);
             this->ui->riverCardBox->setItemData(0, QBrush(Qt::red),Qt::ForegroundRole);
         }else{

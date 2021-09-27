@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 #include "include/tools/tinyformat.h"
-
+#include <QString>
 using namespace std;
 
 class Card {
@@ -42,6 +42,7 @@ class Card {
         static int suitToInt(char suit);
         static vector<string> getSuits();
         string toString();
+        string toFormattedString();
 };
 
 #endif //TEXASSOLVER_CARD_H

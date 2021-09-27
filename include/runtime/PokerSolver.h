@@ -45,6 +45,7 @@ public:
             );
     void dump_strategy(string dump_file,int dump_rounds);
     shared_ptr<GameTree> get_game_tree(){return this->game_tree;};
+    Deck* get_deck(){return &this->deck;}
 private:
     shared_ptr<Dic5Compairer> compairer;
     Deck deck;

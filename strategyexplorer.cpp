@@ -1,6 +1,11 @@
 #include "strategyexplorer.h"
 #include "ui_strategyexplorer.h"
 #include "qstandarditemmodel.h"
+#include <QBrush>
+#include <QApplication>
+#include <QComboBox>
+#include <QColor>
+#include "include/Card.h"
 
 StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
     QDialog(parent),
@@ -23,6 +28,33 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
                 this,
                 SLOT(item_clicked(const QModelIndex&))
                 );
+    Deck* deck = this->qSolverJob->get_solver()->get_deck();
+    vector<string> cards;
+    int index = 0;
+    QString board_qstring = QString::fromStdString(this->qSolverJob->board);
+    for(Card one_card: deck->getCards()){
+        if(board_qstring.contains(QString::fromStdString(one_card.toString())))continue;
+        QString card_str_formatted = QString::fromStdString(one_card.toFormattedString());
+        this->ui->turnCardBox->addItem(card_str_formatted);
+        this->ui->riverCardBox->addItem(card_str_formatted);
+
+        if(card_str_formatted.contains("♦️") ||
+                card_str_formatted.contains("♥️️")){
+            this->ui->turnCardBox->setItemData(0, QBrush(Qt::red),Qt::ForegroundRole);
+            this->ui->riverCardBox->setItemData(0, QBrush(Qt::red),Qt::ForegroundRole);
+        }else{
+            this->ui->turnCardBox->setItemData(0, QBrush(Qt::black),Qt::ForegroundRole);
+            this->ui->riverCardBox->setItemData(0, QBrush(Qt::black),Qt::ForegroundRole);
+        }
+        index += 1;
+    }
+    if(this->qSolverJob->get_solver()->getGameTree()->getRoot()->getRound() == GameTreeNode::GameRound::TURN){
+        this->ui->turnCardBox->clear();
+    }
+    if(this->qSolverJob->get_solver()->getGameTree()->getRoot()->getRound() == GameTreeNode::GameRound::RIVER){
+        this->ui->turnCardBox->clear();
+        this->ui->riverCardBox->clear();
+    }
 }
 
 StrategyExplorer::~StrategyExplorer()

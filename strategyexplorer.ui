@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout" stretch="2,4">
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="2,0,4">
      <item>
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
@@ -31,6 +31,36 @@
         </item>
        </layout>
       </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>  Turn card:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="turnCardBox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>River card:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="riverCardBox"/>
+       </item>
+      </layout>
      </item>
      <item>
       <widget class="QTabWidget" name="tabWidget">

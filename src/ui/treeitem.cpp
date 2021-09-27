@@ -70,7 +70,15 @@ QVariant TreeItem::data() const
         }
     }if(parentNode->getType() == GameTreeNode::GameTreeNodeType::CHANCE){
         shared_ptr<ChanceNode> chanceNode = dynamic_pointer_cast<ChanceNode>(parentNode);
-        return QObject::tr("DEAL CARD");
+        if(chanceNode->getRound() == GameTreeNode::GameRound::FLOP){
+            return QObject::tr("DEAL FLOP CARD");
+        }
+        else if(chanceNode->getRound() == GameTreeNode::GameRound::TURN){
+            return QObject::tr("DEAL TURN CARD");
+        }
+        else if(chanceNode->getRound() == GameTreeNode::GameRound::RIVER){
+            return QObject::tr("DEAL RIVER CARD");
+        }else throw runtime_error("round not recognized");
     }
     return "NodeError";
 }

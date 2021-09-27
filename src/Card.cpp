@@ -206,3 +206,12 @@ vector<string> Card::getSuits(){
 string Card::toString() {
     return this->card;
 }
+
+string Card::toFormattedString() {
+    QString qString = QString::fromStdString(this->card);
+    qString = qString.replace("c", "♣️");
+    qString = qString.replace("d", "♦️");
+    qString = qString.replace("h", "♥️");
+    qString = qString.replace("s", "♠️");
+    return qString.toStdString();
+}

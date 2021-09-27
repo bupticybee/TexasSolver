@@ -48,6 +48,7 @@ public:
     int dump_rounds = 2;
     shared_ptr<GameTreeBuildingSettings> gtbs;
 
+    PokerSolver* get_solver();
     void run();
     void loading();
     void solving();

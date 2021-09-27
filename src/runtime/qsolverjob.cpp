@@ -9,6 +9,14 @@ void QSolverJob:: setContext(QSTextEdit * textEdit){
 
 }
 
+PokerSolver* QSolverJob::get_solver(){
+    if(this->mode == Mode::HOLDEM){
+        return &this->ps_holdem;
+    }else if(this->mode == Mode::SHORTDECK){
+        return &this->ps_shortdeck;
+    }else throw runtime_error("unknown mode in get_solver");
+}
+
 void QSolverJob::run()
 {
     QDebugStream qout(std::cout, this->textEdit);

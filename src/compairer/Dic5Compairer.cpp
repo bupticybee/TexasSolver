@@ -5,15 +5,22 @@
 #include "include/compairer/Dic5Compairer.h"
 
 #include <utility>
+#include <QFile>
+#include <QTextStream>
 
 
 Dic5Compairer::Dic5Compairer(string dic_dir,int lines):Compairer(std::move(dic_dir),lines){
-    ifstream infile(this->dic_dir);
-    string line;
-    progressbar bar(lines / 1000);
+    QFile infile(QString::fromStdString(this->dic_dir));
+    if (!infile.open(QIODevice::ReadOnly)){
+        throw runtime_error("unable to load compairer file");
+    }
+    QTextStream in(&infile);
+    //progressbar bar(lines / 1000);
     int i = 0;
-    while (std::getline(infile, line))
+    //while (std::getline(infile, line))
+    while (!in.atEnd())
     {
+        string line = in.readLine().toStdString();
         vector<string> linesp = string_split(line,',');
         if(linesp.size() != 2)throw runtime_error(tfm::format("linesp not correct: %s",line));
 
@@ -41,10 +48,10 @@ Dic5Compairer::Dic5Compairer(string dic_dir,int lines):Compairer(std::move(dic_d
 
         i ++;
         if(i % 1000 == 0) {
-            bar.update();
+            //bar.update();
         }
     }
-    cout << endl;
+    //cout << endl;
 }
 
 Compairer::CompairResult Dic5Compairer::compairRanks(int rank_former, int rank_latter) {

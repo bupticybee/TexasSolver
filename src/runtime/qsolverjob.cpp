@@ -35,10 +35,9 @@ void QSolverJob::run()
 void QSolverJob::loading(){
     string suits = "c,d,h,s";
     string ranks;
-    this->resource_dir =  "/Users/bytedance/TexasSolverGui/resources";
+    this->resource_dir =  ":/resources";
     string compairer_file;
     int lines;
-    string logfile_name = "./outputs_log.txt";
     cout << tr("Loading holdem compairing file").toStdString() << endl;
     //if(mode == "holdem"){
     ranks = "2,3,4,5,6,7,8,9,T,J,Q,K,A";
@@ -76,7 +75,7 @@ void QSolverJob::solving(){
             this->range_ip,
             this->range_oop,
             this->board,
-            "tmp_log.txt",
+            "",
             max_iteration,
             this->print_interval,
             "discounted_cfr",
@@ -90,7 +89,7 @@ void QSolverJob::solving(){
             this->range_ip,
             this->range_oop,
             this->board,
-            "tmp_log.txt",
+            "",
             max_iteration,
             this->print_interval,
             "discounted_cfr",

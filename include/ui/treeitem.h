@@ -33,6 +33,8 @@ public:
 private:
     QList<TreeItem*> m_childItems;
     TreeItem *m_parentItem;
+    QString get_round_str(GameTreeNode::GameRound round) const;
+    QString get_game_action_str(GameTreeNode::PokerActions action,float amount) const;
 };
 
 #endif // TREEITEM_H

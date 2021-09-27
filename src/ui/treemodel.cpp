@@ -101,9 +101,9 @@ void TreeModel::reGenerateTreeItem(GameTreeNode::GameRound round,TreeItem* node_
         shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(gameTreeNode);
         vector<shared_ptr<GameTreeNode>>& childrens = actionNode->getChildrens();
         for(shared_ptr<GameTreeNode> one_child:childrens){
-            if(one_child->getRound() != round){
+            /*if(one_child->getRound() != round){
                 continue;
-            }
+            }*/
             TreeItem * child_node = new TreeItem(one_child,node_to_process);
             node_to_process->insertChild(child_node);
             this->reGenerateTreeItem(round,child_node);

@@ -145,4 +145,5 @@ FORMS += \
     strategyexplorer.ui
 
 RESOURCES += \
-    translations.qrc
+    translations.qrc \
+    compairer.qrc

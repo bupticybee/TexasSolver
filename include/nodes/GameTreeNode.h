@@ -52,9 +52,8 @@ public:
 
 private:
     GameRound round;
-    double pot{};
     weak_ptr<GameTreeNode> parent;
-
+    double pot{};
 };
 
 

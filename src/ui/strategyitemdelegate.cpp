@@ -29,7 +29,7 @@ void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     doc.setHtml(options.text);
 
     options.text = "";
-    options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &option, painter);
+    //options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &option, painter);
 
     painter->translate(options.rect.left(), options.rect.top());
     QRect clip(0, 0, options.rect.width(), options.rect.height());

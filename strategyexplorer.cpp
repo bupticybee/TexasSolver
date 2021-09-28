@@ -26,8 +26,20 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
                 this->ui->gameTreeView,
                 SIGNAL(expanded(const QModelIndex&)),
                 this,
+                SLOT(item_expanded(const QModelIndex&))
+                );
+    connect(
+                this->ui->gameTreeView,
+                SIGNAL(clicked(const QModelIndex&)),
+                this,
                 SLOT(item_clicked(const QModelIndex&))
                 );
+
+    this->delegate = new StrategyItemDelegate(this);
+    this->ui->strategyTableView->setItemDelegate(this->delegate);
+    this->tableStrategyModel = new TableStrategyModel(this->qSolverJob,this);
+    this->ui->strategyTableView->setModel(this->tableStrategyModel);
+
     Deck* deck = this->qSolverJob->get_solver()->get_deck();
     vector<string> cards;
     int index = 0;
@@ -60,9 +72,11 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
 StrategyExplorer::~StrategyExplorer()
 {
     delete ui;
+    delete this->delegate;
+    delete this->tableStrategyModel;
 }
 
-void StrategyExplorer::item_clicked(const QModelIndex& index){
+void StrategyExplorer::item_expanded(const QModelIndex& index){
     TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
     int num_child = item->childCount();
     for (int i = 0;i < num_child;i ++){
@@ -70,6 +84,10 @@ void StrategyExplorer::item_clicked(const QModelIndex& index){
         if(one_child->childCount() != 0)continue;
         this->ui->gameTreeView->tree_model->reGenerateTreeItem(one_child->m_treedata.lock()->getRound(),one_child);
     }
+}
+
+void StrategyExplorer::item_clicked(const QModelIndex& index){
+
 }
 
 void StrategyExplorer::selection_changed(const QItemSelection &selected,

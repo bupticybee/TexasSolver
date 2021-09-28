@@ -92,7 +92,11 @@ SOURCES += \
     strategyexplorer.cpp \
     qstreeview.cpp \
     src/ui/treeitem.cpp \
-    src/ui/treemodel.cpp
+    src/ui/treemodel.cpp \
+    htmltableview.cpp \
+    src/ui/worditemdelegate.cpp \
+    src/ui/tablestrategymodel.cpp \
+    src/ui/strategyitemdelegate.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -138,7 +142,11 @@ HEADERS += \
     strategyexplorer.h \
     qstreeview.h \
     include/ui/treeitem.h \
-    include/ui/treemodel.h
+    include/ui/treemodel.h \
+    htmltableview.h \
+    include/ui/worditemdelegate.h \
+    include/ui/tablestrategymodel.h \
+    include/ui/strategyitemdelegate.h
 
 FORMS += \
         mainwindow.ui \

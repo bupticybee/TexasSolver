@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
     QStringList languages;
     languages << "English" << QString::fromLocal8Bit("简体中文");
-    QString lang = QInputDialog::getItem(NULL,"select language","language",languages);
+    QString lang = QInputDialog::getItem(NULL,"select language","language",languages,0,false);
 
     QTranslator trans;
     if(lang == "English"){

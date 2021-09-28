@@ -6,16 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>914</width>
-    <height>643</height>
+    <width>1037</width>
+    <height>721</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>StrategyExplorer</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
+  <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,1">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout" stretch="2,0,4">
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="2,0,7">
      <item>
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
@@ -71,6 +71,21 @@
         <attribute name="title">
          <string>Strategy</string>
         </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="HtmlTableView" name="strategyTableView">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <attribute name="horizontalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+          </widget>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -91,6 +106,11 @@
    <class>QSTreeView</class>
    <extends>QTreeView</extends>
    <header location="global">qstreeview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>HtmlTableView</class>
+   <extends>QTableView</extends>
+   <header>htmltableview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

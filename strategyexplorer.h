@@ -4,6 +4,9 @@
 #include <QDialog>
 #include "include/runtime/qsolverjob.h"
 #include "QItemSelection"
+#include "include/ui/worditemdelegate.h"
+#include "include/ui/tablestrategymodel.h"
+#include "include/ui/strategyitemdelegate.h"
 
 namespace Ui {
 class StrategyExplorer;
@@ -20,7 +23,10 @@ public:
 private:
     Ui::StrategyExplorer *ui;
     QSolverJob * qSolverJob;
+    WordItemDelegate * delegate;
+    TableStrategyModel * tableStrategyModel;
 public slots:
+    void item_expanded(const QModelIndex& index);
     void item_clicked(const QModelIndex& index);
     void selection_changed(const QItemSelection &selected,
                                             const QItemSelection &deselected);

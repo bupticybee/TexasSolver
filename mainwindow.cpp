@@ -5,11 +5,14 @@
 #include <QFileDialog>
 #include "include/library.h"
 
+QSTextEdit* MainWindow::s_textEdit = 0;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    MainWindow::s_textEdit = this->get_logwindow();
     connect(this->ui->actionChinese, SIGNAL(triggered()), this, SLOT(on_chinese_local()));
     connect(this->ui->actionEng, SIGNAL(triggered()), this, SLOT(on_en_local()));
     connect(this->ui->actionjson, SIGNAL(triggered()), this, SLOT(on_save_json()));
@@ -18,6 +21,10 @@ MainWindow::MainWindow(QWidget *parent) :
     qSolverJob->current_mission = QSolverJob::MissionType::LOADING;
     qSolverJob->start();
     this->setWindowTitle(tr("TexasSolver"));
+}
+
+QSTextEdit * MainWindow::get_logwindow(){
+    return this->ui->logOutput;
 }
 
 MainWindow::~MainWindow()

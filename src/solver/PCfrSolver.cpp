@@ -756,9 +756,9 @@ void PCfrSolver::train() {
         if(i % this->print_interval == 0 && i != 0 && i >= this->warmup) {
             endtime = timeSinceEpochMillisec();
             long time_ms = endtime - begintime;
-            cout << ("-------------------") << endl;
+            qDebug().noquote() << "-------------------";
             float expliotibility = br.printExploitability(tree->getRoot(), i + 1, tree->getRoot()->getPot(), initial_board_long);
-            cout << QObject::tr("time used: ").toStdString() << float(time_ms) / 1000 << QObject::tr(" second.").toStdString() << endl;
+            qDebug().noquote() << QObject::tr("time used: ") << float(time_ms) / 1000 << QObject::tr(" second.");
             if(!this->logfile.empty()){
                 json jo;
                 jo["iteration"] = i;

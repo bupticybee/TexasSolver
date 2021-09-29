@@ -17,10 +17,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    static QSTextEdit * s_textEdit;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     Ui::MainWindow * getPriUi();
     QSTextEdit * getLogArea();
+    QSTextEdit * get_logwindow();
 
 private slots:
     void on_buttomSolve_clicked();
@@ -36,6 +38,7 @@ private:
     Ui::MainWindow *ui;
     QSolverJob* qSolverJob;
     StrategyExplorer* strategyExplorer;
+
 };
 
 #endif // MAINWINDOW_H

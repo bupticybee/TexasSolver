@@ -5,7 +5,7 @@ using namespace std;
 
 void QSolverJob:: setContext(QSTextEdit * textEdit){
     this->textEdit = textEdit;
-    QDebugStream qout(std::cout, this->textEdit);
+    //QDebugStream qout(qDebug().noquote(), this->textEdit);
 
 }
 
@@ -19,7 +19,7 @@ PokerSolver* QSolverJob::get_solver(){
 
 void QSolverJob::run()
 {
-    QDebugStream qout(std::cout, this->textEdit);
+    //QDebugStream qout(qDebug().noquote(), this->textEdit);
     try{
         if(this->current_mission == MissionType::SOLVING){
             this->solving();
@@ -35,8 +35,8 @@ void QSolverJob::run()
     }
     catch (const runtime_error& error)
     {
-        cout << tr("Encountering error:").toStdString() << endl;
-        cout << error.what() << "\n";
+        qDebug().noquote() << tr("Encountering error:");//.toStdString() << endl;
+        qDebug().noquote() << error.what() << "\n";
     }
 }
 
@@ -46,37 +46,37 @@ void QSolverJob::loading(){
     this->resource_dir =  ":/resources";
     string compairer_file;
     int lines;
-    cout << tr("Loading holdem compairing file").toStdString() << endl;
+    qDebug().noquote() << tr("Loading holdem compairing file");//.toStdString() << endl;
     //if(mode == "holdem"){
     ranks = "2,3,4,5,6,7,8,9,T,J,Q,K,A";
     compairer_file = this->resource_dir + "/compairer/card5_dic_sorted.txt";
     lines = 2598961;
     this->ps_holdem = PokerSolver(ranks,suits,compairer_file,lines);
 
-    cout << tr("Loading shortdeck compairing file").toStdString() << endl;
+    qDebug().noquote() << tr("Loading shortdeck compairing file");//.toStdString() << endl;
     //}else if(mode == "shortdeck"){
     ranks = "6,7,8,9,T,J,Q,K,A";
     compairer_file = this->resource_dir + "/compairer/card5_dic_sorted_shortdeck.txt";
     lines = 376993;
     this->ps_shortdeck = PokerSolver(ranks,suits,compairer_file,lines);
-    cout << tr("Loading finished. Good to go.").toStdString() << endl;
+    qDebug().noquote() << tr("Loading finished. Good to go.");//.toStdString() << endl;
 }
 
 
 void QSolverJob::saving(){
-    std::cout << tr("Saving json file..").toStdString() << std::endl;
+    qDebug().noquote() << tr("Saving json file..");//.toStdString() << std::endl;
     if(this->mode == Mode::HOLDEM){
         this->ps_holdem.dump_strategy(this->savefile,this->dump_rounds);
     }else if(this->mode == Mode::SHORTDECK){
         this->ps_shortdeck.dump_strategy(this->savefile,this->dump_rounds);
     }
-    std::cout << tr("Saving done.").toStdString() << std::endl;
+    qDebug().noquote() << tr("Saving done.");//.toStdString() << std::endl;
 }
 
 void QSolverJob::solving(){
     // TODO  为什么ui上多次求解会积累memory？哪里leak了？
     // TODO  为什么有时候会莫名闪退？
-    std::cout << tr("Start Solving..").toStdString() << std::endl;
+    qDebug().noquote() << tr("Start Solving..");//.toStdString() << std::endl;
 
     if(this->mode == Mode::HOLDEM){
         this->ps_holdem.train(
@@ -107,15 +107,15 @@ void QSolverJob::solving(){
             this->thread_number
         );
     }
-    std::cout << tr("Solving done.").toStdString() << std::endl;
+    qDebug().noquote() << tr("Solving done.");//.toStdString() << std::endl;
 }
 
 void QSolverJob::build_tree(){
-    cout << tr("building tree..").toStdString() << endl;
+    qDebug().noquote() << tr("building tree..");//.toStdString() << endl;
     if(this->mode == Mode::HOLDEM){
         ps_holdem.build_game_tree(oop_commit,ip_commit,current_round,raise_limit,small_blind,big_blind,stack,*gtbs.get(),allin_threshold);
     }else if(this->mode == Mode::SHORTDECK){
         ps_shortdeck.build_game_tree(oop_commit,ip_commit,current_round,raise_limit,small_blind,big_blind,stack,*gtbs.get(),allin_threshold);
     }
-    cout << tr("build tree finished").toStdString() << endl;
+    qDebug().noquote() << tr("build tree finished");//.toStdString() << endl;
 }

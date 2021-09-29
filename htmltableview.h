@@ -1,4 +1,4 @@
-#ifndef HTMLTABLEVIEW_H
+﻿#ifndef HTMLTABLEVIEW_H
 #define HTMLTABLEVIEW_H
 #include <QApplication>
 #include <QTableView>

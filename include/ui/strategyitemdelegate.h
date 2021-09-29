@@ -1,4 +1,4 @@
-#ifndef STRATEGYITEMDELEGATE_H
+﻿#ifndef STRATEGYITEMDELEGATE_H
 #define STRATEGYITEMDELEGATE_H
 
 #include <QStyledItemDelegate>

@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by Xuefeng Huang on 2020/1/29.
 //
 
@@ -22,9 +22,9 @@ Dic5Compairer::Dic5Compairer(string dic_dir,int lines):Compairer(std::move(dic_d
     {
         string line = in.readLine().toStdString();
         vector<string> linesp = string_split(line,',');
-        if(linesp.size() != 2)throw runtime_error(tfm::format("linesp not correct: %s",line));
-
-
+        if(linesp.size() != 2){
+           throw runtime_error(tfm::format("linesp not correct: %s",line));
+        }
         string cards_str = linesp[0];
         int rank = stoi(linesp[1]);
         vector<string> cards = string_split(cards_str,'-');

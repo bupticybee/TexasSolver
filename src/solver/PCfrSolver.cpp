@@ -52,7 +52,7 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
     if(num_threads == -1){
         num_threads = omp_get_num_procs();
     }
-    cout << tfm::format(QObject::tr("Using %s threads").toStdString().c_str(),num_threads) << endl;
+    qDebug().noquote() << QString::fromStdString(tfm::format(QObject::tr("Using %s threads").toStdString().c_str(),num_threads));
     this->num_threads = num_threads;
     this->distributing_task = false;
     omp_set_num_threads(this->num_threads);

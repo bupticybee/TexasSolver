@@ -39,15 +39,16 @@ LIBS += -L /usr/local/lib /usr/local/lib/libomp.dylib
 }
 
 win32: {
-QMAKE_CXXFLAGS += -fopenmp
-LIBS += -fopenmp
+QMAKE_CXXFLAGS+= -openmp
+QMAKE_LFLAGS +=  -openmp
 }
 
 win64: {
-QMAKE_CXXFLAGS += -fopenmp
-LIBS += -fopenmp
+QMAKE_CXXFLAGS+= -openmp
+QMAKE_LFLAGS +=  -openmp
 }
 
+QMAKE_CXXFLAGS_RELEASE *= -O3
 QMAKE_LFLAGS += -v
 
 SOURCES += \

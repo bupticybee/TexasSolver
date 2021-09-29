@@ -1,4 +1,4 @@
-#ifndef QSTEXTEDIT_H
+﻿#ifndef QSTEXTEDIT_H
 #define QSTEXTEDIT_H
 
 #include <QObject>
@@ -14,10 +14,10 @@ public:
     void log_with_signal(string message);
 
 signals:
-    void message_signal(string message);
+    void message_signal(const string& message);
 
 public slots:
-    void message_slot(string message);
+    void message_slot(const string& message);
 };
 
 #endif // QSTEXTEDIT_H

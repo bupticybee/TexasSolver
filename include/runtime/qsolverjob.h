@@ -1,4 +1,4 @@
-#ifndef QSOLVERJOB_H
+﻿#ifndef QSOLVERJOB_H
 #define QSOLVERJOB_H
 #include "include/tools/qdebugstream.h"
 #include "stdio.h"
@@ -7,6 +7,7 @@
 #include <QTextEdit>
 #include <QPlainTextEdit>
 #include "qstextedit.h"
+#include <QDebug>
 
 class QSolverJob : public QThread
 {

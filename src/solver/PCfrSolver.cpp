@@ -941,6 +941,58 @@ void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strate
     }
 }
 
+vector<vector<vector<float>>> PCfrSolver::get_strategy(shared_ptr<ActionNode> node,vector<Card> chance_cards){
+    int deal = 0;
+    int card_num = this->deck.getCards().size();
+    vector<vector<int>> exchange_color_list;
+
+    vector<vector<vector<float>>> ret_strategy = vector<vector<vector<float>>>(this->deck.getCards().size());
+    for(int i = 0;i < this->deck.getCards().size();i ++){
+        ret_strategy[i] = vector<vector<float>>(this->deck.getCards().size());
+        for(int j = 0;j < this->deck.getCards().size();j ++){
+            ret_strategy[i][j] = vector<float>();
+        }
+    }
+
+    vector<Card>& cards = this->deck.getCards();
+
+    for(Card one_card: chance_cards){
+        int card = one_card.getNumberInDeckInt();
+        int offset = this->color_iso_offset[deal][one_card.getCardInt() % 4];
+        if(offset < 0) {
+            for(int x = 0;x < cards.size();x ++){
+                if(
+                    Card::card2int(cards[x]) ==
+                    (Card::card2int(cards[card]) + offset)
+                ){
+                    card = x;
+                    break;
+                }
+            }
+            if(card == one_card.getNumberInDeckInt()){
+                throw runtime_error("isomorphism not found while dump strategy");
+            }
+            vector<int> one_exchange{one_card.getCardInt() % 4,one_card.getCardInt() % 4 + offset};
+            exchange_color_list.push_back(one_exchange);
+        }
+
+        int new_deal;
+        if(deal == 0){
+            new_deal = card + 1;
+        } else if (deal > 0 && deal <= card_num){
+            int origin_deal = deal - 1;
+
+            new_deal = card_num * origin_deal + card;
+            new_deal += (1 + card_num);
+        } else{
+            throw runtime_error(tfm::format("deal out of range : %s ",deal));
+        }
+        deal = new_deal;
+    }
+
+    return ret_strategy;
+}
+
 json PCfrSolver::dumps(bool with_status,int depth) {
     if(with_status == true){
         throw runtime_error("");

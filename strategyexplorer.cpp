@@ -35,13 +35,12 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
                 SLOT(item_clicked(const QModelIndex&))
                 );
 
-    this->delegate = new StrategyItemDelegate(this);
-    this->ui->strategyTableView->setItemDelegate(this->delegate);
+    this->delegate_strategy = new StrategyItemDelegate(this->qSolverJob,this);
+    this->ui->strategyTableView->setItemDelegate(this->delegate_strategy);
     this->tableStrategyModel = new TableStrategyModel(this->qSolverJob,this);
     this->ui->strategyTableView->setModel(this->tableStrategyModel);
 
     Deck* deck = this->qSolverJob->get_solver()->get_deck();
-    vector<string> cards;
     int index = 0;
     QString board_qstring = QString::fromStdString(this->qSolverJob->board);
     for(Card one_card: deck->getCards()){
@@ -58,12 +57,19 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
             this->ui->turnCardBox->setItemData(0, QBrush(Qt::black),Qt::ForegroundRole);
             this->ui->riverCardBox->setItemData(0, QBrush(Qt::black),Qt::ForegroundRole);
         }
+        this->cards.push_back(one_card);
         index += 1;
     }
-    if(this->qSolverJob->get_solver()->getGameTree()->getRoot()->getRound() == GameTreeNode::GameRound::TURN){
+    if(this->qSolverJob->get_solver()->getGameTree()->getRoot()->getRound() == GameTreeNode::GameRound::FLOP){
+        this->delegate_strategy->setTrunCard(this->cards[0]);
+        this->delegate_strategy->setRiverCard(this->cards[1]);
+        this->ui->riverCardBox->setCurrentIndex(1);
+    }
+    else if(this->qSolverJob->get_solver()->getGameTree()->getRoot()->getRound() == GameTreeNode::GameRound::TURN){
+        this->delegate_strategy->setRiverCard(this->cards[0]);
         this->ui->turnCardBox->clear();
     }
-    if(this->qSolverJob->get_solver()->getGameTree()->getRoot()->getRound() == GameTreeNode::GameRound::RIVER){
+    else if(this->qSolverJob->get_solver()->getGameTree()->getRoot()->getRound() == GameTreeNode::GameRound::RIVER){
         this->ui->turnCardBox->clear();
         this->ui->riverCardBox->clear();
     }
@@ -72,7 +78,7 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
 StrategyExplorer::~StrategyExplorer()
 {
     delete ui;
-    delete this->delegate;
+    delete this->delegate_strategy;
     delete this->tableStrategyModel;
 }
 
@@ -87,9 +93,23 @@ void StrategyExplorer::item_expanded(const QModelIndex& index){
 }
 
 void StrategyExplorer::item_clicked(const QModelIndex& index){
-
+    TreeItem * treeNode = static_cast<TreeItem*>(index.internalPointer());
+    this->delegate_strategy->setGameTreeNode(treeNode);
+    this->ui->strategyTableView->viewport()->update();
 }
 
 void StrategyExplorer::selection_changed(const QItemSelection &selected,
                                          const QItemSelection &deselected){
+}
+
+void StrategyExplorer::on_turnCardBox_currentIndexChanged(int index)
+{
+    if(this->cards.size() > 0)this->delegate_strategy->setTrunCard(this->cards[index]);
+    this->ui->strategyTableView->viewport()->update();
+}
+
+void StrategyExplorer::on_riverCardBox_currentIndexChanged(int index)
+{
+    if(this->cards.size() > 0)this->delegate_strategy->setRiverCard(this->cards[index]);
+    this->ui->strategyTableView->viewport()->update();
 }

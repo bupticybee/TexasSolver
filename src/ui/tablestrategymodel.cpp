@@ -44,15 +44,15 @@ QVariant TableStrategyModel::data(const QModelIndex &index, int role) const
     int col = index.column();
     int larger = row > col?row:col;
     int smaller = row > col?col:row;
-    QString  retval = QString("<h4>%1%2%3</h4>")\
+    QString  retval = QString("<h4>%1%2<b>%3</b></h4>")\
             .arg(QString::fromStdString(ranks[ranks.size() - 1 - smaller]))\
             .arg(QString::fromStdString(ranks[ranks.size() - 1 - larger]));
     if(row > col){
-        retval = retval.arg("o");
+        retval = retval.arg(tr("o"));
     }else if(row < col){
-        retval = retval.arg("s");
+        retval = retval.arg(tr("s"));
     }else{
-        retval = retval.arg("");
+        retval = retval.arg(tr(" "));
     }
     return retval;
 }

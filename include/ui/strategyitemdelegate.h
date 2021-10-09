@@ -17,15 +17,9 @@ class StrategyItemDelegate: public WordItemDelegate{
 
 public:
     explicit StrategyItemDelegate(QSolverJob * qSolverJob,QObject *parent = 0);
-    void setGameTreeNode(TreeItem* treeItem);
-    void setTrunCard(Card turn_card);
-    void setRiverCard(Card river_card);
 
 private:
-    TreeItem * treeItem = NULL;// = static_cast<TreeItem*>(index.internalPointer());
     QSolverJob * qSolverJob;
-    Card turn_card;
-    Card river_card;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;

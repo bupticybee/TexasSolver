@@ -946,10 +946,10 @@ vector<vector<vector<float>>> PCfrSolver::get_strategy(shared_ptr<ActionNode> no
     int card_num = this->deck.getCards().size();
     vector<vector<int>> exchange_color_list;
 
-    vector<vector<vector<float>>> ret_strategy = vector<vector<vector<float>>>(this->deck.getCards().size());
-    for(int i = 0;i < this->deck.getCards().size();i ++){
-        ret_strategy[i] = vector<vector<float>>(this->deck.getCards().size());
-        for(int j = 0;j < this->deck.getCards().size();j ++){
+    vector<vector<vector<float>>> ret_strategy = vector<vector<vector<float>>>(52);
+    for(int i = 0;i < 52;i ++){
+        ret_strategy[i] = vector<vector<float>>(52);
+        for(int j = 0;j < 52;j ++){
             ret_strategy[i][j] = vector<float>();
         }
     }
@@ -981,7 +981,6 @@ vector<vector<vector<float>>> PCfrSolver::get_strategy(shared_ptr<ActionNode> no
             new_deal = card + 1;
         } else if (deal > 0 && deal <= card_num){
             int origin_deal = deal - 1;
-
             new_deal = card_num * origin_deal + card;
             new_deal += (1 + card_num);
         } else{
@@ -989,7 +988,31 @@ vector<vector<vector<float>>> PCfrSolver::get_strategy(shared_ptr<ActionNode> no
         }
         deal = new_deal;
     }
+    shared_ptr<Trainable> trainable = node->getTrainable(deal,true);
+    json retjson = trainable->dump_strategy(false);;
 
+    for(vector<int> one_exchange:exchange_color_list){
+        int rank1 = one_exchange[0];
+        int rank2 = one_exchange[1];
+        this->exchangeRange((retjson["strategy"]),rank1,rank2,node);
+    }
+
+    int player = node->getPlayer();
+
+    json& strategy = retjson["strategy"];
+    for(int i = 0;i < this->ranges[player].size();i ++){
+        PrivateCards pc = this->ranges[player][i];
+        string one_range_str = pc.toString();
+        if(!strategy.contains(one_range_str)){
+            for(auto one_key:strategy.items()){
+                cout << one_key.key() << endl;
+            }
+            cout << "strategy: " << strategy  << endl;
+            throw runtime_error(tfm::format("%s not exist in strategy",one_range_str));
+        }
+        vector<float> one_strategy = strategy[one_range_str];
+        ret_strategy[pc.card1][pc.card2] = one_strategy;
+    }
     return ret_strategy;
 }
 

@@ -9,6 +9,8 @@
 #include "include/nodes/ChanceNode.h"
 #include "include/nodes/TerminalNode.h"
 #include "include/nodes/ShowdownNode.h"
+#include "include/ui/treeitem.h"
+#include <map>
 
 class TableStrategyModel : public QAbstractItemModel
 {
@@ -25,10 +27,20 @@ public:
     QModelIndex parent(const QModelIndex &child) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    void setGameTreeNode(TreeItem* treeItem);
+    void setTrunCard(Card turn_card);
+    void setRiverCard(Card river_card);
+    void updateStrategyData();
 
 private:
     QSolverJob* qSolverJob;
     void setupModelData();
+    TreeItem * treeItem = NULL;// = static_cast<TreeItem*>(index.internalPointer());
+    Card turn_card;
+    Card river_card;
+    vector<vector<vector<float>>> current_strategy; // cardint(52) * cardint(52) * strategy_type
+    vector<vector<vector<pair<int,int>>>> ui_strategy_table; // rank * rank * (id,id)
+    map<int,Card> cardint2card;
 
 public slots:
     void clicked_event(const QModelIndex & index);

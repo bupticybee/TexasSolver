@@ -21,6 +21,7 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
     }
     this->ui->gameTreeView->setModel(model);
     */
+    // Initial Game Tree preview panel
     this->ui->gameTreeView->setTreeData(qSolverJob);
     connect(
                 this->ui->gameTreeView,
@@ -35,6 +36,7 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
                 SLOT(item_clicked(const QModelIndex&))
                 );
 
+    // Initize strategy(rough) table
     this->tableStrategyModel = new TableStrategyModel(this->qSolverJob,this);
     this->ui->strategyTableView->setModel(this->tableStrategyModel);
     this->delegate_strategy = new StrategyItemDelegate(this->qSolverJob,this);
@@ -73,6 +75,11 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
         this->ui->turnCardBox->clear();
         this->ui->riverCardBox->clear();
     }
+
+    // Initize timer for strategy auto update
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update_second()));
+    timer->start(1000);
 }
 
 StrategyExplorer::~StrategyExplorer()
@@ -123,6 +130,13 @@ void StrategyExplorer::on_riverCardBox_currentIndexChanged(int index)
 {
     if(this->cards.size() > 0){
         this->tableStrategyModel->setRiverCard(this->cards[index]);
+        this->tableStrategyModel->updateStrategyData();
+    }
+    this->ui->strategyTableView->viewport()->update();
+}
+
+void StrategyExplorer::update_second(){
+    if(this->cards.size() > 0){
         this->tableStrategyModel->updateStrategyData();
     }
     this->ui->strategyTableView->viewport()->update();

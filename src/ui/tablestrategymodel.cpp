@@ -94,6 +94,7 @@ void TableStrategyModel::updateStrategyData(){
         shared_ptr<GameTreeNode> node = this->treeItem->m_treedata.lock();
 
         if(node->getType() == GameTreeNode::GameTreeNode::ACTION){
+            this->setupModelData();
             shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(node);
             //actionNode->getTrainable();
             // create a vector card and input it to solver and get the result
@@ -148,7 +149,62 @@ void TableStrategyModel::updateStrategyData(){
                 QBrush right_brush(Qt::green);
                 painter->fillRect(right_rect, right_brush);
                 */
+
+                /*
+                for(int i = 0; i< this->ui_strategy_table.size();i ++){
+                    for(int j = 0; j< this->ui_strategy_table.size();j ++){
+                        cout << this->ui_strategy_table[i][j].size() << "\t";
+                    }
+                    cout << endl;
+                }
+                */
             }
         }
     }
+}
+
+const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int j) const{
+    vector<pair<GameActions,float>> ret_strategy;
+    if(this->treeItem == NULL)return ret_strategy;
+
+    int strategy_number = this->ui_strategy_table[i][j].size();
+
+    shared_ptr<GameTreeNode> node = this->treeItem->m_treedata.lock();
+
+    if(node->getType() == GameTreeNode::GameTreeNode::ACTION){
+        shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(node);
+
+        vector<GameActions>& gameActions = actionNode->getActions();
+
+        vector<float> strategies;
+
+        if(this->ui_strategy_table[i][j].size() > 0){
+            strategies = vector<float>(gameActions.size());
+            std::fill(strategies.begin(), strategies.end(), 0.);
+        }
+        for(std::pair<int,int> index:this->ui_strategy_table[i][j]){
+            int index1 = index.first;
+            int index2 = index.second;
+            const vector<float>& one_strategy = this->current_strategy[index1][index2];
+            if(gameActions.size() != one_strategy.size()){
+                cout << "index: " << index1 << " " << index2 << endl;
+                cout << "i,j: " << i << " " << j << endl;
+                cout << "size not match between gameAction and stragegy: " << gameActions.size() << " " << one_strategy.size() << endl;
+                throw runtime_error("size not match between gameAction and stragegy");
+            }
+
+            for(int indi = 0;indi < one_strategy.size();indi ++){
+                strategies[indi] += (one_strategy[indi] / strategy_number);
+            }
+        }
+
+        for(int indi = 0;indi < strategies.size();indi ++){
+            ret_strategy.push_back(std::pair<GameActions,float>(actionNode->getActions()[indi],strategies[indi]));
+        }
+
+        return ret_strategy;
+    }else{
+        return ret_strategy;
+    }
+
 }

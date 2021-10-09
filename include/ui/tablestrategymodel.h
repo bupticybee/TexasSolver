@@ -10,6 +10,7 @@
 #include "include/nodes/TerminalNode.h"
 #include "include/nodes/ShowdownNode.h"
 #include "include/ui/treeitem.h"
+#include "include/nodes/GameActions.h"
 #include <map>
 
 class TableStrategyModel : public QAbstractItemModel
@@ -31,6 +32,7 @@ public:
     void setTrunCard(Card turn_card);
     void setRiverCard(Card river_card);
     void updateStrategyData();
+    const vector<pair<GameActions,float>> get_strategy(int i,int j) const;
 
 private:
     QSolverJob* qSolverJob;

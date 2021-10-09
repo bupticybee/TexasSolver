@@ -2,6 +2,7 @@
 #define STRATEGYEXPLORER_H
 
 #include <QDialog>
+#include <QTimer>
 #include "include/runtime/qsolverjob.h"
 #include "QItemSelection"
 #include "include/ui/worditemdelegate.h"
@@ -22,6 +23,7 @@ public:
     ~StrategyExplorer();
 
 private:
+    QTimer *timer;
     Ui::StrategyExplorer *ui;
     QSolverJob * qSolverJob;
     StrategyItemDelegate * delegate_strategy;
@@ -35,6 +37,7 @@ public slots:
 private slots:
     void on_turnCardBox_currentIndexChanged(int index);
     void on_riverCardBox_currentIndexChanged(int index);
+    void update_second();
 };
 
 #endif // STRATEGYEXPLORER_H

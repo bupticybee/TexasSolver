@@ -11,6 +11,7 @@
 #include "include/ui/treeitem.h"
 #include "include/runtime/qsolverjob.h"
 #include "include/Card.h"
+#include "include/ui/tablestrategymodel.h"
 
 class StrategyItemDelegate: public WordItemDelegate{
     Q_OBJECT

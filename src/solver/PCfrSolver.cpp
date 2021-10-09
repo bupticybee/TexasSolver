@@ -518,7 +518,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
             }
         }
 
-        if(!this->distributing_task) {
+        if(!this->distributing_task && !this->collecting_statics) {
             if (iter > this->warmup) {
                 trainable->updateRegrets(regrets, iter + 1, reach_probs);
             }/*else if(iter < this->warmup){
@@ -772,6 +772,23 @@ void PCfrSolver::train() {
             //begintime = timeSinceEpochMillisec();
         }
     }
+
+    qDebug().noquote() << QObject::tr("collecting statics");
+    this->collecting_statics = true;
+    for(int player_id = 0;player_id < this->player_number;player_id ++) {
+        this->round_deal = vector<int>{-1,-1,-1,-1};
+        //#pragma omp parallel
+        {
+            //#pragma omp single
+            {
+                //this->distributing_task = true;
+                cfr(player_id, this->tree->getRoot(), reach_probs[1 - player_id], this->iteration_number, this->initial_board_long,0);
+            }
+        }
+    }
+    this->collecting_statics = false;
+    qDebug().noquote() << QObject::tr("statics collected");
+
     if(!this->logfile.empty()) {
         fileWriter.flush();
         fileWriter.close();

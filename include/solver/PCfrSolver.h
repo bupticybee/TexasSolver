@@ -103,6 +103,7 @@ private:
     uint64_t initial_board_long;
     shared_ptr<Compairer> compairer;
     int color_iso_offset[52 * 52 * 2][4] = {0};
+    bool collecting_statics = false;
 
     Deck deck;
     RiverRangeManager rrm;

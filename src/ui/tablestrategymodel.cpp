@@ -1,4 +1,4 @@
-#include "include/ui/tablestrategymodel.h"
+﻿#include "include/ui/tablestrategymodel.h"
 
 TableStrategyModel::TableStrategyModel(QSolverJob * data, QObject *parent)
     : QAbstractItemModel(parent)
@@ -93,7 +93,7 @@ void TableStrategyModel::updateStrategyData(){
     if(this->treeItem != NULL){
         shared_ptr<GameTreeNode> node = this->treeItem->m_treedata.lock();
 
-        if(node->getType() == GameTreeNode::GameTreeNode::ACTION){
+        if(node != nullptr && node->getType() == GameTreeNode::GameTreeNode::ACTION){
             this->setupModelData();
             shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(node);
             //actionNode->getTrainable();

@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "stdio.h"
 #include "include/runtime/qsolverjob.h"
@@ -162,5 +162,6 @@ void MainWindow::on_copyButtom_clicked()
 void MainWindow::on_showResultButton_clicked()
 {
     this->strategyExplorer = new StrategyExplorer(this,this->qSolverJob);
+    strategyExplorer->setAttribute(Qt::WA_DeleteOnClose);
     strategyExplorer->show();
 }

@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by Xuefeng Huang on 2020/1/28.
 //
 
@@ -43,7 +43,7 @@ class Card {
         static vector<string> getSuits();
         string toString();
         string toFormattedString();
-        string toFormattedHtml();
+        QString toFormattedHtml();
 };
 
 #endif //TEXASSOLVER_CARD_H

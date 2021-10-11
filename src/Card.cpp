@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by Xuefeng Huang on 2020/1/28.
 //
 
@@ -216,15 +216,15 @@ string Card::toFormattedString() {
     return qString.toStdString();
 }
 
-string Card::toFormattedHtml() {
+QString Card::toFormattedHtml() {
     QString qString = QString::fromStdString(this->card);
     if(qString.contains("c"))
-        qString = qString.replace("c", "<font style=\"color:black;\">♣<\/font>");
+        qString = qString.replace("c", QString::fromLocal8Bit("<span style=\"color:black;\">&#9827;<\/span>"));
     else if(qString.contains("d"))
-        qString = qString.replace("d", "<font style=\"color:red;\">♦<\/font>");
+        qString = qString.replace("d", QString::fromLocal8Bit("<span style=\"color:red;\">&#9830;<\/span>"));
     else if(qString.contains("h"))
-        qString = qString.replace("h", "<font style=\"color:red;\">♥️<\/font>");
+        qString = qString.replace("h", QString::fromLocal8Bit("<span style=\"color:red;\">&#9829;<\/span>"));
     else if(qString.contains("s"))
-        qString = qString.replace("s", "<font style=\"color:black;\">♠️<\/font>");
-    return qString.toStdString();
+        qString = qString.replace("s", QString::fromLocal8Bit("<span style=\"color:black;\">&#9824;<\/span>"));
+    return qString;
 }

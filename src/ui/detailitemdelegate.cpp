@@ -1,4 +1,4 @@
-#include "include/ui/detailitemdelegate.h"
+﻿#include "include/ui/detailitemdelegate.h"
 #include <QPainter>
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
@@ -100,8 +100,8 @@ void DetailItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
                 }
             }
             options.text = "";
-            options.text += QString::fromStdString(detailViewerModel->tableStrategyModel->cardint2card[card1].toFormattedHtml());
-            options.text += QString::fromStdString(detailViewerModel->tableStrategyModel->cardint2card[card2].toFormattedHtml());
+            options.text += detailViewerModel->tableStrategyModel->cardint2card[card1].toFormattedHtml();
+            options.text += detailViewerModel->tableStrategyModel->cardint2card[card2].toFormattedHtml();
             options.text = "<h2>" + options.text + "<\/h2>";
             for(int i = 0;i < strategy.size();i ++){
                 GameActions one_action = gameActions[i];

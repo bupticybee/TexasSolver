@@ -1025,6 +1025,7 @@ vector<vector<vector<float>>> PCfrSolver::get_strategy(shared_ptr<ActionNode> no
                 cout << one_key.key() << endl;
             }
             cout << "strategy: " << strategy  << endl;
+            cout << "Eror when get_strategy in PCfrSolver" << endl;
             throw runtime_error(tfm::format("%s not exist in strategy",one_range_str));
         }
         vector<float> one_strategy = strategy[one_range_str];

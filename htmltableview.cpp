@@ -8,6 +8,7 @@ HtmlTableView::HtmlTableView()
 
 HtmlTableView::HtmlTableView(QWidget *parent)
 {
+    viewport()->installEventFilter(this);
     setMouseTracking(true);
 }
 
@@ -16,6 +17,29 @@ void HtmlTableView::mousePressEvent(QMouseEvent *event) {
 
     auto anchor = anchorAt(event->pos());
     _mousePressAnchor = anchor;
+}
+
+bool HtmlTableView::eventFilter(QObject *watched, QEvent *event){
+    if(viewport() == watched){
+        if(event->type() == QEvent::MouseMove){
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+        QModelIndex index = indexAt(mouseEvent->pos());
+        if(index.isValid()){
+            int i = index.row();
+            int j = index.column();
+            if(i != this->last_bearing_i || j != last_bearing_j){
+                this->last_bearing_i = i;
+                this->last_bearing_j = j;
+                emit itemMouseChange(i,j);
+            }
+        }
+        else{
+        }
+        }
+        else if(event->type() == QEvent::Leave){
+        }
+    }
+    return QTableView::eventFilter(watched, event);
 }
 
 void HtmlTableView::mouseMoveEvent(QMouseEvent *event) {
@@ -61,9 +85,10 @@ QString HtmlTableView::anchorAt(const QPoint &pos) const {
             auto itemRect = visualRect(index);
             auto relativeClickPosition = pos - itemRect.topLeft();
 
-            auto html = model()->data(index, Qt::DisplayRole).toString();
-
-            return wordDelegate->anchorAt(html, relativeClickPosition);
+            if(model() != NULL){
+                auto html = model()->data(index, Qt::DisplayRole).toString();
+                return wordDelegate->anchorAt(html, relativeClickPosition);
+            }
         }
     }
 
@@ -72,8 +97,10 @@ QString HtmlTableView::anchorAt(const QPoint &pos) const {
 
 
 void HtmlTableView::resizeEvent(QResizeEvent* ev){
-    int num_columns = this->model()->columnCount(QModelIndex());
-    if (num_columns > 0) {
+    if(model() != NULL){
+        int num_columns = this->model()->columnCount(QModelIndex());
+        int num_rows = this->model()->rowCount(QModelIndex());
+        if (num_columns > 0) {
         int width = ev->size().width();
         int used_width = 0;
         // Set our widths to be a percentage of the available width
@@ -85,16 +112,17 @@ void HtmlTableView::resizeEvent(QResizeEvent* ev){
 
         // Set our last column to the remaining width
         this->setColumnWidth(num_columns - 1, width - used_width);
-    }
-    if (num_columns > 0) {
+        }
+        if (num_columns > 0) {
         int height = ev->size().height();
         int used_height = 0;
         for (int i = 0; i < num_columns - 1; i++) {
-            int column_height = height / num_columns;
+            int column_height = height / num_rows;
             this->setRowHeight(i, column_height);
             used_height += column_height;
         }
         this->setRowHeight(num_columns - 1, height - used_height);
+        }
     }
     QTableView::resizeEvent(ev);
 }

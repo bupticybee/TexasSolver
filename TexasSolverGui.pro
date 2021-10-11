@@ -97,7 +97,10 @@ SOURCES += \
     htmltableview.cpp \
     src/ui/worditemdelegate.cpp \
     src/ui/tablestrategymodel.cpp \
-    src/ui/strategyitemdelegate.cpp
+    src/ui/strategyitemdelegate.cpp \
+    src/ui/detailwindowsetting.cpp \
+    src/ui/detailviewermodel.cpp \
+    src/ui/detailitemdelegate.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -147,7 +150,10 @@ HEADERS += \
     htmltableview.h \
     include/ui/worditemdelegate.h \
     include/ui/tablestrategymodel.h \
-    include/ui/strategyitemdelegate.h
+    include/ui/strategyitemdelegate.h \
+    include/ui/detailwindowsetting.h \
+    include/ui/detailviewermodel.h \
+    include/ui/detailitemdelegate.h
 
 FORMS += \
         mainwindow.ui \

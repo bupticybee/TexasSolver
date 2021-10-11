@@ -5,9 +5,10 @@
 #include <QRect>
 #include <QBrush>
 
-StrategyItemDelegate::StrategyItemDelegate(QSolverJob * qSolverJob,QObject *parent) :
+StrategyItemDelegate::StrategyItemDelegate(QSolverJob * qSolverJob,DetailWindowSetting* detailWindowSetting,QObject *parent) :
     WordItemDelegate(parent)
 {
+    this->detailWindowSetting = detailWindowSetting;
     this->qSolverJob = qSolverJob;
 }
 
@@ -77,8 +78,6 @@ void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
                 ind += 1;
             }
         }
-        cout << endl;
-
     }
 
     QTextDocument doc;

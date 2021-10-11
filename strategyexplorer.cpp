@@ -12,6 +12,7 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
     ui(new Ui::StrategyExplorer)
 {
     this->qSolverJob = qSolverJob;
+    this->detailWindowSetting = DetailWindowSetting();
     ui->setupUi(this);
     /*
     QStandardItemModel* model = new QStandardItemModel();
@@ -39,7 +40,7 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
     // Initize strategy(rough) table
     this->tableStrategyModel = new TableStrategyModel(this->qSolverJob,this);
     this->ui->strategyTableView->setModel(this->tableStrategyModel);
-    this->delegate_strategy = new StrategyItemDelegate(this->qSolverJob,this);
+    this->delegate_strategy = new StrategyItemDelegate(this->qSolverJob,&(this->detailWindowSetting),this);
     this->ui->strategyTableView->setItemDelegate(this->delegate_strategy);
 
     Deck* deck = this->qSolverJob->get_solver()->get_deck();
@@ -80,6 +81,15 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update_second()));
     timer->start(1000);
+
+    // On mouse event of strategy table
+    connect(this->ui->strategyTableView,SIGNAL(itemMouseChange(int,int)),this,SLOT(onMouseMoveEvent(int,int)));
+
+    // Initize Detail Viewer window
+    this->detailViewerModel = new DetailViewerModel(this->tableStrategyModel,this);
+    this->ui->detailView->setModel(this->detailViewerModel);
+    this->detailItemItemDelegate = new DetailItemDelegate(&(this->detailWindowSetting),this);
+    this->ui->detailView->setItemDelegate(this->detailItemItemDelegate);
 }
 
 StrategyExplorer::~StrategyExplorer()
@@ -87,6 +97,8 @@ StrategyExplorer::~StrategyExplorer()
     delete ui;
     delete this->delegate_strategy;
     delete this->tableStrategyModel;
+    delete this->detailViewerModel;
+    delete this->timer;
 }
 
 void StrategyExplorer::item_expanded(const QModelIndex& index){
@@ -124,6 +136,7 @@ void StrategyExplorer::on_turnCardBox_currentIndexChanged(int index)
         this->tableStrategyModel->updateStrategyData();
     }
     this->ui->strategyTableView->viewport()->update();
+    this->ui->detailView->viewport()->update();
 }
 
 void StrategyExplorer::on_riverCardBox_currentIndexChanged(int index)
@@ -133,6 +146,7 @@ void StrategyExplorer::on_riverCardBox_currentIndexChanged(int index)
         this->tableStrategyModel->updateStrategyData();
     }
     this->ui->strategyTableView->viewport()->update();
+    this->ui->detailView->viewport()->update();
 }
 
 void StrategyExplorer::update_second(){
@@ -140,4 +154,12 @@ void StrategyExplorer::update_second(){
         this->tableStrategyModel->updateStrategyData();
     }
     this->ui->strategyTableView->viewport()->update();
+    this->ui->detailView->viewport()->update();
+}
+
+
+void StrategyExplorer::onMouseMoveEvent(int i,int j){
+    this->detailWindowSetting.grid_i = i;
+    this->detailWindowSetting.grid_j = j;
+    this->ui->detailView->viewport()->update();
 }

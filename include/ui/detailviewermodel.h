@@ -1,5 +1,5 @@
-#ifndef TABLESTRATEGYMODEL_H
-#define TABLESTRATEGYMODEL_H
+#ifndef DETAILVIEWERMODEL_H
+#define DETAILVIEWERMODEL_H
 
 #include <QAbstractItemModel>
 #include <QModelIndex>
@@ -11,15 +11,17 @@
 #include "include/nodes/ShowdownNode.h"
 #include "include/ui/treeitem.h"
 #include "include/nodes/GameActions.h"
+#include "include/ui/tablestrategymodel.h"
+#include "include/ui/detailwindowsetting.h"
 #include <map>
 
-class TableStrategyModel : public QAbstractItemModel
+class DetailViewerModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    explicit TableStrategyModel(QSolverJob* data, QObject *parent = nullptr);
-    ~TableStrategyModel();
+    explicit DetailViewerModel(TableStrategyModel* tableStrategyModel, QObject *parent = nullptr);
+    ~DetailViewerModel();
 
     QVariant data(const QModelIndex &index, int role) const override;
     QModelIndex index(int row, int column,
@@ -28,24 +30,12 @@ public:
     QModelIndex parent(const QModelIndex &child) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-    void setGameTreeNode(TreeItem* treeItem);
-    void setTrunCard(Card turn_card);
-    void setRiverCard(Card river_card);
-    void updateStrategyData();
-    const vector<pair<GameActions,float>> get_strategy(int i,int j) const;
-    vector<vector<vector<float>>> current_strategy; // cardint(52) * cardint(52) * strategy_type
-    vector<vector<vector<pair<int,int>>>> ui_strategy_table; // rank * rank * (id,id)
-    map<int,Card> cardint2card;
-    TreeItem * treeItem = NULL;// = static_cast<TreeItem*>(index.internalPointer());
-
-private:
-    QSolverJob* qSolverJob;
-    void setupModelData();
-    Card turn_card;
-    Card river_card;
+    int columns;
+    int rows;
+    TableStrategyModel* tableStrategyModel = NULL;
 
 public slots:
     void clicked_event(const QModelIndex & index);
 };
 
-#endif // TABLESTRATEGYMODEL_H
+#endif // DETAILVIEWERMODEL_H

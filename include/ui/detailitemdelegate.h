@@ -1,5 +1,5 @@
-﻿#ifndef STRATEGYITEMDELEGATE_H
-#define STRATEGYITEMDELEGATE_H
+#ifndef DETAILITEMDELEGATE_H
+#define DETAILITEMDELEGATE_H
 
 #include <QStyledItemDelegate>
 #include "include/ui/worditemdelegate.h"
@@ -13,19 +13,19 @@
 #include "include/Card.h"
 #include "include/ui/tablestrategymodel.h"
 #include "include/ui/detailwindowsetting.h"
+#include "include/ui/detailviewermodel.h"
 
-class StrategyItemDelegate: public WordItemDelegate{
+class DetailItemDelegate: public WordItemDelegate{
     Q_OBJECT
 
 public:
-    explicit StrategyItemDelegate(QSolverJob * qSolverJob,DetailWindowSetting* detailWindowSetting,QObject *parent = 0);
+    explicit DetailItemDelegate(DetailWindowSetting* detailWindowSetting,QObject *parent = 0);
 
 private:
-    QSolverJob * qSolverJob = NULL;
     DetailWindowSetting* detailWindowSetting = NULL;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
-#endif // STRATEGYITEMDELEGATE_H
+#endif // DETAILITEMDELEGATE_H

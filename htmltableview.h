@@ -4,6 +4,7 @@
 #include <QTableView>
 #include <QCursor>
 #include <QMouseEvent>
+#include <iostream>
 #include "include/ui/worditemdelegate.h"
 #include <QHeaderView>
 
@@ -14,10 +15,12 @@ class HtmlTableView: public QTableView
 public:
     explicit HtmlTableView(QWidget *parent = 0);
     HtmlTableView();
+    bool eventFilter(QObject *watched, QEvent *event);
 signals:
     void linkActivated(QString link);
     void linkHovered(QString link);
     void linkUnhovered();
+    void itemMouseChange(int i,int j);
 
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -31,6 +34,8 @@ private:
     QString _mousePressAnchor;
     QString _lastHoveredAnchor;
     void resizeEvent(QResizeEvent* ev);
+    int last_bearing_i = 0;
+    int last_bearing_j = 0;
 };
 
 #endif // HTMLTABLEVIEW_H

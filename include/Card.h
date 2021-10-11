@@ -43,6 +43,7 @@ class Card {
         static vector<string> getSuits();
         string toString();
         string toFormattedString();
+        string toFormattedHtml();
 };
 
 #endif //TEXASSOLVER_CARD_H

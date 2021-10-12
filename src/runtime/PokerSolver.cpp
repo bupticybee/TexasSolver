@@ -74,8 +74,8 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
 
     vector<PrivateCards> range1 = PrivateRangeConverter::rangeStr2Cards(player1RangeStr,initialBoard);
     vector<PrivateCards> range2 = PrivateRangeConverter::rangeStr2Cards(player2RangeStr,initialBoard);
+    uint64_t initial_board_long = Card::boardInts2long(initialBoard);
 
-    long initial_board_long = Card::boardInts2long(initialBoard);
     this->player1Range = noDuplicateRange(range1,initial_board_long);
     this->player2Range = noDuplicateRange(range2,initial_board_long);
 

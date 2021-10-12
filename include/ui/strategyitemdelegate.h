@@ -26,6 +26,8 @@ private:
 
 protected:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paint_strategy(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paint_range(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 #endif // STRATEGYITEMDELEGATE_H

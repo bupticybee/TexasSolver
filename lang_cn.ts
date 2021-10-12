@@ -2,6 +2,34 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN" sourcelanguage="en">
 <context>
+    <name>DetailItemDelegate</name>
+    <message>
+        <location filename="src/ui/detailitemdelegate.cpp" line="108"/>
+        <source>FOLD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/detailitemdelegate.cpp" line="111"/>
+        <source>CALL</source>
+        <translation type="unfinished">跟注</translation>
+    </message>
+    <message>
+        <location filename="src/ui/detailitemdelegate.cpp" line="114"/>
+        <source>CHECK</source>
+        <translation type="unfinished">过牌</translation>
+    </message>
+    <message>
+        <location filename="src/ui/detailitemdelegate.cpp" line="117"/>
+        <source>BET</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/detailitemdelegate.cpp" line="120"/>
+        <source>RAISE</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="mainwindow.ui" line="14"/>
@@ -158,7 +186,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="mainwindow.ui" line="355"/>
         <source>Copy from Ip to OOP</source>
-        <translation type="unfinished"></translation>
+        <translation>从IP到OOP拷贝配置</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="381"/>
@@ -225,7 +253,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="mainwindow.ui" line="733"/>
         <source>allin threshold: </source>
-        <translation type="unfinished"></translation>
+        <translation>全下阈值(%): </translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="746"/>
@@ -235,7 +263,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="mainwindow.ui" line="753"/>
         <source>     use isomorphism</source>
-        <translation type="unfinished"></translation>
+        <translation>     利用游戏对称性加速</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="787"/>
@@ -391,7 +419,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="mainwindow.ui" line="1085"/>
         <source>json</source>
-        <translation type="unfinished"></translation>
+        <translation>json文件</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="23"/>
@@ -401,12 +429,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="mainwindow.cpp" line="37"/>
         <source>Save File</source>
-        <translation type="unfinished"></translation>
+        <translation>保存文件</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="39"/>
         <source>Json file (*.json)</source>
-        <translation type="unfinished"></translation>
+        <translation>Json 文件 (*.json)</translation>
     </message>
 </context>
 <context>
@@ -425,6 +453,16 @@ p, li { white-space: pre-wrap; }
         <location filename="src/solver/PCfrSolver.cpp" line="761"/>
         <source> second.</source>
         <translation> 秒.</translation>
+    </message>
+    <message>
+        <location filename="src/solver/PCfrSolver.cpp" line="776"/>
+        <source>collecting statics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/solver/PCfrSolver.cpp" line="790"/>
+        <source>statics collected</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/solver/BestResponse.cpp" line="42"/>
@@ -588,17 +626,52 @@ p, li { white-space: pre-wrap; }
         <translation>河牌发牌:</translation>
     </message>
     <message>
-        <location filename="strategyexplorer.ui" line="72"/>
+        <location filename="strategyexplorer.ui" line="85"/>
+        <source>Rough Strategy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="99"/>
+        <source>EV:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="112"/>
+        <location filename="strategyexplorer.ui" line="149"/>
+        <source>IP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="125"/>
+        <location filename="strategyexplorer.ui" line="162"/>
+        <source>OOP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="136"/>
+        <source>Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="173"/>
+        <source>Strategy:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="186"/>
+        <source>strategy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Strategy</source>
-        <translation>策略</translation>
+        <translation type="vanished">策略</translation>
     </message>
     <message>
-        <location filename="strategyexplorer.ui" line="92"/>
         <source>Range</source>
-        <translation>范围</translation>
+        <translation type="vanished">范围</translation>
     </message>
     <message>
-        <location filename="strategyexplorer.cpp" line="111"/>
+        <location filename="strategyexplorer.cpp" line="124"/>
         <source>Encountering error:</source>
         <translation>遇到错误:</translation>
     </message>

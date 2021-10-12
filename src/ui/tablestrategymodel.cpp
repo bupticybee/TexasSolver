@@ -72,6 +72,84 @@ void TableStrategyModel::setupModelData()
             this->ui_strategy_table[i][j] = vector<pair<int,int>>();
         }
     }
+
+    this->p1_range = vector<vector<float>>(52);
+    for(int i = 0;i < 52;i ++){
+        this->p1_range[i] = vector<float>(52);
+        for(int j = 0;j < 52;j ++){
+            this->p1_range[i][j] = 0;
+        }
+    }
+
+    this->p2_range = vector<vector<float>>(52);
+    for(int i = 0;i < 52;i ++){
+        this->p2_range[i] = vector<float>(52);
+        for(int j = 0;j < 52;j ++){
+            this->p2_range[i][j] = 0;
+        }
+    }
+
+    this->ui_p1_range = vector<vector<vector<pair<int,int>>>>(ranks.size());
+    for(int i = 0;i < ranks.size();i ++){
+        this->ui_p1_range[i] = vector<vector<pair<int,int>>>(ranks.size());
+        for(int j = 0;j < ranks.size();j ++){
+            this->ui_p1_range[i][j] = vector<pair<int,int>>();
+        }
+    }
+
+    this->ui_p2_range = vector<vector<vector<pair<int,int>>>>(ranks.size());
+    for(int i = 0;i < ranks.size();i ++){
+        this->ui_p2_range[i] = vector<vector<pair<int,int>>>(ranks.size());
+        for(int j = 0;j < ranks.size();j ++){
+            this->ui_p2_range[i][j] = vector<pair<int,int>>();
+        }
+    }
+
+    vector<PrivateCards>& p1range = this->qSolverJob->get_solver()->player1Range;
+    vector<PrivateCards>& p2range = this->qSolverJob->get_solver()->player2Range;
+
+    for(PrivateCards one_private: p1range){
+        Card card1 = this->cardint2card[one_private.card1];
+        Card card2 = this->cardint2card[one_private.card2];
+
+        int rank1 = card1.getCardInt() / 4;
+        int suit1 = card1.getCardInt() - (rank1)*4;
+        int index1 = 12 - rank1; // this index is the index of the actal ui, so AKQ would be the lower index and 234 would be high
+
+        int rank2 = card2.getCardInt() / 4;
+        int suit2 = card2.getCardInt() - (rank2)*4;
+        int index2 = 12 - rank2;
+
+        if(index1 == index2){
+            this->ui_p1_range[index1][index2].push_back(std::pair<int,int>(one_private.card1,one_private.card2));
+        }
+        else if(suit1 == suit2){
+            this->ui_p1_range[min(index1,index2)][max(index1,index2)].push_back(std::pair<int,int>(one_private.card1,one_private.card2));
+        }else{
+            this->ui_p1_range[max(index1,index2)][min(index1,index2)].push_back(std::pair<int,int>(one_private.card1,one_private.card2));
+        }
+    }
+    for(PrivateCards one_private: p2range){
+        Card card1 = this->cardint2card[one_private.card1];
+        Card card2 = this->cardint2card[one_private.card2];
+
+        int rank1 = card1.getCardInt() / 4;
+        int suit1 = card1.getCardInt() - (rank1)*4;
+        int index1 = 12 - rank1; // this index is the index of the actal ui, so AKQ would be the lower index and 234 would be high
+
+        int rank2 = card2.getCardInt() / 4;
+        int suit2 = card2.getCardInt() - (rank2)*4;
+        int index2 = 12 - rank2;
+
+        if(index1 == index2){
+            this->ui_p2_range[index1][index2].push_back(std::pair<int,int>(one_private.card1,one_private.card2));
+        }
+        else if(suit1 == suit2){
+            this->ui_p2_range[min(index1,index2)][max(index1,index2)].push_back(std::pair<int,int>(one_private.card1,one_private.card2));
+        }else{
+            this->ui_p2_range[max(index1,index2)][min(index1,index2)].push_back(std::pair<int,int>(one_private.card1,one_private.card2));
+        }
+    }
 }
 
 void TableStrategyModel::clicked_event(const QModelIndex & index){
@@ -92,9 +170,8 @@ void TableStrategyModel::setRiverCard(Card river_card){
 void TableStrategyModel::updateStrategyData(){
     if(this->treeItem != NULL){
         shared_ptr<GameTreeNode> node = this->treeItem->m_treedata.lock();
-
+        this->setupModelData();
         if(node != nullptr && node->getType() == GameTreeNode::GameTreeNode::ACTION){
-            this->setupModelData();
             shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(node);
             //actionNode->getTrainable();
             // create a vector card and input it to solver and get the result
@@ -137,27 +214,56 @@ void TableStrategyModel::updateStrategyData(){
                         }
                     }
                 }
+            }
+        }
+        if(this->qSolverJob->get_solver() != NULL  && this->qSolverJob->get_solver()->get_solver() != NULL && node != nullptr){
+            vector<PrivateCards>& p1range = this->qSolverJob->get_solver()->player1Range;
+            vector<PrivateCards>& p2range = this->qSolverJob->get_solver()->player2Range;
 
-                /*
-                QRect left_rect(option.rect.left(), option.rect.top(),\
-                     option.rect.width() / 2, option.rect.height());
-                QBrush left_brush(Qt::red);
-                painter->fillRect(left_rect, left_brush);
+            for(auto one_private:p1range)this->p1_range[one_private.card1][one_private.card2] = one_private.weight;
+            for(auto one_private:p2range)this->p2_range[one_private.card1][one_private.card2] = one_private.weight;
 
-                QRect right_rect(option.rect.left() + option.rect.width() / 2, option.rect.top(),\
-                     option.rect.width() / 2 , option.rect.height());
-                QBrush right_brush(Qt::green);
-                painter->fillRect(right_rect, right_brush);
-                */
-
-                /*
-                for(int i = 0; i< this->ui_strategy_table.size();i ++){
-                    for(int j = 0; j< this->ui_strategy_table.size();j ++){
-                        cout << this->ui_strategy_table[i][j].size() << "\t";
+            shared_ptr<GameTreeNode> iter_node = node->getParent();
+            shared_ptr<GameTreeNode> last_node = node;
+            while(iter_node != nullptr){
+                if(iter_node->getType() == GameTreeNode::GameTreeNode::ACTION){
+                    shared_ptr<ActionNode> iterActionNode = dynamic_pointer_cast<ActionNode>(iter_node);
+                    vector<Card> deal_cards;
+                    GameTreeNode::GameRound root_round = this->qSolverJob->get_solver()->getGameTree()->getRoot()->getRound();
+                    GameTreeNode::GameRound current_round = iterActionNode->getRound();
+                    if(root_round == GameTreeNode::GameRound::FLOP){
+                        if(current_round == GameTreeNode::GameRound::TURN){deal_cards.push_back(this->turn_card);}
+                        if(current_round == GameTreeNode::GameRound::RIVER){deal_cards.push_back(this->turn_card);deal_cards.push_back(this->river_card);}
                     }
-                    cout << endl;
+                    else if(root_round == GameTreeNode::GameRound::TURN){
+                        if(current_round == GameTreeNode::GameRound::RIVER){deal_cards.push_back(this->river_card);}
+                    }
+
+                    vector<vector<vector<float>>> current_strategy = this->qSolverJob->get_solver()->get_solver()->get_strategy(iterActionNode,deal_cards);
+
+                    int child_chosen = -1;
+                    for(int i = 0;i < iterActionNode->getChildrens().size();i ++){
+                        if(iterActionNode->getChildrens()[i] == last_node){
+                            child_chosen = i;
+                            break;
+                        }
+                    }
+                    if(child_chosen == -1)throw runtime_error("no child chosen");
+                    for(int i = 0;i < 52;i ++){
+                        for(int j = 0;j < 52;j ++){
+                            if(current_strategy[i][j].size() == 0)continue;
+                            if(iterActionNode->getPlayer() == 0){ // p1, IP
+                                this->p1_range[i][j] *= current_strategy[i][j][child_chosen];
+                            }
+                            else if(iterActionNode->getPlayer() == 1){ // p2, OOP
+                                this->p2_range[i][j] *= current_strategy[i][j][child_chosen];
+                            }else throw runtime_error("player not exist in tablestrategymodel");
+                        }
+                    }
                 }
-                */
+
+                iter_node = iter_node->getParent();
+                last_node = last_node->getParent();
             }
         }
     }

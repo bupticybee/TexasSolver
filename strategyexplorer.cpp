@@ -164,3 +164,24 @@ void StrategyExplorer::onMouseMoveEvent(int i,int j){
     this->detailWindowSetting.grid_j = j;
     this->ui->detailView->viewport()->update();
 }
+
+void StrategyExplorer::on_strategyModeButtom_clicked()
+{
+    this->detailWindowSetting.mode = DetailWindowSetting::DetailWindowMode::STRATEGY;
+    this->ui->strategyTableView->viewport()->update();
+    this->ui->detailView->viewport()->update();
+}
+
+void StrategyExplorer::on_ipRangeButtom_clicked()
+{
+    this->detailWindowSetting.mode = DetailWindowSetting::DetailWindowMode::RANGE_IP;
+    this->ui->strategyTableView->viewport()->update();
+    this->ui->detailView->viewport()->update();
+}
+
+void StrategyExplorer::on_oopRangeButtom_clicked()
+{
+    this->detailWindowSetting.mode = DetailWindowSetting::DetailWindowMode::RANGE_OOP;
+    this->ui->strategyTableView->viewport()->update();
+    this->ui->detailView->viewport()->update();
+}

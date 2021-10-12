@@ -2,6 +2,34 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>DetailItemDelegate</name>
+    <message>
+        <location filename="src/ui/detailitemdelegate.cpp" line="108"/>
+        <source>FOLD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/detailitemdelegate.cpp" line="111"/>
+        <source>CALL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/detailitemdelegate.cpp" line="114"/>
+        <source>CHECK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/detailitemdelegate.cpp" line="117"/>
+        <source>BET</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/detailitemdelegate.cpp" line="120"/>
+        <source>RAISE</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="mainwindow.ui" line="14"/>
@@ -427,6 +455,16 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/solver/PCfrSolver.cpp" line="776"/>
+        <source>collecting statics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/solver/PCfrSolver.cpp" line="790"/>
+        <source>statics collected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/solver/BestResponse.cpp" line="42"/>
         <source>Iter: %s</source>
         <translation type="unfinished"></translation>
@@ -588,17 +626,44 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="strategyexplorer.ui" line="72"/>
-        <source>Strategy</source>
+        <location filename="strategyexplorer.ui" line="85"/>
+        <source>Rough Strategy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="strategyexplorer.ui" line="92"/>
-        <source>Range</source>
+        <location filename="strategyexplorer.ui" line="99"/>
+        <source>EV:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="strategyexplorer.cpp" line="111"/>
+        <location filename="strategyexplorer.ui" line="112"/>
+        <location filename="strategyexplorer.ui" line="149"/>
+        <source>IP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="125"/>
+        <location filename="strategyexplorer.ui" line="162"/>
+        <source>OOP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="136"/>
+        <source>Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="173"/>
+        <source>Strategy:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="186"/>
+        <source>strategy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.cpp" line="124"/>
         <source>Encountering error:</source>
         <translation type="unfinished"></translation>
     </message>

@@ -49,6 +49,9 @@ private slots:
     void on_riverCardBox_currentIndexChanged(int index);
     void update_second();
     void onMouseMoveEvent(int i,int j);
+    void on_strategyModeButtom_clicked();
+    void on_ipRangeButtom_clicked();
+    void on_oopRangeButtom_clicked();
 };
 
 #endif // STRATEGYEXPLORER_H

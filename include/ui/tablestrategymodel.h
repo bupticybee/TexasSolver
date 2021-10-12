@@ -34,7 +34,11 @@ public:
     void updateStrategyData();
     const vector<pair<GameActions,float>> get_strategy(int i,int j) const;
     vector<vector<vector<float>>> current_strategy; // cardint(52) * cardint(52) * strategy_type
+    vector<vector<float>> p1_range; // cardint(52) * cardint(52)
+    vector<vector<float>> p2_range; // cardint(52) * cardint(52)
     vector<vector<vector<pair<int,int>>>> ui_strategy_table; // rank * rank * (id,id)
+    vector<vector<vector<pair<int,int>>>> ui_p1_range; // rank * rank * (id,id)
+    vector<vector<vector<pair<int,int>>>> ui_p2_range; // rank * rank * (id,id)
     map<int,Card> cardint2card;
     TreeItem * treeItem = NULL;// = static_cast<TreeItem*>(index.internalPointer());
 

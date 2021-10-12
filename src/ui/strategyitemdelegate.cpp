@@ -12,17 +12,9 @@ StrategyItemDelegate::StrategyItemDelegate(QSolverJob * qSolverJob,DetailWindowS
     this->qSolverJob = qSolverJob;
 }
 
-void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     auto options = option;
     initStyleOption(&options, index);
-
-    painter->save();
-
-    QRect rect(option.rect.left(), option.rect.top(),\
-             option.rect.width(), option.rect.height());
-    QBrush brush(Qt::gray);
-    painter->fillRect(rect, brush);
-
     const TableStrategyModel * tableStrategyModel = qobject_cast<const TableStrategyModel*>(index.model());
     vector<pair<GameActions,float>> strategy = tableStrategyModel->get_strategy(index.row(),index.column());
     if(!strategy.empty()){
@@ -84,7 +76,6 @@ void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
             }
         }
     }
-
     QTextDocument doc;
     doc.setHtml(options.text);
 
@@ -94,6 +85,71 @@ void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     painter->translate(options.rect.left(), options.rect.top());
     QRect clip(0, 0, options.rect.width(), options.rect.height());
     doc.drawContents(painter, clip);
+}
+
+void StrategyItemDelegate::paint_range(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    auto options = option;
+    initStyleOption(&options, index);
+    const TableStrategyModel * tableStrategyModel = qobject_cast<const TableStrategyModel*>(index.model());
+
+    vector<pair<int,int>> card_cords;
+    if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::RANGE_IP){
+        card_cords = tableStrategyModel->ui_p1_range[index.row()][index.column()];
+    }else{
+        card_cords = tableStrategyModel->ui_p2_range[index.row()][index.column()];
+    }
+
+    if(!card_cords.empty()){
+        float range_number = 0;
+        for(auto one_cord:card_cords){
+            if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::RANGE_IP){
+                range_number += tableStrategyModel->p1_range[one_cord.first][one_cord.second];
+            }else{
+                // when it's oop, which is p1
+                range_number += tableStrategyModel->p2_range[one_cord.first][one_cord.second];
+            }
+        }
+        range_number = range_number / card_cords.size();
+
+        if(range_number < 0 || range_number > 1) throw runtime_error("range number incorrect in strategyitemdeletage");
+
+        float fold_prob = 1 - range_number;
+        int disable_height = (int)(fold_prob * option.rect.height());
+        int remain_height = option.rect.height() - disable_height;
+
+        // draw background for flod
+        QRect rect(option.rect.left(), option.rect.top() + disable_height,\
+         option.rect.width(), remain_height);
+        QBrush brush(Qt::yellow);
+        painter->fillRect(rect, brush);
+    }
+    QTextDocument doc;
+    doc.setHtml(options.text);
+
+    options.text = "";
+    //options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &option, painter);
+
+    painter->translate(options.rect.left(), options.rect.top());
+    QRect clip(0, 0, options.rect.width(), options.rect.height());
+    doc.drawContents(painter, clip);
+}
+
+void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+
+    painter->save();
+
+    QRect rect(option.rect.left(), option.rect.top(),\
+             option.rect.width(), option.rect.height());
+    QBrush brush(Qt::gray);
+    painter->fillRect(rect, brush);
+
+    if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::STRATEGY){
+        this->paint_strategy(painter,option,index);
+    }
+    else if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::RANGE_IP ||
+            this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::RANGE_OOP ){
+        this->paint_range(painter,option,index);
+    }
 
     painter->restore();
 }

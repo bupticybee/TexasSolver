@@ -11,13 +11,13 @@ class QSTextEdit : public QTextEdit
     Q_OBJECT
 public:
     explicit QSTextEdit(QWidget *parent = nullptr);
-    void log_with_signal(string message);
+    void log_with_signal(QString message);
 
 signals:
-    void message_signal(const string& message);
+    void message_signal(const QString& message);
 
 public slots:
-    void message_slot(const string& message);
+    void message_slot(const QString& message);
 };
 
 #endif // QSTEXTEDIT_H

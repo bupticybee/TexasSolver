@@ -176,6 +176,8 @@ void DetailItemDelegate::paint_range(QPainter *painter, const QStyleOptionViewIt
             options.text += detailViewerModel->tableStrategyModel->cardint2card[cord.first].toFormattedHtml();
             options.text += detailViewerModel->tableStrategyModel->cardint2card[cord.second].toFormattedHtml();
             options.text = "<h2>" + options.text + "<\/h2>";
+
+            options.text +=  QString(" <h5>%1<\/h5>").arg(QString::number(range_number,'f',3));
         }
     }
 

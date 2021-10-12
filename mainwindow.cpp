@@ -96,7 +96,7 @@ void MainWindow::on_buildTreeButtom_clicked()
     }else if(board_str_arr.size() == 5){
         qSolverJob->current_round = 3;
     }else{
-        this->ui->logOutput->log_with_signal(tfm::format("Error : board %s not recognized",qSolverJob->board));
+        this->ui->logOutput->log_with_signal(QString::fromStdString(tfm::format("Error : board %s not recognized",qSolverJob->board)));
         return;
     }
     qSolverJob->raise_limit = this->ui->raiseLimitText->text().toInt();

@@ -30,7 +30,7 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
         // redundant check, could be removed, or the
         // upper if statement could be removed
         if(MainWindow::s_textEdit != 0){
-            MainWindow::s_textEdit->log_with_signal(msg.toStdString());
+            MainWindow::s_textEdit->log_with_signal(msg);
             MainWindow::s_textEdit->update();
         }
     }

@@ -20,7 +20,7 @@ public:
  {
   // output anything that is left
   if (!m_string.empty())
-   log_window->log_with_signal(m_string);
+   //log_window->log_with_signal(m_string);
 
   m_stream.rdbuf(m_old_buf);
  }
@@ -30,7 +30,7 @@ protected:
  {
   if (v == '\n')
   {
-   log_window->log_with_signal(m_string);
+   //log_window->log_with_signal(m_string);
    m_string.erase(m_string.begin(), m_string.end());
   }
   else
@@ -51,7 +51,7 @@ protected:
    {
     std::string tmp(m_string.begin(), m_string.begin() + pos);
     //log_window->setText(log_window->toPlainText() + tmp.c_str())
-    log_window->log_with_signal(tmp);
+    //log_window->log_with_signal(tmp);
     m_string.erase(m_string.begin(), m_string.begin() + pos + 1);
    }
   }

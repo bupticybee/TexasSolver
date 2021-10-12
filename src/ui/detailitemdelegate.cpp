@@ -37,6 +37,7 @@ void DetailItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         int ind = index.row() * detailViewerModel->columns + index.column();
 
         if(ind < strategy_number){
+
             pair<int,int> strategy_ui_table = detailViewerModel->tableStrategyModel->ui_strategy_table[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j][ind];
             int card1 = strategy_ui_table.first;
             int card2 = strategy_ui_table.second;
@@ -67,6 +68,11 @@ void DetailItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             int disable_height = (int)(fold_prob * option.rect.height());
             int remain_height = option.rect.height() - disable_height;
 
+            // draw background for flod
+            QRect rect(option.rect.left(), option.rect.top(),\
+                 option.rect.width(), disable_height);
+            QBrush brush(QColor	(0,191,255));
+            painter->fillRect(rect, brush);
 
             int ind = 0;
             float last_prob = 0;

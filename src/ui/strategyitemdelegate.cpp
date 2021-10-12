@@ -46,6 +46,11 @@ void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
         int disable_height = (int)(fold_prob * option.rect.height());
         int remain_height = option.rect.height() - disable_height;
 
+        // draw background for flod
+        QRect rect(option.rect.left(), option.rect.top(),\
+         option.rect.width(), disable_height);
+        QBrush brush(QColor	(0,191,255));
+        painter->fillRect(rect, brush);
 
         int ind = 0;
         float last_prob = 0;

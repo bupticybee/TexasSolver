@@ -51,7 +51,7 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
         QString card_str_formatted = QString::fromStdString(one_card.toFormattedString());
         this->ui->turnCardBox->addItem(card_str_formatted);
         this->ui->riverCardBox->addItem(card_str_formatted);
-
+        /*
         if(card_str_formatted.contains(QString::fromLocal8Bit("♦️")) ||
                 card_str_formatted.contains(QString::fromLocal8Bit("♥️️"))){
             this->ui->turnCardBox->setItemData(0, QBrush(Qt::red),Qt::ForegroundRole);
@@ -60,6 +60,7 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
             this->ui->turnCardBox->setItemData(0, QBrush(Qt::black),Qt::ForegroundRole);
             this->ui->riverCardBox->setItemData(0, QBrush(Qt::black),Qt::ForegroundRole);
         }
+        */
         this->cards.push_back(one_card);
         index += 1;
     }

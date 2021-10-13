@@ -132,7 +132,7 @@ void StrategyExplorer::selection_changed(const QItemSelection &selected,
 
 void StrategyExplorer::on_turnCardBox_currentIndexChanged(int index)
 {
-    if(this->cards.size() > 0){
+    if(this->cards.size() > 0 && index < this->cards.size()){
         this->tableStrategyModel->setTrunCard(this->cards[index]);
         this->tableStrategyModel->updateStrategyData();
     }
@@ -142,7 +142,7 @@ void StrategyExplorer::on_turnCardBox_currentIndexChanged(int index)
 
 void StrategyExplorer::on_riverCardBox_currentIndexChanged(int index)
 {
-    if(this->cards.size() > 0){
+    if(this->cards.size() > 0  && index < this->cards.size()){
         this->tableStrategyModel->setRiverCard(this->cards[index]);
         this->tableStrategyModel->updateStrategyData();
     }

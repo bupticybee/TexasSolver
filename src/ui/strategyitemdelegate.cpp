@@ -134,6 +134,22 @@ void StrategyItemDelegate::paint_range(QPainter *painter, const QStyleOptionView
     doc.drawContents(painter, clip);
 }
 
+void StrategyItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    auto options = option;
+    initStyleOption(&options, index);
+    const TableStrategyModel * tableStrategyModel = qobject_cast<const TableStrategyModel*>(index.model());
+    vector<pair<GameActions,float>> strategy = tableStrategyModel->get_strategy(index.row(),index.column());
+
+    QTextDocument doc;
+    doc.setHtml(options.text);
+    options.text = "";
+    //options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &option, painter);
+
+    painter->translate(options.rect.left(), options.rect.top());
+    QRect clip(0, 0, options.rect.width(), options.rect.height());
+    doc.drawContents(painter, clip);
+}
+
 void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
 
     painter->save();
@@ -149,6 +165,10 @@ void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     else if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::RANGE_IP ||
             this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::RANGE_OOP ){
         this->paint_range(painter,option,index);
+    }
+    if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::EV){
+        //this->paint_evs(painter,option,index);
+        this->paint_strategy(painter,option,index);
     }
 
     painter->restore();

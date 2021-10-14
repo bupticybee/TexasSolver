@@ -4,10 +4,9 @@
 class DetailWindowSetting{
 public:
     enum DetailWindowMode{
-        EV_OOP,
-        EV_IP,
         RANGE_OOP,
         RANGE_IP,
+        EV,
         STRATEGY
     };
     DetailWindowMode mode;

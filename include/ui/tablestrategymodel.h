@@ -34,6 +34,7 @@ public:
     void updateStrategyData();
     const vector<pair<GameActions,float>> get_strategy(int i,int j) const;
     vector<vector<vector<float>>> current_strategy; // cardint(52) * cardint(52) * strategy_type
+    vector<vector<vector<float>>> current_evs; // cardint(52) * cardint(52) * strategy_type
     vector<vector<float>> p1_range; // cardint(52) * cardint(52)
     vector<vector<float>> p2_range; // cardint(52) * cardint(52)
     vector<vector<vector<pair<int,int>>>> ui_strategy_table; // rank * rank * (id,id)

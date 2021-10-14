@@ -185,3 +185,10 @@ void StrategyExplorer::on_oopRangeButtom_clicked()
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();
 }
+
+void StrategyExplorer::on_evModeButtom_clicked()
+{
+    this->detailWindowSetting.mode = DetailWindowSetting::DetailWindowMode::EV;
+    this->ui->strategyTableView->viewport()->update();
+    this->ui->detailView->viewport()->update();
+}

@@ -95,6 +95,7 @@ public:
     void train() override;
     json dumps(bool with_status,int depth) override;
     vector<vector<vector<float>>> get_strategy(shared_ptr<ActionNode> node,vector<Card> chance_cards) override;
+    vector<vector<vector<float>>> get_evs(shared_ptr<ActionNode> node,vector<Card> chance_cards) override;
 private:
     vector<vector<PrivateCards>> ranges;
     vector<PrivateCards> range1;
@@ -104,6 +105,7 @@ private:
     shared_ptr<Compairer> compairer;
     int color_iso_offset[52 * 52 * 2][4] = {0};
     bool collecting_statics = false;
+    bool statics_collected = false;
 
     Deck deck;
     RiverRangeManager rrm;

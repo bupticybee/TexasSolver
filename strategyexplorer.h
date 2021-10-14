@@ -52,6 +52,7 @@ private slots:
     void on_strategyModeButtom_clicked();
     void on_ipRangeButtom_clicked();
     void on_oopRangeButtom_clicked();
+    void on_evModeButtom_clicked();
 };
 
 #endif // STRATEGYEXPLORER_H

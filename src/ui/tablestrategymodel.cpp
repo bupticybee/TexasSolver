@@ -189,6 +189,9 @@ void TableStrategyModel::updateStrategyData(){
                 vector<vector<vector<float>>> current_strategy = this->qSolverJob->get_solver()->get_solver()->get_strategy(actionNode,deal_cards);
                 this->current_strategy = current_strategy;
 
+                vector<vector<vector<float>>> current_evs = this->qSolverJob->get_solver()->get_solver()->get_evs(actionNode,deal_cards);
+                this->current_evs = current_evs;
+
                 for(int i = 0;i < 52;i ++){
                     for(int j = 0;j < 52;j ++){
                         const vector<float>& one_strategy = this->current_strategy[i][j];

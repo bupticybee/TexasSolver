@@ -541,6 +541,46 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
                 }
             }
         }
+
+        if(this->collecting_statics || (iter % this->print_interval == 0)){
+            float oppo_sum = 0;
+            vector<float> oppo_card_sum = vector<float> (52);
+            fill(oppo_card_sum.begin(),oppo_card_sum.end(),0);
+
+            const vector<PrivateCards>& oppo_hand = playerHands(oppo);
+            for(int i = 0;i < oppo_hand.size();i ++){
+                oppo_card_sum[oppo_hand[i].card1] += reach_probs[i];
+                oppo_card_sum[oppo_hand[i].card2] += reach_probs[i];
+                oppo_sum += reach_probs[i];
+            }
+
+            const vector<PrivateCards>& player_hand = playerHands(player);
+            vector<float> evs(actions.size() * node_player_private_cards.size(),0.0);
+            for (int action_id = 0; action_id < actions.size(); action_id++) {
+                for (int hand_id = 0; hand_id < node_player_private_cards.size(); hand_id++) {
+                    float one_ev = (all_action_utility)[action_id][hand_id];//current_strategy; //[hand_id + action_id * node_player_private_cards.size()];
+
+                    int oppo_same_card_ind = this->pcm.indPlayer2Player(player,oppo,hand_id);
+                    float plus_reach_prob;
+
+                    const PrivateCards& one_player_hand = player_hand[hand_id];
+                    if(oppo_same_card_ind == -1){
+                        plus_reach_prob = 0;
+                    }else{
+                        plus_reach_prob = reach_probs[oppo_same_card_ind];
+                    }
+
+                    float rp_sum = (
+                        oppo_sum - oppo_card_sum[one_player_hand.card1]
+                        - oppo_card_sum[one_player_hand.card2]
+                        + plus_reach_prob);
+
+                    evs[hand_id + action_id * node_player_private_cards.size()] = one_ev / rp_sum;
+                }
+            }
+            trainable->setEv(evs);
+        }
+
     }
     return payoffs;
 
@@ -787,6 +827,7 @@ void PCfrSolver::train() {
         }
     }
     this->collecting_statics = false;
+    this->statics_collected = true;
     qDebug().noquote() << QObject::tr("statics collected");
 
     if(!this->logfile.empty()) {
@@ -1032,6 +1073,83 @@ vector<vector<vector<float>>> PCfrSolver::get_strategy(shared_ptr<ActionNode> no
         ret_strategy[pc.card1][pc.card2] = one_strategy;
     }
     return ret_strategy;
+}
+
+vector<vector<vector<float>>> PCfrSolver::get_evs(shared_ptr<ActionNode> node,vector<Card> chance_cards){
+    // If solving process has not finished, then no evs is set, therefore we shouldn't return anything
+    int deal = 0;
+    int card_num = this->deck.getCards().size();
+    vector<vector<int>> exchange_color_list;
+
+    vector<vector<vector<float>>> ret_evs = vector<vector<vector<float>>>(52);
+    for(int i = 0;i < 52;i ++){
+        ret_evs[i] = vector<vector<float>>(52);
+        for(int j = 0;j < 52;j ++){
+            ret_evs[i][j] = vector<float>();
+        }
+    }
+
+    vector<Card>& cards = this->deck.getCards();
+
+    for(Card one_card: chance_cards){
+        int card = one_card.getNumberInDeckInt();
+        int offset = this->color_iso_offset[deal][one_card.getCardInt() % 4];
+        if(offset < 0) {
+            for(int x = 0;x < cards.size();x ++){
+                if(
+                    Card::card2int(cards[x]) ==
+                    (Card::card2int(cards[card]) + offset)
+                ){
+                    card = x;
+                    break;
+                }
+            }
+            if(card == one_card.getNumberInDeckInt()){
+                throw runtime_error("isomorphism not found while dump evs");
+            }
+            vector<int> one_exchange{one_card.getCardInt() % 4,one_card.getCardInt() % 4 + offset};
+            exchange_color_list.push_back(one_exchange);
+        }
+
+        int new_deal;
+        if(deal == 0){
+            new_deal = card + 1;
+        } else if (deal > 0 && deal <= card_num){
+            int origin_deal = deal - 1;
+            new_deal = card_num * origin_deal + card;
+            new_deal += (1 + card_num);
+        } else{
+            throw runtime_error(tfm::format("deal out of range : %s ",deal));
+        }
+        deal = new_deal;
+    }
+    shared_ptr<Trainable> trainable = node->getTrainable(deal,true);
+    json retjson = trainable->dump_evs();
+
+    for(vector<int> one_exchange:exchange_color_list){
+        int rank1 = one_exchange[0];
+        int rank2 = one_exchange[1];
+        this->exchangeRange((retjson["evs"]),rank1,rank2,node);
+    }
+
+    int player = node->getPlayer();
+
+    json& evs = retjson["evs"];
+    for(int i = 0;i < this->ranges[player].size();i ++){
+        PrivateCards pc = this->ranges[player][i];
+        string one_range_str = pc.toString();
+        if(!evs.contains(one_range_str)){
+            for(auto one_key:evs.items()){
+                cout << one_key.key() << endl;
+            }
+            cout << "evs: " << evs  << endl;
+            cout << "Eror when get_evs in PCfrSolver" << endl;
+            throw runtime_error(tfm::format("%s not exist in evs",one_range_str));
+        }
+        vector<float> one_evs = evs[one_range_str];
+        ret_evs[pc.card1][pc.card2] = one_evs;
+    }
+    return ret_evs;
 }
 
 json PCfrSolver::dumps(bool with_status,int depth) {

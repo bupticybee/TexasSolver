@@ -6,27 +6,27 @@
     <message>
         <location filename="src/ui/detailitemdelegate.cpp" line="108"/>
         <source>FOLD</source>
-        <translation type="unfinished"></translation>
+        <translation>弃牌</translation>
     </message>
     <message>
         <location filename="src/ui/detailitemdelegate.cpp" line="111"/>
         <source>CALL</source>
-        <translation type="unfinished">跟注</translation>
+        <translation>跟注</translation>
     </message>
     <message>
         <location filename="src/ui/detailitemdelegate.cpp" line="114"/>
         <source>CHECK</source>
-        <translation type="unfinished">过牌</translation>
+        <translation>过牌</translation>
     </message>
     <message>
         <location filename="src/ui/detailitemdelegate.cpp" line="117"/>
         <source>BET</source>
-        <translation type="unfinished"></translation>
+        <translation>下注</translation>
     </message>
     <message>
         <location filename="src/ui/detailitemdelegate.cpp" line="120"/>
         <source>RAISE</source>
-        <translation type="unfinished"></translation>
+        <translation>加注</translation>
     </message>
 </context>
 <context>
@@ -628,7 +628,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="strategyexplorer.ui" line="85"/>
         <source>Rough Strategy</source>
-        <translation type="unfinished"></translation>
+        <translation>大致策略</translation>
     </message>
     <message>
         <location filename="strategyexplorer.ui" line="99"/>
@@ -639,28 +639,28 @@ p, li { white-space: pre-wrap; }
         <location filename="strategyexplorer.ui" line="112"/>
         <location filename="strategyexplorer.ui" line="149"/>
         <source>IP</source>
-        <translation type="unfinished"></translation>
+        <translation>后行动玩家(IP)</translation>
     </message>
     <message>
         <location filename="strategyexplorer.ui" line="125"/>
         <location filename="strategyexplorer.ui" line="162"/>
         <source>OOP</source>
-        <translation type="unfinished"></translation>
+        <translation>先行动玩家(OOP)</translation>
     </message>
     <message>
         <location filename="strategyexplorer.ui" line="136"/>
         <source>Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>范围:</translation>
     </message>
     <message>
         <location filename="strategyexplorer.ui" line="173"/>
         <source>Strategy:</source>
-        <translation type="unfinished"></translation>
+        <translation>策略:</translation>
     </message>
     <message>
         <location filename="strategyexplorer.ui" line="186"/>
         <source>strategy</source>
-        <translation type="unfinished"></translation>
+        <translation>策略</translation>
     </message>
     <message>
         <source>Strategy</source>

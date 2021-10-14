@@ -317,3 +317,49 @@ const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int
     }
 
 }
+
+const vector<float> TableStrategyModel::get_ev_grid(int i,int j)const{
+    vector<float> ret_evs;
+    if(this->treeItem == NULL || this->current_evs.empty())return ret_evs;
+
+    int strategy_number = this->ui_strategy_table[i][j].size();
+
+    shared_ptr<GameTreeNode> node = this->treeItem->m_treedata.lock();
+
+    if(node->getType() == GameTreeNode::GameTreeNode::ACTION){
+        shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(node);
+
+        vector<GameActions>& gameActions = actionNode->getActions();
+
+        vector<float> strategies;
+
+        if(this->ui_strategy_table[i][j].size() > 0){
+            strategies = vector<float>(gameActions.size());
+            std::fill(strategies.begin(), strategies.end(), 0.);
+        }
+        for(std::pair<int,int> index:this->ui_strategy_table[i][j]){
+            int index1 = index.first;
+            int index2 = index.second;
+            const vector<float>& one_strategy = this->current_strategy[index1][index2];
+            const vector<float>& one_ev = this->current_evs[index1][index2];
+
+            if(one_ev.size() != one_strategy.size()) return vector<float>();
+
+            if(gameActions.size() != one_strategy.size()){
+                cout << "index: " << index1 << " " << index2 << endl;
+                cout << "i,j: " << i << " " << j << endl;
+                cout << "size not match between gameAction and stragegy: " << gameActions.size() << " " << one_strategy.size() << endl;
+                throw runtime_error("size not match between gameAction and stragegy");
+            }
+            float one_ev_float = 0;
+            for(int indi = 0;indi < one_strategy.size();indi ++){
+                one_ev_float += one_strategy[indi] * one_ev[indi];
+            }
+            ret_evs.push_back(one_ev_float);
+        }
+
+        return ret_evs;
+    }else{
+        return ret_evs;
+    }
+}

@@ -177,7 +177,7 @@ void DetailItemDelegate::paint_range(QPainter *painter, const QStyleOptionViewIt
             options.text += detailViewerModel->tableStrategyModel->cardint2card[cord.second].toFormattedHtml();
             options.text = "<h2>" + options.text + "<\/h2>";
 
-            options.text +=  QString(" <h5>%1<\/h5>").arg(QString::number(range_number,'f',3));
+            options.text +=  QString(" <h2>%1<\/h2>").arg(QString::number(range_number,'f',3));
         }
     }
 
@@ -316,6 +316,63 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
     doc.drawContents(painter, clip);
 }
 
+void DetailItemDelegate::paint_evs_only(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    auto options = option;
+    initStyleOption(&options, index);
+
+    const DetailViewerModel * detailViewerModel = qobject_cast<const DetailViewerModel*>(index.model());
+    //vector<pair<GameActions,float>> strategy = detailViewerModel->tableStrategyModel->get_strategy(this->detailWindowSetting->grid_i,this->detailWindowSetting->grid_j);
+    options.text = "";
+
+    if(detailViewerModel->tableStrategyModel->treeItem != NULL &&
+            detailViewerModel->tableStrategyModel->treeItem->m_treedata.lock()->getType() == GameTreeNode::GameTreeNode::ACTION){
+
+        shared_ptr<GameTreeNode> node = detailViewerModel->tableStrategyModel->treeItem->m_treedata.lock();
+        int strategy_number = 0;
+        if(this->detailWindowSetting->grid_i >= 0 && this->detailWindowSetting->grid_j >= 0){
+           strategy_number = detailViewerModel->tableStrategyModel->ui_strategy_table[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j].size();
+        }
+
+        vector<float> evs = detailViewerModel->tableStrategyModel->get_ev_grid(this->detailWindowSetting->grid_i,this->detailWindowSetting->grid_j);
+        int ind = index.row() * detailViewerModel->columns + index.column();
+
+        if(ind < evs.size() and ind < strategy_number)
+        {
+            float one_ev = evs[ind];
+            float normalized_ev = (one_ev + detailViewerModel->tableStrategyModel->get_solver()->stack) / (2 * detailViewerModel->tableStrategyModel->get_solver()->stack);
+            normalized_ev = max(min(normalized_ev,(float)1.0),(float)0.0);
+            //options.text += QString("</br>%1").arg(QString::number(normalized_ev));
+
+            pair<int,int> strategy_ui_table = detailViewerModel->tableStrategyModel->ui_strategy_table[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j][ind];
+            int card1 = strategy_ui_table.first;
+            int card2 = strategy_ui_table.second;
+
+            int red = max((int)(255 - normalized_ev * 255),0);
+            int green = min((int)(normalized_ev * 255),255);
+            QBrush brush = QBrush(QColor(red,green,0));
+
+            // draw background for flod
+            QRect rect(option.rect.left(), option.rect.top(),
+             option.rect.width(), option.rect.height());
+            painter->fillRect(rect, brush);
+
+            options.text = "";
+            options.text += detailViewerModel->tableStrategyModel->cardint2card[card1].toFormattedHtml();
+            options.text += detailViewerModel->tableStrategyModel->cardint2card[card2].toFormattedHtml();
+            options.text = "<h2>" + options.text + "<\/h2>";
+
+            options.text +=  QString(" <h2>%1<\/h2>").arg(QString::number(one_ev,'f',3));
+        }
+    }
+
+    QTextDocument doc;
+    doc.setHtml(options.text);
+
+    painter->translate(options.rect.left(), options.rect.top());
+    QRect clip(0, 0, options.rect.width(), options.rect.height());
+    doc.drawContents(painter, clip);
+}
+
 void DetailItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     painter->save();
 
@@ -333,6 +390,9 @@ void DetailItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     }
     else if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::EV){
         this->paint_evs(painter,option,index);
+    }
+    else if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::EV_ONLY){
+        this->paint_evs_only(painter,option,index);
     }
 
 

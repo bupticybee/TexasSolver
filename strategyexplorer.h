@@ -1,4 +1,4 @@
-#ifndef STRATEGYEXPLORER_H
+﻿#ifndef STRATEGYEXPLORER_H
 #define STRATEGYEXPLORER_H
 
 #include <QDialog>
@@ -53,6 +53,7 @@ private slots:
     void on_ipRangeButtom_clicked();
     void on_oopRangeButtom_clicked();
     void on_evModeButtom_clicked();
+    void on_evOnlyModeButtom_clicked();
 };
 
 #endif // STRATEGYEXPLORER_H

@@ -1,4 +1,4 @@
-#include "include/ui/strategyitemdelegate.h"
+﻿#include "include/ui/strategyitemdelegate.h"
 #include <QPainter>
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
@@ -138,8 +138,27 @@ void StrategyItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewIt
     auto options = option;
     initStyleOption(&options, index);
     const TableStrategyModel * tableStrategyModel = qobject_cast<const TableStrategyModel*>(index.model());
-    vector<pair<GameActions,float>> strategy = tableStrategyModel->get_strategy(index.row(),index.column());
+    vector<float> evs = tableStrategyModel->get_ev_grid(index.row(),index.column());
+    sort(evs.begin(), evs.end());
 
+    int last_left = 0;
+    for(int i = 0;i < evs.size();i ++ ){
+        float one_ev = evs[evs.size() - i - 1];
+        float normalized_ev = (one_ev + this->qSolverJob->stack) / (2 * this->qSolverJob->stack);
+        normalized_ev = max(min(normalized_ev,(float)1.0),(float)0.0);
+        //options.text += QString("</br>%1").arg(QString::number(normalized_ev));
+
+        int red = max((int)(255 - normalized_ev * 255),0);
+        int green = min((int)(normalized_ev * 255),255);
+        QBrush brush = QBrush(QColor(red,green,0));
+
+        int this_width = (int)((float(i + 1) / evs.size()) * options.rect.width()) - last_left;
+
+        QRect rect(option.rect.left() + last_left, option.rect.top(),\
+             this_width , options.rect.height());
+        painter->fillRect(rect, brush);
+        last_left += this_width;
+    }
     QTextDocument doc;
     doc.setHtml(options.text);
     options.text = "";
@@ -166,9 +185,11 @@ void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
             this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::RANGE_OOP ){
         this->paint_range(painter,option,index);
     }
-    if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::EV){
-        //this->paint_evs(painter,option,index);
+    else if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::EV){
         this->paint_strategy(painter,option,index);
+    }
+    else if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::EV_ONLY){
+        this->paint_evs(painter,option,index);
     }
 
     painter->restore();

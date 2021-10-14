@@ -1,4 +1,4 @@
-#ifndef DETAILWINDOWSETTING_H
+﻿#ifndef DETAILWINDOWSETTING_H
 #define DETAILWINDOWSETTING_H
 
 class DetailWindowSetting{
@@ -7,6 +7,7 @@ public:
         RANGE_OOP,
         RANGE_IP,
         EV,
+        EV_ONLY,
         STRATEGY
     };
     DetailWindowMode mode;

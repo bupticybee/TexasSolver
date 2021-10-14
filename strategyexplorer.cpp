@@ -192,3 +192,10 @@ void StrategyExplorer::on_evModeButtom_clicked()
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();
 }
+
+void StrategyExplorer::on_evOnlyModeButtom_clicked()
+{
+    this->detailWindowSetting.mode = DetailWindowSetting::DetailWindowMode::EV_ONLY;
+    this->ui->strategyTableView->viewport()->update();
+    this->ui->detailView->viewport()->update();
+}

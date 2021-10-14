@@ -284,7 +284,7 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
             options.text = "<h2>" + options.text + "<\/h2>";
             for(int i = 0;i < evs.size();i ++){
                 GameActions one_action = gameActions[i];
-                QString one_ev = evs[i] == -1.0? tr("Not calculated"):QString::number(evs[i],'f',1);
+                QString one_ev = evs[i] != evs[i]? tr("Can't calculate"):QString::number(evs[i],'f',1);
                 QString ev_str = tr("EV");
                 if(one_action.getAction() ==  GameTreeNode::PokerActions::FOLD){
                     options.text +=  QString(" <h5> %1 %2: %3<\/h5>").arg(tr("FOLD"),ev_str,one_ev);

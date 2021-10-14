@@ -578,6 +578,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
                     evs[hand_id + action_id * node_player_private_cards.size()] = one_ev / rp_sum;
                 }
             }
+            // TODO if evs contains nan what should we do?
             trainable->setEv(evs);
         }
 

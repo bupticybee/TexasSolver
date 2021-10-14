@@ -83,7 +83,7 @@ const vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
 
 void DiscountedCfrTrainable::setEv(const vector<float>& evs){
     if(evs.size() != this->evs.size()) throw runtime_error("size mismatch in discountcfrtrainable setEV");
-    for(int i = 0;i < evs.size();i ++) this->evs[i] = evs[i];
+    for(int i = 0;i < evs.size();i ++) if(evs[i] == evs[i])this->evs[i] = evs[i];
 }
 
 void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) {

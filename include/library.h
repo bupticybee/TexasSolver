@@ -1,4 +1,4 @@
-#ifndef TEXASSOLVER_LIBRARY_H
+﻿#ifndef TEXASSOLVER_LIBRARY_H
 #define TEXASSOLVER_LIBRARY_H
 #include <vector>
 #include <string>
@@ -81,5 +81,6 @@ Combinations<T>::comb(unsigned long long n, unsigned long long k) {
 vector<string> string_split(string strin,char split);
 uint64_t timeSinceEpochMillisec();
 int random(int min, int max);
+float normalization_tanh(float stack,float ev,float ratio=7);
 
 #endif //TEXASSOLVER_LIBRARY_H

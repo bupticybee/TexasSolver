@@ -13,6 +13,7 @@
 #include "include/Card.h"
 #include "include/ui/tablestrategymodel.h"
 #include "include/ui/detailwindowsetting.h"
+#include "include/library.h"
 
 class StrategyItemDelegate: public WordItemDelegate{
     Q_OBJECT

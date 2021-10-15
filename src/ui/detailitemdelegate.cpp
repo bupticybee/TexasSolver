@@ -339,8 +339,7 @@ void DetailItemDelegate::paint_evs_only(QPainter *painter, const QStyleOptionVie
         if(ind < evs.size() and ind < strategy_number)
         {
             float one_ev = evs[ind];
-            float normalized_ev = (one_ev + detailViewerModel->tableStrategyModel->get_solver()->stack) / (2 * detailViewerModel->tableStrategyModel->get_solver()->stack);
-            normalized_ev = max(min(normalized_ev,(float)1.0),(float)0.0);
+            float normalized_ev = normalization_tanh(detailViewerModel->tableStrategyModel->get_solver()->stack,one_ev);
             //options.text += QString("</br>%1").arg(QString::number(normalized_ev));
 
             pair<int,int> strategy_ui_table = detailViewerModel->tableStrategyModel->ui_strategy_table[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j][ind];

@@ -14,6 +14,7 @@
 #include "include/ui/tablestrategymodel.h"
 #include "include/ui/detailwindowsetting.h"
 #include "include/ui/detailviewermodel.h"
+#include "include/library.h"
 
 class DetailItemDelegate: public WordItemDelegate{
     Q_OBJECT

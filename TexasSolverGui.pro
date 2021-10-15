@@ -25,7 +25,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 TRANSLATIONS =  lang_cn.ts\
                 lang_en.ts
 
-RC_ICONS = imgs/texassolver_logo.ico
 
 macx: {
 QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -lomp -I/usr/local/include
@@ -37,16 +36,19 @@ QMAKE_LFLAGS += -lomp
 
 macx: {
 LIBS += -L /usr/local/lib /usr/local/lib/libomp.dylib
+ICON = imgs/texassolver_logo.icns
 }
 
 win32: {
 QMAKE_CXXFLAGS+= -openmp
 QMAKE_LFLAGS +=  -openmp
+RC_ICONS = imgs/texassolver_logo.ico
 }
 
 win64: {
 QMAKE_CXXFLAGS+= -openmp
 QMAKE_LFLAGS +=  -openmp
+RC_ICONS = imgs/texassolver_logo.ico
 }
 
 QMAKE_CXXFLAGS_RELEASE *= -O3

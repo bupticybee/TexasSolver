@@ -103,7 +103,9 @@ SOURCES += \
     src/ui/strategyitemdelegate.cpp \
     src/ui/detailwindowsetting.cpp \
     src/ui/detailviewermodel.cpp \
-    src/ui/detailitemdelegate.cpp
+    src/ui/detailitemdelegate.cpp \
+    src/ui/roughstrategyviewermodel.cpp \
+    src/ui/roughstrategyitemdelegate.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -156,7 +158,9 @@ HEADERS += \
     include/ui/strategyitemdelegate.h \
     include/ui/detailwindowsetting.h \
     include/ui/detailviewermodel.h \
-    include/ui/detailitemdelegate.h
+    include/ui/detailitemdelegate.h \
+    include/ui/roughstrategyviewermodel.h \
+    include/ui/roughstrategyitemdelegate.h
 
 FORMS += \
         mainwindow.ui \

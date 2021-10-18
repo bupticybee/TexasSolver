@@ -78,12 +78,33 @@
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1,1,7">
+    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="10,2,10,40">
      <item>
       <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
         <string>Rough Strategy</string>
        </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="HtmlTableView" name="roughStrategyView">
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>

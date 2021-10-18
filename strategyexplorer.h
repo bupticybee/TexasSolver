@@ -16,6 +16,8 @@
 #include "include/Card.h"
 #include "include/ui/detailviewermodel.h"
 #include "include/ui/detailitemdelegate.h"
+#include "include/ui/roughstrategyviewermodel.h"
+#include "include/ui/roughstrategyitemdelegate.h"
 
 namespace Ui {
 class StrategyExplorer;
@@ -38,6 +40,8 @@ private:
     TableStrategyModel * tableStrategyModel;
     DetailViewerModel * detailViewerModel;
     DetailItemDelegate * detailItemItemDelegate;
+    RoughStrategyViewerModel * roughStrategyViewerModel;
+    RoughStrategyItemDelegate * roughStrategyItemDelegate;
     vector<Card> cards;
 public slots:
     void item_expanded(const QModelIndex& index);

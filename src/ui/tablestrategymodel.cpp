@@ -150,6 +150,7 @@ void TableStrategyModel::setupModelData()
             this->ui_p2_range[max(index1,index2)][min(index1,index2)].push_back(std::pair<int,int>(one_private.card1,one_private.card2));
         }
     }
+    this->total_strategy = vector<pair<GameActions,pair<float,float>>>();
 }
 
 void TableStrategyModel::clicked_event(const QModelIndex & index){
@@ -269,7 +270,64 @@ void TableStrategyModel::updateStrategyData(){
                 last_node = last_node->getParent();
             }
         }
+        if(this->qSolverJob->get_solver() != NULL  && this->qSolverJob->get_solver()->get_solver() != NULL && node != nullptr){
+            this->total_strategy = this->get_total_strategy();
+        }
     }
+}
+
+const vector<pair<GameActions,pair<float,float>>> TableStrategyModel::get_total_strategy() const{
+    vector<pair<GameActions,pair<float,float>>> ret_strategy;
+    if(this->treeItem == NULL)return ret_strategy;
+
+
+    shared_ptr<GameTreeNode> node = this->treeItem->m_treedata.lock();
+
+    if(node->getType() == GameTreeNode::GameTreeNode::ACTION){
+        shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(node);
+        vector<GameActions>& gameActions = actionNode->getActions();
+        int current_player = actionNode->getPlayer();
+
+        vector<float> combos(gameActions.size(),0.0);
+        vector<float> avg_strategy(gameActions.size(),0.0);
+        float sum_strategy = 0;
+
+        for(int index1 = 0;index1 < this->current_strategy.size() ;index1 ++){
+            for(int index2 = 0;index2 < this->current_strategy.size() ;index2 ++){
+                const vector<float>& one_strategy = this->current_strategy[index1][index2];
+                if(one_strategy.empty())continue;
+
+                const vector<vector<float>>& range = current_player == 0? this->p1_range:this->p2_range;
+                if(range.size() <= index1 || range[index1].size() < index2) throw runtime_error(" index error when get range in tablestrategymodel");
+                const float one_range = range[index1][index2];
+
+                for(int i = 0;i < one_strategy.size(); i ++ ){
+                    float one_prob = one_strategy[i];
+                    combos[i] += one_range;
+                    avg_strategy[i] += one_prob * one_range;
+                    sum_strategy += one_prob * one_range;
+                }
+
+                if(gameActions.size() != one_strategy.size()){
+                    cout << "index: " << index1 << " " << index2 << endl;
+                    cout << "size not match between gameAction and stragegy: " << gameActions.size() << " " << one_strategy.size() << endl;
+                    throw runtime_error("size not match between gameAction and stragegy");
+                }
+            }
+        }
+
+        for(int i = 0;i < gameActions.size(); i ++ ){
+            avg_strategy[i] = avg_strategy[i] / sum_strategy;
+            pair<float,float> statics = pair<float,float>(combos[i],avg_strategy[i]);
+            pair<GameActions,pair<float,float>> one_ret = pair<GameActions,pair<float,float>>(gameActions[i],statics);
+            ret_strategy.push_back(one_ret);
+        }
+        return ret_strategy;
+    }else{
+        return ret_strategy;
+    }
+
+
 }
 
 const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int j) const{

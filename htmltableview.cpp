@@ -95,6 +95,12 @@ QString HtmlTableView::anchorAt(const QPoint &pos) const {
     return QString();
 }
 
+void HtmlTableView::triger_resize(){
+    QResizeEvent* ev = new QResizeEvent(this->size(),this->size());
+    this->resizeEvent(ev);
+    //this->resize(this->parentWidget()->size());
+    delete ev;
+}
 
 void HtmlTableView::resizeEvent(QResizeEvent* ev){
     if(model() != NULL){

@@ -91,6 +91,12 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
     this->ui->detailView->setModel(this->detailViewerModel);
     this->detailItemItemDelegate = new DetailItemDelegate(&(this->detailWindowSetting),this);
     this->ui->detailView->setItemDelegate(this->detailItemItemDelegate);
+
+    // Initize Rough Strategy Viewer
+    this->roughStrategyViewerModel = new RoughStrategyViewerModel(this->tableStrategyModel,this);
+    this->ui->roughStrategyView->setModel(this->roughStrategyViewerModel);
+    this->roughStrategyItemDelegate = new RoughStrategyItemDelegate(&(this->detailWindowSetting),this);
+    this->ui->roughStrategyView->setItemDelegate(this->roughStrategyItemDelegate);
 }
 
 StrategyExplorer::~StrategyExplorer()
@@ -99,6 +105,7 @@ StrategyExplorer::~StrategyExplorer()
     delete this->delegate_strategy;
     delete this->tableStrategyModel;
     delete this->detailViewerModel;
+    delete this->roughStrategyViewerModel;
     delete this->timer;
 }
 
@@ -118,6 +125,9 @@ void StrategyExplorer::item_clicked(const QModelIndex& index){
         this->tableStrategyModel->setGameTreeNode(treeNode);
         this->tableStrategyModel->updateStrategyData();
         this->ui->strategyTableView->viewport()->update();
+        this->roughStrategyViewerModel->onchanged();
+        this->ui->roughStrategyView->triger_resize();
+        this->ui->roughStrategyView->viewport()->update();
     }
     catch (const runtime_error& error)
     {
@@ -135,6 +145,9 @@ void StrategyExplorer::on_turnCardBox_currentIndexChanged(int index)
     if(this->cards.size() > 0 && index < this->cards.size()){
         this->tableStrategyModel->setTrunCard(this->cards[index]);
         this->tableStrategyModel->updateStrategyData();
+        // TODO this somehow cause bugs, crashes, why?
+        //this->roughStrategyViewerModel->onchanged();
+        //this->ui->roughStrategyView->viewport()->update();
     }
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();
@@ -145,6 +158,8 @@ void StrategyExplorer::on_riverCardBox_currentIndexChanged(int index)
     if(this->cards.size() > 0  && index < this->cards.size()){
         this->tableStrategyModel->setRiverCard(this->cards[index]);
         this->tableStrategyModel->updateStrategyData();
+        //this->roughStrategyViewerModel->onchanged();
+        //this->ui->roughStrategyView->viewport()->update();
     }
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();
@@ -153,6 +168,8 @@ void StrategyExplorer::on_riverCardBox_currentIndexChanged(int index)
 void StrategyExplorer::update_second(){
     if(this->cards.size() > 0){
         this->tableStrategyModel->updateStrategyData();
+        this->roughStrategyViewerModel->onchanged();
+        this->ui->roughStrategyView->viewport()->update();
     }
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();
@@ -170,6 +187,8 @@ void StrategyExplorer::on_strategyModeButtom_clicked()
     this->detailWindowSetting.mode = DetailWindowSetting::DetailWindowMode::STRATEGY;
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();
+    this->roughStrategyViewerModel->onchanged();
+    this->ui->roughStrategyView->viewport()->update();
 }
 
 void StrategyExplorer::on_ipRangeButtom_clicked()
@@ -177,6 +196,8 @@ void StrategyExplorer::on_ipRangeButtom_clicked()
     this->detailWindowSetting.mode = DetailWindowSetting::DetailWindowMode::RANGE_IP;
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();
+    this->roughStrategyViewerModel->onchanged();
+    this->ui->roughStrategyView->viewport()->update();
 }
 
 void StrategyExplorer::on_oopRangeButtom_clicked()
@@ -184,6 +205,8 @@ void StrategyExplorer::on_oopRangeButtom_clicked()
     this->detailWindowSetting.mode = DetailWindowSetting::DetailWindowMode::RANGE_OOP;
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();
+    this->roughStrategyViewerModel->onchanged();
+    this->ui->roughStrategyView->viewport()->update();
 }
 
 void StrategyExplorer::on_evModeButtom_clicked()
@@ -191,6 +214,7 @@ void StrategyExplorer::on_evModeButtom_clicked()
     this->detailWindowSetting.mode = DetailWindowSetting::DetailWindowMode::EV;
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();
+    this->ui->roughStrategyView->viewport()->update();
 }
 
 void StrategyExplorer::on_evOnlyModeButtom_clicked()
@@ -198,4 +222,6 @@ void StrategyExplorer::on_evOnlyModeButtom_clicked()
     this->detailWindowSetting.mode = DetailWindowSetting::DetailWindowMode::EV_ONLY;
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();
+    this->roughStrategyViewerModel->onchanged();
+    this->ui->roughStrategyView->viewport()->update();
 }

@@ -41,7 +41,7 @@ QVariant DetailViewerModel::data(const QModelIndex &index, int role) const
     int row = index.row();
     int col = index.column();
 
-    return "TEST";
+    return "Viewer";
 }
 
 void DetailViewerModel::clicked_event(const QModelIndex & index){

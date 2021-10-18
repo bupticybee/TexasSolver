@@ -16,6 +16,7 @@ public:
     explicit HtmlTableView(QWidget *parent = 0);
     HtmlTableView();
     bool eventFilter(QObject *watched, QEvent *event);
+    void triger_resize();
 signals:
     void linkActivated(QString link);
     void linkHovered(QString link);

@@ -115,7 +115,7 @@ void PokerSolver::dump_strategy(string dump_file,int dump_rounds) {
         fileWriter.close();
         qDebug().noquote() << QObject::tr("save success");
     }else{
-        qDebug().noquote() << QObject::tr("save failed, file cannot be opened");
+        qDebug().noquote() << QObject::tr("save failed, file cannot be open");
     }
     setlocale(LC_CTYPE, "C");
 }

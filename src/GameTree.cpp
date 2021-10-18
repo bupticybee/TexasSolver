@@ -621,9 +621,14 @@ vector<double> GameTree::get_possible_bets(shared_ptr<ActionNode> root, int play
             amount = this->round_nearest(amount, (double) rule.big_blind);
         }
         if(betType == BetType::RAISE)amount += (rule.get_commit(next_player) - rule.get_commit(player));
-        if(amount + rule.get_commit(player) > rule.initial_effective_stack * rule.allin_threshold)amount = -1;
+        if(amount + rule.get_commit(player) > rule.initial_effective_stack * rule.allin_threshold)amount = (double) (rule.stack - rule.get_commit(player)); // if larget than allin thres then allin
         if(amount < rule.stack - rule.get_commit(player) && amount > 0) {
             possible_amounts.push_back(amount);
+        }else if(amount == rule.stack - rule.get_commit(player)){
+            possible_amounts.push_back(amount);
+        }
+        else if(amount > rule.stack - rule.get_commit(player)){
+            possible_amounts.push_back(rule.stack - rule.get_commit(player));
         }
     }
     if(all_in) possible_amounts.push_back((double) (rule.stack - rule.get_commit(player)));
@@ -660,7 +665,8 @@ vector<double> GameTree::get_possible_bets(shared_ptr<ActionNode> root, int play
     for(double val:possible_amounts){
         if(
                 (val > rule.get_commit(next_player) - rule.get_commit(player)) &&
-                (val <= rule.stack - rule.get_commit(player))
+                (val <= rule.stack - rule.get_commit(player)) &&
+                find(tmp_vector.begin(),tmp_vector.end(), val) == tmp_vector.end()
         )tmp_vector.push_back(val);
     }
     possible_amounts = tmp_vector;

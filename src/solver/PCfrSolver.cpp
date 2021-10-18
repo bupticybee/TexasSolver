@@ -1071,6 +1071,13 @@ vector<vector<vector<float>>> PCfrSolver::get_strategy(shared_ptr<ActionNode> no
             throw runtime_error(tfm::format("%s not exist in strategy",one_range_str));
         }
         vector<float> one_strategy = strategy[one_range_str];
+        bool intercept = false;
+        for(auto one_card:chance_cards){
+            if(one_card.getCardInt() == pc.card1 || one_card.getCardInt() == pc.card2){
+                intercept = true;
+            }
+        }
+        if(intercept) continue;
         ret_strategy[pc.card1][pc.card2] = one_strategy;
     }
     return ret_strategy;
@@ -1148,6 +1155,13 @@ vector<vector<vector<float>>> PCfrSolver::get_evs(shared_ptr<ActionNode> node,ve
             throw runtime_error(tfm::format("%s not exist in evs",one_range_str));
         }
         vector<float> one_evs = evs[one_range_str];
+        bool intercept = false;
+        for(auto one_card:chance_cards){
+            if(one_card.getCardInt() == pc.card1 || one_card.getCardInt() == pc.card2){
+                intercept = true;
+            }
+        }
+        if(intercept) continue;
         ret_evs[pc.card1][pc.card2] = one_evs;
     }
     return ret_evs;

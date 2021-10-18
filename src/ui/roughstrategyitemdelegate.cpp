@@ -1,4 +1,4 @@
-#include "include/ui/roughstrategyitemdelegate.h"
+﻿#include "include/ui/roughstrategyitemdelegate.h"
 #include <QPainter>
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
@@ -48,6 +48,27 @@ void RoughStrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOp
         QRect rect(option.rect.left(), option.rect.top(),\
              option.rect.width(), option.rect.height());
         painter->fillRect(rect, brush);
+
+        options.text = "";
+        GameActions one_action = one_strategy.first;
+        float one_strategy_float = one_strategy.second.second * 100;
+        float one_combo = one_strategy.second.first;
+        if(one_action.getAction() ==  GameTreeNode::PokerActions::FOLD){
+            options.text +=  QString(" <h3> %1 <\/h3> <h4>%2\%<\/h4> <h4>%3 %4<\/h4>").arg(tr("FOLD"),QString::number(one_strategy_float,'f',1),QString::number(one_combo,'f',1),tr("combos"));
+        }
+        else if(one_action.getAction() ==  GameTreeNode::PokerActions::CALL){
+            options.text +=  QString(" <h3> %1 <\/h3> <h4>%2\%<\/h4> <h4>%3 %4<\/h4>").arg(tr("CALL"),QString::number(one_strategy_float,'f',1),QString::number(one_combo,'f',1),tr("combos"));
+
+        }
+        else if(one_action.getAction() ==  GameTreeNode::PokerActions::CHECK){
+            options.text +=  QString(" <h3> %1 <\/h3> <h4>%2\%<\/h4> <h4>%3 %4<\/h4>").arg(tr("CHECK"),QString::number(one_strategy_float,'f',1),QString::number(one_combo,'f',1),tr("combos"));
+        }
+        else if(one_action.getAction() ==  GameTreeNode::PokerActions::BET){
+            options.text +=  QString(" <h3> %1 %2 <\/h3> <h4>%3\%<\/h4> <h4>%4 %5<\/h4>").arg(tr("BET"),QString::number(one_action.getAmount(),'f',1),QString::number(one_strategy_float,'f',1),QString::number(one_combo,'f',1),tr("combos"));
+        }
+        else if(one_action.getAction() ==  GameTreeNode::PokerActions::RAISE){
+            options.text +=  QString(" <h3> %1 %2 <\/h3> <h4>%3\%<\/h4> <h4>%4 %5<\/h4>").arg(tr("RAISE"),QString::number(one_action.getAmount(),'f',1),QString::number(one_strategy_float,'f',1),QString::number(one_combo,'f',1),tr("combos"));
+        }
 
     }
     QTextDocument doc;

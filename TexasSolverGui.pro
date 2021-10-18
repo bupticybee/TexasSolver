@@ -51,7 +51,7 @@ QMAKE_LFLAGS +=  -openmp
 RC_ICONS = imgs/texassolver_logo.ico
 }
 
-QMAKE_CXXFLAGS_RELEASE *= -O3
+QMAKE_CXXFLAGS_RELEASE *= -O2
 QMAKE_LFLAGS += -v
 
 SOURCES += \

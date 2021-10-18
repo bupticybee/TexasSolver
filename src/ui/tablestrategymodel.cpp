@@ -303,7 +303,7 @@ const vector<pair<GameActions,pair<float,float>>> TableStrategyModel::get_total_
 
                 for(int i = 0;i < one_strategy.size(); i ++ ){
                     float one_prob = one_strategy[i];
-                    combos[i] += one_range;
+                    combos[i] += one_prob * one_range;
                     avg_strategy[i] += one_prob * one_range;
                     sum_strategy += one_prob * one_range;
                 }

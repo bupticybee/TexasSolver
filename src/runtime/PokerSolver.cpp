@@ -102,12 +102,22 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
 }
 
 void PokerSolver::dump_strategy(string dump_file,int dump_rounds) {
+    //locale &loc=locale::global(locale(locale(),"",LC_CTYPE));
+    setlocale(LC_ALL,"");
+
     json dump_json = this->solver->dumps(false,dump_rounds);
+    //QFile ofile( QString::fromStdString(dump_file));
     ofstream fileWriter;
     fileWriter.open(dump_file);
-    fileWriter << dump_json;
-    fileWriter.flush();
-    fileWriter.close();
+    if(!fileWriter.fail()){
+        fileWriter << dump_json;
+        fileWriter.flush();
+        fileWriter.close();
+        qDebug().noquote() << QObject::tr("save success");
+    }else{
+        qDebug().noquote() << QObject::tr("save failed, file cannot be opened");
+    }
+    setlocale(LC_CTYPE, "C");
 }
 
 const shared_ptr<GameTree> &PokerSolver::getGameTree() const {

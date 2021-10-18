@@ -12,6 +12,8 @@
 #include "include/solver/CfrSolver.h"
 #include "include/solver/PCfrSolver.h"
 #include "include/library.h"
+#include <QDebug>
+#include <QFile>
 using namespace std;
 
 class PokerSolver {

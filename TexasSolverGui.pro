@@ -105,7 +105,8 @@ SOURCES += \
     src/ui/detailviewermodel.cpp \
     src/ui/detailitemdelegate.cpp \
     src/ui/roughstrategyviewermodel.cpp \
-    src/ui/roughstrategyitemdelegate.cpp
+    src/ui/roughstrategyitemdelegate.cpp \
+    src/ui/droptextedit.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -160,7 +161,8 @@ HEADERS += \
     include/ui/detailviewermodel.h \
     include/ui/detailitemdelegate.h \
     include/ui/roughstrategyviewermodel.h \
-    include/ui/roughstrategyitemdelegate.h
+    include/ui/roughstrategyitemdelegate.h \
+    include/ui/droptextedit.h
 
 FORMS += \
         mainwindow.ui \

@@ -33,7 +33,7 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
-             <widget class="QTextEdit" name="ipRangeText">
+             <widget class="DropTextEdit" name="ipRangeText">
               <property name="html">
                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -58,7 +58,7 @@ p, li { white-space: pre-wrap; }
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QTextEdit" name="oopRangeText">
+             <widget class="DropTextEdit" name="oopRangeText">
               <property name="html">
                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -1091,7 +1091,12 @@ p, li { white-space: pre-wrap; }
   <customwidget>
    <class>QSTextEdit</class>
    <extends>QTextEdit</extends>
-   <header location="global">qstextedit.h</header>
+   <header>qstextedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DropTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>include/ui/droptextedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

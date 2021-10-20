@@ -119,9 +119,31 @@ void StrategyExplorer::item_expanded(const QModelIndex& index){
     }
 }
 
+void StrategyExplorer::process_treeclick(TreeItem* treeitem){
+    shared_ptr<GameTreeNode> treenode = treeitem->m_treedata.lock();
+    if(treenode->getType() == GameTreeNode::GameTreeNodeType::ACTION){
+        shared_ptr<ActionNode> actionnode = static_pointer_cast<ActionNode>(treenode);
+        QString action_str = QString("<b>%1 %2</b>").arg(actionnode->getPlayer() == 0?tr("IP"):tr("OOP"),tr(" decision node"));
+        this->ui->nodeDisplayLabel->setText(action_str);
+    }
+    else if(treenode->getType() == GameTreeNode::GameTreeNodeType::CHANCE){
+        QString chance_str = tr("Chance node");
+        this->ui->nodeDisplayLabel->setText(chance_str);
+    }
+    else if(treenode->getType() == GameTreeNode::GameTreeNodeType::TERMINAL){
+        QString terminal_str = tr("Terminal node");
+        this->ui->nodeDisplayLabel->setText(terminal_str);
+    }
+    else if(treenode->getType() == GameTreeNode::GameTreeNodeType::SHOWDOWN){
+        QString showdown_str = tr("Showdown node");
+        this->ui->nodeDisplayLabel->setText(showdown_str);
+    }
+}
+
 void StrategyExplorer::item_clicked(const QModelIndex& index){
     try{
         TreeItem * treeNode = static_cast<TreeItem*>(index.internalPointer());
+        this->process_treeclick(treeNode);
         this->tableStrategyModel->setGameTreeNode(treeNode);
         this->tableStrategyModel->updateStrategyData();
         this->ui->strategyTableView->viewport()->update();

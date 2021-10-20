@@ -18,6 +18,11 @@
 #include "include/ui/detailitemdelegate.h"
 #include "include/ui/roughstrategyviewermodel.h"
 #include "include/ui/roughstrategyitemdelegate.h"
+#include "include/nodes/GameTreeNode.h"
+#include "include/nodes/ActionNode.h"
+#include "include/nodes/ChanceNode.h"
+#include "include/nodes/TerminalNode.h"
+#include "include/nodes/ShowdownNode.h"
 
 namespace Ui {
 class StrategyExplorer;
@@ -43,6 +48,7 @@ private:
     RoughStrategyViewerModel * roughStrategyViewerModel;
     RoughStrategyItemDelegate * roughStrategyItemDelegate;
     vector<Card> cards;
+    void process_treeclick(TreeItem* treeitem);
 public slots:
     void item_expanded(const QModelIndex& index);
     void item_clicked(const QModelIndex& index);

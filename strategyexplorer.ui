@@ -108,7 +108,30 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="gameInfoLayout"/>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="boardLabel">
+           <property name="text">
+            <string>board:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item>
+          <widget class="QLabel" name="nodeDisplayLabel">
+           <property name="text">
+            <string>NoNodeChosen</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </item>
      <item>
       <layout class="QHBoxLayout" name="modeChoseLayout" stretch="1,1">
@@ -223,7 +246,7 @@
   <customwidget>
    <class>QSTreeView</class>
    <extends>QTreeView</extends>
-   <header location="global">qstreeview.h</header>
+   <header>qstreeview.h</header>
   </customwidget>
   <customwidget>
    <class>HtmlTableView</class>

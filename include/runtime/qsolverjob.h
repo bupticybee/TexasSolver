@@ -53,6 +53,7 @@ public:
     void run();
     void loading();
     void solving();
+    void stop();
     void saving();
     void build_tree();
     void setContext(QSTextEdit * textEdit);

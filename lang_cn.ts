@@ -5,28 +5,43 @@
     <name>DetailItemDelegate</name>
     <message>
         <location filename="src/ui/detailitemdelegate.cpp" line="108"/>
+        <location filename="src/ui/detailitemdelegate.cpp" line="290"/>
         <source>FOLD</source>
         <translation>弃牌</translation>
     </message>
     <message>
         <location filename="src/ui/detailitemdelegate.cpp" line="111"/>
+        <location filename="src/ui/detailitemdelegate.cpp" line="293"/>
         <source>CALL</source>
         <translation>跟注</translation>
     </message>
     <message>
         <location filename="src/ui/detailitemdelegate.cpp" line="114"/>
+        <location filename="src/ui/detailitemdelegate.cpp" line="296"/>
         <source>CHECK</source>
         <translation>过牌</translation>
     </message>
     <message>
         <location filename="src/ui/detailitemdelegate.cpp" line="117"/>
+        <location filename="src/ui/detailitemdelegate.cpp" line="299"/>
         <source>BET</source>
         <translation>下注</translation>
     </message>
     <message>
         <location filename="src/ui/detailitemdelegate.cpp" line="120"/>
+        <location filename="src/ui/detailitemdelegate.cpp" line="302"/>
         <source>RAISE</source>
         <translation>加注</translation>
+    </message>
+    <message>
+        <location filename="src/ui/detailitemdelegate.cpp" line="287"/>
+        <source>Can&apos;t calculate</source>
+        <translation>无法计算</translation>
+    </message>
+    <message>
+        <location filename="src/ui/detailitemdelegate.cpp" line="288"/>
+        <source>EV</source>
+        <translation>价值</translation>
     </message>
 </context>
 <context>
@@ -321,103 +336,112 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="914"/>
-        <source>start solving</source>
-        <translation>开始求解局面</translation>
+        <location filename="mainwindow.ui" line="920"/>
+        <source>Start solving</source>
+        <translation>开始求解</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="921"/>
+        <location filename="mainwindow.ui" line="933"/>
+        <source>Stop solving</source>
+        <translation>停止求解</translation>
+    </message>
+    <message>
+        <source>start solving</source>
+        <translation type="vanished">开始求解局面</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="946"/>
         <source>ShowResult</source>
         <translation>显示结果</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="945"/>
+        <location filename="mainwindow.ui" line="970"/>
         <source>Clear Log</source>
         <translation>清除日志</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="973"/>
+        <location filename="mainwindow.ui" line="998"/>
         <source>Solver</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="977"/>
+        <location filename="mainwindow.ui" line="1002"/>
         <source>Language</source>
-        <translation>语言</translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="988"/>
+        <location filename="mainwindow.ui" line="1013"/>
         <source>range</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="992"/>
+        <location filename="mainwindow.ui" line="1017"/>
         <source>import</source>
         <translation>导入</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="999"/>
+        <location filename="mainwindow.ui" line="1024"/>
         <source>export</source>
         <translation>导出</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1010"/>
+        <location filename="mainwindow.ui" line="1035"/>
         <source>strategy</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1014"/>
+        <location filename="mainwindow.ui" line="1039"/>
         <source>export to file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1035"/>
+        <location filename="mainwindow.ui" line="1060"/>
         <source>import setting</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1040"/>
+        <location filename="mainwindow.ui" line="1065"/>
         <source>export current setting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1045"/>
+        <location filename="mainwindow.ui" line="1070"/>
         <source>ZN-CH</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1050"/>
-        <location filename="mainwindow.ui" line="1055"/>
+        <location filename="mainwindow.ui" line="1075"/>
+        <location filename="mainwindow.ui" line="1080"/>
         <source>Enghish</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1060"/>
+        <location filename="mainwindow.ui" line="1085"/>
         <source>Chinese</source>
         <translation>中文</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1065"/>
+        <location filename="mainwindow.ui" line="1090"/>
         <source>import IP range</source>
         <translation>导入后行玩家(IP)range</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1070"/>
+        <location filename="mainwindow.ui" line="1095"/>
         <source>import OOP range</source>
         <translation>导入先行玩家(OOP)range</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1075"/>
+        <location filename="mainwindow.ui" line="1100"/>
         <source>export IP range</source>
         <translation>导出后行玩家(IP)range</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1080"/>
+        <location filename="mainwindow.ui" line="1105"/>
         <source>export OOP range</source>
         <translation>导出先行玩家(OOP)range</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1085"/>
+        <location filename="mainwindow.ui" line="1110"/>
         <source>json</source>
         <translation>json文件</translation>
     </message>
@@ -445,24 +469,24 @@ p, li { white-space: pre-wrap; }
         <translation>使用 %s 个进程</translation>
     </message>
     <message>
-        <location filename="src/solver/PCfrSolver.cpp" line="761"/>
+        <location filename="src/solver/PCfrSolver.cpp" line="806"/>
         <source>time used: </source>
         <translation>耗时: </translation>
     </message>
     <message>
-        <location filename="src/solver/PCfrSolver.cpp" line="761"/>
+        <location filename="src/solver/PCfrSolver.cpp" line="806"/>
         <source> second.</source>
         <translation> 秒.</translation>
     </message>
     <message>
-        <location filename="src/solver/PCfrSolver.cpp" line="776"/>
+        <location filename="src/solver/PCfrSolver.cpp" line="825"/>
         <source>collecting statics</source>
-        <translation type="unfinished"></translation>
+        <translation>收集数据中</translation>
     </message>
     <message>
-        <location filename="src/solver/PCfrSolver.cpp" line="790"/>
+        <location filename="src/solver/PCfrSolver.cpp" line="840"/>
         <source>statics collected</source>
-        <translation type="unfinished"></translation>
+        <translation>收集数据完毕</translation>
     </message>
     <message>
         <location filename="src/solver/BestResponse.cpp" line="42"/>
@@ -549,6 +573,16 @@ p, li { white-space: pre-wrap; }
         <source>DEAL RIVER CARD</source>
         <translation>发河牌</translation>
     </message>
+    <message>
+        <location filename="src/runtime/PokerSolver.cpp" line="122"/>
+        <source>save success</source>
+        <translation>保存成功</translation>
+    </message>
+    <message>
+        <location filename="src/runtime/PokerSolver.cpp" line="124"/>
+        <source>save failed, file cannot be open</source>
+        <translation>保存失败，文件无法打开</translation>
+    </message>
 </context>
 <context>
     <name>QSolverJob</name>
@@ -583,24 +617,66 @@ p, li { white-space: pre-wrap; }
         <translation>保存完毕.</translation>
     </message>
     <message>
-        <location filename="src/runtime/qsolverjob.cpp" line="79"/>
+        <location filename="src/runtime/qsolverjob.cpp" line="77"/>
+        <source>Trying to stop solver.</source>
+        <translation>尝试停止Solver.</translation>
+    </message>
+    <message>
+        <location filename="src/runtime/qsolverjob.cpp" line="88"/>
         <source>Start Solving..</source>
         <translation>开始求解..</translation>
     </message>
     <message>
-        <location filename="src/runtime/qsolverjob.cpp" line="110"/>
+        <location filename="src/runtime/qsolverjob.cpp" line="119"/>
         <source>Solving done.</source>
         <translation>求解结束.</translation>
     </message>
     <message>
-        <location filename="src/runtime/qsolverjob.cpp" line="114"/>
+        <location filename="src/runtime/qsolverjob.cpp" line="123"/>
         <source>building tree..</source>
         <translation>构建游戏树中..</translation>
     </message>
     <message>
-        <location filename="src/runtime/qsolverjob.cpp" line="120"/>
+        <location filename="src/runtime/qsolverjob.cpp" line="129"/>
         <source>build tree finished</source>
         <translation>构建游戏树完成</translation>
+    </message>
+</context>
+<context>
+    <name>RoughStrategyItemDelegate</name>
+    <message>
+        <location filename="src/ui/roughstrategyitemdelegate.cpp" line="57"/>
+        <source>FOLD</source>
+        <translation type="unfinished">弃牌</translation>
+    </message>
+    <message>
+        <location filename="src/ui/roughstrategyitemdelegate.cpp" line="57"/>
+        <location filename="src/ui/roughstrategyitemdelegate.cpp" line="60"/>
+        <location filename="src/ui/roughstrategyitemdelegate.cpp" line="64"/>
+        <location filename="src/ui/roughstrategyitemdelegate.cpp" line="67"/>
+        <location filename="src/ui/roughstrategyitemdelegate.cpp" line="70"/>
+        <source>combos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/roughstrategyitemdelegate.cpp" line="60"/>
+        <source>CALL</source>
+        <translation type="unfinished">跟注</translation>
+    </message>
+    <message>
+        <location filename="src/ui/roughstrategyitemdelegate.cpp" line="64"/>
+        <source>CHECK</source>
+        <translation type="unfinished">过牌</translation>
+    </message>
+    <message>
+        <location filename="src/ui/roughstrategyitemdelegate.cpp" line="67"/>
+        <source>BET</source>
+        <translation type="unfinished">下注</translation>
+    </message>
+    <message>
+        <location filename="src/ui/roughstrategyitemdelegate.cpp" line="70"/>
+        <source>RAISE</source>
+        <translation type="unfinished">加注</translation>
     </message>
 </context>
 <context>
@@ -631,34 +707,53 @@ p, li { white-space: pre-wrap; }
         <translation>大致策略</translation>
     </message>
     <message>
-        <location filename="strategyexplorer.ui" line="99"/>
-        <source>EV:</source>
+        <location filename="strategyexplorer.ui" line="117"/>
+        <source>board:</source>
+        <translation>牌面:</translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="128"/>
+        <source>NoNodeChosen</source>
+        <translation>尚未选择节点</translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="180"/>
+        <source>Strategy &amp; EVs:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="strategyexplorer.ui" line="112"/>
-        <location filename="strategyexplorer.ui" line="149"/>
+        <location filename="strategyexplorer.ui" line="206"/>
+        <source>Ev + strategy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="219"/>
+        <source>Ev</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.ui" line="156"/>
+        <location filename="strategyexplorer.cpp" line="146"/>
         <source>IP</source>
         <translation>后行动玩家(IP)</translation>
     </message>
     <message>
-        <location filename="strategyexplorer.ui" line="125"/>
-        <location filename="strategyexplorer.ui" line="162"/>
+        <location filename="strategyexplorer.ui" line="169"/>
+        <location filename="strategyexplorer.cpp" line="146"/>
         <source>OOP</source>
         <translation>先行动玩家(OOP)</translation>
     </message>
     <message>
-        <location filename="strategyexplorer.ui" line="136"/>
+        <location filename="strategyexplorer.ui" line="143"/>
         <source>Range:</source>
         <translation>范围:</translation>
     </message>
     <message>
-        <location filename="strategyexplorer.ui" line="173"/>
         <source>Strategy:</source>
-        <translation>策略:</translation>
+        <translation type="vanished">策略:</translation>
     </message>
     <message>
-        <location filename="strategyexplorer.ui" line="186"/>
+        <location filename="strategyexplorer.ui" line="193"/>
         <source>strategy</source>
         <translation>策略</translation>
     </message>
@@ -671,7 +766,32 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">范围</translation>
     </message>
     <message>
-        <location filename="strategyexplorer.cpp" line="124"/>
+        <location filename="strategyexplorer.cpp" line="139"/>
+        <source>board</source>
+        <translation>牌面</translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.cpp" line="146"/>
+        <source> decision node</source>
+        <translation> 决策节点</translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.cpp" line="150"/>
+        <source>&lt;b&gt;Chance node&lt;/b&gt;</source>
+        <translation>&lt;b&gt;发牌节点&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.cpp" line="154"/>
+        <source>&lt;b&gt;Terminal node&lt;/b&gt;</source>
+        <translation>&lt;b&gt;Fold节点&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.cpp" line="158"/>
+        <source>&lt;b&gt;Showdown node&lt;/b&gt;</source>
+        <translation>&lt;b&gt;摊牌节点&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location filename="strategyexplorer.cpp" line="177"/>
         <source>Encountering error:</source>
         <translation>遇到错误:</translation>
     </message>

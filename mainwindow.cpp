@@ -165,3 +165,10 @@ void MainWindow::on_showResultButton_clicked()
     strategyExplorer->setAttribute(Qt::WA_DeleteOnClose);
     strategyExplorer->show();
 }
+
+void MainWindow::on_stopSolvingButton_clicked()
+{
+    if(this->qSolverJob != NULL){
+        this->qSolverJob->stop();
+    }
+}

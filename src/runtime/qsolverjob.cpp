@@ -73,6 +73,15 @@ void QSolverJob::saving(){
     qDebug().noquote() << tr("Saving done.");//.toStdString() << std::endl;
 }
 
+void QSolverJob::stop(){
+    qDebug().noquote() << tr("Trying to stop solver.");
+    if(this->mode == Mode::HOLDEM){
+        this->ps_holdem.stop();
+    }else if(this->mode == Mode::SHORTDECK){
+        this->ps_shortdeck.stop();
+    }
+}
+
 void QSolverJob::solving(){
     // TODO  为什么ui上多次求解会积累memory？哪里leak了？
     // TODO  为什么有时候会莫名闪退？

@@ -34,6 +34,8 @@ private slots:
     void on_copyButtom_clicked();
     void on_showResultButton_clicked();
 
+    void on_stopSolvingButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QSolverJob* qSolverJob;

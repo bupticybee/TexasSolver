@@ -761,6 +761,10 @@ void PCfrSolver::purnTree() {
     // TODO how to purn the tree, use wramup to start training in memory-save mode, and switch to purn tree directly to both save memory and speedup
 }
 
+void PCfrSolver::stop() {
+    this->nowstop = true;
+}
+
 void PCfrSolver::train() {
 
     vector<vector<PrivateCards>> player_privates(this->player_number);
@@ -794,7 +798,7 @@ void PCfrSolver::train() {
                 }
             }
         }
-        if(i % this->print_interval == 0 && i != 0 && i >= this->warmup) {
+        if( (i % this->print_interval == 0 && i != 0 && i >= this->warmup) || this->nowstop) {
             endtime = timeSinceEpochMillisec();
             long time_ms = endtime - begintime;
             qDebug().noquote() << "-------------------";
@@ -808,6 +812,10 @@ void PCfrSolver::train() {
                 fileWriter << jo << endl;
             }
             if(expliotibility <= this->accuracy){
+                break;
+            }
+            if(this->nowstop){
+                this->nowstop = false;
                 break;
             }
             //begintime = timeSinceEpochMillisec();

@@ -45,6 +45,7 @@ public:
             bool use_isomorphism,
             int threads
             );
+    void stop();
     vector<PrivateCards> player1Range;
     vector<PrivateCards> player2Range;
     void dump_strategy(string dump_file,int dump_rounds);

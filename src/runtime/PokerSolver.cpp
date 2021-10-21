@@ -61,6 +61,12 @@ vector<PrivateCards> noDuplicateRange(const vector<PrivateCards> &private_range,
     return range_array;
 }
 
+void PokerSolver::stop(){
+    if(this->solver != nullptr){
+        this->solver->stop();
+    }
+}
+
 void PokerSolver::train(string p1_range, string p2_range, string boards, string log_file, int iteration_number,
                         int print_interval, string algorithm,int warmup,float accuracy,bool use_isomorphism,int threads) {
     string player1RangeStr = p1_range;

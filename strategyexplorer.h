@@ -49,6 +49,7 @@ private:
     RoughStrategyItemDelegate * roughStrategyItemDelegate;
     vector<Card> cards;
     void process_treeclick(TreeItem* treeitem);
+    void process_board(TreeItem* treeitem);
 public slots:
     void item_expanded(const QModelIndex& index);
     void item_clicked(const QModelIndex& index);

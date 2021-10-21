@@ -22,6 +22,7 @@ class Card {
         Card(string card);
         string getCard();
         int getCardInt();
+        bool empty();
         int getNumberInDeckInt();
         static int card2int(Card card);
         static int strCard2int(string card);
@@ -29,6 +30,7 @@ class Card {
         static uint64_t boardCards2long(vector<string> cards);
         static uint64_t boardCard2long(Card& card);
         static uint64_t boardCards2long(vector<Card>& cards);
+        static QString boardCards2html(vector<Card>& cards);
         static inline bool boardsHasIntercept(uint64_t board1,uint64_t board2){
             return ((board1 & board2) != 0);
         };

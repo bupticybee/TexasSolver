@@ -119,6 +119,26 @@ void StrategyExplorer::item_expanded(const QModelIndex& index){
     }
 }
 
+void StrategyExplorer::process_board(TreeItem* treeitem){
+    vector<string> board_str_arr = string_split(this->qSolverJob->board,',');
+    vector<Card> cards;
+    for(string one_board_str:board_str_arr){
+        cards.push_back(Card(one_board_str));
+    }
+    if(treeitem != NULL){
+        if(treeitem->m_treedata.lock()->getRound() == GameTreeNode::GameRound::TURN && !this->tableStrategyModel->getTrunCard().empty()){
+            cards.push_back(Card(this->tableStrategyModel->getTrunCard()));
+        }
+        else if(treeitem->m_treedata.lock()->getRound() == GameTreeNode::GameRound::RIVER){
+            if(!this->tableStrategyModel->getTrunCard().empty())
+                cards.push_back(Card(this->tableStrategyModel->getTrunCard()));
+            if(!this->tableStrategyModel->getRiverCard().empty())
+                cards.push_back(Card(this->tableStrategyModel->getRiverCard()));
+        }
+    }
+    this->ui->boardLabel->setText(QString("<b>%1: </b>").arg(tr("board")) + Card::boardCards2html(cards));
+}
+
 void StrategyExplorer::process_treeclick(TreeItem* treeitem){
     shared_ptr<GameTreeNode> treenode = treeitem->m_treedata.lock();
     if(treenode->getType() == GameTreeNode::GameTreeNodeType::ACTION){
@@ -127,15 +147,15 @@ void StrategyExplorer::process_treeclick(TreeItem* treeitem){
         this->ui->nodeDisplayLabel->setText(action_str);
     }
     else if(treenode->getType() == GameTreeNode::GameTreeNodeType::CHANCE){
-        QString chance_str = tr("Chance node");
+        QString chance_str = tr("<b>Chance node</b>");
         this->ui->nodeDisplayLabel->setText(chance_str);
     }
     else if(treenode->getType() == GameTreeNode::GameTreeNodeType::TERMINAL){
-        QString terminal_str = tr("Terminal node");
+        QString terminal_str = tr("<b>Terminal node</b>");
         this->ui->nodeDisplayLabel->setText(terminal_str);
     }
     else if(treenode->getType() == GameTreeNode::GameTreeNodeType::SHOWDOWN){
-        QString showdown_str = tr("Showdown node");
+        QString showdown_str = tr("<b>Showdown node</b>");
         this->ui->nodeDisplayLabel->setText(showdown_str);
     }
 }
@@ -144,6 +164,7 @@ void StrategyExplorer::item_clicked(const QModelIndex& index){
     try{
         TreeItem * treeNode = static_cast<TreeItem*>(index.internalPointer());
         this->process_treeclick(treeNode);
+        this->process_board(treeNode);
         this->tableStrategyModel->setGameTreeNode(treeNode);
         this->tableStrategyModel->updateStrategyData();
         this->ui->strategyTableView->viewport()->update();
@@ -170,6 +191,7 @@ void StrategyExplorer::on_turnCardBox_currentIndexChanged(int index)
         // TODO this somehow cause bugs, crashes, why?
         //this->roughStrategyViewerModel->onchanged();
         //this->ui->roughStrategyView->viewport()->update();
+        this->process_board(this->tableStrategyModel->treeItem);
     }
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();
@@ -182,6 +204,7 @@ void StrategyExplorer::on_riverCardBox_currentIndexChanged(int index)
         this->tableStrategyModel->updateStrategyData();
         //this->roughStrategyViewerModel->onchanged();
         //this->ui->roughStrategyView->viewport()->update();
+        this->process_board(this->tableStrategyModel->treeItem);
     }
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();
@@ -192,6 +215,7 @@ void StrategyExplorer::update_second(){
         this->tableStrategyModel->updateStrategyData();
         this->roughStrategyViewerModel->onchanged();
         this->ui->roughStrategyView->viewport()->update();
+        this->process_board(this->tableStrategyModel->treeItem);
     }
     this->ui->strategyTableView->viewport()->update();
     this->ui->detailView->viewport()->update();

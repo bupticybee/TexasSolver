@@ -4,7 +4,7 @@
 
 #include "include/Card.h"
 
-Card::Card(){}
+Card::Card(){this->card = "empty";}
 Card::Card(string card,int card_num_in_deck){
     this->card = card;
     this->card_int = Card::strCard2int(this->card);
@@ -15,6 +15,11 @@ Card::Card(string card){
     this->card = card;
     this->card_int = Card::strCard2int(this->card);
     this->card_number_in_deck = -1;
+}
+
+bool Card::empty(){
+    if(this->card == "empty")return true;
+    else return false;
 }
 
 string Card::getCard() {
@@ -67,6 +72,15 @@ uint64_t Card::boardCards2long(vector<Card>& cards){
         board_int[i] = Card::card2int(cards[i]);
     }
     return Card::boardInts2long(board_int);
+}
+
+QString Card::boardCards2html(vector<Card>& cards){
+    QString ret_html = "";
+    for(auto one_card:cards){
+        if(one_card.empty())continue;
+        ret_html += one_card.toFormattedHtml();
+    }
+    return ret_html;
 }
 
 uint64_t Card::boardInt2long(int board){

@@ -31,6 +31,8 @@ public:
     void setGameTreeNode(TreeItem* treeItem);
     void setTrunCard(Card turn_card);
     void setRiverCard(Card river_card);
+    Card getTrunCard(){return turn_card;};
+    Card getRiverCard(){return river_card;};
     void updateStrategyData();
     const vector<pair<GameActions,float>> get_strategy(int i,int j) const;
     const vector<pair<GameActions,pair<float,float>>> get_total_strategy() const;

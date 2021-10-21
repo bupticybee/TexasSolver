@@ -780,18 +780,11 @@ p, li { white-space: pre-wrap; }
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_50" stretch="6,3">
+           <layout class="QHBoxLayout" name="horizontalLayout_50" stretch="6">
             <item>
              <widget class="QPushButton" name="buildTreeButtom">
               <property name="text">
                <string>Build Tree</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="pushButton_5">
-              <property name="text">
-               <string>Show Tree</string>
               </property>
              </widget>
             </item>

@@ -93,10 +93,22 @@ void StrategyItemDelegate::paint_range(QPainter *painter, const QStyleOptionView
     const TableStrategyModel * tableStrategyModel = qobject_cast<const TableStrategyModel*>(index.model());
 
     vector<pair<int,int>> card_cords;
+    if(tableStrategyModel == NULL
+            || tableStrategyModel->ui_p1_range.size() <= index.row()
+            || tableStrategyModel->ui_p1_range.size() <= index.column()
+            || tableStrategyModel->ui_p2_range.size() <= index.row()
+            || tableStrategyModel->ui_p2_range.size() <= index.column()
+            ){
+        return;
+    }
     if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::RANGE_IP){
         card_cords = tableStrategyModel->ui_p1_range[index.row()][index.column()];
     }else{
         card_cords = tableStrategyModel->ui_p2_range[index.row()][index.column()];
+    }
+
+    if(tableStrategyModel->p1_range.empty() || tableStrategyModel->p2_range.empty()){
+        return;
     }
 
     if(!card_cords.empty()){

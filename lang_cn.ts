@@ -719,17 +719,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="strategyexplorer.ui" line="180"/>
         <source>Strategy &amp; EVs:</source>
-        <translation type="unfinished"></translation>
+        <translation>策略和价值:</translation>
     </message>
     <message>
         <location filename="strategyexplorer.ui" line="206"/>
         <source>Ev + strategy</source>
-        <translation type="unfinished"></translation>
+        <translation>策略 + 价值</translation>
     </message>
     <message>
         <location filename="strategyexplorer.ui" line="219"/>
         <source>Ev</source>
-        <translation type="unfinished"></translation>
+        <translation>价值</translation>
     </message>
     <message>
         <location filename="strategyexplorer.ui" line="156"/>

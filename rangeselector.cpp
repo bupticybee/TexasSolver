@@ -45,10 +45,15 @@ void RangeSelector::grid_area(int i1,int j1,int i2,int j2){
     }
     this->ui->textEdit->setText(this->rangeSelectorTableModel->getRangeText());
     //this->ui->rangeTableView->update();
+    // DIRTY TRICK TO REPLACE update(), update() doesn't work here for some reason I dont know.
+    this->ui->textEdit->setFocus();
+    this->ui->rangeTableView->setFocus();
 }
 
 void RangeSelector::grid_release(int i,int j){
     //this->ui->rangeTableView->update();
+    this->ui->textEdit->setFocus();
+    this->ui->rangeTableView->setFocus();
 }
 
 void RangeSelector::grid_pressed(int i,int j){

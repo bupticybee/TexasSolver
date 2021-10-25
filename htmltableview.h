@@ -27,16 +27,14 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
-
-private:
     QString anchorAt(const QPoint &pos) const;
+    int last_bearing_i = 0;
+    int last_bearing_j = 0;
 
 private:
     QString _mousePressAnchor;
     QString _lastHoveredAnchor;
     void resizeEvent(QResizeEvent* ev);
-    int last_bearing_i = 0;
-    int last_bearing_j = 0;
 };
 
 #endif // HTMLTABLEVIEW_H

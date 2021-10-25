@@ -42,6 +42,10 @@ void MainWindow::on_save_json(){
     qSolverJob->start();
 }
 
+void MainWindow::on_ip_range(QString range_text){
+    this->ui->ipRangeText->setText(range_text);
+}
+
 void MainWindow::on_buttomSolve_clicked()
 {   
     qSolverJob->max_iteration = ui->iterationText->text().toInt();
@@ -171,4 +175,20 @@ void MainWindow::on_stopSolvingButton_clicked()
     if(this->qSolverJob != NULL){
         this->qSolverJob->stop();
     }
+}
+
+void MainWindow::on_ipRangeSelectButtom_clicked()
+{
+    QSolverJob::Mode mode = this->ui->mode_box->currentIndex() == 0 ? QSolverJob::Mode::HOLDEM:QSolverJob::Mode::SHORTDECK;
+    this->rangeSelector = new RangeSelector(this->ui->ipRangeText,this,mode);
+    rangeSelector->setAttribute(Qt::WA_DeleteOnClose);
+    rangeSelector->show();
+}
+
+void MainWindow::on_oopRangeSelectButtom_clicked()
+{
+    QSolverJob::Mode mode = this->ui->mode_box->currentIndex() == 0 ? QSolverJob::Mode::HOLDEM:QSolverJob::Mode::SHORTDECK;
+    this->rangeSelector = new RangeSelector(this->ui->oopRangeText,this,mode);
+    rangeSelector->setAttribute(Qt::WA_DeleteOnClose);
+    rangeSelector->show();
 }

@@ -106,7 +106,11 @@ SOURCES += \
     src/ui/detailitemdelegate.cpp \
     src/ui/roughstrategyviewermodel.cpp \
     src/ui/roughstrategyitemdelegate.cpp \
-    src/ui/droptextedit.cpp
+    src/ui/droptextedit.cpp \
+    src/ui/htmltablerangeview.cpp \
+    rangeselector.cpp \
+    src/ui/rangeselectortablemodel.cpp \
+    src/ui/rangeselectortabledelegate.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -162,11 +166,16 @@ HEADERS += \
     include/ui/detailitemdelegate.h \
     include/ui/roughstrategyviewermodel.h \
     include/ui/roughstrategyitemdelegate.h \
-    include/ui/droptextedit.h
+    include/ui/droptextedit.h \
+    include/ui/htmltablerangeview.h \
+    rangeselector.h \
+    include/ui/rangeselectortablemodel.h \
+    include/ui/rangeselectortabledelegate.h
 
 FORMS += \
         mainwindow.ui \
-    strategyexplorer.ui
+    strategyexplorer.ui \
+    rangeselector.ui
 
 RESOURCES += \
     translations.qrc \

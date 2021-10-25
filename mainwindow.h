@@ -7,6 +7,7 @@
 #include "include/runtime/qsolverjob.h"
 #include "qstextedit.h"
 #include "strategyexplorer.h"
+#include "rangeselector.h"
 
 namespace Ui {
 class MainWindow;
@@ -31,16 +32,21 @@ private slots:
     void on_en_local();
     void on_buildTreeButtom_clicked();
     void on_save_json();
+    void on_ip_range(QString range_text);
     void on_copyButtom_clicked();
     void on_showResultButton_clicked();
 
     void on_stopSolvingButton_clicked();
 
-private:
-    Ui::MainWindow *ui;
-    QSolverJob* qSolverJob;
-    StrategyExplorer* strategyExplorer;
+    void on_ipRangeSelectButtom_clicked();
 
+    void on_oopRangeSelectButtom_clicked();
+
+private:
+    Ui::MainWindow *ui = NULL;
+    QSolverJob* qSolverJob = NULL;
+    StrategyExplorer* strategyExplorer = NULL;
+    RangeSelector* rangeSelector = NULL;
 };
 
 #endif // MAINWINDOW_H

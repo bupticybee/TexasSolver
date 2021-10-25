@@ -6,7 +6,8 @@ HtmlTableView::HtmlTableView()
 
 }
 
-HtmlTableView::HtmlTableView(QWidget *parent)
+HtmlTableView::HtmlTableView(QWidget *parent):
+    QTableView(parent)
 {
     viewport()->installEventFilter(this);
     setMouseTracking(true);

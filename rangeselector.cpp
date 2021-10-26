@@ -5,7 +5,6 @@ RangeSelector::RangeSelector(QTextEdit* rangeEdit,QWidget *parent,QSolverJob::Mo
     QDialog(parent),
     ui(new Ui::RangeSelector)
 {
-    ui->setupUi(this);
 
     QString ranks;
     if(mode == QSolverJob::Mode::HOLDEM){
@@ -18,6 +17,7 @@ RangeSelector::RangeSelector(QTextEdit* rangeEdit,QWidget *parent,QSolverJob::Mo
     this->rank_list = ranks.split(",");
     this->rangeSelectorTableModel = new RangeSelectorTableModel(this->rank_list,rangeEdit->toPlainText(),this);
     this->rangeSelectorTableDelegate = new RangeSelectorTableDelegate(this->rank_list,this->rangeSelectorTableModel,this);
+    ui->setupUi(this);
     this->ui->rangeTableView->setModel(this->rangeSelectorTableModel);
     this->ui->rangeTableView->setItemDelegate(this->rangeSelectorTableDelegate);
     this->rangeEdit = rangeEdit;

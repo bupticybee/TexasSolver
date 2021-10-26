@@ -113,11 +113,11 @@ QString RangeSelectorTableModel::get_ij_text(int i,int j){
             .arg(QString(this->ranklist[smaller]))\
             .arg(QString(this->ranklist[larger]));
     if(row > col){
-        retval = retval.arg(tr("o"));
+        retval = retval.arg("o");
     }else if(row < col){
-        retval = retval.arg(tr("s"));
+        retval = retval.arg("s");
     }else{
-        retval = retval.arg(tr(""));
+        retval = retval.arg("");
     }
     return retval;
 }

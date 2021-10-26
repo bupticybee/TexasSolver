@@ -193,12 +193,41 @@ void MainWindow::on_oopRangeSelectButtom_clicked()
     rangeSelector->show();
 }
 
+float iso_corh(QString board){
+    vector<string> board_str_arr = string_split(board.toStdString(),',');
+    vector<Card> initialBoard;
+    for(string one_board_str:board_str_arr){
+        initialBoard.push_back(Card(one_board_str));
+    }
+    float corh = 1;
+    uint16_t color_hash[4];
+    for(int i = 0;i < 4;i ++)color_hash[i] = 0;
+    for (Card one_card:initialBoard) {
+        int rankind = one_card.getCardInt() % 4;
+        int suitind = one_card.getCardInt() / 4;
+        color_hash[rankind] = color_hash[rankind] | (1 << suitind);
+    }
+    for(int i = 0;i < 4;i ++){
+        for(int j = 0;j < i;j ++){
+            if(color_hash[i] == color_hash[j]){
+                corh = corh * 0.70;
+                continue;
+            }
+        }
+    }
+    return corh;
+}
+
 void MainWindow::on_estimateMemoryButtom_clicked()
 {
     long memory_float = this->qSolverJob->estimate_tree_memory(this->ui->ipRangeText->toPlainText(),this->ui->oopRangeText->toPlainText(),this->ui->boardText->toPlainText());
     // float32 should take 4bytes
-    float memory_mb = (float)memory_float * 4 / 1024 / 1024;
-    float memory_gb = (float)memory_float * 4 / 1024 / 1024 / 1024;
+    float corh = 1;
+    if(this->ui->useIsoCheck->isChecked()){
+        corh =iso_corh(this->ui->boardText->toPlainText());
+    }
+    float memory_mb = (float)memory_float * corh * 4 / 1024 / 1024;
+    float memory_gb = (float)memory_float * corh * 4 / 1024 / 1024 / 1024;
     QString message = tr("Estimated Memory Usage: ") + QString::number(memory_mb,'f',1) + tr(" Mb , which is ") + QString::number(memory_gb,'f',2) + tr("GB ");
     qDebug().noquote() << message;
     QMessageBox msgBox;

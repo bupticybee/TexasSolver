@@ -517,9 +517,9 @@ long GameTree::re_estimate_tree_memory(const shared_ptr<GameTreeNode>& node,int 
             retnum += re_estimate_tree_memory(one_child,deck_num, p1range_num, p2range_num, num_current_deal);
         }
         if(action_node->getPlayer() == 0){
-            retnum += num_current_deal * p1range_num * childrens.size() * 3;
+            retnum += num_current_deal * p1range_num * (childrens.size() + 1) * 3;
         }else{
-            retnum += num_current_deal * p2range_num * childrens.size() * 3;
+            retnum += num_current_deal * p2range_num * (childrens.size() + 1) * 3;
         }
         return retnum;
     }else if(node->getType() == GameTreeNode::CHANCE){

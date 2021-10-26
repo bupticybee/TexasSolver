@@ -1,7 +1,8 @@
-//
+﻿//
 // Created by bytedance on 7.6.21.
 //
 #include "include/tools/CommandLineTool.h"
+#include <QString>
 
 CommandLineTool::CommandLineTool(string mode,string resource_dir) {
     string suits = "c,d,h,s";
@@ -168,7 +169,7 @@ void CommandLineTool::processCommand(string input) {
         );
     }else if(command == "dump_result"){
         string output_file = paramstr;
-        this->ps.dump_strategy(output_file,this->dump_rounds);
+        this->ps.dump_strategy(QString::fromStdString(output_file),this->dump_rounds);
     }else if(command == "set_dump_rounds"){
         this->dump_rounds = stoi(paramstr);
     }else{

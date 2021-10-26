@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by Xuefeng Huang on 2020/2/6.
 //
 
@@ -46,9 +46,10 @@ public:
             int threads
             );
     void stop();
+    int estimate_tree_memory(QString range1,QString range2,QString board);
     vector<PrivateCards> player1Range;
     vector<PrivateCards> player2Range;
-    void dump_strategy(string dump_file,int dump_rounds);
+    void dump_strategy(QString dump_file,int dump_rounds);
     shared_ptr<GameTree> get_game_tree(){return this->game_tree;};
     Deck* get_deck(){return &this->deck;}
     shared_ptr<Solver> get_solver(){return this->solver;}

@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by Xuefeng Huang on 2020/1/30.
 //
 
@@ -499,6 +499,34 @@ GameTreeNode::GameRound GameTree::strToGameRound(const string& round) {
         throw runtime_error(tfm::format("game round not found: %s",round));
     }
     return game_round;
+}
+
+int GameTree::estimate_tree_memory(int deck_num,int p1range_num,int p2range_num,int num_current_deal){
+    return this->re_estimate_tree_memory(this->root,deck_num, p1range_num, p2range_num, num_current_deal);
+}
+
+int GameTree::re_estimate_tree_memory(const shared_ptr<GameTreeNode>& node,int deck_num,int p1range_num,int p2range_num,int num_current_deal){
+    if(node->getType() == GameTreeNode::ACTION){
+        shared_ptr<ActionNode> action_node = std::dynamic_pointer_cast<ActionNode>(node);
+        vector<shared_ptr<GameTreeNode>> childrens = action_node->getChildrens();
+        vector<GameActions> actions = action_node->getActions();
+
+        int retnum = 0;
+        for(int i = 0;i < childrens.size();i++){
+            shared_ptr<GameTreeNode> one_child = childrens[i];
+            retnum += re_estimate_tree_memory(one_child,deck_num, p1range_num, p2range_num, num_current_deal);
+        }
+        if(action_node->getPlayer() == 0){
+            retnum += num_current_deal * p1range_num * childrens.size() * 3;
+        }else{
+            retnum += num_current_deal * p2range_num * childrens.size() * 3;
+        }
+        return retnum;
+    }else if(node->getType() == GameTreeNode::CHANCE){
+        shared_ptr<ChanceNode> chance_node = std::dynamic_pointer_cast<ChanceNode>(node);
+        shared_ptr<GameTreeNode> children = chance_node->getChildren();
+        return re_estimate_tree_memory(children,deck_num, p1range_num, p2range_num, num_current_deal * (deck_num));
+    }
 }
 
 void GameTree::recurrentPrintTree(const shared_ptr<GameTreeNode>& node, int depth, int depth_limit) {

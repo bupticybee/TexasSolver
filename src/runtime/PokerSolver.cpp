@@ -67,6 +67,27 @@ void PokerSolver::stop(){
     }
 }
 
+int PokerSolver::estimate_tree_memory(QString range1,QString range2,QString board){
+    if(this->game_tree == nullptr){
+        qDebug().noquote() << QObject::tr("Please buld tree first.");
+        return 0;
+    }
+    else{
+        string player1RangeStr = range1.toStdString();
+        string player2RangeStr = range2.toStdString();
+
+        vector<string> board_str_arr = string_split(board.toStdString(),',');
+        vector<int> initialBoard;
+        for(string one_board_str:board_str_arr){
+            initialBoard.push_back(Card::strCard2int(one_board_str));
+        }
+
+        vector<PrivateCards> range1 = PrivateRangeConverter::rangeStr2Cards(player1RangeStr,initialBoard);
+        vector<PrivateCards> range2 = PrivateRangeConverter::rangeStr2Cards(player2RangeStr,initialBoard);
+        return this->game_tree->estimate_tree_memory(this->deck.getCards().size() - initialBoard.size(),range1.size(),range2.size());
+    }
+}
+
 void PokerSolver::train(string p1_range, string p2_range, string boards, string log_file, int iteration_number,
                         int print_interval, string algorithm,int warmup,float accuracy,bool use_isomorphism,int threads) {
     string player1RangeStr = p1_range;
@@ -107,14 +128,14 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
     this->solver->train();
 }
 
-void PokerSolver::dump_strategy(string dump_file,int dump_rounds) {
+void PokerSolver::dump_strategy(QString dump_file,int dump_rounds) {
     //locale &loc=locale::global(locale(locale(),"",LC_CTYPE));
     setlocale(LC_ALL,"");
 
     json dump_json = this->solver->dumps(false,dump_rounds);
     //QFile ofile( QString::fromStdString(dump_file));
     ofstream fileWriter;
-    fileWriter.open(dump_file);
+    fileWriter.open(dump_file.toLocal8Bit());
     if(!fileWriter.fail()){
         fileWriter << dump_json;
         fileWriter.flush();

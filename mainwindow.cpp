@@ -37,7 +37,7 @@ void MainWindow::on_save_json(){
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                "output_strategy.json",
                                tr("Json file (*.json)"));
-    this->qSolverJob->savefile = fileName.toStdString();
+    this->qSolverJob->savefile = fileName;
     qSolverJob->current_mission = QSolverJob::MissionType::SAVING;
     qSolverJob->start();
 }
@@ -191,4 +191,17 @@ void MainWindow::on_oopRangeSelectButtom_clicked()
     this->rangeSelector = new RangeSelector(this->ui->oopRangeText,this,mode);
     rangeSelector->setAttribute(Qt::WA_DeleteOnClose);
     rangeSelector->show();
+}
+
+void MainWindow::on_estimateMemoryButtom_clicked()
+{
+    int memory_float = this->qSolverJob->estimate_tree_memory(this->ui->ipRangeText->toPlainText(),this->ui->oopRangeText->toPlainText(),this->ui->boardText->toPlainText());
+    // float32 should take 4bytes
+    float memory_mb = (float)memory_float * 4 / 1024 / 1024;
+    float memory_gb = (float)memory_float * 4 / 1024 / 1024 / 1024;
+    QString message = tr("Estimated Memory Usage: ") + QString::number(memory_mb,'f',1) + tr(" Mb , which is ") + QString::number(memory_gb,'f',2) + tr("GB ");
+    qDebug().noquote() << message;
+    QMessageBox msgBox;
+    msgBox.setText(message);
+    msgBox.exec();
 }

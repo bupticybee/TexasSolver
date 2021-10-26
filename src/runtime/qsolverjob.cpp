@@ -119,6 +119,16 @@ void QSolverJob::solving(){
     qDebug().noquote() << tr("Solving done.");//.toStdString() << std::endl;
 }
 
+int QSolverJob::estimate_tree_memory(QString range1,QString range2,QString board){
+    qDebug().noquote() << tr("Estimating tree memory..");//.toStdString() << endl;
+    if(this->mode == Mode::HOLDEM){
+        return ps_holdem.estimate_tree_memory(range1,range2,board);
+    }else if(this->mode == Mode::SHORTDECK){
+        return ps_shortdeck.estimate_tree_memory(range1,range2,board);
+    }
+    return 0;
+}
+
 void QSolverJob::build_tree(){
     qDebug().noquote() << tr("building tree..");//.toStdString() << endl;
     if(this->mode == Mode::HOLDEM){

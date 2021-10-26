@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -8,6 +8,7 @@
 #include "qstextedit.h"
 #include "strategyexplorer.h"
 #include "rangeselector.h"
+#include <QMessageBox>
 
 namespace Ui {
 class MainWindow;
@@ -41,6 +42,8 @@ private slots:
     void on_ipRangeSelectButtom_clicked();
 
     void on_oopRangeSelectButtom_clicked();
+
+    void on_estimateMemoryButtom_clicked();
 
 private:
     Ui::MainWindow *ui = NULL;

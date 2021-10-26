@@ -54,8 +54,8 @@ public:
     static ifstream readAllBytes(const string& filePath);
     static GameTreeNode::GameRound strToGameRound(const string& round);
     static void recurrentPrintTree(const shared_ptr<GameTreeNode>& node,int depth,int depth_limit);
-    long estimate_tree_memory(int deck_num,int p1range_num,int p2range_num,int num_current_deal=1);
-    long re_estimate_tree_memory(const shared_ptr<GameTreeNode>& node,int deck_num,int p1range_num,int p2range_num,int num_current_deal=1);
+    long long estimate_tree_memory(int deck_num,int p1range_num,int p2range_num,int num_current_deal=1);
+    long long re_estimate_tree_memory(const shared_ptr<GameTreeNode>& node,int deck_num,int p1range_num,int p2range_num,int num_current_deal=1);
     shared_ptr<GameTreeNode> recurrentGenerateTreeNode(json node_json,const shared_ptr<GameTreeNode>& parent);
     shared_ptr<ActionNode> generateActionNode(json meta,vector<string> childrens_actions, vector<json> childrens_nodes, const string& round,shared_ptr<GameTreeNode> parent);
     shared_ptr<ChanceNode> generateChanceNode(json meta,const json& child,string round,shared_ptr<GameTreeNode> parent);

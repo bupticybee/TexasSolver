@@ -220,14 +220,15 @@ float iso_corh(QString board){
 
 void MainWindow::on_estimateMemoryButtom_clicked()
 {
-    long memory_float = this->qSolverJob->estimate_tree_memory(this->ui->ipRangeText->toPlainText(),this->ui->oopRangeText->toPlainText(),this->ui->boardText->toPlainText());
+    long long memory_float = this->qSolverJob->estimate_tree_memory(this->ui->ipRangeText->toPlainText(),this->ui->oopRangeText->toPlainText(),this->ui->boardText->toPlainText());
     // float32 should take 4bytes
     float corh = 1;
     if(this->ui->useIsoCheck->isChecked()){
         corh =iso_corh(this->ui->boardText->toPlainText());
     }
-    float memory_mb = (float)memory_float * corh * 4 / 1024 / 1024;
-    float memory_gb = (float)memory_float * corh * 4 / 1024 / 1024 / 1024;
+    qDebug().noquote() << memory_float << endl;
+    float memory_mb = (float)memory_float / 1024 / 1024 * corh * 4 ;
+    float memory_gb = (float)memory_float / 1024 / 1024 / 1024 * corh * 4;
     QString message;
     if(memory_gb < 1){
         message = tr("Estimated Memory Usage: ") + QString::number(memory_mb,'f',1) + tr(" Mb");

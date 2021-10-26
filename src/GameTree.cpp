@@ -501,17 +501,17 @@ GameTreeNode::GameRound GameTree::strToGameRound(const string& round) {
     return game_round;
 }
 
-long GameTree::estimate_tree_memory(int deck_num,int p1range_num,int p2range_num,int num_current_deal){
+long long GameTree::estimate_tree_memory(int deck_num,int p1range_num,int p2range_num,int num_current_deal){
     return this->re_estimate_tree_memory(this->root,deck_num, p1range_num, p2range_num, num_current_deal);
 }
 
-long GameTree::re_estimate_tree_memory(const shared_ptr<GameTreeNode>& node,int deck_num,int p1range_num,int p2range_num,int num_current_deal){
+long long GameTree::re_estimate_tree_memory(const shared_ptr<GameTreeNode>& node,int deck_num,int p1range_num,int p2range_num,int num_current_deal){
     if(node->getType() == GameTreeNode::ACTION){
         shared_ptr<ActionNode> action_node = std::dynamic_pointer_cast<ActionNode>(node);
         vector<shared_ptr<GameTreeNode>> childrens = action_node->getChildrens();
         vector<GameActions> actions = action_node->getActions();
 
-        long retnum = 0;
+        long long retnum = 0;
         for(int i = 0;i < childrens.size();i++){
             shared_ptr<GameTreeNode> one_child = childrens[i];
             retnum += re_estimate_tree_memory(one_child,deck_num, p1range_num, p2range_num, num_current_deal);

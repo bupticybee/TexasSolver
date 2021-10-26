@@ -67,7 +67,7 @@ void PokerSolver::stop(){
     }
 }
 
-long PokerSolver::estimate_tree_memory(QString range1,QString range2,QString board){
+long long PokerSolver::estimate_tree_memory(QString range1,QString range2,QString board){
     if(this->game_tree == nullptr){
         qDebug().noquote() << QObject::tr("Please buld tree first.");
         return 0;

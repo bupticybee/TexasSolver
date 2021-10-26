@@ -46,7 +46,7 @@ public:
             int threads
             );
     void stop();
-    long estimate_tree_memory(QString range1,QString range2,QString board);
+    long long estimate_tree_memory(QString range1,QString range2,QString board);
     vector<PrivateCards> player1Range;
     vector<PrivateCards> player2Range;
     void dump_strategy(QString dump_file,int dump_rounds);

@@ -287,7 +287,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="mainwindow.ui" line="794"/>
-        <source>Show Tree</source>
+        <source>Estimate Solving Memory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -456,6 +456,21 @@ p, li { white-space: pre-wrap; }
         <source>Json file (*.json)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="mainwindow.cpp" line="231"/>
+        <source>Estimated Memory Usage: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="231"/>
+        <source> Mb , which is </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="231"/>
+        <source>GB </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -570,12 +585,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/runtime/PokerSolver.cpp" line="122"/>
+        <location filename="src/runtime/PokerSolver.cpp" line="72"/>
+        <source>Please buld tree first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/runtime/PokerSolver.cpp" line="143"/>
         <source>save success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/runtime/PokerSolver.cpp" line="124"/>
+        <location filename="src/runtime/PokerSolver.cpp" line="145"/>
         <source>save failed, file cannot be open</source>
         <translation type="unfinished"></translation>
     </message>
@@ -629,12 +649,80 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="src/runtime/qsolverjob.cpp" line="123"/>
+        <source>Estimating tree memory..</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/runtime/qsolverjob.cpp" line="133"/>
         <source>building tree..</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/runtime/qsolverjob.cpp" line="129"/>
+        <location filename="src/runtime/qsolverjob.cpp" line="139"/>
         <source>build tree finished</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RangeSelector</name>
+    <message>
+        <location filename="rangeselector.ui" line="14"/>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="22"/>
+        <source>Range Text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="36"/>
+        <source>Confirm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="43"/>
+        <source>Clear range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="79"/>
+        <source>Range Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="rangeselector.cpp" line="27"/>
+        <source>RangeSelector</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RangeSelectorTableModel</name>
+    <message>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="81"/>
+        <source>skipping range %1, format error, range list should contain two part seperate by &apos;:&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="97"/>
+        <source>skipping range %1, format error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="116"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="134"/>
+        <source>o</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="118"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="136"/>
+        <source>s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="138"/>
+        <source> </source>
         <translation type="unfinished"></translation>
     </message>
 </context>

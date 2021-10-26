@@ -287,8 +287,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="mainwindow.ui" line="794"/>
+        <source>Estimate Solving Memory</source>
+        <translation>估计求解需要的内存</translation>
+    </message>
+    <message>
         <source>Show Tree</source>
-        <translation>展示游戏树</translation>
+        <translation type="vanished">展示游戏树</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="809"/>
@@ -460,6 +464,21 @@ p, li { white-space: pre-wrap; }
         <source>Json file (*.json)</source>
         <translation>Json 文件 (*.json)</translation>
     </message>
+    <message>
+        <location filename="mainwindow.cpp" line="231"/>
+        <source>Estimated Memory Usage: </source>
+        <translation>估计的内存消耗: </translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="231"/>
+        <source> Mb , which is </source>
+        <translation> Mb , 大约是 </translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="231"/>
+        <source>GB </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -574,12 +593,17 @@ p, li { white-space: pre-wrap; }
         <translation>发河牌</translation>
     </message>
     <message>
-        <location filename="src/runtime/PokerSolver.cpp" line="122"/>
+        <location filename="src/runtime/PokerSolver.cpp" line="72"/>
+        <source>Please buld tree first.</source>
+        <translation>请先构建游戏树.</translation>
+    </message>
+    <message>
+        <location filename="src/runtime/PokerSolver.cpp" line="143"/>
         <source>save success</source>
         <translation>保存成功</translation>
     </message>
     <message>
-        <location filename="src/runtime/PokerSolver.cpp" line="124"/>
+        <location filename="src/runtime/PokerSolver.cpp" line="145"/>
         <source>save failed, file cannot be open</source>
         <translation>保存失败，文件无法打开</translation>
     </message>
@@ -633,13 +657,81 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="src/runtime/qsolverjob.cpp" line="123"/>
+        <source>Estimating tree memory..</source>
+        <translation>正在估计内存使用..</translation>
+    </message>
+    <message>
+        <location filename="src/runtime/qsolverjob.cpp" line="133"/>
         <source>building tree..</source>
         <translation>构建游戏树中..</translation>
     </message>
     <message>
-        <location filename="src/runtime/qsolverjob.cpp" line="129"/>
+        <location filename="src/runtime/qsolverjob.cpp" line="139"/>
         <source>build tree finished</source>
         <translation>构建游戏树完成</translation>
+    </message>
+</context>
+<context>
+    <name>RangeSelector</name>
+    <message>
+        <location filename="rangeselector.ui" line="14"/>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="22"/>
+        <source>Range Text</source>
+        <translation>范围</translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="36"/>
+        <source>Confirm</source>
+        <translation>确认</translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="43"/>
+        <source>Clear range</source>
+        <translation>清空范围</translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="79"/>
+        <source>Range Number</source>
+        <translation>范围数字</translation>
+    </message>
+    <message>
+        <location filename="rangeselector.cpp" line="27"/>
+        <source>RangeSelector</source>
+        <translation>范围选择器</translation>
+    </message>
+</context>
+<context>
+    <name>RangeSelectorTableModel</name>
+    <message>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="81"/>
+        <source>skipping range %1, format error, range list should contain two part seperate by &apos;:&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="97"/>
+        <source>skipping range %1, format error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="116"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="134"/>
+        <source>o</source>
+        <translation>异色</translation>
+    </message>
+    <message>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="118"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="136"/>
+        <source>s</source>
+        <translation>同色</translation>
+    </message>
+    <message>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="138"/>
+        <source> </source>
+        <translation>对子</translation>
     </message>
 </context>
 <context>
@@ -647,7 +739,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/ui/roughstrategyitemdelegate.cpp" line="57"/>
         <source>FOLD</source>
-        <translation type="unfinished">弃牌</translation>
+        <translation>弃牌</translation>
     </message>
     <message>
         <location filename="src/ui/roughstrategyitemdelegate.cpp" line="57"/>
@@ -661,22 +753,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/ui/roughstrategyitemdelegate.cpp" line="60"/>
         <source>CALL</source>
-        <translation type="unfinished">跟注</translation>
+        <translation>跟注</translation>
     </message>
     <message>
         <location filename="src/ui/roughstrategyitemdelegate.cpp" line="64"/>
         <source>CHECK</source>
-        <translation type="unfinished">过牌</translation>
+        <translation>过牌</translation>
     </message>
     <message>
         <location filename="src/ui/roughstrategyitemdelegate.cpp" line="67"/>
         <source>BET</source>
-        <translation type="unfinished">下注</translation>
+        <translation>下注</translation>
     </message>
     <message>
         <location filename="src/ui/roughstrategyitemdelegate.cpp" line="70"/>
         <source>RAISE</source>
-        <translation type="unfinished">加注</translation>
+        <translation>加注</translation>
     </message>
 </context>
 <context>

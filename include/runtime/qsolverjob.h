@@ -56,7 +56,7 @@ public:
     void stop();
     void saving();
     void build_tree();
-    int estimate_tree_memory(QString range1,QString range2,QString board);
+    long estimate_tree_memory(QString range1,QString range2,QString board);
     void setContext(QSTextEdit * textEdit);
     QString savefile;
 };

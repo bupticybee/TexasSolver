@@ -195,7 +195,7 @@ void MainWindow::on_oopRangeSelectButtom_clicked()
 
 void MainWindow::on_estimateMemoryButtom_clicked()
 {
-    int memory_float = this->qSolverJob->estimate_tree_memory(this->ui->ipRangeText->toPlainText(),this->ui->oopRangeText->toPlainText(),this->ui->boardText->toPlainText());
+    long memory_float = this->qSolverJob->estimate_tree_memory(this->ui->ipRangeText->toPlainText(),this->ui->oopRangeText->toPlainText(),this->ui->boardText->toPlainText());
     // float32 should take 4bytes
     float memory_mb = (float)memory_float * 4 / 1024 / 1024;
     float memory_gb = (float)memory_float * 4 / 1024 / 1024 / 1024;

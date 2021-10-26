@@ -226,7 +226,6 @@ void MainWindow::on_estimateMemoryButtom_clicked()
     if(this->ui->useIsoCheck->isChecked()){
         corh =iso_corh(this->ui->boardText->toPlainText());
     }
-    qDebug().noquote() << memory_float << endl;
     float memory_mb = (float)memory_float / 1024 / 1024 * corh * 4 ;
     float memory_gb = (float)memory_float / 1024 / 1024 / 1024 * corh * 4;
     QString message;

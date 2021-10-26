@@ -228,7 +228,12 @@ void MainWindow::on_estimateMemoryButtom_clicked()
     }
     float memory_mb = (float)memory_float * corh * 4 / 1024 / 1024;
     float memory_gb = (float)memory_float * corh * 4 / 1024 / 1024 / 1024;
-    QString message = tr("Estimated Memory Usage: ") + QString::number(memory_mb,'f',1) + tr(" Mb , which is ") + QString::number(memory_gb,'f',2) + tr("Gb ");
+    QString message;
+    if(memory_gb < 1){
+        message = tr("Estimated Memory Usage: ") + QString::number(memory_mb,'f',1) + tr(" Mb");
+    }else{
+        message = tr("Estimated Memory Usage: ") + QString::number(memory_gb,'f',2) + tr(" Gb");
+    }
     qDebug().noquote() << message;
     QMessageBox msgBox;
     msgBox.setText(message);

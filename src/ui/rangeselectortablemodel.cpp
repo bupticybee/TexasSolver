@@ -33,6 +33,14 @@ float RangeSelectorTableModel::getRangeAt(int i, int j){
     }
 }
 
+void RangeSelectorTableModel::clear_range(){
+    for(int i = 0;i < this->ranklist.size();i ++){
+        for(int j = 0;j < this->ranklist.size();j ++){
+            this->grids_float[i][j] = 0;
+        }
+    }
+}
+
 void RangeSelectorTableModel::setRangeAt(int i, int j,float value){
     if(i < 0 || i >= this->ranklist.size()){
         qDebug().noquote() << "RangeSelectorTableModel::setRangeAt i not valid: " << i;
@@ -83,8 +91,10 @@ void RangeSelectorTableModel::setRangeText(QString input_range){
         }
 
         for(QString one_key: keys){
+            if(one_key.count(" ") == one_key.length() || one_key == "")continue;
             if(!this->string2ij.count(one_key)){
                 qDebug().noquote() << QString(tr("skipping range %1, format error")).arg(one_range);
+                continue;
             }
             pair<int,int> cord = this->string2ij[one_key];
             if(one_range_list.size() > 1)range_float = one_range_list[1].toFloat();

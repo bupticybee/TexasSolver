@@ -64,7 +64,9 @@ void RangeSelector::grid_pressed(int i,int j){
     }else{
         this->rangeSelectorTableModel->setRangeAt(i,j,this->range_num);
     }
-    this->ui->textEdit->setText(this->rangeSelectorTableModel->getRangeText());
+    if(this->rangeSelectorTableModel->getRangeText() != this->ui->textEdit->toPlainText()){
+        this->ui->textEdit->setText(this->rangeSelectorTableModel->getRangeText());
+    }
     //this->ui->rangeTableView->update();
 }
 
@@ -87,5 +89,32 @@ void RangeSelector::on_confirmButtom_clicked()
 void RangeSelector::on_rangeNumberSlider_valueChanged(int value)
 {
     this->range_num = float(this->ui->rangeNumberSlider->value()) / this->max_val;
-    this->ui->rangeNumberBox->setTitle(QString("%1:%2").arg(tr("Range Number"),QString::number(this->range_num,'f',3)));
+    if(this->range_num != this->ui->rangeNumberEdit->text().toFloat()){
+        this->ui->rangeNumberEdit->setText(QString("%2").arg(QString::number(this->range_num,'f',3)));
+    }
+}
+
+void RangeSelector::on_rangeNumberEdit_textEdited(const QString &arg1)
+{
+    this->range_num = this->ui->rangeNumberEdit->text().toFloat();
+    this->ui->rangeNumberSlider->setValue((int)(this->max_val * this->range_num));
+}
+
+void RangeSelector::on_clearRangeButtom_clicked()
+{
+    this->ui->textEdit->setText("");
+    this->rangeSelectorTableModel->clear_range();
+    // DIRTY TRICK TO REPLACE update(), update() doesn't work here for some reason I dont know.
+    this->ui->textEdit->setFocus();
+    this->ui->rangeTableView->setFocus();
+    this->ui->textEdit->setFocus();
+}
+
+void RangeSelector::on_textEdit_textChanged()
+{
+    QString range_text = this->ui->textEdit->toPlainText();
+    this->rangeSelectorTableModel->setRangeText(range_text);
+    // DIRTY TRICK TO REPLACE update(), update() doesn't work here for some reason I dont know.
+    this->ui->rangeTableView->setFocus();
+    this->ui->textEdit->setFocus();
 }

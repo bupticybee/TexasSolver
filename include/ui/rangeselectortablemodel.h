@@ -39,6 +39,7 @@ public:
     QModelIndex parent(const QModelIndex &child) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    void clear_range();
 private:
     vector<vector<QString>> grids_string;
     vector<vector<float>> grids_float;

@@ -40,6 +40,9 @@ private slots:
     void grid_area(int i1,int j1,int i2,int j2);
     void grid_release(int i,int j);
     void update_second();
+    void on_rangeNumberEdit_textEdited(const QString &arg1);
+    void on_clearRangeButtom_clicked();
+    void on_textEdit_textChanged();
 };
 
 #endif // RANGESELECTOR_H

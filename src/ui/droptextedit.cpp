@@ -1,4 +1,4 @@
-#include "include/ui/droptextedit.h"
+﻿#include "include/ui/droptextedit.h"
 
 void DropTextEdit::dropEvent(QDropEvent* event){
     const QMimeData* mimeData = event->mimeData();
@@ -7,7 +7,7 @@ void DropTextEdit::dropEvent(QDropEvent* event){
     {
       QList<QUrl> urlList = mimeData->urls();
       if(urlList.size() > 0){
-          QFile file(urlList.at(0).path());
+          QFile file(urlList.at(0).toLocalFile());
           file.open(QIODevice::ReadOnly);
           QString s;
           QTextStream s1(&file);

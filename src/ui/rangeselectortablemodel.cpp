@@ -73,6 +73,7 @@ QString RangeSelectorTableModel::getRangeText(){
 }
 
 void RangeSelectorTableModel::setRangeText(QString input_range){
+    this->clear_range();
     for(QString one_range:input_range.split(",")){
         QStringList one_range_list = one_range.split(":");
 

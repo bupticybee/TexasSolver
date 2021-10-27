@@ -3,6 +3,7 @@
 #include <QTranslator>
 #include <QInputDialog>
 #include <string>
+#include <QSettings>
 
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -41,17 +42,33 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(myMessageOutput);
     QApplication a(argc, argv);
 
-    QStringList languages;
-    languages << "English" << QString::fromLocal8Bit("简体中文");
-    QString lang = QInputDialog::getItem(NULL,"select language","language",languages,0,false);
-
+    QSettings setting("TexasSolver", "Setting");
+    setting.beginGroup("solver");
+    QString language_str = setting.value("language").toString();
     QTranslator trans;
-    if(lang == "English"){
-        trans.load(":/lang_en.qm");
-    }else if(lang == QString::fromLocal8Bit("简体中文")){
-        trans.load(":/lang_cn.qm");
+
+    if(language_str == ""){
+        QStringList languages;
+        languages << "English" << QString::fromLocal8Bit("简体中文");
+        QString lang = QInputDialog::getItem(NULL,"select language","language",languages,0,false);
+
+        if(lang == "English"){
+            trans.load(":/lang_en.qm");
+            language_str = "EN";
+        }else if(lang == QString::fromLocal8Bit("简体中文")){
+            trans.load(":/lang_cn.qm");
+            language_str = "CN";
+        }
+        a.installTranslator(&trans);
+        setting.setValue("language",language_str);
+    }else{
+        if(language_str == "EN"){
+            trans.load(":/lang_en.qm");
+        }else if(language_str == "CN"){
+            trans.load(":/lang_cn.qm");
+        }
+        a.installTranslator(&trans);
     }
-    a.installTranslator(&trans);
     MainWindow w;
     w.show();
 

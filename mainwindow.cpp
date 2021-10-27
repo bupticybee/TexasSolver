@@ -239,3 +239,11 @@ void MainWindow::on_estimateMemoryButtom_clicked()
     msgBox.setText(message);
     msgBox.exec();
 }
+
+void MainWindow::on_selectBoardButton_clicked()
+{
+    QSolverJob::Mode mode = this->ui->mode_box->currentIndex() == 0 ? QSolverJob::Mode::HOLDEM:QSolverJob::Mode::SHORTDECK;
+    this->boardSelector = new boardselector(this->ui->boardText,mode,this);
+    boardSelector->setAttribute(Qt::WA_DeleteOnClose);
+    boardSelector->show();
+}

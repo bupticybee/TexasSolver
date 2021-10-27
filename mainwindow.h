@@ -9,6 +9,7 @@
 #include "strategyexplorer.h"
 #include "rangeselector.h"
 #include <QMessageBox>
+#include "boardselector.h"
 
 namespace Ui {
 class MainWindow;
@@ -45,11 +46,14 @@ private slots:
 
     void on_estimateMemoryButtom_clicked();
 
+    void on_selectBoardButton_clicked();
+
 private:
     Ui::MainWindow *ui = NULL;
     QSolverJob* qSolverJob = NULL;
     StrategyExplorer* strategyExplorer = NULL;
     RangeSelector* rangeSelector = NULL;
+    boardselector* boardSelector = NULL;
 };
 
 #endif // MAINWINDOW_H

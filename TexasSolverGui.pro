@@ -110,7 +110,8 @@ SOURCES += \
     src/ui/htmltablerangeview.cpp \
     rangeselector.cpp \
     src/ui/rangeselectortablemodel.cpp \
-    src/ui/rangeselectortabledelegate.cpp
+    src/ui/rangeselectortabledelegate.cpp \
+    boardselector.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -170,12 +171,14 @@ HEADERS += \
     include/ui/htmltablerangeview.h \
     rangeselector.h \
     include/ui/rangeselectortablemodel.h \
-    include/ui/rangeselectortabledelegate.h
+    include/ui/rangeselectortabledelegate.h \
+    boardselector.h
 
 FORMS += \
         mainwindow.ui \
     strategyexplorer.ui \
-    rangeselector.ui
+    rangeselector.ui \
+    boardselector.ui
 
 RESOURCES += \
     translations.qrc \

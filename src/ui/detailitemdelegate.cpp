@@ -100,7 +100,7 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
             options.text = "";
             options.text += detailViewerModel->tableStrategyModel->cardint2card[card1].toFormattedHtml();
             options.text += detailViewerModel->tableStrategyModel->cardint2card[card2].toFormattedHtml();
-            options.text = "<h2>" + options.text + "<\/h2>";
+            options.text = "<h2 >" + options.text + "<\/h2>";
             for(int i = 0;i < strategy.size();i ++){
                 GameActions one_action = gameActions[i];
                 float one_strategy = strategy[i] * 100;

@@ -118,3 +118,30 @@ void RangeSelector::on_textEdit_textChanged()
     this->ui->rangeTableView->setFocus();
     this->ui->textEdit->setFocus();
 }
+
+void RangeSelector::on_exportRangeButton_clicked()
+{
+    QString range_text = this->ui->textEdit->toPlainText();
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Range"),
+                               "output_range.txt",
+                               tr("Text file (*.txt)"));
+    setlocale(LC_ALL,"");
+
+    ofstream fileWriter;
+    fileWriter.open(fileName.toLocal8Bit());
+    QMessageBox msgBox;
+    QString message;
+    if(!fileWriter.fail()){
+        fileWriter << range_text.toStdString();
+        fileWriter.flush();
+        fileWriter.close();
+
+         message = QObject::tr("save success");
+    }else{
+        message = QObject::tr("save failed, file cannot be open");
+    }
+    qDebug().noquote() << message;
+    msgBox.setText(message);
+    setlocale(LC_CTYPE, "C");
+    msgBox.exec();
+}

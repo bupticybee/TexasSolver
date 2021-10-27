@@ -9,6 +9,8 @@
 #include "include/ui/rangeselectortabledelegate.h"
 #include <QModelIndex>
 #include <QTimer>
+#include <QFileDialog>
+#include <QMessageBox>
 
 namespace Ui {
 class RangeSelector;
@@ -43,6 +45,7 @@ private slots:
     void on_rangeNumberEdit_textEdited(const QString &arg1);
     void on_clearRangeButtom_clicked();
     void on_textEdit_textChanged();
+    void on_exportRangeButton_clicked();
 };
 
 #endif // RANGESELECTOR_H

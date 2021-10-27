@@ -229,7 +229,9 @@ void MainWindow::on_estimateMemoryButtom_clicked()
     float memory_mb = (float)memory_float / 1024 / 1024 * corh * 4 ;
     float memory_gb = (float)memory_float / 1024 / 1024 / 1024 * corh * 4;
     QString message;
-    if(memory_gb < 1){
+    if(memory_gb == 0){
+        message = tr("Please build tree first.");
+    }else if(memory_gb < 1){
         message = tr("Estimated Memory Usage: ") + QString::number(memory_mb,'f',1) + tr(" Mb");
     }else{
         message = tr("Estimated Memory Usage: ") + QString::number(memory_gb,'f',2) + tr(" Gb");

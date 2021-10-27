@@ -111,7 +111,9 @@ SOURCES += \
     rangeselector.cpp \
     src/ui/rangeselectortablemodel.cpp \
     src/ui/rangeselectortabledelegate.cpp \
-    boardselector.cpp
+    boardselector.cpp \
+    src/ui/boardselectortablemodel.cpp \
+    src/ui/boardselectortabledelegate.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -172,7 +174,9 @@ HEADERS += \
     rangeselector.h \
     include/ui/rangeselectortablemodel.h \
     include/ui/rangeselectortabledelegate.h \
-    boardselector.h
+    boardselector.h \
+    include/ui/boardselectortablemodel.h \
+    include/ui/boardselectortabledelegate.h
 
 FORMS += \
         mainwindow.ui \

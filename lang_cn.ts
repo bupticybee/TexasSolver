@@ -69,13 +69,13 @@
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;SimSun&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;.AppleSystemUIFont&apos;; font-size:13pt;&quot;&gt;AA,KK,QQ,JJ,TT,99:0.75,88:0.75,77:0.5,66:0.25,55:0.25,AK,AQs,AQo:0.75,AJs,AJo:0.5,ATs:0.75,A6s:0.25,A5s:0.75,A4s:0.75,A3s:0.5,A2s:0.5,KQs,KQo:0.5,KJs,KTs:0.75,K5s:0.25,K4s:0.25,QJs:0.75,QTs:0.75,Q9s:0.5,JTs:0.75,J9s:0.75,J8s:0.75,T9s:0.75,T8s:0.75,T7s:0.75,98s:0.75,97s:0.75,96s:0.5,87s:0.75,86s:0.5,85s:0.5,76s:0.75,75s:0.5,65s:0.75,64s:0.5,54s:0.75,53s:0.5,43s:0.5&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.AppleSystemUIFont&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;AA,KK,QQ,JJ,TT,99:0.75,88:0.75,77:0.5,66:0.25,55:0.25,AK,AQs,AQo:0.75,AJs,AJo:0.5,ATs:0.75,A6s:0.25,A5s:0.75,A4s:0.75,A3s:0.5,A2s:0.5,KQs,KQo:0.5,KJs,KTs:0.75,K5s:0.25,K4s:0.25,QJs:0.75,QTs:0.75,Q9s:0.5,JTs:0.75,J9s:0.75,J8s:0.75,T9s:0.75,T8s:0.75,T7s:0.75,98s:0.75,97s:0.75,96s:0.5,87s:0.75,86s:0.5,85s:0.5,76s:0.75,75s:0.5,65s:0.75,64s:0.5,54s:0.75,53s:0.5,43s:0.5&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <oldsource>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.AppleSystemUIFont&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;AA,KK,QQ,JJ,TT,99:0.75,88:0.75,77:0.5,66:0.25,55:0.25,AK,AQs,AQo:0.75,AJs,AJo:0.5,ATs:0.75,A6s:0.25,A5s:0.75,A4s:0.75,A3s:0.5,A2s:0.5,KQs,KQo:0.5,KJs,KTs:0.75,K5s:0.25,K4s:0.25,QJs:0.75,QTs:0.75,Q9s:0.5,JTs:0.75,J9s:0.75,J8s:0.75,T9s:0.75,T8s:0.75,T7s:0.75,98s:0.75,97s:0.75,96s:0.5,87s:0.75,86s:0.5,85s:0.5,76s:0.75,75s:0.5,65s:0.75,64s:0.5,54s:0.75,53s:0.5,43s:0.5&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;SimSun&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;.AppleSystemUIFont&apos;; font-size:13pt;&quot;&gt;AA,KK,QQ,JJ,TT,99:0.75,88:0.75,77:0.5,66:0.25,55:0.25,AK,AQs,AQo:0.75,AJs,AJo:0.5,ATs:0.75,A6s:0.25,A5s:0.75,A4s:0.75,A3s:0.5,A2s:0.5,KQs,KQo:0.5,KJs,KTs:0.75,K5s:0.25,K4s:0.25,QJs:0.75,QTs:0.75,Q9s:0.5,JTs:0.75,J9s:0.75,J8s:0.75,T9s:0.75,T8s:0.75,T7s:0.75,98s:0.75,97s:0.75,96s:0.5,87s:0.75,86s:0.5,85s:0.5,76s:0.75,75s:0.5,65s:0.75,64s:0.5,54s:0.75,53s:0.5,43s:0.5&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -93,13 +93,13 @@ p, li { white-space: pre-wrap; }
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;SimSun&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;.AppleSystemUIFont&apos;; font-size:13pt;&quot;&gt;QQ:0.5,JJ:0.75,TT,99,88,77,66,55,44,33,22,AKo:0.25,AQs,AQo:0.75,AJs,AJo:0.75,ATs,ATo:0.75,A9s,A8s,A7s,A6s,A5s,A4s,A3s,A2s,KQ,KJ,KTs,KTo:0.5,K9s,K8s,K7s,K6s,K5s,K4s:0.5,K3s:0.5,K2s:0.5,QJ,QTs,Q9s,Q8s,Q7s,JTs,JTo:0.5,J9s,J8s,T9s,T8s,T7s,98s,97s,96s,87s,86s,76s,75s,65s,64s,54s,53s,43s&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.AppleSystemUIFont&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;QQ:0.5,JJ:0.75,TT,99,88,77,66,55,44,33,22,AKo:0.25,AQs,AQo:0.75,AJs,AJo:0.75,ATs,ATo:0.75,A9s,A8s,A7s,A6s,A5s,A4s,A3s,A2s,KQ,KJ,KTs,KTo:0.5,K9s,K8s,K7s,K6s,K5s,K4s:0.5,K3s:0.5,K2s:0.5,QJ,QTs,Q9s,Q8s,Q7s,JTs,JTo:0.5,J9s,J8s,T9s,T8s,T7s,98s,97s,96s,87s,86s,76s,75s,65s,64s,54s,53s,43s&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <oldsource>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.AppleSystemUIFont&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;QQ:0.5,JJ:0.75,TT,99,88,77,66,55,44,33,22,AKo:0.25,AQs,AQo:0.75,AJs,AJo:0.75,ATs,ATo:0.75,A9s,A8s,A7s,A6s,A5s,A4s,A3s,A2s,KQ,KJ,KTs,KTo:0.5,K9s,K8s,K7s,K6s,K5s,K4s:0.5,K3s:0.5,K2s:0.5,QJ,QTs,Q9s,Q8s,Q7s,JTs,JTo:0.5,J9s,J8s,T9s,T8s,T7s,98s,97s,96s,87s,86s,76s,75s,65s,64s,54s,53s,43s&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;SimSun&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;.AppleSystemUIFont&apos;; font-size:13pt;&quot;&gt;QQ:0.5,JJ:0.75,TT,99,88,77,66,55,44,33,22,AKo:0.25,AQs,AQo:0.75,AJs,AJo:0.75,ATs,ATo:0.75,A9s,A8s,A7s,A6s,A5s,A4s,A3s,A2s,KQ,KJ,KTs,KTo:0.5,K9s,K8s,K7s,K6s,K5s,K4s:0.5,K3s:0.5,K2s:0.5,QJ,QTs,Q9s,Q8s,Q7s,JTs,JTo:0.5,J9s,J8s,T9s,T8s,T7s,98s,97s,96s,87s,86s,76s,75s,65s,64s,54s,53s,43s&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -117,13 +117,13 @@ p, li { white-space: pre-wrap; }
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;SimSun&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;.AppleSystemUIFont&apos;; font-size:13pt;&quot;&gt;Qs,Jh,2h&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.AppleSystemUIFont&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Qs,Jh,2h&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <oldsource>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.AppleSystemUIFont&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Qs,Jh,2h&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;SimSun&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;.AppleSystemUIFont&apos;; font-size:13pt;&quot;&gt;Qs,Jh,2h&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -314,6 +314,17 @@ p, li { white-space: pre-wrap; }
         <translation>估计求解需要的内存</translation>
     </message>
     <message>
+        <location filename="mainwindow.ui" line="1092"/>
+        <location filename="mainwindow.cpp" line="315"/>
+        <source>Settings</source>
+        <translation>设置</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="1107"/>
+        <source>clear all</source>
+        <translation>清除所有</translation>
+    </message>
+    <message>
         <source>Show Tree</source>
         <translation type="vanished">展示游戏树</translation>
     </message>
@@ -392,119 +403,134 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1002"/>
-        <source>Language</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="1013"/>
-        <source>range</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="1017"/>
+        <location filename="mainwindow.ui" line="1097"/>
         <source>import</source>
         <translation>导入</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1024"/>
+        <location filename="mainwindow.ui" line="1102"/>
         <source>export</source>
         <translation>导出</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1035"/>
+        <location filename="mainwindow.ui" line="1004"/>
         <source>strategy</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1039"/>
+        <location filename="mainwindow.ui" line="1008"/>
         <source>export to file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1060"/>
+        <location filename="mainwindow.ui" line="1016"/>
+        <source>parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="1037"/>
         <source>import setting</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1065"/>
+        <location filename="mainwindow.ui" line="1042"/>
         <source>export current setting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1070"/>
+        <location filename="mainwindow.ui" line="1047"/>
         <source>ZN-CH</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1075"/>
-        <location filename="mainwindow.ui" line="1080"/>
+        <location filename="mainwindow.ui" line="1052"/>
+        <location filename="mainwindow.ui" line="1057"/>
         <source>Enghish</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1085"/>
+        <location filename="mainwindow.ui" line="1062"/>
         <source>Chinese</source>
         <translation>中文</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1090"/>
+        <location filename="mainwindow.ui" line="1067"/>
         <source>import IP range</source>
         <translation>导入后行玩家(IP)range</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1095"/>
+        <location filename="mainwindow.ui" line="1072"/>
         <source>import OOP range</source>
         <translation>导入先行玩家(OOP)range</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1100"/>
+        <location filename="mainwindow.ui" line="1077"/>
         <source>export IP range</source>
         <translation>导出后行玩家(IP)range</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1105"/>
+        <location filename="mainwindow.ui" line="1082"/>
         <source>export OOP range</source>
         <translation>导出先行玩家(OOP)range</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1110"/>
+        <location filename="mainwindow.ui" line="1087"/>
         <source>json</source>
         <translation>json文件</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="23"/>
+        <location filename="mainwindow.cpp" line="25"/>
         <source>TexasSolver</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="37"/>
+        <location filename="mainwindow.cpp" line="39"/>
         <source>Save File</source>
         <translation>保存文件</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="39"/>
+        <location filename="mainwindow.cpp" line="41"/>
         <source>Json file (*.json)</source>
         <translation>Json 文件 (*.json)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="233"/>
-        <source>Please build tree first.</source>
-        <translation type="unfinished"></translation>
+        <location filename="mainwindow.cpp" line="102"/>
+        <source>File selection invalid.</source>
+        <translation>文件选择无效.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="235"/>
-        <location filename="mainwindow.cpp" line="237"/>
+        <location filename="mainwindow.cpp" line="107"/>
+        <source>File open failed.</source>
+        <translation>文件打开失败.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="224"/>
+        <source>Save Parameters</source>
+        <translation>保存参数</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="226"/>
+        <source>Text file (*.txt)</source>
+        <translation>文本文件 (*.txt)</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="537"/>
+        <source>Please build tree first.</source>
+        <translation>请先建树.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="539"/>
+        <location filename="mainwindow.cpp" line="541"/>
         <source>Estimated Memory Usage: </source>
         <translation>估计的内存消耗: </translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="235"/>
+        <location filename="mainwindow.cpp" line="539"/>
         <source> Mb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="237"/>
+        <location filename="mainwindow.cpp" line="541"/>
         <source> Gb</source>
         <translation type="unfinished"></translation>
     </message>
@@ -631,12 +657,14 @@ p, li { white-space: pre-wrap; }
         <translation>请先构建游戏树.</translation>
     </message>
     <message>
+        <location filename="mainwindow.cpp" line="334"/>
         <location filename="rangeselector.cpp" line="139"/>
         <location filename="src/runtime/PokerSolver.cpp" line="143"/>
         <source>save success</source>
         <translation>保存成功</translation>
     </message>
     <message>
+        <location filename="mainwindow.cpp" line="336"/>
         <location filename="rangeselector.cpp" line="141"/>
         <location filename="src/runtime/PokerSolver.cpp" line="145"/>
         <source>save failed, file cannot be open</source>
@@ -672,36 +700,46 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="src/runtime/qsolverjob.cpp" line="73"/>
+        <source>Dump round: </source>
+        <translation>保存轮数: </translation>
+    </message>
+    <message>
+        <location filename="src/runtime/qsolverjob.cpp" line="75"/>
+        <source>This could be slow, or even blow your RAM, dump to river is not well optimized :(</source>
+        <translation>保存可能很慢，甚至可能爆内存，保存至river目前并没有很好优化 :(</translation>
+    </message>
+    <message>
+        <location filename="src/runtime/qsolverjob.cpp" line="82"/>
         <source>Saving done.</source>
         <translation>保存完毕.</translation>
     </message>
     <message>
-        <location filename="src/runtime/qsolverjob.cpp" line="77"/>
+        <location filename="src/runtime/qsolverjob.cpp" line="86"/>
         <source>Trying to stop solver.</source>
         <translation>尝试停止Solver.</translation>
     </message>
     <message>
-        <location filename="src/runtime/qsolverjob.cpp" line="88"/>
+        <location filename="src/runtime/qsolverjob.cpp" line="97"/>
         <source>Start Solving..</source>
         <translation>开始求解..</translation>
     </message>
     <message>
-        <location filename="src/runtime/qsolverjob.cpp" line="119"/>
+        <location filename="src/runtime/qsolverjob.cpp" line="128"/>
         <source>Solving done.</source>
         <translation>求解结束.</translation>
     </message>
     <message>
-        <location filename="src/runtime/qsolverjob.cpp" line="123"/>
+        <location filename="src/runtime/qsolverjob.cpp" line="132"/>
         <source>Estimating tree memory..</source>
         <translation>正在估计内存使用..</translation>
     </message>
     <message>
-        <location filename="src/runtime/qsolverjob.cpp" line="133"/>
+        <location filename="src/runtime/qsolverjob.cpp" line="142"/>
         <source>building tree..</source>
         <translation>构建游戏树中..</translation>
     </message>
     <message>
-        <location filename="src/runtime/qsolverjob.cpp" line="139"/>
+        <location filename="src/runtime/qsolverjob.cpp" line="148"/>
         <source>build tree finished</source>
         <translation>构建游戏树完成</translation>
     </message>
@@ -725,16 +763,21 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="rangeselector.ui" line="43"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="50"/>
         <source>Clear range</source>
         <translation>清空范围</translation>
     </message>
     <message>
-        <location filename="rangeselector.ui" line="50"/>
+        <location filename="rangeselector.ui" line="57"/>
         <source>Export Range</source>
         <translation>导出范围</translation>
     </message>
     <message>
-        <location filename="rangeselector.ui" line="86"/>
+        <location filename="rangeselector.ui" line="93"/>
         <source>Range Number</source>
         <translation>范围数字</translation>
     </message>
@@ -759,12 +802,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/ui/rangeselectortablemodel.cpp" line="81"/>
         <source>skipping range %1, format error, range list should contain two part seperate by &apos;:&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>跳过范围 %1, 格式错误, 范围字符串应该包含两部分，由&apos;:&apos;间隔</translation>
     </message>
     <message>
         <location filename="src/ui/rangeselectortablemodel.cpp" line="97"/>
         <source>skipping range %1, format error</source>
-        <translation type="unfinished"></translation>
+        <translation>跳过范围 %1, 格式错误</translation>
     </message>
     <message>
         <location filename="src/ui/rangeselectortablemodel.cpp" line="134"/>
@@ -817,6 +860,76 @@ p, li { white-space: pre-wrap; }
         <location filename="src/ui/roughstrategyitemdelegate.cpp" line="70"/>
         <source>RAISE</source>
         <translation>加注</translation>
+    </message>
+</context>
+<context>
+    <name>SettingEditor</name>
+    <message>
+        <location filename="settingeditor.ui" line="14"/>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="settingeditor.ui" line="24"/>
+        <source>Language</source>
+        <translation>语言</translation>
+    </message>
+    <message>
+        <location filename="settingeditor.ui" line="32"/>
+        <source>English</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="settingeditor.ui" line="37"/>
+        <source>Chinese</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="settingeditor.ui" line="62"/>
+        <source>Dump round when saving strategy</source>
+        <translation>保存策略时的保存轮数</translation>
+    </message>
+    <message>
+        <location filename="settingeditor.ui" line="70"/>
+        <source>1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="settingeditor.ui" line="75"/>
+        <source>2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="settingeditor.ui" line="80"/>
+        <source>3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="settingeditor.cpp" line="9"/>
+        <source>Settings</source>
+        <translation>设置</translation>
+    </message>
+    <message>
+        <location filename="settingeditor.cpp" line="18"/>
+        <location filename="settingeditor.cpp" line="47"/>
+        <source>Unknown language: </source>
+        <translation>未知语言: </translation>
+    </message>
+    <message>
+        <location filename="settingeditor.cpp" line="18"/>
+        <location filename="settingeditor.cpp" line="47"/>
+        <source>Setting fail</source>
+        <translation>设置失败</translation>
+    </message>
+    <message>
+        <location filename="settingeditor.cpp" line="25"/>
+        <source>dump round error: </source>
+        <translation>保存轮数错误: </translation>
+    </message>
+    <message>
+        <location filename="settingeditor.cpp" line="58"/>
+        <source>Restart program to make language selection effective.</source>
+        <translation>重启重续使语言更改生效.</translation>
     </message>
 </context>
 <context>
@@ -959,7 +1072,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="boardselector.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="boardselector.ui" line="29"/>

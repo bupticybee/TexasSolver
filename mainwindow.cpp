@@ -78,7 +78,14 @@ vector<float> sizes_convert(QString input){
     QStringList list = input.split(" ");
     vector<float> sizes;
     foreach(QString num, list){
-        sizes.push_back(num.toFloat());
+        if(num.endsWith("x")){
+            int pos = num.lastIndexOf(QChar('x'));
+            num = num.left(pos);
+            sizes.push_back(num.toFloat()  * 100);
+        }
+        else{
+            sizes.push_back(num.toFloat());
+        }
     }
     return sizes;
 }

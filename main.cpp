@@ -69,6 +69,12 @@ int main(int argc, char *argv[])
         }
         a.installTranslator(&trans);
     }
+
+    int dump_round = setting.value("dump_round").toInt();
+    if(dump_round == 0){
+        setting.setValue("dump_round",2);
+    }
+
     MainWindow w;
     w.show();
 

@@ -8,6 +8,7 @@
 #include <QPlainTextEdit>
 #include "qstextedit.h"
 #include <QDebug>
+#include <QSettings>
 
 class QSolverJob : public QThread
 {

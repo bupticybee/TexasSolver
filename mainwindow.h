@@ -10,6 +10,7 @@
 #include "rangeselector.h"
 #include <QMessageBox>
 #include "boardselector.h"
+#include "settingeditor.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,10 +31,9 @@ public:
 private slots:
     void on_buttomSolve_clicked();
     void on_clearLogButtom_clicked();
-    void on_chinese_local();
-    void on_en_local();
     void on_buildTreeButtom_clicked();
     void on_save_json();
+    void on_settings();
     void on_ip_range(QString range_text);
     void on_copyButtom_clicked();
     void on_showResultButton_clicked();
@@ -54,6 +54,7 @@ private:
     StrategyExplorer* strategyExplorer = NULL;
     RangeSelector* rangeSelector = NULL;
     boardselector* boardSelector = NULL;
+    SettingEditor* settingEditor = NULL;
 };
 
 #endif // MAINWINDOW_H

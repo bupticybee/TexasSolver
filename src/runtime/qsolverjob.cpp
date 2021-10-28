@@ -65,6 +65,15 @@ void QSolverJob::loading(){
 
 void QSolverJob::saving(){
     qDebug().noquote() << tr("Saving json file..");//.toStdString() << std::endl;
+
+    QSettings setting("TexasSolver", "Setting");
+    setting.beginGroup("solver");
+    this->dump_rounds = setting.value("dump_round").toInt();
+
+    qDebug().noquote() << tr("Dump round: ") << this->dump_rounds;
+    if(this->dump_rounds == 3){
+        qDebug().noquote() << tr("This could be slow, or even blow your RAM, dump to river is not well optimized :(");
+    }
     if(this->mode == Mode::HOLDEM){
         this->ps_holdem.dump_strategy(this->savefile,this->dump_rounds);
     }else if(this->mode == Mode::SHORTDECK){

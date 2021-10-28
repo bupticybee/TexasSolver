@@ -13,9 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     MainWindow::s_textEdit = this->get_logwindow();
-    connect(this->ui->actionChinese, SIGNAL(triggered()), this, SLOT(on_chinese_local()));
-    connect(this->ui->actionEng, SIGNAL(triggered()), this, SLOT(on_en_local()));
     connect(this->ui->actionjson, SIGNAL(triggered()), this, SLOT(on_save_json()));
+    connect(this->ui->actionSettings, SIGNAL(triggered()), this, SLOT(on_settings()));
     qSolverJob = new QSolverJob;
     qSolverJob->setContext(this->getLogArea());
     qSolverJob->current_mission = QSolverJob::MissionType::LOADING;
@@ -40,6 +39,12 @@ void MainWindow::on_save_json(){
     this->qSolverJob->savefile = fileName;
     qSolverJob->current_mission = QSolverJob::MissionType::SAVING;
     qSolverJob->start();
+}
+
+void MainWindow::on_settings(){
+    this->settingEditor = new SettingEditor(this);
+    settingEditor->setAttribute(Qt::WA_DeleteOnClose);
+    settingEditor->show();
 }
 
 void MainWindow::on_ip_range(QString range_text){
@@ -67,14 +72,6 @@ QSTextEdit * MainWindow::getLogArea(){
 void MainWindow::on_clearLogButtom_clicked()
 {
     this->ui->logOutput->clear();
-}
-
-void MainWindow::on_chinese_local(){
-
-}
-
-void MainWindow::on_en_local(){
-
 }
 
 vector<float> sizes_convert(QString input){

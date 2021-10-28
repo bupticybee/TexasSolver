@@ -150,3 +150,26 @@ void RangeSelector::on_cancelButton_clicked()
 {
     close();
 }
+
+void RangeSelector::on_importRangeButton_clicked()
+{
+    QString fileName =  QFileDialog::getOpenFileName(
+              this,
+              tr("Open range file"),
+              QDir::currentPath(),
+              tr("Text files (*.txt)"));
+    if( fileName.isNull() )
+    {
+        qDebug().noquote() << tr("File selection invalid.");
+        return;
+    }
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly)){
+        qDebug().noquote() << tr("File open failed.");
+        return;
+    }
+    QString content;
+    QTextStream s1(&file);
+    content.append(s1.readAll());
+    this->ui->textEdit->setText(content);
+}

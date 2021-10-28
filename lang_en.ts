@@ -486,6 +486,16 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="mainwindow.cpp" line="97"/>
+        <source>Open parameters file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="99"/>
+        <source>Text files (*.txt)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="mainwindow.cpp" line="102"/>
         <source>File selection invalid.</source>
         <translation type="unfinished"></translation>
@@ -765,7 +775,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="rangeselector.ui" line="93"/>
+        <location filename="rangeselector.ui" line="64"/>
+        <source>Import Range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="100"/>
         <source>Range Number</source>
         <translation type="unfinished"></translation>
     </message>
@@ -782,6 +797,26 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="rangeselector.cpp" line="127"/>
         <source>Text file (*.txt)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="rangeselector.cpp" line="158"/>
+        <source>Open range file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="rangeselector.cpp" line="160"/>
+        <source>Text files (*.txt)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="rangeselector.cpp" line="163"/>
+        <source>File selection invalid.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="rangeselector.cpp" line="168"/>
+        <source>File open failed.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -94,9 +94,9 @@ void MainWindow::clear_all_params(){
 void MainWindow::on_import_params(){
     QString fileName =  QFileDialog::getOpenFileName(
               this,
-              "Open parameters file",
+              tr("Open parameters file"),
               QDir::currentPath(),
-              "Text files (*.txt)");
+              tr("Text files (*.txt)"));
     if( fileName.isNull() )
     {
         qDebug().noquote() << tr("File selection invalid.");

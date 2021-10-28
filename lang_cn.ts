@@ -405,12 +405,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="mainwindow.ui" line="1097"/>
         <source>import</source>
-        <translation>导入</translation>
+        <translation>导入参数</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="1102"/>
         <source>export</source>
-        <translation>导出</translation>
+        <translation>导出参数</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="1004"/>
@@ -420,7 +420,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="mainwindow.ui" line="1008"/>
         <source>export to file</source>
-        <translation type="unfinished"></translation>
+        <translation>保存策略到文件</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="1016"/>
@@ -430,12 +430,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="mainwindow.ui" line="1037"/>
         <source>import setting</source>
-        <translation></translation>
+        <translation>导入参数</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="1042"/>
         <source>export current setting</source>
-        <translation type="unfinished"></translation>
+        <translation>导出当前参数</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="1047"/>
@@ -492,6 +492,16 @@ p, li { white-space: pre-wrap; }
         <location filename="mainwindow.cpp" line="41"/>
         <source>Json file (*.json)</source>
         <translation>Json 文件 (*.json)</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="97"/>
+        <source>Open parameters file</source>
+        <translation>打开参数文件</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="99"/>
+        <source>Text files (*.txt)</source>
+        <translation>文本 files (*.txt)</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="102"/>
@@ -777,7 +787,12 @@ p, li { white-space: pre-wrap; }
         <translation>导出范围</translation>
     </message>
     <message>
-        <location filename="rangeselector.ui" line="93"/>
+        <location filename="rangeselector.ui" line="64"/>
+        <source>Import Range</source>
+        <translation>导入范围</translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="100"/>
         <source>Range Number</source>
         <translation>范围数字</translation>
     </message>
@@ -795,6 +810,26 @@ p, li { white-space: pre-wrap; }
         <location filename="rangeselector.cpp" line="127"/>
         <source>Text file (*.txt)</source>
         <translation>文本文件 (*.txt)</translation>
+    </message>
+    <message>
+        <location filename="rangeselector.cpp" line="158"/>
+        <source>Open range file</source>
+        <translation>打开范围文件</translation>
+    </message>
+    <message>
+        <location filename="rangeselector.cpp" line="160"/>
+        <source>Text files (*.txt)</source>
+        <translation>文本文件 (*.txt)</translation>
+    </message>
+    <message>
+        <location filename="rangeselector.cpp" line="163"/>
+        <source>File selection invalid.</source>
+        <translation>文件选择无效.</translation>
+    </message>
+    <message>
+        <location filename="rangeselector.cpp" line="168"/>
+        <source>File open failed.</source>
+        <translation>文件打开失败.</translation>
     </message>
 </context>
 <context>

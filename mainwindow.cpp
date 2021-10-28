@@ -15,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent) :
     MainWindow::s_textEdit = this->get_logwindow();
     connect(this->ui->actionjson, SIGNAL(triggered()), this, SLOT(on_save_json()));
     connect(this->ui->actionSettings, SIGNAL(triggered()), this, SLOT(on_settings()));
+    connect(this->ui->actionimport, SIGNAL(triggered()), this, SLOT(on_import_params()));
+    connect(this->ui->actionexport, SIGNAL(triggered()), this, SLOT(on_export_params()));
+    connect(this->ui->actionclear_all, SIGNAL(triggered()), this, SLOT(on_clear_all()));
     qSolverJob = new QSolverJob;
     qSolverJob->setContext(this->getLogArea());
     qSolverJob->current_mission = QSolverJob::MissionType::LOADING;
@@ -39,6 +42,303 @@ void MainWindow::on_save_json(){
     this->qSolverJob->savefile = fileName;
     qSolverJob->current_mission = QSolverJob::MissionType::SAVING;
     qSolverJob->start();
+}
+
+QString getParams(QString input,QString key){
+    if(input.contains(key)){
+        return input.replace(key,"").trimmed();
+    }else{
+        return "INVALID";
+    }
+}
+
+void MainWindow::on_clear_all(){
+    this->clear_all_params();
+}
+
+void MainWindow::clear_all_params(){
+    this->ui->potText->clear();
+    this->ui->effectiveStackText->clear();
+    this->ui->boardText->clear();
+    this->ui->oopRangeText->clear();
+    this->ui->ipRangeText->clear();
+    this->ui->flop_oop_bet->clear();
+    this->ui->flop_oop_raise->clear();
+    this->ui->flop_oop_allin->setChecked(false);
+    this->ui->flop_ip_bet->clear();
+    this->ui->flop_ip_raise->clear();
+    this->ui->flop_ip_allin->setChecked(false);
+    this->ui->turn_oop_bet->clear();
+    this->ui->turn_oop_raise->clear();
+    this->ui->turn_oop_donk->clear();
+    this->ui->turn_oop_allin->setChecked(false);
+    this->ui->turn_ip_bet->clear();
+    this->ui->turn_ip_raise->clear();
+    this->ui->turn_ip_allin->setChecked(false);
+    this->ui->river_oop_bet->clear();
+    this->ui->river_oop_raise->clear();
+    this->ui->river_oop_donk->clear();
+    this->ui->river_oop_allin->setChecked(false);
+    this->ui->river_ip_bet->clear();
+    this->ui->river_ip_raise->clear();
+    this->ui->river_ip_allin->setChecked(false);
+    this->ui->allinThresholdText->clear();
+    this->ui->threadsText->clear();
+    this->ui->exploitabilityText->clear();
+    this->ui->iterationText->clear();
+    this->ui->logIntervalText->clear();
+    this->ui->raiseLimitText->clear();
+    this->ui->useIsoCheck->setChecked(false);
+}
+
+void MainWindow::on_import_params(){
+    QString fileName =  QFileDialog::getOpenFileName(
+              this,
+              "Open parameters file",
+              QDir::currentPath(),
+              "Text files (*.txt)");
+    if( fileName.isNull() )
+    {
+        qDebug().noquote() << tr("File selection invalid.");
+        return;
+    }
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly)){
+        qDebug().noquote() << tr("File open failed.");
+        return;
+    }
+    QString content;
+    QTextStream s1(&file);
+    content.append(s1.readAll());
+    this->clear_all_params();
+    for(QString one_line_content:content.split("\n")){
+        if(getParams(one_line_content,"set_pot") != "INVALID"){
+            this->ui->potText->setText(getParams(one_line_content,"set_pot"));
+        }
+        else if(getParams(one_line_content,"set_effective_stack") != "INVALID"){
+            this->ui->effectiveStackText->setText(getParams(one_line_content,"set_effective_stack"));
+        }
+        else if(getParams(one_line_content,"set_board") != "INVALID"){
+            this->ui->boardText->setText(getParams(one_line_content,"set_board"));
+        }
+        else if(getParams(one_line_content,"set_range_oop") != "INVALID"){
+            this->ui->oopRangeText->setText(getParams(one_line_content,"set_range_oop"));
+        }
+        else if(getParams(one_line_content,"set_range_ip") != "INVALID"){
+            this->ui->ipRangeText->setText(getParams(one_line_content,"set_range_ip"));
+        }
+        // FLOP
+        else if(getParams(one_line_content,"set_bet_sizes oop,flop,bet,") != "INVALID"){
+            this->ui->flop_oop_bet->setText(getParams(one_line_content,"set_bet_sizes oop,flop,bet,").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes oop,flop,raise") != "INVALID"){
+            this->ui->flop_oop_raise->setText(getParams(one_line_content,"set_bet_sizes oop,flop,raise").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes oop,flop,allin") != "INVALID"){
+            this->ui->flop_oop_allin->setChecked(true);
+        }
+        else if(getParams(one_line_content,"set_bet_sizes ip,flop,bet,") != "INVALID"){
+            this->ui->flop_ip_bet->setText(getParams(one_line_content,"set_bet_sizes ip,flop,bet,").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes ip,flop,raise") != "INVALID"){
+            this->ui->flop_ip_raise->setText(getParams(one_line_content,"set_bet_sizes ip,flop,raise").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes ip,flop,allin") != "INVALID"){
+            this->ui->flop_ip_allin->setChecked(true);
+        }
+        // TURN
+        else if(getParams(one_line_content,"set_bet_sizes oop,turn,bet,") != "INVALID"){
+            this->ui->turn_oop_bet->setText(getParams(one_line_content,"set_bet_sizes oop,turn,bet,").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes oop,turn,raise") != "INVALID"){
+            this->ui->turn_oop_raise->setText(getParams(one_line_content,"set_bet_sizes oop,turn,raise").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes oop,turn,donk") != "INVALID"){
+            this->ui->turn_oop_donk->setText(getParams(one_line_content,"set_bet_sizes oop,turn,donk").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes oop,turn,allin") != "INVALID"){
+            this->ui->turn_oop_allin->setChecked(true);
+        }
+        else if(getParams(one_line_content,"set_bet_sizes ip,turn,bet,") != "INVALID"){
+            this->ui->turn_ip_bet->setText(getParams(one_line_content,"set_bet_sizes ip,turn,bet,").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes ip,turn,raise") != "INVALID"){
+            this->ui->turn_ip_raise->setText(getParams(one_line_content,"set_bet_sizes ip,turn,raise").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes ip,turn,allin") != "INVALID"){
+            this->ui->turn_ip_allin->setChecked(true);
+        }
+        // RIVER
+        else if(getParams(one_line_content,"set_bet_sizes oop,river,bet,") != "INVALID"){
+            this->ui->river_oop_bet->setText(getParams(one_line_content,"set_bet_sizes oop,river,bet,").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes oop,river,raise") != "INVALID"){
+            this->ui->river_oop_raise->setText(getParams(one_line_content,"set_bet_sizes oop,river,raise").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes oop,river,donk") != "INVALID"){
+            this->ui->river_oop_donk->setText(getParams(one_line_content,"set_bet_sizes oop,river,donk").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes oop,river,allin") != "INVALID"){
+            this->ui->river_oop_allin->setChecked(true);
+        }
+        else if(getParams(one_line_content,"set_bet_sizes ip,river,bet,") != "INVALID"){
+            this->ui->river_ip_bet->setText(getParams(one_line_content,"set_bet_sizes ip,river,bet,").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes ip,river,raise") != "INVALID"){
+            this->ui->river_ip_raise->setText(getParams(one_line_content,"set_bet_sizes ip,river,raise").replace(',',' '));
+        }
+        else if(getParams(one_line_content,"set_bet_sizes ip,river,allin") != "INVALID"){
+            this->ui->river_ip_allin->setChecked(true);
+        }
+        // OTHER PARAMS
+        else if(getParams(one_line_content,"set_allin_threshold") != "INVALID"){
+            this->ui->allinThresholdText->setText(getParams(one_line_content,"set_allin_threshold"));
+        }
+        else if(getParams(one_line_content,"set_thread_num") != "INVALID"){
+            this->ui->threadsText->setText(getParams(one_line_content,"set_thread_num"));
+        }
+        else if(getParams(one_line_content,"set_accuracy") != "INVALID"){
+            this->ui->exploitabilityText->setText(getParams(one_line_content,"set_accuracy"));
+        }
+        else if(getParams(one_line_content,"set_max_iteration") != "INVALID"){
+            this->ui->iterationText->setText(getParams(one_line_content,"set_max_iteration"));
+        }
+        else if(getParams(one_line_content,"set_print_interval") != "INVALID"){
+            this->ui->logIntervalText->setText(getParams(one_line_content,"set_print_interval"));
+        }
+        else if(getParams(one_line_content,"set_raise_limit") != "INVALID"){
+            this->ui->raiseLimitText->setText(getParams(one_line_content,"set_raise_limit"));
+        }
+        else if(getParams(one_line_content,"set_use_isomorphism") != "INVALID"){
+            if(getParams(one_line_content,"set_use_isomorphism") == "1"){
+                this->ui->useIsoCheck->setChecked(true);
+            }else{
+                this->ui->useIsoCheck->setChecked(false);
+            }
+        }
+    }
+    this->update();
+}
+
+void MainWindow::on_export_params(){
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Parameters"),
+                               "output_parameters.txt",
+                               tr("Text file (*.txt)"));
+    QString output_text = "";
+    QTextStream out(&output_text);
+    out << "set_pot " << this->ui->potText->text().trimmed();
+    out << "\n";
+    out << "set_effective_stack " << this->ui->effectiveStackText->text().trimmed();
+    out << "\n";
+    out << "set_board " << this->ui->boardText->toPlainText();
+    out << "\n";
+    out << "set_range_oop " << this->ui->oopRangeText->toPlainText();
+    out << "\n";
+    out << "set_range_ip " << this->ui->ipRangeText->toPlainText();
+    out << "\n";
+    // FLOP
+    out << "set_bet_sizes oop,flop,bet," << this->ui->flop_oop_bet->text().trimmed().replace(' ',',');
+    out << "\n";
+    out << "set_bet_sizes oop,flop,raise," << this->ui->flop_oop_raise->text().trimmed().replace(' ',',');
+    out << "\n";
+    if(this->ui->flop_ip_allin->isChecked()){
+        out << "set_bet_sizes oop,flop,allin" << "\n";
+    }
+    out << "set_bet_sizes ip,flop,bet," << this->ui->flop_ip_bet->text().trimmed().replace(' ',',');
+    out << "\n";
+    out << "set_bet_sizes ip,flop,raise," << this->ui->flop_ip_raise->text().trimmed().replace(' ',',');
+    out << "\n";
+    if(this->ui->flop_ip_allin->isChecked()){
+        out << "set_bet_sizes ip,flop,allin" << "\n";
+    }
+    // TURN
+    out << "set_bet_sizes oop,turn,bet," << this->ui->turn_oop_bet->text().trimmed().replace(' ',',');
+    out << "\n";
+    out << "set_bet_sizes oop,turn,raise," << this->ui->turn_oop_raise->text().trimmed().replace(' ',',');
+    out << "\n";
+    if(this->ui->turn_oop_donk->text().trimmed() != ""){
+        out << "set_bet_sizes oop,turn,donk," << this->ui->turn_oop_donk->text().trimmed().replace(' ',',');
+        out << "\n";
+    }
+    if(this->ui->turn_ip_allin->isChecked()){
+        out << "set_bet_sizes oop,turn,allin" << "\n";
+    }
+    out << "set_bet_sizes ip,turn,bet," << this->ui->turn_ip_bet->text().trimmed().replace(' ',',');
+    out << "\n";
+    out << "set_bet_sizes ip,turn,raise," << this->ui->turn_ip_raise->text().trimmed().replace(' ',',');
+    out << "\n";
+    if(this->ui->turn_ip_allin->isChecked()){
+        out << "set_bet_sizes ip,turn,allin" << "\n";
+    }
+    // RIVER
+    out << "set_bet_sizes oop,river,bet," << this->ui->river_oop_bet->text().trimmed().replace(' ',',');
+    out << "\n";
+    out << "set_bet_sizes oop,river,raise," << this->ui->river_oop_raise->text().trimmed().replace(' ',',');
+    out << "\n";
+    if(this->ui->river_ip_allin->isChecked()){
+        out << "set_bet_sizes oop,river,allin" << "\n";
+    }
+    out << "set_bet_sizes ip,river,bet," << this->ui->river_ip_bet->text().trimmed().replace(' ',',');
+    out << "\n";
+    out << "set_bet_sizes ip,river,raise," << this->ui->river_ip_raise->text().trimmed().replace(' ',',');
+    out << "\n";
+    if(this->ui->river_oop_donk->text().trimmed() != ""){
+        out << "set_bet_sizes oop,river,donk," << this->ui->river_oop_donk->text().trimmed().replace(' ',',');
+        out << "\n";
+    }
+    if(this->ui->river_ip_allin->isChecked()){
+        out << "set_bet_sizes ip,river,allin" << "\n";
+    }
+
+    out << "set_allin_threshold " << this->ui->allinThresholdText->text().trimmed();
+    out << "\n";
+    out << "set_raise_limit " << this->ui->raiseLimitText->text().trimmed();
+    out << "\n";
+    out << "build_tree";
+    out << "\n";
+    out << "set_thread_num " << this->ui->threadsText->text().trimmed();
+    out << "\n";
+    out << "set_accuracy " << this->ui->exploitabilityText->text().trimmed();
+    out << "\n";
+    out << "set_max_iteration " << this->ui->iterationText->text().trimmed();
+    out << "\n";
+    out << "set_print_interval" << this->ui->logIntervalText->text().trimmed();
+    out << "\n";
+    if(this->ui->useIsoCheck->isChecked()){
+        out << "set_use_isomorphism 1" << "\n";
+    }else{
+        out << "set_use_isomorphism 0" << "\n";
+    }
+    out << "start_solve";
+    out << "\n";
+
+    this->setWindowTitle(tr("Settings"));
+    QSettings setting("TexasSolver", "Setting");
+    setting.beginGroup("solver");
+    int dump_round = setting.value("dump_round").toInt();
+    out << "set_dump_rounds " << dump_round;
+    out << "\n";
+    out << "dump_result output_result.json";
+
+    setlocale(LC_ALL,"");
+
+    ofstream fileWriter;
+    fileWriter.open(fileName.toLocal8Bit());
+    QMessageBox msgBox;
+    QString message;
+    if(!fileWriter.fail()){
+        fileWriter << output_text.toStdString();
+        fileWriter.flush();
+        fileWriter.close();
+
+         message = QObject::tr("save success");
+    }else{
+        message = QObject::tr("save failed, file cannot be open");
+    }
+    qDebug().noquote() << message;
+    msgBox.setText(message);
+    setlocale(LC_CTYPE, "C");
+    msgBox.exec();
 }
 
 void MainWindow::on_settings(){

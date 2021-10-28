@@ -46,6 +46,7 @@ private slots:
     void on_clearRangeButtom_clicked();
     void on_textEdit_textChanged();
     void on_exportRangeButton_clicked();
+    void on_cancelButton_clicked();
 };
 
 #endif // RANGESELECTOR_H

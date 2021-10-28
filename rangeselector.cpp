@@ -145,3 +145,8 @@ void RangeSelector::on_exportRangeButton_clicked()
     setlocale(LC_CTYPE, "C");
     msgBox.exec();
 }
+
+void RangeSelector::on_cancelButton_clicked()
+{
+    close();
+}

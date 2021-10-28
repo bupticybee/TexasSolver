@@ -33,7 +33,10 @@ private slots:
     void on_clearLogButtom_clicked();
     void on_buildTreeButtom_clicked();
     void on_save_json();
+    void on_import_params();
+    void on_export_params();
     void on_settings();
+    void on_clear_all();
     void on_ip_range(QString range_text);
     void on_copyButtom_clicked();
     void on_showResultButton_clicked();
@@ -49,6 +52,7 @@ private slots:
     void on_selectBoardButton_clicked();
 
 private:
+    void clear_all_params();
     Ui::MainWindow *ui = NULL;
     QSolverJob* qSolverJob = NULL;
     StrategyExplorer* strategyExplorer = NULL;

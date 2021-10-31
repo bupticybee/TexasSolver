@@ -34,27 +34,28 @@ private slots:
     void on_buildTreeButtom_clicked();
     void on_save_json();
     void on_import_params();
+    void import_from_file(QString from);
     void on_export_params();
     void on_settings();
     void on_clear_all();
     void on_ip_range(QString range_text);
     void on_copyButtom_clicked();
     void on_showResultButton_clicked();
-
     void on_stopSolvingButton_clicked();
-
     void on_ipRangeSelectButtom_clicked();
-
     void on_oopRangeSelectButtom_clicked();
-
     void on_estimateMemoryButtom_clicked();
-
     void on_selectBoardButton_clicked();
+    void on_openParametersFolderButton_clicked();
+    void item_clicked(const QModelIndex&);
+
+    void on_exportCurrentParameterButton_clicked();
 
 private:
     void clear_all_params();
     Ui::MainWindow *ui = NULL;
     QSolverJob* qSolverJob = NULL;
+    QFileSystemModel * qFileSystemModel = NULL;
     StrategyExplorer* strategyExplorer = NULL;
     RangeSelector* rangeSelector = NULL;
     boardselector* boardSelector = NULL;

@@ -1,4 +1,4 @@
-#include "rangeselector.h"
+﻿#include "rangeselector.h"
 #include "ui_rangeselector.h"
 
 RangeSelector::RangeSelector(QTextEdit* rangeEdit,QWidget *parent,QSolverJob::Mode mode) :
@@ -28,6 +28,24 @@ RangeSelector::RangeSelector(QTextEdit* rangeEdit,QWidget *parent,QSolverJob::Mo
     connect(this->ui->rangeTableView,SIGNAL(view_item_pressed(int,int)),this,SLOT(grid_pressed(int,int)));
     connect(this->ui->rangeTableView,SIGNAL(view_item_area(int,int,int,int)),this,SLOT(grid_area(int,int,int,int)));
     connect(this->ui->rangeTableView,SIGNAL(item_release(int,int)),this,SLOT(grid_release(int,int)));
+
+    QStringList filters;
+    filters << "*.txt";
+    qFileSystemModel = new QFileSystemModel(this);
+    QDir filedir = QDir::current().filePath("ranges");
+    qFileSystemModel->setRootPath(filedir.path());
+    qFileSystemModel->setNameFilters(filters);
+    qFileSystemModel->setFilter(QDir::AllDirs | QDir::AllEntries |QDir::NoDotAndDotDot);
+    this->ui->rangeFilesTreeView->setModel(this->qFileSystemModel);
+    this->ui->rangeFilesTreeView->setRootIndex(this->qFileSystemModel->index(filedir.path()));
+    for (int i=1; i<=4; i++)
+    {   this->ui->rangeFilesTreeView->hideColumn(i);}
+    connect(
+                this->ui->rangeFilesTreeView,
+                SIGNAL(clicked(const QModelIndex&)),
+                this,
+                SLOT(item_clicked(const QModelIndex&))
+                );
     /*
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update_second()));
@@ -123,8 +141,9 @@ void RangeSelector::on_exportRangeButton_clicked()
 {
     QString range_text = this->ui->textEdit->toPlainText();
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Range"),
-                               "output_range.txt",
+                               QDir::current().filePath("ranges/output_range.txt"),
                                tr("Text file (*.txt)"));
+    if(fileName.isNull())return;
     setlocale(LC_ALL,"");
 
     ofstream fileWriter;
@@ -151,13 +170,7 @@ void RangeSelector::on_cancelButton_clicked()
     close();
 }
 
-void RangeSelector::on_importRangeButton_clicked()
-{
-    QString fileName =  QFileDialog::getOpenFileName(
-              this,
-              tr("Open range file"),
-              QDir::currentPath(),
-              tr("Text files (*.txt)"));
+void RangeSelector::import_range(QString fileName){
     if( fileName.isNull() )
     {
         qDebug().noquote() << tr("File selection invalid.");
@@ -172,4 +185,28 @@ void RangeSelector::on_importRangeButton_clicked()
     QTextStream s1(&file);
     content.append(s1.readAll());
     this->ui->textEdit->setText(content);
+}
+
+void RangeSelector::on_importRangeButton_clicked()
+{
+    QString fileName =  QFileDialog::getOpenFileName(
+              this,
+              tr("Open range file"),
+              QDir::currentPath(),
+              tr("Text files (*.txt)"));
+    this->import_range(fileName);
+}
+
+void RangeSelector::item_clicked(const QModelIndex& index){
+    if(!this->qFileSystemModel->isDir(index)){
+        QFileInfo fileinfo = QFileInfo(this->qFileSystemModel->filePath(index));
+        if(fileinfo.suffix() == "txt"){
+            this->import_range(this->qFileSystemModel->filePath(index));
+        }
+    }
+}
+
+void RangeSelector::on_openRangeFolderButton_clicked()
+{
+    QDesktopServices::openUrl( QUrl::fromLocalFile(QDir::current().filePath("ranges")) );
 }

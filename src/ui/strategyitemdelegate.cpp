@@ -187,6 +187,7 @@ void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     QRect rect(option.rect.left(), option.rect.top(),\
              option.rect.width(), option.rect.height());
     QBrush brush(Qt::gray);
+    if(index.column() == index.row())brush = QBrush(Qt::darkGray);
     painter->fillRect(rect, brush);
 
     if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::STRATEGY){

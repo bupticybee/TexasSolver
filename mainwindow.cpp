@@ -23,6 +23,25 @@ MainWindow::MainWindow(QWidget *parent) :
     qSolverJob->current_mission = QSolverJob::MissionType::LOADING;
     qSolverJob->start();
     this->setWindowTitle(tr("TexasSolver"));
+
+    // parameters tree view
+    QStringList filters;
+    filters << "*.txt";
+    qFileSystemModel = new QFileSystemModel(this);
+    QDir filedir = QDir::current().filePath("parameters");
+    qFileSystemModel->setRootPath(filedir.path());
+    qFileSystemModel->setNameFilters(filters);
+    qFileSystemModel->setFilter(QDir::AllDirs | QDir::AllEntries |QDir::NoDotAndDotDot);
+    this->ui->parametersTreeView->setModel(this->qFileSystemModel);
+    this->ui->parametersTreeView->setRootIndex(this->qFileSystemModel->index(filedir.path()));
+    for (int i=1; i<=4; i++)
+    {   this->ui->parametersTreeView->hideColumn(i);}
+    connect(
+                this->ui->parametersTreeView,
+                SIGNAL(clicked(const QModelIndex&)),
+                this,
+                SLOT(item_clicked(const QModelIndex&))
+                );
 }
 
 QSTextEdit * MainWindow::get_logwindow(){
@@ -39,6 +58,7 @@ void MainWindow::on_save_json(){
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                "output_strategy.json",
                                tr("Json file (*.json)"));
+    if(fileName.isNull())return;
     this->qSolverJob->savefile = fileName;
     qSolverJob->current_mission = QSolverJob::MissionType::SAVING;
     qSolverJob->start();
@@ -91,12 +111,7 @@ void MainWindow::clear_all_params(){
     this->ui->useIsoCheck->setChecked(false);
 }
 
-void MainWindow::on_import_params(){
-    QString fileName =  QFileDialog::getOpenFileName(
-              this,
-              tr("Open parameters file"),
-              QDir::currentPath(),
-              tr("Text files (*.txt)"));
+void MainWindow::import_from_file(QString fileName){
     if( fileName.isNull() )
     {
         qDebug().noquote() << tr("File selection invalid.");
@@ -220,10 +235,20 @@ void MainWindow::on_import_params(){
     this->update();
 }
 
+void MainWindow::on_import_params(){
+    QString fileName =  QFileDialog::getOpenFileName(
+              this,
+              tr("Open parameters file"),
+              QDir::currentPath(),
+              tr("Text files (*.txt)"));
+    this->import_from_file(fileName);
+}
+
 void MainWindow::on_export_params(){
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Parameters"),
-                               "output_parameters.txt",
+                               "parameters/output_parameters.txt",
                                tr("Text file (*.txt)"));
+    if(fileName.isNull())return;
     QString output_text = "";
     QTextStream out(&output_text);
     out << "set_pot " << this->ui->potText->text().trimmed();
@@ -552,4 +577,23 @@ void MainWindow::on_selectBoardButton_clicked()
     this->boardSelector = new boardselector(this->ui->boardText,mode,this);
     boardSelector->setAttribute(Qt::WA_DeleteOnClose);
     boardSelector->show();
+}
+
+void MainWindow::on_openParametersFolderButton_clicked()
+{
+    QDesktopServices::openUrl(QUrl::fromLocalFile(QDir::current().filePath("parameters")));
+}
+
+void MainWindow::item_clicked(const QModelIndex& index){
+    if(!this->qFileSystemModel->isDir(index)){
+        QFileInfo fileinfo = QFileInfo(this->qFileSystemModel->filePath(index));
+        if(fileinfo.suffix() == "txt"){
+            this->import_from_file(this->qFileSystemModel->filePath(index));
+        }
+    }
+}
+
+void MainWindow::on_exportCurrentParameterButton_clicked()
+{
+    this->on_export_params();
 }

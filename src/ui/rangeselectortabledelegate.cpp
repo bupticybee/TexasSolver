@@ -1,4 +1,4 @@
-#include "include/ui/rangeselectortabledelegate.h"
+﻿#include "include/ui/rangeselectortabledelegate.h"
 
 RangeSelectorTableDelegate::RangeSelectorTableDelegate(QStringList ranks,RangeSelectorTableModel *rangeSelectorTableModel,QObject *parent):WordItemDelegate(parent){
     this->rank_list = ranks;
@@ -14,6 +14,7 @@ void RangeSelectorTableDelegate::paint(QPainter *painter, const QStyleOptionView
     QRect rect(option.rect.left(), option.rect.top(),\
              option.rect.width(), option.rect.height());
     QBrush brush(Qt::gray);
+    if(index.column() == index.row())brush = QBrush(Qt::darkGray);
     painter->fillRect(rect, brush);
 
     float range_float = this->rangeSelectorTableModel->getRangeAt(index.row(),index.column());

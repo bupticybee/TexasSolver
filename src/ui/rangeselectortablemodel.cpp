@@ -1,7 +1,8 @@
 #include "include/ui/rangeselectortablemodel.h"
 
-RangeSelectorTableModel::RangeSelectorTableModel(QStringList ranks,QString initial_board,QObject *parent):QAbstractItemModel(parent){
+RangeSelectorTableModel::RangeSelectorTableModel(QStringList ranks,QString initial_board,QObject *parent,bool thumbnail):QAbstractItemModel(parent){
     this->ranklist = ranks;
+    this->thumbnail = thumbnail;
 
     this->grids_string = vector<vector<QString>>(this->ranklist.size());
     for(int i = 0;i < this->ranklist.size();i ++){

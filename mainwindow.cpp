@@ -30,6 +30,10 @@ MainWindow::MainWindow(QWidget *parent) :
     qFileSystemModel = new QFileSystemModel(this);
     QDir filedir = QDir::current().filePath("parameters");
     qFileSystemModel->setRootPath(filedir.path());
+#ifdef Q_OS_MAC
+    filedir = QDir("");
+    qFileSystemModel->setRootPath(filedir.path());
+#endif
     qFileSystemModel->setNameFilters(filters);
     qFileSystemModel->setFilter(QDir::AllDirs | QDir::AllEntries |QDir::NoDotAndDotDot);
     this->ui->parametersTreeView->setModel(this->qFileSystemModel);
@@ -42,6 +46,22 @@ MainWindow::MainWindow(QWidget *parent) :
                 this,
                 SLOT(item_clicked(const QModelIndex&))
                 );
+
+    // Thumbnail process
+    this->ip_model = new RangeSelectorTableModel(QString("A,K,Q,J,T,9,8,7,6,5,4,3,2").split(","),this->ui->ipRangeText->toPlainText(),this,true);
+    this->ip_delegate = new RangeSelectorTableDelegate(QString("A,K,Q,J,T,9,8,7,6,5,4,3,2").split(","),this->ip_model,this);
+    this->ui->IpRangeTableView->setModel(this->ip_model);
+    this->ui->IpRangeTableView->setItemDelegate(this->ip_delegate);
+    this->ui->IpRangeTableView->verticalHeader()->setMinimumSectionSize(1);
+    this->ui->IpRangeTableView->horizontalHeader()->setMinimumSectionSize(1);
+
+    this->oop_model = new RangeSelectorTableModel(QString("A,K,Q,J,T,9,8,7,6,5,4,3,2").split(","),this->ui->oopRangeText->toPlainText(),this,true);
+    this->oop_delegate = new RangeSelectorTableDelegate(QString("A,K,Q,J,T,9,8,7,6,5,4,3,2").split(","),this->oop_model,this);
+    this->ui->oopRangeTableView->setModel(this->oop_model);
+    this->ui->oopRangeTableView->setItemDelegate(this->oop_delegate);
+    this->ui->oopRangeTableView->verticalHeader()->setMinimumSectionSize(1);
+    this->ui->oopRangeTableView->horizontalHeader()->setMinimumSectionSize(1);
+    this->ui->tabWidget->hide();
 }
 
 QSTextEdit * MainWindow::get_logwindow(){
@@ -51,6 +71,11 @@ QSTextEdit * MainWindow::get_logwindow(){
 MainWindow::~MainWindow()
 {
     delete qSolverJob;
+    delete qFileSystemModel;
+    delete ip_delegate;
+    delete ip_model;
+    delete oop_delegate;
+    delete oop_model;
     delete ui;
 }
 
@@ -74,6 +99,10 @@ QString getParams(QString input,QString key){
 
 void MainWindow::on_clear_all(){
     this->clear_all_params();
+    this->ui->IpRangeTableView->update();
+    this->ui->oopRangeTableView->update();
+    this->ui->IpRangeTableView->setFocus();
+    this->ui->oopRangeTableView->setFocus();
 }
 
 void MainWindow::clear_all_params(){
@@ -242,6 +271,10 @@ void MainWindow::on_import_params(){
               QDir::currentPath(),
               tr("Text files (*.txt)"));
     this->import_from_file(fileName);
+    this->ui->IpRangeTableView->update();
+    this->ui->oopRangeTableView->update();
+    this->ui->IpRangeTableView->setFocus();
+    this->ui->oopRangeTableView->setFocus();
 }
 
 void MainWindow::on_export_params(){
@@ -589,6 +622,10 @@ void MainWindow::item_clicked(const QModelIndex& index){
         QFileInfo fileinfo = QFileInfo(this->qFileSystemModel->filePath(index));
         if(fileinfo.suffix() == "txt"){
             this->import_from_file(this->qFileSystemModel->filePath(index));
+            this->ui->IpRangeTableView->update();
+            this->ui->oopRangeTableView->update();
+            this->ui->IpRangeTableView->setFocus();
+            this->ui->oopRangeTableView->setFocus();
         }
     }
 }
@@ -596,4 +633,16 @@ void MainWindow::item_clicked(const QModelIndex& index){
 void MainWindow::on_exportCurrentParameterButton_clicked()
 {
     this->on_export_params();
+}
+
+void MainWindow::on_ipRangeText_textChanged()
+{
+    this->ip_model->setRangeText(this->ui->ipRangeText->toPlainText());
+    this->ui->IpRangeTableView->update();
+}
+
+void MainWindow::on_oopRangeText_textChanged()
+{
+    this->oop_model->setRangeText(this->ui->oopRangeText->toPlainText());
+    this->ui->oopRangeTableView->update();
 }

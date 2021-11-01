@@ -60,12 +60,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="32"/>
+        <location filename="mainwindow.ui" line="34"/>
         <source>IP Range</source>
         <translation>后行玩家(IP)范围</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="38"/>
+        <location filename="mainwindow.ui" line="40"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -79,17 +79,16 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="49"/>
         <source>Select IP Range</source>
-        <translation>选择后行玩家(IP)范围</translation>
+        <translation type="vanished">选择后行玩家(IP)范围</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="57"/>
+        <location filename="mainwindow.ui" line="52"/>
         <source>OOp range</source>
         <translation>先行玩家(OOP)范围</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="63"/>
+        <location filename="mainwindow.ui" line="58"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -103,17 +102,16 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="74"/>
         <source>Select OOP Range</source>
-        <translation>选择先行玩家(OOP)范围</translation>
+        <translation type="vanished">选择先行玩家(OOP)范围</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="89"/>
+        <location filename="mainwindow.ui" line="134"/>
         <source>Board</source>
         <translation>公共牌</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="96"/>
+        <location filename="mainwindow.ui" line="141"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -127,200 +125,225 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="107"/>
+        <location filename="mainwindow.ui" line="152"/>
         <source>Select Board Card</source>
         <translation>选择公共牌</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="122"/>
+        <location filename="mainwindow.ui" line="167"/>
         <source>Flop IP</source>
         <translation>翻牌 后行玩家(IP) 配置</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="130"/>
-        <location filename="mainwindow.ui" line="207"/>
-        <location filename="mainwindow.ui" line="284"/>
-        <location filename="mainwindow.ui" line="389"/>
-        <location filename="mainwindow.ui" line="466"/>
-        <location filename="mainwindow.ui" line="568"/>
+        <location filename="mainwindow.ui" line="175"/>
+        <location filename="mainwindow.ui" line="252"/>
+        <location filename="mainwindow.ui" line="329"/>
+        <location filename="mainwindow.ui" line="434"/>
+        <location filename="mainwindow.ui" line="511"/>
+        <location filename="mainwindow.ui" line="613"/>
         <source>Bet Sizes : </source>
         <translation>下注尺度: </translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="137"/>
-        <location filename="mainwindow.ui" line="214"/>
-        <location filename="mainwindow.ui" line="291"/>
-        <location filename="mainwindow.ui" line="396"/>
-        <location filename="mainwindow.ui" line="473"/>
-        <location filename="mainwindow.ui" line="523"/>
-        <location filename="mainwindow.ui" line="575"/>
-        <location filename="mainwindow.ui" line="625"/>
-        <location filename="mainwindow.ui" line="687"/>
+        <location filename="mainwindow.ui" line="182"/>
+        <location filename="mainwindow.ui" line="259"/>
+        <location filename="mainwindow.ui" line="336"/>
+        <location filename="mainwindow.ui" line="441"/>
+        <location filename="mainwindow.ui" line="518"/>
+        <location filename="mainwindow.ui" line="568"/>
+        <location filename="mainwindow.ui" line="620"/>
+        <location filename="mainwindow.ui" line="670"/>
+        <location filename="mainwindow.ui" line="732"/>
         <source>50</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="155"/>
-        <location filename="mainwindow.ui" line="232"/>
-        <location filename="mainwindow.ui" line="309"/>
-        <location filename="mainwindow.ui" line="414"/>
-        <location filename="mainwindow.ui" line="491"/>
-        <location filename="mainwindow.ui" line="593"/>
+        <location filename="mainwindow.ui" line="200"/>
+        <location filename="mainwindow.ui" line="277"/>
+        <location filename="mainwindow.ui" line="354"/>
+        <location filename="mainwindow.ui" line="459"/>
+        <location filename="mainwindow.ui" line="536"/>
+        <location filename="mainwindow.ui" line="638"/>
         <source>Raise Sizes: </source>
         <translation>加注尺度: </translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="162"/>
-        <location filename="mainwindow.ui" line="239"/>
-        <location filename="mainwindow.ui" line="421"/>
-        <location filename="mainwindow.ui" line="498"/>
+        <location filename="mainwindow.ui" line="207"/>
+        <location filename="mainwindow.ui" line="284"/>
+        <location filename="mainwindow.ui" line="466"/>
+        <location filename="mainwindow.ui" line="543"/>
         <source>60</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="180"/>
-        <location filename="mainwindow.ui" line="257"/>
-        <location filename="mainwindow.ui" line="334"/>
-        <location filename="mainwindow.ui" line="439"/>
-        <location filename="mainwindow.ui" line="541"/>
-        <location filename="mainwindow.ui" line="643"/>
+        <location filename="mainwindow.ui" line="225"/>
+        <location filename="mainwindow.ui" line="302"/>
+        <location filename="mainwindow.ui" line="379"/>
+        <location filename="mainwindow.ui" line="484"/>
+        <location filename="mainwindow.ui" line="586"/>
+        <location filename="mainwindow.ui" line="688"/>
         <source>Add Allin</source>
         <translation>允许全下</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="144"/>
-        <location filename="mainwindow.ui" line="169"/>
-        <location filename="mainwindow.ui" line="221"/>
-        <location filename="mainwindow.ui" line="246"/>
-        <location filename="mainwindow.ui" line="298"/>
-        <location filename="mainwindow.ui" line="323"/>
-        <location filename="mainwindow.ui" line="403"/>
-        <location filename="mainwindow.ui" line="428"/>
-        <location filename="mainwindow.ui" line="480"/>
-        <location filename="mainwindow.ui" line="505"/>
-        <location filename="mainwindow.ui" line="530"/>
-        <location filename="mainwindow.ui" line="582"/>
-        <location filename="mainwindow.ui" line="607"/>
-        <location filename="mainwindow.ui" line="632"/>
+        <location filename="mainwindow.ui" line="189"/>
+        <location filename="mainwindow.ui" line="214"/>
+        <location filename="mainwindow.ui" line="266"/>
+        <location filename="mainwindow.ui" line="291"/>
+        <location filename="mainwindow.ui" line="343"/>
+        <location filename="mainwindow.ui" line="368"/>
+        <location filename="mainwindow.ui" line="448"/>
+        <location filename="mainwindow.ui" line="473"/>
+        <location filename="mainwindow.ui" line="525"/>
+        <location filename="mainwindow.ui" line="550"/>
+        <location filename="mainwindow.ui" line="575"/>
+        <location filename="mainwindow.ui" line="627"/>
+        <location filename="mainwindow.ui" line="652"/>
+        <location filename="mainwindow.ui" line="677"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="199"/>
+        <location filename="mainwindow.ui" line="85"/>
+        <source>Select IP</source>
+        <translation>选择Ip范围</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="106"/>
+        <source>Select OOP</source>
+        <translation>选择OOP范围</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="244"/>
         <source>Turn IP</source>
         <translation>转牌 后行玩家(IP) 配置</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="276"/>
+        <location filename="mainwindow.ui" line="321"/>
         <source>River IP</source>
         <translation>河牌 后行玩家(IP) 配置</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="316"/>
-        <location filename="mainwindow.ui" line="600"/>
+        <location filename="mainwindow.ui" line="361"/>
+        <location filename="mainwindow.ui" line="645"/>
         <source>60 100</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="355"/>
+        <location filename="mainwindow.ui" line="400"/>
         <source>Copy from Ip to OOP</source>
         <translation>从IP到OOP拷贝配置</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="381"/>
+        <location filename="mainwindow.ui" line="426"/>
         <source>Flop OOP</source>
         <translation>翻牌 先行玩家(OOP) 配置</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="458"/>
+        <location filename="mainwindow.ui" line="503"/>
         <source>Turn OOP</source>
         <translation>转牌 先行玩家(OOP) 配置</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="516"/>
-        <location filename="mainwindow.ui" line="618"/>
+        <location filename="mainwindow.ui" line="561"/>
+        <location filename="mainwindow.ui" line="663"/>
         <source>Donk Sizes: </source>
         <translation>反主動下注尺度: </translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="560"/>
+        <location filename="mainwindow.ui" line="605"/>
         <source>River OOP</source>
         <translation>河牌 先行玩家(OOP) 配置</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="666"/>
+        <location filename="mainwindow.ui" line="711"/>
         <source>raise limit: </source>
         <translation>加注最大次数: </translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="673"/>
+        <location filename="mainwindow.ui" line="718"/>
         <source>3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="680"/>
+        <location filename="mainwindow.ui" line="725"/>
         <source>times.      Pot: </source>
         <translation>次.      底池(pot)筹码量: </translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="694"/>
+        <location filename="mainwindow.ui" line="739"/>
         <source>Effective Stack: </source>
         <translation>有效筹码量: </translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="701"/>
-        <location filename="mainwindow.ui" line="824"/>
+        <location filename="mainwindow.ui" line="746"/>
+        <location filename="mainwindow.ui" line="869"/>
         <source>200</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="708"/>
+        <location filename="mainwindow.ui" line="753"/>
         <source>  Mode: </source>
         <translation>  软件模式: </translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="716"/>
+        <location filename="mainwindow.ui" line="761"/>
         <source>texas holdem</source>
         <translation>德州扑克</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="721"/>
+        <location filename="mainwindow.ui" line="766"/>
         <source>shortdeck</source>
         <translation>短牌</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="733"/>
+        <location filename="mainwindow.ui" line="778"/>
         <source>allin threshold: </source>
         <translation>全下阈值(%): </translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="746"/>
+        <location filename="mainwindow.ui" line="791"/>
         <source>0.67</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="753"/>
+        <location filename="mainwindow.ui" line="798"/>
         <source>     use isomorphism</source>
         <translation>     利用游戏对称性加速</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="787"/>
+        <location filename="mainwindow.ui" line="832"/>
         <source>Build Tree</source>
         <translation>构建游戏树</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="794"/>
+        <location filename="mainwindow.ui" line="839"/>
         <source>Estimate Solving Memory</source>
         <translation>估计求解需要的内存</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1092"/>
-        <location filename="mainwindow.cpp" line="315"/>
+        <location filename="mainwindow.ui" line="1014"/>
+        <source>Parameters</source>
+        <translation>参数</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="1022"/>
+        <source>Export Current Parameter</source>
+        <translation>导出当前参数</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="1029"/>
+        <source>Open Parameters Folder</source>
+        <translation>打开参数目录</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="1190"/>
+        <location filename="mainwindow.cpp" line="373"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1107"/>
+        <location filename="mainwindow.ui" line="1205"/>
         <source>clear all</source>
         <translation>清除所有</translation>
     </message>
@@ -329,57 +352,57 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">展示游戏树</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="809"/>
+        <location filename="mainwindow.ui" line="854"/>
         <source>Solver Options</source>
         <translation>求解器选项</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="817"/>
+        <location filename="mainwindow.ui" line="862"/>
         <source>iterations: </source>
         <translation>迭代次数: </translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="831"/>
+        <location filename="mainwindow.ui" line="876"/>
         <source>times.    stop solving when reach </source>
         <translation>次.         当达到 </translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="838"/>
+        <location filename="mainwindow.ui" line="883"/>
         <source>0.5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="845"/>
+        <location filename="mainwindow.ui" line="890"/>
         <source>% exploitability</source>
         <translation>%底池的剥削度后停止程序</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="869"/>
+        <location filename="mainwindow.ui" line="914"/>
         <source>log interval:  </source>
         <translation>打印间隔:  </translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="876"/>
+        <location filename="mainwindow.ui" line="921"/>
         <source>10</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="883"/>
+        <location filename="mainwindow.ui" line="928"/>
         <source>threads: </source>
         <translation>进程数: </translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="890"/>
+        <location filename="mainwindow.ui" line="935"/>
         <source>8</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="920"/>
+        <location filename="mainwindow.ui" line="965"/>
         <source>Start solving</source>
         <translation>开始求解</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="933"/>
+        <location filename="mainwindow.ui" line="978"/>
         <source>Stop solving</source>
         <translation>停止求解</translation>
     </message>
@@ -388,93 +411,93 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">开始求解局面</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="946"/>
+        <location filename="mainwindow.ui" line="991"/>
         <source>ShowResult</source>
         <translation>显示结果</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="970"/>
+        <location filename="mainwindow.ui" line="1068"/>
         <source>Clear Log</source>
         <translation>清除日志</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="998"/>
+        <location filename="mainwindow.ui" line="1096"/>
         <source>Solver</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1097"/>
+        <location filename="mainwindow.ui" line="1195"/>
         <source>import</source>
         <translation>导入参数</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1102"/>
+        <location filename="mainwindow.ui" line="1200"/>
         <source>export</source>
         <translation>导出参数</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1004"/>
+        <location filename="mainwindow.ui" line="1102"/>
         <source>strategy</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1008"/>
+        <location filename="mainwindow.ui" line="1106"/>
         <source>export to file</source>
         <translation>保存策略到文件</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1016"/>
+        <location filename="mainwindow.ui" line="1114"/>
         <source>parameters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1037"/>
+        <location filename="mainwindow.ui" line="1135"/>
         <source>import setting</source>
         <translation>导入参数</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1042"/>
+        <location filename="mainwindow.ui" line="1140"/>
         <source>export current setting</source>
         <translation>导出当前参数</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1047"/>
+        <location filename="mainwindow.ui" line="1145"/>
         <source>ZN-CH</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1052"/>
-        <location filename="mainwindow.ui" line="1057"/>
+        <location filename="mainwindow.ui" line="1150"/>
+        <location filename="mainwindow.ui" line="1155"/>
         <source>Enghish</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1062"/>
+        <location filename="mainwindow.ui" line="1160"/>
         <source>Chinese</source>
         <translation>中文</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1067"/>
+        <location filename="mainwindow.ui" line="1165"/>
         <source>import IP range</source>
         <translation>导入后行玩家(IP)range</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1072"/>
+        <location filename="mainwindow.ui" line="1170"/>
         <source>import OOP range</source>
         <translation>导入先行玩家(OOP)range</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1077"/>
+        <location filename="mainwindow.ui" line="1175"/>
         <source>export IP range</source>
         <translation>导出后行玩家(IP)range</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1082"/>
+        <location filename="mainwindow.ui" line="1180"/>
         <source>export OOP range</source>
         <translation>导出先行玩家(OOP)range</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1087"/>
+        <location filename="mainwindow.ui" line="1185"/>
         <source>json</source>
         <translation>json文件</translation>
     </message>
@@ -484,63 +507,63 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="39"/>
+        <location filename="mainwindow.cpp" line="83"/>
         <source>Save File</source>
         <translation>保存文件</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="41"/>
+        <location filename="mainwindow.cpp" line="85"/>
         <source>Json file (*.json)</source>
         <translation>Json 文件 (*.json)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="97"/>
+        <location filename="mainwindow.cpp" line="270"/>
         <source>Open parameters file</source>
         <translation>打开参数文件</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="99"/>
+        <location filename="mainwindow.cpp" line="272"/>
         <source>Text files (*.txt)</source>
         <translation>文本 files (*.txt)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="102"/>
+        <location filename="mainwindow.cpp" line="146"/>
         <source>File selection invalid.</source>
         <translation>文件选择无效.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="107"/>
+        <location filename="mainwindow.cpp" line="151"/>
         <source>File open failed.</source>
         <translation>文件打开失败.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="224"/>
+        <location filename="mainwindow.cpp" line="281"/>
         <source>Save Parameters</source>
         <translation>保存参数</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="226"/>
+        <location filename="mainwindow.cpp" line="283"/>
         <source>Text file (*.txt)</source>
         <translation>文本文件 (*.txt)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="537"/>
+        <location filename="mainwindow.cpp" line="595"/>
         <source>Please build tree first.</source>
         <translation>请先建树.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="539"/>
-        <location filename="mainwindow.cpp" line="541"/>
+        <location filename="mainwindow.cpp" line="597"/>
+        <location filename="mainwindow.cpp" line="599"/>
         <source>Estimated Memory Usage: </source>
         <translation>估计的内存消耗: </translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="539"/>
+        <location filename="mainwindow.cpp" line="597"/>
         <source> Mb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="541"/>
+        <location filename="mainwindow.cpp" line="599"/>
         <source> Gb</source>
         <translation type="unfinished"></translation>
     </message>
@@ -667,15 +690,15 @@ p, li { white-space: pre-wrap; }
         <translation>请先构建游戏树.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="334"/>
-        <location filename="rangeselector.cpp" line="139"/>
+        <location filename="mainwindow.cpp" line="392"/>
+        <location filename="rangeselector.cpp" line="162"/>
         <location filename="src/runtime/PokerSolver.cpp" line="143"/>
         <source>save success</source>
         <translation>保存成功</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="336"/>
-        <location filename="rangeselector.cpp" line="141"/>
+        <location filename="mainwindow.cpp" line="394"/>
+        <location filename="rangeselector.cpp" line="164"/>
         <location filename="src/runtime/PokerSolver.cpp" line="145"/>
         <source>save failed, file cannot be open</source>
         <translation>保存失败，文件无法打开</translation>
@@ -792,7 +815,12 @@ p, li { white-space: pre-wrap; }
         <translation>导入范围</translation>
     </message>
     <message>
-        <location filename="rangeselector.ui" line="100"/>
+        <location filename="rangeselector.ui" line="71"/>
+        <source>Open Range Folder</source>
+        <translation>打开范围目录</translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="107"/>
         <source>Range Number</source>
         <translation>范围数字</translation>
     </message>
@@ -802,32 +830,32 @@ p, li { white-space: pre-wrap; }
         <translation>范围选择器</translation>
     </message>
     <message>
-        <location filename="rangeselector.cpp" line="125"/>
+        <location filename="rangeselector.cpp" line="147"/>
         <source>Save Range</source>
         <translation>保存范围</translation>
     </message>
     <message>
-        <location filename="rangeselector.cpp" line="127"/>
+        <location filename="rangeselector.cpp" line="149"/>
         <source>Text file (*.txt)</source>
         <translation>文本文件 (*.txt)</translation>
     </message>
     <message>
-        <location filename="rangeselector.cpp" line="158"/>
+        <location filename="rangeselector.cpp" line="198"/>
         <source>Open range file</source>
         <translation>打开范围文件</translation>
     </message>
     <message>
-        <location filename="rangeselector.cpp" line="160"/>
+        <location filename="rangeselector.cpp" line="200"/>
         <source>Text files (*.txt)</source>
         <translation>文本文件 (*.txt)</translation>
     </message>
     <message>
-        <location filename="rangeselector.cpp" line="163"/>
+        <location filename="rangeselector.cpp" line="180"/>
         <source>File selection invalid.</source>
         <translation>文件选择无效.</translation>
     </message>
     <message>
-        <location filename="rangeselector.cpp" line="168"/>
+        <location filename="rangeselector.cpp" line="185"/>
         <source>File open failed.</source>
         <translation>文件打开失败.</translation>
     </message>
@@ -835,29 +863,29 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RangeSelectorTableModel</name>
     <message>
-        <location filename="src/ui/rangeselectortablemodel.cpp" line="81"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="82"/>
         <source>skipping range %1, format error, range list should contain two part seperate by &apos;:&apos;</source>
         <translation>跳过范围 %1, 格式错误, 范围字符串应该包含两部分，由&apos;:&apos;间隔</translation>
     </message>
     <message>
-        <location filename="src/ui/rangeselectortablemodel.cpp" line="97"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="98"/>
         <source>skipping range %1, format error</source>
         <translation>跳过范围 %1, 格式错误</translation>
     </message>
     <message>
-        <location filename="src/ui/rangeselectortablemodel.cpp" line="134"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="135"/>
         <source>o</source>
-        <translation>异色</translation>
+        <translation>o</translation>
     </message>
     <message>
-        <location filename="src/ui/rangeselectortablemodel.cpp" line="136"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="137"/>
         <source>s</source>
-        <translation>同色</translation>
+        <translation>s</translation>
     </message>
     <message>
-        <location filename="src/ui/rangeselectortablemodel.cpp" line="138"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="139"/>
         <source> </source>
-        <translation>对子</translation>
+        <translation> </translation>
     </message>
 </context>
 <context>
@@ -1089,17 +1117,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/ui/tablestrategymodel.cpp" line="51"/>
         <source>o</source>
-        <translation>异色</translation>
+        <translation>o</translation>
     </message>
     <message>
         <location filename="src/ui/tablestrategymodel.cpp" line="53"/>
         <source>s</source>
-        <translation>同色</translation>
+        <translation>s</translation>
     </message>
     <message>
         <location filename="src/ui/tablestrategymodel.cpp" line="55"/>
         <source> </source>
-        <translation>对子</translation>
+        <translation> </translation>
     </message>
 </context>
 <context>

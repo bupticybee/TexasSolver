@@ -11,6 +11,8 @@
 #include <QMessageBox>
 #include "boardselector.h"
 #include "settingeditor.h"
+#include "include/ui/rangeselectortablemodel.h"
+#include "include/ui/rangeselectortabledelegate.h"
 
 namespace Ui {
 class MainWindow;
@@ -51,6 +53,10 @@ private slots:
 
     void on_exportCurrentParameterButton_clicked();
 
+    void on_ipRangeText_textChanged();
+
+    void on_oopRangeText_textChanged();
+
 private:
     void clear_all_params();
     Ui::MainWindow *ui = NULL;
@@ -60,6 +66,11 @@ private:
     RangeSelector* rangeSelector = NULL;
     boardselector* boardSelector = NULL;
     SettingEditor* settingEditor = NULL;
+    RangeSelectorTableDelegate * ip_delegate;
+    RangeSelectorTableDelegate * oop_delegate;
+    RangeSelectorTableModel * ip_model;
+    RangeSelectorTableModel * oop_model;
+
 };
 
 #endif // MAINWINDOW_H

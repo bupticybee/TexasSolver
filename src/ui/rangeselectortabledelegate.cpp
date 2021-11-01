@@ -33,6 +33,8 @@ void RangeSelectorTableDelegate::paint(QPainter *painter, const QStyleOptionView
 
     painter->translate(options.rect.left(), options.rect.top());
     QRect clip(0, 0, options.rect.width(), options.rect.height());
-    doc.drawContents(painter, clip);
+    if(!this->rangeSelectorTableModel->in_thumbnail_mode()){
+        doc.drawContents(painter, clip);
+    }
     painter->restore();
 }

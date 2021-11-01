@@ -112,7 +112,8 @@ void HtmlTableView::resizeEvent(QResizeEvent* ev){
         int used_width = 0;
         // Set our widths to be a percentage of the available width
         for (int i = 0; i < num_columns - 1; i++) {
-            int column_width = width / num_columns;
+            //int column_width = width / num_columns;
+            int column_width = (int)((float)width * (i + 1) / num_columns) -  (int)((float)width * (i) / num_columns);
             this->setColumnWidth(i, column_width);
             used_width += column_width;
         }
@@ -124,7 +125,8 @@ void HtmlTableView::resizeEvent(QResizeEvent* ev){
         int height = ev->size().height();
         int used_height = 0;
         for (int i = 0; i < num_columns - 1; i++) {
-            int column_height = height / num_rows;
+            //int column_height = height / num_rows;
+            int column_height = (int)((float)height * (i + 1) / num_rows) -  (int)((float)height * (i) / num_rows);
             this->setRowHeight(i, column_height);
             used_height += column_height;
         }

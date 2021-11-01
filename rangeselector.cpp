@@ -34,6 +34,10 @@ RangeSelector::RangeSelector(QTextEdit* rangeEdit,QWidget *parent,QSolverJob::Mo
     qFileSystemModel = new QFileSystemModel(this);
     QDir filedir = QDir::current().filePath("ranges");
     qFileSystemModel->setRootPath(filedir.path());
+#ifdef Q_OS_MAC
+    filedir = QDir("");
+    qFileSystemModel->setRootPath(filedir.path());
+#endif
     qFileSystemModel->setNameFilters(filters);
     qFileSystemModel->setFilter(QDir::AllDirs | QDir::AllEntries |QDir::NoDotAndDotDot);
     this->ui->rangeFilesTreeView->setModel(this->qFileSystemModel);

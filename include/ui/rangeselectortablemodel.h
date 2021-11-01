@@ -24,7 +24,7 @@ class RangeSelectorTableModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    explicit RangeSelectorTableModel(QStringList ranks,QString initial_board,QObject *parent = nullptr);
+    explicit RangeSelectorTableModel(QStringList ranks,QString initial_board,QObject *parent = nullptr,bool thumbnail=false);
     ~RangeSelectorTableModel();
 
     float getRangeAt(int i, int j);
@@ -40,12 +40,14 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     void clear_range();
+    bool in_thumbnail_mode(){return this->thumbnail;}
 private:
     vector<vector<QString>> grids_string;
     vector<vector<float>> grids_float;
     map<QString,pair<int,int>> string2ij;
     QString get_ij_text(int i,int j);
     QStringList ranklist;
+    bool thumbnail = false;
 };
 
 

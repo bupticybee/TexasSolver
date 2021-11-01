@@ -60,12 +60,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="32"/>
+        <location filename="mainwindow.ui" line="34"/>
         <source>IP Range</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="38"/>
+        <location filename="mainwindow.ui" line="40"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -79,17 +79,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="49"/>
-        <source>Select IP Range</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="57"/>
+        <location filename="mainwindow.ui" line="52"/>
         <source>OOp range</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="63"/>
+        <location filename="mainwindow.ui" line="58"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -103,17 +98,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="74"/>
-        <source>Select OOP Range</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="89"/>
+        <location filename="mainwindow.ui" line="134"/>
         <source>Board</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="96"/>
+        <location filename="mainwindow.ui" line="141"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -127,346 +117,371 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="107"/>
+        <location filename="mainwindow.ui" line="152"/>
         <source>Select Board Card</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="122"/>
+        <location filename="mainwindow.ui" line="167"/>
         <source>Flop IP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="130"/>
-        <location filename="mainwindow.ui" line="207"/>
-        <location filename="mainwindow.ui" line="284"/>
-        <location filename="mainwindow.ui" line="389"/>
-        <location filename="mainwindow.ui" line="466"/>
-        <location filename="mainwindow.ui" line="568"/>
+        <location filename="mainwindow.ui" line="175"/>
+        <location filename="mainwindow.ui" line="252"/>
+        <location filename="mainwindow.ui" line="329"/>
+        <location filename="mainwindow.ui" line="434"/>
+        <location filename="mainwindow.ui" line="511"/>
+        <location filename="mainwindow.ui" line="613"/>
         <source>Bet Sizes : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="137"/>
-        <location filename="mainwindow.ui" line="214"/>
-        <location filename="mainwindow.ui" line="291"/>
-        <location filename="mainwindow.ui" line="396"/>
-        <location filename="mainwindow.ui" line="473"/>
-        <location filename="mainwindow.ui" line="523"/>
-        <location filename="mainwindow.ui" line="575"/>
-        <location filename="mainwindow.ui" line="625"/>
-        <location filename="mainwindow.ui" line="687"/>
+        <location filename="mainwindow.ui" line="182"/>
+        <location filename="mainwindow.ui" line="259"/>
+        <location filename="mainwindow.ui" line="336"/>
+        <location filename="mainwindow.ui" line="441"/>
+        <location filename="mainwindow.ui" line="518"/>
+        <location filename="mainwindow.ui" line="568"/>
+        <location filename="mainwindow.ui" line="620"/>
+        <location filename="mainwindow.ui" line="670"/>
+        <location filename="mainwindow.ui" line="732"/>
         <source>50</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="155"/>
-        <location filename="mainwindow.ui" line="232"/>
-        <location filename="mainwindow.ui" line="309"/>
-        <location filename="mainwindow.ui" line="414"/>
-        <location filename="mainwindow.ui" line="491"/>
-        <location filename="mainwindow.ui" line="593"/>
+        <location filename="mainwindow.ui" line="200"/>
+        <location filename="mainwindow.ui" line="277"/>
+        <location filename="mainwindow.ui" line="354"/>
+        <location filename="mainwindow.ui" line="459"/>
+        <location filename="mainwindow.ui" line="536"/>
+        <location filename="mainwindow.ui" line="638"/>
         <source>Raise Sizes: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="162"/>
-        <location filename="mainwindow.ui" line="239"/>
-        <location filename="mainwindow.ui" line="421"/>
-        <location filename="mainwindow.ui" line="498"/>
+        <location filename="mainwindow.ui" line="207"/>
+        <location filename="mainwindow.ui" line="284"/>
+        <location filename="mainwindow.ui" line="466"/>
+        <location filename="mainwindow.ui" line="543"/>
         <source>60</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="180"/>
-        <location filename="mainwindow.ui" line="257"/>
-        <location filename="mainwindow.ui" line="334"/>
-        <location filename="mainwindow.ui" line="439"/>
-        <location filename="mainwindow.ui" line="541"/>
-        <location filename="mainwindow.ui" line="643"/>
+        <location filename="mainwindow.ui" line="225"/>
+        <location filename="mainwindow.ui" line="302"/>
+        <location filename="mainwindow.ui" line="379"/>
+        <location filename="mainwindow.ui" line="484"/>
+        <location filename="mainwindow.ui" line="586"/>
+        <location filename="mainwindow.ui" line="688"/>
         <source>Add Allin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="144"/>
-        <location filename="mainwindow.ui" line="169"/>
-        <location filename="mainwindow.ui" line="221"/>
-        <location filename="mainwindow.ui" line="246"/>
-        <location filename="mainwindow.ui" line="298"/>
-        <location filename="mainwindow.ui" line="323"/>
-        <location filename="mainwindow.ui" line="403"/>
-        <location filename="mainwindow.ui" line="428"/>
-        <location filename="mainwindow.ui" line="480"/>
-        <location filename="mainwindow.ui" line="505"/>
-        <location filename="mainwindow.ui" line="530"/>
-        <location filename="mainwindow.ui" line="582"/>
-        <location filename="mainwindow.ui" line="607"/>
-        <location filename="mainwindow.ui" line="632"/>
+        <location filename="mainwindow.ui" line="189"/>
+        <location filename="mainwindow.ui" line="214"/>
+        <location filename="mainwindow.ui" line="266"/>
+        <location filename="mainwindow.ui" line="291"/>
+        <location filename="mainwindow.ui" line="343"/>
+        <location filename="mainwindow.ui" line="368"/>
+        <location filename="mainwindow.ui" line="448"/>
+        <location filename="mainwindow.ui" line="473"/>
+        <location filename="mainwindow.ui" line="525"/>
+        <location filename="mainwindow.ui" line="550"/>
+        <location filename="mainwindow.ui" line="575"/>
+        <location filename="mainwindow.ui" line="627"/>
+        <location filename="mainwindow.ui" line="652"/>
+        <location filename="mainwindow.ui" line="677"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="199"/>
+        <location filename="mainwindow.ui" line="85"/>
+        <source>Select IP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="106"/>
+        <source>Select OOP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="244"/>
         <source>Turn IP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="276"/>
+        <location filename="mainwindow.ui" line="321"/>
         <source>River IP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="316"/>
-        <location filename="mainwindow.ui" line="600"/>
+        <location filename="mainwindow.ui" line="361"/>
+        <location filename="mainwindow.ui" line="645"/>
         <source>60 100</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="355"/>
+        <location filename="mainwindow.ui" line="400"/>
         <source>Copy from Ip to OOP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="381"/>
+        <location filename="mainwindow.ui" line="426"/>
         <source>Flop OOP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="458"/>
+        <location filename="mainwindow.ui" line="503"/>
         <source>Turn OOP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="516"/>
-        <location filename="mainwindow.ui" line="618"/>
+        <location filename="mainwindow.ui" line="561"/>
+        <location filename="mainwindow.ui" line="663"/>
         <source>Donk Sizes: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="560"/>
+        <location filename="mainwindow.ui" line="605"/>
         <source>River OOP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="666"/>
+        <location filename="mainwindow.ui" line="711"/>
         <source>raise limit: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="673"/>
+        <location filename="mainwindow.ui" line="718"/>
         <source>3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="680"/>
+        <location filename="mainwindow.ui" line="725"/>
         <source>times.      Pot: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="694"/>
+        <location filename="mainwindow.ui" line="739"/>
         <source>Effective Stack: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="701"/>
-        <location filename="mainwindow.ui" line="824"/>
+        <location filename="mainwindow.ui" line="746"/>
+        <location filename="mainwindow.ui" line="869"/>
         <source>200</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="708"/>
+        <location filename="mainwindow.ui" line="753"/>
         <source>  Mode: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="716"/>
+        <location filename="mainwindow.ui" line="761"/>
         <source>texas holdem</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="721"/>
+        <location filename="mainwindow.ui" line="766"/>
         <source>shortdeck</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="733"/>
+        <location filename="mainwindow.ui" line="778"/>
         <source>allin threshold: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="746"/>
+        <location filename="mainwindow.ui" line="791"/>
         <source>0.67</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="753"/>
+        <location filename="mainwindow.ui" line="798"/>
         <source>     use isomorphism</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="787"/>
+        <location filename="mainwindow.ui" line="832"/>
         <source>Build Tree</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="794"/>
+        <location filename="mainwindow.ui" line="839"/>
         <source>Estimate Solving Memory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="809"/>
+        <location filename="mainwindow.ui" line="854"/>
         <source>Solver Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="817"/>
+        <location filename="mainwindow.ui" line="862"/>
         <source>iterations: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="831"/>
+        <location filename="mainwindow.ui" line="876"/>
         <source>times.    stop solving when reach </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="838"/>
+        <location filename="mainwindow.ui" line="883"/>
         <source>0.5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="845"/>
+        <location filename="mainwindow.ui" line="890"/>
         <source>% exploitability</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="869"/>
+        <location filename="mainwindow.ui" line="914"/>
         <source>log interval:  </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="876"/>
+        <location filename="mainwindow.ui" line="921"/>
         <source>10</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="883"/>
+        <location filename="mainwindow.ui" line="928"/>
         <source>threads: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="890"/>
+        <location filename="mainwindow.ui" line="935"/>
         <source>8</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="920"/>
+        <location filename="mainwindow.ui" line="965"/>
         <source>Start solving</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="933"/>
+        <location filename="mainwindow.ui" line="978"/>
         <source>Stop solving</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="946"/>
+        <location filename="mainwindow.ui" line="991"/>
         <source>ShowResult</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="970"/>
+        <location filename="mainwindow.ui" line="1014"/>
+        <source>Parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="1022"/>
+        <source>Export Current Parameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="1029"/>
+        <source>Open Parameters Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="1068"/>
         <source>Clear Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="998"/>
+        <location filename="mainwindow.ui" line="1096"/>
         <source>Solver</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1092"/>
-        <location filename="mainwindow.cpp" line="315"/>
+        <location filename="mainwindow.ui" line="1190"/>
+        <location filename="mainwindow.cpp" line="373"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1107"/>
+        <location filename="mainwindow.ui" line="1205"/>
         <source>clear all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1097"/>
+        <location filename="mainwindow.ui" line="1195"/>
         <source>import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1102"/>
+        <location filename="mainwindow.ui" line="1200"/>
         <source>export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1004"/>
+        <location filename="mainwindow.ui" line="1102"/>
         <source>strategy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1008"/>
+        <location filename="mainwindow.ui" line="1106"/>
         <source>export to file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1016"/>
+        <location filename="mainwindow.ui" line="1114"/>
         <source>parameters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1037"/>
+        <location filename="mainwindow.ui" line="1135"/>
         <source>import setting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1042"/>
+        <location filename="mainwindow.ui" line="1140"/>
         <source>export current setting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1047"/>
+        <location filename="mainwindow.ui" line="1145"/>
         <source>ZN-CH</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1052"/>
-        <location filename="mainwindow.ui" line="1057"/>
+        <location filename="mainwindow.ui" line="1150"/>
+        <location filename="mainwindow.ui" line="1155"/>
         <source>Enghish</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1062"/>
+        <location filename="mainwindow.ui" line="1160"/>
         <source>Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1067"/>
+        <location filename="mainwindow.ui" line="1165"/>
         <source>import IP range</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1072"/>
+        <location filename="mainwindow.ui" line="1170"/>
         <source>import OOP range</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1077"/>
+        <location filename="mainwindow.ui" line="1175"/>
         <source>export IP range</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1082"/>
+        <location filename="mainwindow.ui" line="1180"/>
         <source>export OOP range</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1087"/>
+        <location filename="mainwindow.ui" line="1185"/>
         <source>json</source>
         <translation type="unfinished"></translation>
     </message>
@@ -476,63 +491,63 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="39"/>
+        <location filename="mainwindow.cpp" line="83"/>
         <source>Save File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="41"/>
+        <location filename="mainwindow.cpp" line="85"/>
         <source>Json file (*.json)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="97"/>
+        <location filename="mainwindow.cpp" line="270"/>
         <source>Open parameters file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="99"/>
+        <location filename="mainwindow.cpp" line="272"/>
         <source>Text files (*.txt)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="102"/>
+        <location filename="mainwindow.cpp" line="146"/>
         <source>File selection invalid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="107"/>
+        <location filename="mainwindow.cpp" line="151"/>
         <source>File open failed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="224"/>
+        <location filename="mainwindow.cpp" line="281"/>
         <source>Save Parameters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="226"/>
+        <location filename="mainwindow.cpp" line="283"/>
         <source>Text file (*.txt)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="537"/>
+        <location filename="mainwindow.cpp" line="595"/>
         <source>Please build tree first.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="539"/>
-        <location filename="mainwindow.cpp" line="541"/>
+        <location filename="mainwindow.cpp" line="597"/>
+        <location filename="mainwindow.cpp" line="599"/>
         <source>Estimated Memory Usage: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="539"/>
+        <location filename="mainwindow.cpp" line="597"/>
         <source> Mb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="541"/>
+        <location filename="mainwindow.cpp" line="599"/>
         <source> Gb</source>
         <translation type="unfinished"></translation>
     </message>
@@ -655,15 +670,15 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="334"/>
-        <location filename="rangeselector.cpp" line="139"/>
+        <location filename="mainwindow.cpp" line="392"/>
+        <location filename="rangeselector.cpp" line="162"/>
         <location filename="src/runtime/PokerSolver.cpp" line="143"/>
         <source>save success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="336"/>
-        <location filename="rangeselector.cpp" line="141"/>
+        <location filename="mainwindow.cpp" line="394"/>
+        <location filename="rangeselector.cpp" line="164"/>
         <location filename="src/runtime/PokerSolver.cpp" line="145"/>
         <source>save failed, file cannot be open</source>
         <translation type="unfinished"></translation>
@@ -780,7 +795,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="rangeselector.ui" line="100"/>
+        <location filename="rangeselector.ui" line="71"/>
+        <source>Open Range Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="rangeselector.ui" line="107"/>
         <source>Range Number</source>
         <translation type="unfinished"></translation>
     </message>
@@ -790,32 +810,32 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="rangeselector.cpp" line="125"/>
+        <location filename="rangeselector.cpp" line="147"/>
         <source>Save Range</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="rangeselector.cpp" line="127"/>
+        <location filename="rangeselector.cpp" line="149"/>
         <source>Text file (*.txt)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="rangeselector.cpp" line="158"/>
+        <location filename="rangeselector.cpp" line="198"/>
         <source>Open range file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="rangeselector.cpp" line="160"/>
+        <location filename="rangeselector.cpp" line="200"/>
         <source>Text files (*.txt)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="rangeselector.cpp" line="163"/>
+        <location filename="rangeselector.cpp" line="180"/>
         <source>File selection invalid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="rangeselector.cpp" line="168"/>
+        <location filename="rangeselector.cpp" line="185"/>
         <source>File open failed.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -823,27 +843,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RangeSelectorTableModel</name>
     <message>
-        <location filename="src/ui/rangeselectortablemodel.cpp" line="81"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="82"/>
         <source>skipping range %1, format error, range list should contain two part seperate by &apos;:&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/ui/rangeselectortablemodel.cpp" line="97"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="98"/>
         <source>skipping range %1, format error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/ui/rangeselectortablemodel.cpp" line="134"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="135"/>
         <source>o</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/ui/rangeselectortablemodel.cpp" line="136"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="137"/>
         <source>s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/ui/rangeselectortablemodel.cpp" line="138"/>
+        <location filename="src/ui/rangeselectortablemodel.cpp" line="139"/>
         <source> </source>
         <translation type="unfinished"></translation>
     </message>

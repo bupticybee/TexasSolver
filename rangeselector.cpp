@@ -50,6 +50,8 @@ RangeSelector::RangeSelector(QTextEdit* rangeEdit,QWidget *parent,QSolverJob::Mo
                 this,
                 SLOT(item_clicked(const QModelIndex&))
                 );
+    connect(ui->rangeFilesTreeView, SIGNAL(expanded(QModelIndex)), this, SLOT(onExpanded(QModelIndex)));
+
     /*
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update_second()));
@@ -213,4 +215,8 @@ void RangeSelector::item_clicked(const QModelIndex& index){
 void RangeSelector::on_openRangeFolderButton_clicked()
 {
     QDesktopServices::openUrl( QUrl::fromLocalFile(QDir::current().filePath("ranges")) );
+}
+
+void RangeSelector::onExpanded(const QModelIndex& index){
+    ui->rangeFilesTreeView->resizeColumnToContents(0);
 }

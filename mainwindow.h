@@ -56,6 +56,7 @@ private slots:
     void on_ipRangeText_textChanged();
 
     void on_oopRangeText_textChanged();
+    void onExpanded(const QModelIndex& index);
 
 private:
     void clear_all_params();

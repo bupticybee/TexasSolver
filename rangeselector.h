@@ -55,6 +55,7 @@ private slots:
     void on_cancelButton_clicked();
     void on_importRangeButton_clicked();
     void on_openRangeFolderButton_clicked();
+    void onExpanded(const QModelIndex& index);
 };
 
 #endif // RANGESELECTOR_H

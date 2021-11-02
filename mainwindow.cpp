@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 this,
                 SLOT(item_clicked(const QModelIndex&))
                 );
+    connect(ui->parametersTreeView, SIGNAL(expanded(QModelIndex)), this, SLOT(onExpanded(QModelIndex)));
 
     // Thumbnail process
     this->ip_model = new RangeSelectorTableModel(QString("A,K,Q,J,T,9,8,7,6,5,4,3,2").split(","),this->ui->ipRangeText->toPlainText(),this,true);
@@ -645,4 +646,8 @@ void MainWindow::on_oopRangeText_textChanged()
 {
     this->oop_model->setRangeText(this->ui->oopRangeText->toPlainText());
     this->ui->oopRangeTableView->update();
+}
+
+void MainWindow::onExpanded(const QModelIndex& index){
+    ui->parametersTreeView->resizeColumnToContents(0);
 }

@@ -1,4 +1,4 @@
-#include "include/ui/rangeselectortablemodel.h"
+﻿#include "include/ui/rangeselectortablemodel.h"
 
 RangeSelectorTableModel::RangeSelectorTableModel(QStringList ranks,QString initial_board,QObject *parent,bool thumbnail):QAbstractItemModel(parent){
     this->ranklist = ranks;
@@ -76,6 +76,7 @@ QString RangeSelectorTableModel::getRangeText(){
 void RangeSelectorTableModel::setRangeText(QString input_range){
     this->clear_range();
     for(QString one_range:input_range.split(",")){
+        if(one_range.trimmed() == "")continue;
         QStringList one_range_list = one_range.split(":");
 
         if(one_range_list.size() > 2 || one_range_list.size() < 1){

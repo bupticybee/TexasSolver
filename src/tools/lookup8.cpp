@@ -16,7 +16,7 @@ at producing 64-bit results.
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include "tools/lookup8.h"
+#include "include/tools/lookup8.h"
 
 
 ub8 hash1(ub1* k,ub8 length,ub8 level)

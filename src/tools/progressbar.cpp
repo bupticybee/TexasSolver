@@ -1,7 +1,7 @@
 //
 // Created by Xuefeng Huang on 2020/1/29.
 //
-#include "tools/progressbar.h"
+#include "include/tools/progressbar.h"
 
 progressbar::progressbar() :
         progress(0),
@@ -40,7 +40,7 @@ void progressbar::set_niter(int niter) {
 }
 
 void progressbar::update() {
-
+    return;
     if (n_cycles == 0) throw std::runtime_error(
                 "progressbar::update: number of cycles not set");
 

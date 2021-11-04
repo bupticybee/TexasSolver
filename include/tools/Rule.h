@@ -5,9 +5,9 @@
 #ifndef BINDSOLVER_RULE_H
 #define BINDSOLVER_RULE_H
 
-#include "Deck.h"
-#include "StreetSetting.h"
-#include "GameTreeBuildingSettings.h"
+#include "include/Deck.h"
+#include "include/tools/StreetSetting.h"
+#include "include/tools/GameTreeBuildingSettings.h"
 
 using namespace std;
 

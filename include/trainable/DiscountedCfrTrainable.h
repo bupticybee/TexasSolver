@@ -4,8 +4,8 @@
 
 #ifndef TEXASSOLVER_DISCOUNTEDCFRTRAINABLE_H
 #define TEXASSOLVER_DISCOUNTEDCFRTRAINABLE_H
-#include <nodes/ActionNode.h>
-#include <ranges/PrivateCards.h>
+#include <include/nodes/ActionNode.h>
+#include <include/ranges/PrivateCards.h>
 #include "Trainable.h"
 using namespace std;
 
@@ -16,6 +16,7 @@ private:
     int action_number;
     int card_number;
     vector<float> r_plus;
+    vector<float> evs;
     constexpr static float alpha = 1.5f;
     constexpr static float beta = 0.5f;
     constexpr static float gamma = 2;
@@ -37,9 +38,13 @@ public:
 
     void updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) override;
 
+    void setEv(const vector<float>& evs) override;
+
     void copyStrategy(shared_ptr<Trainable> other_trainable);
 
     json dump_strategy(bool with_state) override;
+
+    json dump_evs() override;
 
 private:
 

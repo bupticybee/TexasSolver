@@ -5,9 +5,9 @@
 #ifndef TEXASSOLVER_CFRPLUSTRAINABLE_H
 #define TEXASSOLVER_CFRPLUSTRAINABLE_H
 
-#include <nodes/ActionNode.h>
-#include <ranges/PrivateCards.h>
-#include "Trainable.h"
+#include <include/nodes/ActionNode.h>
+#include <include/ranges/PrivateCards.h>
+#include "include/trainable/Trainable.h"
 using namespace std;
 
 class CfrPlusTrainable : public Trainable{

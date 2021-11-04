@@ -1,8 +1,8 @@
 //
 // Created by bytedance on 2.6.21.
 //
-#include "GameTree.h"
-#include "tools/GameTreeBuildingSettings.h"
+#include "include/GameTree.h"
+#include "include/tools/GameTreeBuildingSettings.h"
 
 GameTreeBuildingSettings::GameTreeBuildingSettings(
         StreetSetting flop_ip,

@@ -6,8 +6,8 @@
 #define TEXASSOLVER_PRIVATERANGECONVERTER_H
 
 
-#include <ranges/PrivateCards.h>
-#include "library.h"
+#include <include/ranges/PrivateCards.h>
+#include "include/library.h"
 using namespace std;
 
 class PrivateRangeConverter {

@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/1/30.
 //
 
-#include "nodes/TerminalNode.h"
+#include "include/nodes/TerminalNode.h"
 
 TerminalNode::TerminalNode() {
 

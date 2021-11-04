@@ -7,8 +7,8 @@
 
 #include <string>
 #include <vector>
-#include "fmt/format.h"
-#include "nodes/GameTreeNode.h"
+#include "include/tools/tinyformat.h"
+#include "include/nodes/GameTreeNode.h"
 
 class GameActions {
 public:

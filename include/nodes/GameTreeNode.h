@@ -6,7 +6,7 @@
 #define TEXASSOLVER_GAMETREENODE_H
 #include <string>
 #include <vector>
-#include "fmt/format.h"
+#include "include/tools/tinyformat.h"
 using namespace std;
 
 class GameTreeNode {
@@ -46,14 +46,14 @@ public:
     GameRound getRound();
     double getPot();
     void printHistory();
+    string toString();
     static void printNodeHistory(GameTreeNode* node);
     virtual GameTreeNodeType getType() = 0;
 
 private:
     GameRound round;
+    weak_ptr<GameTreeNode> parent;
     double pot{};
-    shared_ptr<GameTreeNode> parent;
-
 };
 
 

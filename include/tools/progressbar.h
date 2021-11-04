@@ -41,6 +41,7 @@
 //
 
 #include <iostream>
+#include <string>
 
 class progressbar {
 

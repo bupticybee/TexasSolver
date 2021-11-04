@@ -2,7 +2,7 @@
 // Created by Xuefeng Huang on 2020/1/29.
 //
 
-#include "nodes/GameActions.h"
+#include "include/nodes/GameActions.h"
 
 GameActions::GameActions() = default;
 
@@ -17,9 +17,9 @@ double GameActions::getAmount() {
 GameActions::GameActions(GameTreeNode::PokerActions action, double amount) {
     this->action = action;
     if (action == GameTreeNode::PokerActions::RAISE || action == GameTreeNode::PokerActions::BET ) {
-        if (amount == -1) throw runtime_error(fmt::format("raise/bet amount should not be -1, find {}",amount));
+        if (amount == -1) throw runtime_error(tfm::format("raise/bet amount should not be -1, find %s",amount));
     } else {
-        if (amount != -1) throw runtime_error(fmt::format("check/fold/call amount should be -1, find {}",amount));
+        if (amount != -1) throw runtime_error(tfm::format("check/fold/call amount should be -1, find %s",amount));
     }
     this->amount = amount;
 }

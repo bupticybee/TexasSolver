@@ -6,7 +6,7 @@
 #define TEXASSOLVER_RIVERCOMBS_H
 
 
-#include <ranges/PrivateCards.h>
+#include <include/ranges/PrivateCards.h>
 
 class RiverCombs {
 public:

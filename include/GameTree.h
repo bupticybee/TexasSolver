@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by Xuefeng Huang on 2020/1/30.
 //
 
@@ -6,16 +6,16 @@
 #define TEXASSOLVER_GAMETREE_H
 
 
-#include <nodes/GameTreeNode.h>
-#include "Deck.h"
-#include "json.hpp"
+#include <include/nodes/GameTreeNode.h>
+#include "include/Deck.h"
+#include "include/json.hpp"
 #include <fstream>
-#include <nodes/ActionNode.h>
-#include <nodes/ShowdownNode.h>
-#include <nodes/TerminalNode.h>
-#include <nodes/ChanceNode.h>
-#include "library.h"
-#include "tools/Rule.h"
+#include <include/nodes/ActionNode.h>
+#include <include/nodes/ShowdownNode.h>
+#include <include/nodes/TerminalNode.h>
+#include <include/nodes/ChanceNode.h>
+#include "include/library.h"
+#include "include/tools/Rule.h"
 
 using json = nlohmann::json;
 
@@ -42,6 +42,7 @@ public:
             GameTreeBuildingSettings buildingSettings,
             float allin_threshold
     );
+    ~GameTree();
     shared_ptr<GameTreeNode> __build(shared_ptr<GameTreeNode> node,Rule rule);
     shared_ptr<GameTreeNode> __build(shared_ptr<GameTreeNode> node,Rule rule,string last_action,int check_times,int raise_times);
     void buildChance(shared_ptr<ChanceNode> root,Rule rule);
@@ -53,6 +54,8 @@ public:
     static ifstream readAllBytes(const string& filePath);
     static GameTreeNode::GameRound strToGameRound(const string& round);
     static void recurrentPrintTree(const shared_ptr<GameTreeNode>& node,int depth,int depth_limit);
+    long long estimate_tree_memory(int deck_num,int p1range_num,int p2range_num,int num_current_deal=1);
+    long long re_estimate_tree_memory(const shared_ptr<GameTreeNode>& node,int deck_num,int p1range_num,int p2range_num,int num_current_deal=1);
     shared_ptr<GameTreeNode> recurrentGenerateTreeNode(json node_json,const shared_ptr<GameTreeNode>& parent);
     shared_ptr<ActionNode> generateActionNode(json meta,vector<string> childrens_actions, vector<json> childrens_nodes, const string& round,shared_ptr<GameTreeNode> parent);
     shared_ptr<ChanceNode> generateChanceNode(json meta,const json& child,string round,shared_ptr<GameTreeNode> parent);

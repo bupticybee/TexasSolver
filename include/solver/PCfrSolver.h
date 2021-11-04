@@ -4,20 +4,20 @@
 
 #ifndef TEXASSOLVER_PCFRSOLVER_H
 #define TEXASSOLVER_PCFRSOLVER_H
-#include <ranges/PrivateCards.h>
-#include <compairer/Compairer.h>
-#include <Deck.h>
-#include <ranges/RiverRangeManager.h>
-#include <ranges/PrivateCardsManager.h>
-#include <trainable/CfrPlusTrainable.h>
-#include <trainable/DiscountedCfrTrainable.h>
-#include "Solver.h"
+#include <include/ranges/PrivateCards.h>
+#include <include/compairer/Compairer.h>
+#include <include/Deck.h>
+#include <include/ranges/RiverRangeManager.h>
+#include <include/ranges/PrivateCardsManager.h>
+#include <include/trainable/CfrPlusTrainable.h>
+#include <include/trainable/DiscountedCfrTrainable.h>
+#include "include/solver/Solver.h"
 #include <omp.h>
-#include "tools/lookup8.h"
-#include "tools/utils.h"
+#include "include/tools/lookup8.h"
+#include "include/tools/utils.h"
 #include <queue>
 #include <optional>
-
+/*
 template<typename T>
 class ThreadsafeQueue {
     std::queue<T> queue_;
@@ -70,6 +70,7 @@ struct TaskParams{
     uint64_t current_board;
     int deal;
 };
+*/
 
 class PCfrSolver:public Solver {
 public:
@@ -90,8 +91,12 @@ public:
             bool use_isomorphism,
             int num_threads
     );
+    ~PCfrSolver();
     void train() override;
-    json dumps(bool with_status,int depth);
+    void stop() override;
+    json dumps(bool with_status,int depth) override;
+    vector<vector<vector<float>>> get_strategy(shared_ptr<ActionNode> node,vector<Card> chance_cards) override;
+    vector<vector<vector<float>>> get_evs(shared_ptr<ActionNode> node,vector<Card> chance_cards) override;
 private:
     vector<vector<PrivateCards>> ranges;
     vector<PrivateCards> range1;
@@ -100,6 +105,8 @@ private:
     uint64_t initial_board_long;
     shared_ptr<Compairer> compairer;
     int color_iso_offset[52 * 52 * 2][4] = {0};
+    bool collecting_statics = false;
+    bool statics_collected = false;
 
     Deck deck;
     RiverRangeManager rrm;
@@ -119,6 +126,7 @@ private:
     bool distributing_task;
     float accuracy;
     bool use_isomorphism;
+    bool nowstop = false;
 
     const vector<PrivateCards>& playerHands(int player);
     vector<vector<float>> getReachProbs();

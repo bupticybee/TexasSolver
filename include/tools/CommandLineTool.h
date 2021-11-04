@@ -8,7 +8,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include "runtime/PokerSolver.h"
+#include "include/runtime/PokerSolver.h"
 
 using namespace std;
 class CommandLineTool{

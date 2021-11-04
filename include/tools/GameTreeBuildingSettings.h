@@ -4,7 +4,7 @@
 
 #ifndef BINDSOLVER_GAMETREEBUILDINGSETTINGS_H
 #define BINDSOLVER_GAMETREEBUILDINGSETTINGS_H
-#include "tools/StreetSetting.h"
+#include "include/tools/StreetSetting.h"
 
 class GameTreeBuildingSettings {
 public:

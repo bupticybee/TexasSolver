@@ -9,9 +9,9 @@
 #include <set>
 #include <fstream>
 #include <unordered_map>
-#include "Compairer.h"
-#include "library.h"
-#include "tools/progressbar.h"
+#include "include/compairer/Compairer.h"
+#include "include/library.h"
+#include "include/tools/progressbar.h"
 
 
 class Dic5Compairer:public Compairer{

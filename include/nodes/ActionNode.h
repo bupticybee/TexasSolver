@@ -6,16 +6,17 @@
 #define TEXASSOLVER_ACTIONNODE_H
 
 
-#include <trainable/Trainable.h>
+#include <include/trainable/Trainable.h>
 #include <thread>
 #include <mutex>
-#include <ranges/PrivateCards.h>
-#include "GameTreeNode.h"
-#include "GameActions.h"
+#include <include/ranges/PrivateCards.h>
+#include "include/nodes/GameTreeNode.h"
+#include "include/nodes/GameActions.h"
 
 class ActionNode :public GameTreeNode {
 public:
     ActionNode(vector<GameActions> actions, vector<shared_ptr<GameTreeNode>> childrens, int player, GameRound round,double pot,shared_ptr<GameTreeNode> parent);
+    ~ActionNode();
     vector<GameActions>& getActions();
     vector<shared_ptr<GameTreeNode>>& getChildrens();
     int getPlayer();

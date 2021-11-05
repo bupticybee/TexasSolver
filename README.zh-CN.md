@@ -22,7 +22,7 @@ Features:
 - 支持将最优策略保存为json文件
 - 是 [TexasHoldemSolverJava](https://github.com/bupticybee/TexasHoldemSolverJava) 的c++版本,速度是前者的5倍以上，而内存使用仅有前者的1/3不到
 
-你可以通过 [google colab demo](https://colab.research.google.com/github/bupticybee/TexasSolver/blob/master/TexasSolverTechDemo.ipynb) 体验这个solver。
+你可以通过 [google colab demo](https://colab.research.google.com/github/bupticybee/TexasSolver/blob/console/TexasSolverTechDemo.ipynb) 体验这个solver。
 
 ## 安装
 

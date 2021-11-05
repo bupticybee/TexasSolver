@@ -65,7 +65,7 @@ icybee@yeah.net
    - A: No, you can only put the link of this project to other website, not the binary, this project is under AGPL-V3 license, and these kind of action violates this license.
 
 3. Q: Can I intergate it to my software?
-   - A: If you intergate the release package(binary) into your software, Yes, you can do that. If you want to intergate the code of the solver into your software or provide service through internet, then you need to contact me for a commercial license.
+   - A: If you intergate the release package(binary) into your software, Yes, you can do that. If you want to intergate the code of the solver into your software or provide service through internet, then you need to contact me for a commercial license, which is also the main profit-making method of this project.
 
 4. Q: What framework do you use to write the ui?
    - A: I use QT 5.1.0 (opensourced edition) to build the GUI version. For the console version, I use Mingw + CMake.

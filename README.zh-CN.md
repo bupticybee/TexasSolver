@@ -9,7 +9,7 @@ README [English](README.md) | [中文](README.zh-CN.md)
 
 ## 项目介绍
 
-一个开源的，极其高效的德州扑克和短牌solver, 看看这个 [介绍视频](https://www.bilibili.com/video/BV1QQ4y1h7pM) 了解更多。支持Windows，MacOs和Linux。
+一个开源的，极其高效的德州扑克和短牌solver, 看看这个 [介绍视频](https://www.bilibili.com/video/BV1sr4y1C7KE) 了解更多。支持Windows，MacOs和Linux。
 
 ![](imgs/solver_example.gif)
 

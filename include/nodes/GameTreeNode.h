@@ -6,6 +6,7 @@
 #define TEXASSOLVER_GAMETREENODE_H
 #include <string>
 #include <vector>
+#include <memory>
 #include "include/tools/tinyformat.h"
 using namespace std;
 

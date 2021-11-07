@@ -10,6 +10,7 @@
 #include <include/compairer/Compairer.h>
 #include <include/compairer/Dic5Compairer.h>
 #include <mutex>
+#include <memory>
 
 class RiverRangeManager {
 public:

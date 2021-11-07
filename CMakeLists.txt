@@ -13,6 +13,20 @@ set(CMAKE_CXX_FLAGS "-fPIC")
 set(CMAKE_C_FLAGS "-fopenmp")
 set(LINKFLAGS "-fopenmp")
 
+if (CMAKE_HOST_WIN32)
+    set(WINDOWS 1)
+elseif (CMAKE_HOST_WIN64)
+    set(WINDOWS 1)
+elseif (CMAKE_HOST_APPLE)
+    set(MACOS 1)
+elseif (CMAKE_HOST_UNIX)
+    set(LINUX 1)
+endif ()
+
+if (WINDOWS)
+    set(CMAKE_EXE_LINKER_FLAGS "-static")
+endif ()
+
 #openmp
 FIND_PACKAGE(OpenMP REQUIRED)
 IF(OPENMP_FOUND)

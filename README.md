@@ -8,7 +8,7 @@
 README [English](README.md) | [中文](README.zh-CN.md)
 
 ## Introduction 
-A open sourced, extremely efficient Texas Hold'em and short deck solver. See this [Introduction video](https://www.youtube.com/watch?v=MydczBwSfWc) for more. Supports Windows,MacOs and Linux.
+A open sourced, extremely efficient Texas Hold'em and short deck solver. See this [Introduction video](https://youtu.be/IsSJNz7sRmQ) for more. Supports Windows,MacOs and Linux.
 
 ![](imgs/solver_example.gif)
 

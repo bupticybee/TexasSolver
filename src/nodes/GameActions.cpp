@@ -35,7 +35,7 @@ string GameActions::pokerActionToString(GameTreeNode::PokerActions pokerActions)
         case GameTreeNode::PokerActions::FOLD :   return "FOLD";
         case GameTreeNode::PokerActions::CALL :   return "CALL";
         default:{
-            throw runtime_error(fmt::format("PokerActions %s not found"));
+            throw runtime_error("PokerActions not found");
         }
     }
 }

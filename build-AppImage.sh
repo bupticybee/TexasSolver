@@ -40,7 +40,12 @@ pushd "$BUILD_DIR"
 qmake "$REPO_ROOT"
 
 # build project and install files into AppDir
-make -j
+if [ "$CI" == "" ];  then
+    make -j
+else
+	# concurent build jobs takes too much of RAM on github-actions 
+	make
+fi
 make install INSTALL_ROOT=AppDir
 
 # now, build AppImage using linuxdeploy and linuxdeploy-plugin-qt

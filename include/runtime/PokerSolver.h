@@ -19,7 +19,7 @@ using namespace std;
 class PokerSolver {
 public:
     PokerSolver();
-    PokerSolver(string ranks,string suits,string compairer_file,int compairer_file_lines);
+    PokerSolver(string ranks,string suits,string compairer_file,int compairer_file_lines,string compairer_file_bin);
     void load_game_tree(string game_tree_file);
     void build_game_tree(
             float oop_commit,

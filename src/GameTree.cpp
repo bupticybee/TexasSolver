@@ -527,6 +527,7 @@ long long GameTree::re_estimate_tree_memory(const shared_ptr<GameTreeNode>& node
         shared_ptr<GameTreeNode> children = chance_node->getChildren();
         return re_estimate_tree_memory(children,deck_num, p1range_num, p2range_num, num_current_deal * (deck_num));
     }
+    return 0;
 }
 
 void GameTree::recurrentPrintTree(const shared_ptr<GameTreeNode>& node, int depth, int depth_limit) {

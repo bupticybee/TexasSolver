@@ -8,11 +8,11 @@ PokerSolver::PokerSolver() {
 
 }
 
-PokerSolver::PokerSolver(string ranks, string suits, string compairer_file,int compairer_file_lines) {
+PokerSolver::PokerSolver(string ranks, string suits, string compairer_file,int compairer_file_lines, string compairer_file_bin) {
     vector<string> ranks_vector = string_split(ranks,',');
     vector<string> suits_vector = string_split(suits,',');
     this->deck = Deck(ranks_vector,suits_vector);
-    this->compairer = make_shared<Dic5Compairer>(compairer_file,compairer_file_lines);
+    this->compairer = make_shared<Dic5Compairer>(compairer_file,compairer_file_lines,compairer_file_bin);
 }
 
 void PokerSolver::load_game_tree(string game_tree_file) {

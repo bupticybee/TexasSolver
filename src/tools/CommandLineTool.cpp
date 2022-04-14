@@ -8,21 +8,23 @@ CommandLineTool::CommandLineTool(string mode,string resource_dir) {
     string suits = "c,d,h,s";
     string ranks;
     this->resource_dir = resource_dir;
-    string compairer_file;
+    string compairer_file,compairer_file_bin;
     int lines;
     if(mode == "holdem"){
         ranks = "2,3,4,5,6,7,8,9,T,J,Q,K,A";
         compairer_file = this->resource_dir + "/compairer/card5_dic_sorted.txt";
+        compairer_file_bin = "./resources/compairer/card5_dic_sorted.bin";
         lines = 2598961;
     }else if(mode == "shortdeck"){
         ranks = "6,7,8,9,T,J,Q,K,A";
         compairer_file = this->resource_dir + "/compairer/card5_dic_sorted_shortdeck.txt";
+        compairer_file_bin = "./resources/compairer/card5_dic_sorted_shortdeck.bin";
         lines = 376993;
     }else{
         throw runtime_error(tfm::format("mode not recognized : ",mode));
     }
     string logfile_name = "../resources/outputs/outputs_log.txt";
-    this->ps = PokerSolver(ranks,suits,compairer_file,lines);
+    this->ps = PokerSolver(ranks,suits,compairer_file,lines,compairer_file_bin);
 
     StreetSetting gbs_flop_ip = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
     StreetSetting gbs_turn_ip = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);

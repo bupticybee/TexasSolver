@@ -179,6 +179,7 @@ void TableStrategyModel::updateStrategyData(){
             vector<Card> deal_cards;
             GameTreeNode::GameRound root_round = this->qSolverJob->get_solver()->getGameTree()->getRoot()->getRound();
             GameTreeNode::GameRound current_round = actionNode->getRound();
+            this->current_player = actionNode->getPlayer();
             if(root_round == GameTreeNode::GameRound::FLOP){
                 if(current_round == GameTreeNode::GameRound::TURN){deal_cards.push_back(this->turn_card);}
                 if(current_round == GameTreeNode::GameRound::RIVER){deal_cards.push_back(this->turn_card);deal_cards.push_back(this->river_card);}
@@ -332,7 +333,7 @@ const vector<pair<GameActions,pair<float,float>>> TableStrategyModel::get_total_
 
 const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int j) const{
     vector<pair<GameActions,float>> ret_strategy;
-    if(this->treeItem == NULL)return ret_strategy;
+    if(this->treeItem == NULL) return ret_strategy;
 
     int strategy_number = this->ui_strategy_table[i][j].size();
 
@@ -344,6 +345,36 @@ const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int
         vector<GameActions>& gameActions = actionNode->getActions();
 
         vector<float> strategies;
+
+// get range data - initally copied from paint_range - probably could need cleanup
+        vector<pair<int,int>> card_cords;
+        const vector<vector<float>> *current_range;
+        if(0 == current_player ){
+            card_cords = ui_p1_range[i][j];
+            current_range = & p1_range;
+        }else{
+            card_cords = ui_p2_range[i][j];
+            current_range = & p2_range;
+        }
+
+        if(p1_range.empty() || p2_range.empty()){
+            return ret_strategy;
+        }
+
+        float range_number = 0;
+        if(!card_cords.empty()){
+            for(int indi = 0;indi < card_cords.size();indi ++){
+                    range_number += (*current_range)[card_cords[indi].first][card_cords[indi].second];
+            }
+            range_number = range_number / card_cords.size();
+
+            if(range_number < 0 || range_number > 1) throw runtime_error("range number incorrect in strategyitemdeletage");
+        }
+        else
+            return ret_strategy;
+
+// got range data
+
 
         if(this->ui_strategy_table[i][j].size() > 0){
             strategies = vector<float>(gameActions.size());
@@ -360,9 +391,10 @@ const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int
                 throw runtime_error("size not match between gameAction and stragegy");
             }
 
-            for(int indi = 0;indi < one_strategy.size();indi ++){
-                strategies[indi] += (one_strategy[indi] / strategy_number);
-            }
+            if ( range_number > 0)
+                for(int indi = 0;indi < one_strategy.size();indi ++){
+                    strategies[indi] += (one_strategy[indi] * (*current_range)[index1][index2] / strategy_number/ range_number); // is this correct?
+                }
         }
 
         for(int indi = 0;indi < strategies.size();indi ++){

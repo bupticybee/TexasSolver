@@ -48,6 +48,7 @@ public:
     map<int,Card> cardint2card;
     TreeItem * treeItem = NULL;// = static_cast<TreeItem*>(index.internalPointer());
     QSolverJob* get_solver(){return this->qSolverJob;};
+    int current_player;
 
 private:
     QSolverJob* qSolverJob;

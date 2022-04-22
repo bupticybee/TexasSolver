@@ -28,6 +28,16 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
         }
         int ind = index.row() * detailViewerModel->columns + index.column();
 
+// do range data preperation - copied from paint_range - probably could need cleanup
+        vector<pair<int,int>> card_cords;
+        if(0 == detailViewerModel->tableStrategyModel->current_player ){
+            card_cords = detailViewerModel->tableStrategyModel->ui_p1_range[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j];
+        }else{
+            card_cords = detailViewerModel->tableStrategyModel->ui_p2_range[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j];
+        }
+
+// did range data preperation
+
         if(ind < strategy_number){
 
             pair<int,int> strategy_ui_table = detailViewerModel->tableStrategyModel->ui_strategy_table[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j][ind];
@@ -57,11 +67,26 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
                 strategy_without_fold[i] = strategy_without_fold[i] / strategy_without_fold_sum;
             }
 
-            int disable_height = (int)(fold_prob * option.rect.height());
-            int remain_height = option.rect.height() - disable_height;
+// get range data - copied from paint_range - probably could need cleanup
+            pair<int,int> cord = card_cords[ind];
+            float range_number;
+            if(0 == detailViewerModel->tableStrategyModel->current_player){
+                range_number = detailViewerModel->tableStrategyModel->p1_range[cord.first][cord.second];
+            }else{
+                range_number = detailViewerModel->tableStrategyModel->p2_range[cord.first][cord.second];
+            }
+
+            if(range_number < 0 || range_number > 1) throw runtime_error("range number incorrect in strategyitemdeletage");
+// got range data
+
+            float not_in_range = 1 - range_number;
+            int niR_height = (int)(not_in_range * option.rect.height());
+
+            int disable_height = (int)(fold_prob * (option.rect.height()-niR_height));
+            int remain_height = option.rect.height() - niR_height - disable_height;
 
             // draw background for flod
-            QRect rect(option.rect.left(), option.rect.top(),\
+            QRect rect(option.rect.left(), option.rect.top() + niR_height,\
                  option.rect.width(), disable_height);
             QBrush brush(QColor	(0,191,255));
             painter->fillRect(rect, brush);
@@ -89,7 +114,7 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
                 int delta_x = (int)(option.rect.width() * last_prob);
                 int delta_width = (int)(option.rect.width() * (last_prob + strategy_without_fold[ind])) - (int)(option.rect.width() * last_prob);
 
-                QRect rect(option.rect.left() + delta_x, option.rect.top() + disable_height,\
+                QRect rect(option.rect.left() + delta_x, option.rect.top() + niR_height + disable_height,\
                  delta_width , remain_height);
                 painter->fillRect(rect, brush);
 
@@ -205,6 +230,17 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
         }
         int ind = index.row() * detailViewerModel->columns + index.column();
 
+// do range data preperation - copied from paint_range - probably could need cleanup
+        vector<pair<int,int>> card_cords;
+        if(0 == detailViewerModel->tableStrategyModel->current_player ){
+            card_cords = detailViewerModel->tableStrategyModel->ui_p1_range[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j];
+        }else{
+            card_cords = detailViewerModel->tableStrategyModel->ui_p2_range[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j];
+        }
+
+// did range data preperation
+
+
         if(ind < strategy_number){
 
             pair<int,int> strategy_ui_table = detailViewerModel->tableStrategyModel->ui_strategy_table[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j][ind];
@@ -235,11 +271,26 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
                 strategy_without_fold[i] = strategy_without_fold[i] / strategy_without_fold_sum;
             }
 
-            int disable_height = (int)(fold_prob * option.rect.height());
-            int remain_height = option.rect.height() - disable_height;
+// get range data - copied from paint_range - probably could need cleanup
+            pair<int,int> cord = card_cords[ind];
+            float range_number;
+            if(0 == detailViewerModel->tableStrategyModel->current_player){
+                range_number = detailViewerModel->tableStrategyModel->p1_range[cord.first][cord.second];
+            }else{
+                range_number = detailViewerModel->tableStrategyModel->p2_range[cord.first][cord.second];
+            }
+
+            if(range_number < 0 || range_number > 1) throw runtime_error("range number incorrect in strategyitemdeletage");
+// got range data
+
+            float not_in_range = 1 - range_number;
+            int niR_height = (int)(not_in_range * option.rect.height());
+
+            int disable_height = (int)(fold_prob * (option.rect.height()-niR_height));
+            int remain_height = option.rect.height() - niR_height - disable_height;
 
             // draw background for flod
-            QRect rect(option.rect.left(), option.rect.top(),\
+            QRect rect(option.rect.left(), option.rect.top() + niR_height,\
                  option.rect.width(), disable_height);
             QBrush brush(QColor	(0,191,255));
             painter->fillRect(rect, brush);
@@ -267,7 +318,7 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
                 int delta_x = (int)(option.rect.width() * last_prob);
                 int delta_width = (int)(option.rect.width() * (last_prob + strategy_without_fold[ind])) - (int)(option.rect.width() * last_prob);
 
-                QRect rect(option.rect.left() + delta_x, option.rect.top() + disable_height,\
+                QRect rect(option.rect.left() + delta_x, option.rect.top() + niR_height + disable_height,\
                  delta_width , remain_height);
                 painter->fillRect(rect, brush);
 

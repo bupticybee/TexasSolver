@@ -349,11 +349,12 @@ const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int
 // get range data - initally copied from paint_range - probably could need cleanup
         vector<pair<int,int>> card_cords;
         const vector<vector<float>> *current_range;
+        card_cords = ui_strategy_table[i][j];
         if(0 == current_player ){
-            card_cords = ui_p1_range[i][j];
+            //card_cords = ui_p1_range[i][j];
             current_range = & p1_range;
         }else{
-            card_cords = ui_p2_range[i][j];
+            //card_cords = ui_p2_range[i][j];
             current_range = & p2_range;
         }
 
@@ -393,7 +394,7 @@ const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int
 
             if ( range_number > 0)
                 for(int indi = 0;indi < one_strategy.size();indi ++){
-                    strategies[indi] += (one_strategy[indi] * (*current_range)[index1][index2] / strategy_number/ range_number); // is this correct?
+                    strategies[indi] += (one_strategy[indi] * (*current_range)[index1][index2] / range_number / strategy_number); // is this correct?
                 }
         }
 

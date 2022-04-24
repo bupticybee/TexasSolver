@@ -47,11 +47,12 @@ void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionV
                 ){
             return;
         }
-        if(0 == tableStrategyModel->current_player ){
-            card_cords = tableStrategyModel->ui_p1_range[index.row()][index.column()];
-        }else{
-            card_cords = tableStrategyModel->ui_p2_range[index.row()][index.column()];
-        }
+//        if(0 == tableStrategyModel->current_player ){
+//            card_cords = tableStrategyModel->ui_p1_range[index.row()][index.column()];
+//        }else{
+//            card_cords = tableStrategyModel->ui_p2_range[index.row()][index.column()];
+//        }
+        card_cords = tableStrategyModel->ui_strategy_table[index.row()][index.column()];
 
         if(tableStrategyModel->p1_range.empty() || tableStrategyModel->p2_range.empty()){
             return;

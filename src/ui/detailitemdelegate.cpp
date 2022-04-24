@@ -28,16 +28,6 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
         }
         int ind = index.row() * detailViewerModel->columns + index.column();
 
-// do range data preperation - copied from paint_range - probably could need cleanup
-        vector<pair<int,int>> card_cords;
-        if(0 == detailViewerModel->tableStrategyModel->current_player ){
-            card_cords = detailViewerModel->tableStrategyModel->ui_p1_range[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j];
-        }else{
-            card_cords = detailViewerModel->tableStrategyModel->ui_p2_range[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j];
-        }
-
-// did range data preperation
-
         if(ind < strategy_number){
 
             pair<int,int> strategy_ui_table = detailViewerModel->tableStrategyModel->ui_strategy_table[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j][ind];
@@ -67,15 +57,13 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
                 strategy_without_fold[i] = strategy_without_fold[i] / strategy_without_fold_sum;
             }
 
-// get range data - copied from paint_range - probably could need cleanup
-            pair<int,int> cord = card_cords[ind];
+// get range data - copied initially from paint_range - probably could need cleanup
             float range_number;
             if(0 == detailViewerModel->tableStrategyModel->current_player){
-                range_number = detailViewerModel->tableStrategyModel->p1_range[cord.first][cord.second];
+                range_number = detailViewerModel->tableStrategyModel->p1_range[card1][card2];
             }else{
-                range_number = detailViewerModel->tableStrategyModel->p2_range[cord.first][cord.second];
+                range_number = detailViewerModel->tableStrategyModel->p2_range[card1][card2];
             }
-
             if(range_number < 0 || range_number > 1) throw runtime_error("range number incorrect in strategyitemdeletage");
 // got range data
 
@@ -230,17 +218,6 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
         }
         int ind = index.row() * detailViewerModel->columns + index.column();
 
-// do range data preperation - copied from paint_range - probably could need cleanup
-        vector<pair<int,int>> card_cords;
-        if(0 == detailViewerModel->tableStrategyModel->current_player ){
-            card_cords = detailViewerModel->tableStrategyModel->ui_p1_range[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j];
-        }else{
-            card_cords = detailViewerModel->tableStrategyModel->ui_p2_range[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j];
-        }
-
-// did range data preperation
-
-
         if(ind < strategy_number){
 
             pair<int,int> strategy_ui_table = detailViewerModel->tableStrategyModel->ui_strategy_table[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j][ind];
@@ -271,13 +248,12 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
                 strategy_without_fold[i] = strategy_without_fold[i] / strategy_without_fold_sum;
             }
 
-// get range data - copied from paint_range - probably could need cleanup
-            pair<int,int> cord = card_cords[ind];
+// get range data - copied initally from paint_range - probably could need cleanup
             float range_number;
             if(0 == detailViewerModel->tableStrategyModel->current_player){
-                range_number = detailViewerModel->tableStrategyModel->p1_range[cord.first][cord.second];
+                range_number = detailViewerModel->tableStrategyModel->p1_range[card1][card2];
             }else{
-                range_number = detailViewerModel->tableStrategyModel->p2_range[cord.first][cord.second];
+                range_number = detailViewerModel->tableStrategyModel->p2_range[card1][card2];
             }
 
             if(range_number < 0 || range_number > 1) throw runtime_error("range number incorrect in strategyitemdeletage");

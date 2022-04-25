@@ -226,11 +226,11 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
             shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(node);
             vector<GameActions>& gameActions = actionNode->getActions();
             vector<float> evs = detailViewerModel->tableStrategyModel->current_evs.empty()? vector<float>(gameActions.size(),-1.0):detailViewerModel->tableStrategyModel->current_evs[card1][card2] ;
+            if(gameActions.size() != evs.size())throw runtime_error("evs size mismatch in DetailItemItemDelegate paint");
 
             vector<float> strategy = detailViewerModel->tableStrategyModel->current_strategy[card1][card2];
+            if(gameActions.size() != strategy.size())throw runtime_error("strategy size mismatch in DetailItemItemDelegate paint");
 
-
-            if(gameActions.size() != strategy.size())throw runtime_error("size mismatch in DetailItemItemDelegate paint");
             float fold_prob = 0;
             vector<float> strategy_without_fold;
             float strategy_without_fold_sum = 0;
@@ -276,16 +276,27 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
             int bet_raise_num = 0;
             for(int i = 0;i < strategy.size();i ++){
                 GameActions one_action = gameActions[i];
+                float normalized_ev = normalization_tanh(detailViewerModel->tableStrategyModel->get_solver()->stack,evs[i]);
                 QBrush brush(Qt::gray);
                 if(one_action.getAction() != GameTreeNode::PokerActions::FOLD){
-                if(one_action.getAction() == GameTreeNode::PokerActions::CHECK
-                || one_action.getAction() == GameTreeNode::PokerActions::CALL){
-                    brush = QBrush(Qt::green);
+                    if(one_action.getAction() == GameTreeNode::PokerActions::CHECK
+                    || one_action.getAction() == GameTreeNode::PokerActions::CALL){
+//                        brush = QBrush(Qt::green);
+                        int green = 255;
+                        int blue = max((int)(225 - normalized_ev * 175),55);
+                        int red = 55;
+                        brush = QBrush(QColor(red,green,blue));
                 }
                 else if(one_action.getAction() == GameTreeNode::PokerActions::BET
                 || one_action.getAction() == GameTreeNode::PokerActions::RAISE){
-                    int color_base = max(128 - 32 * bet_raise_num - 1,0);
-                    brush = QBrush(QColor(255,color_base,color_base));
+//                     int color_base = max(128 - 32 * bet_raise_num - 1,0);
+//                     brush = QBrush(QColor(255,color_base,color_base));
+                     int color_base = max(128 - 32 * bet_raise_num - 1,0);
+                     int blue = max((int)(255 - normalized_ev * (255 - color_base)), color_base);
+                     int red = color_base + min((int)(normalized_ev * (255-color_base)),255-color_base);;
+                     int green = color_base;
+                     brush = QBrush(QColor(red,green,blue));
+
                     bet_raise_num += 1;
                 }else{
                 brush = QBrush(Qt::blue);
@@ -302,8 +313,6 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
                 ind += 1;
                 }
             }
-
-            if(gameActions.size() != evs.size())throw runtime_error("size mismatch in DetailItemItemDelegate paint");
 
             options.text = "";
             options.text += detailViewerModel->tableStrategyModel->cardint2card[card1].toFormattedHtml();
@@ -375,7 +384,8 @@ void DetailItemDelegate::paint_evs_only(QPainter *painter, const QStyleOptionVie
 
             int red = max((int)(255 - normalized_ev * 255),0);
             int green = min((int)(normalized_ev * 255),255);
-            QBrush brush = QBrush(QColor(red,green,0));
+            int blue = min(red, green);
+            QBrush brush = QBrush(QColor(red,green,blue));
 
             // draw background for flod
             QRect rect(option.rect.left(), option.rect.top(),

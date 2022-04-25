@@ -12,14 +12,16 @@ StrategyItemDelegate::StrategyItemDelegate(QSolverJob * qSolverJob,DetailWindowS
     this->qSolverJob = qSolverJob;
 }
 
-void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, bool withEVs) const {
     auto options = option;
     initStyleOption(&options, index);
     const TableStrategyModel * tableStrategyModel = qobject_cast<const TableStrategyModel*>(index.model());
     vector<pair<GameActions,float>> strategy = tableStrategyModel->get_strategy(index.row(),index.column());
+    vector<float> evs = tableStrategyModel->get_strategies_evs(index.row(),index.column());
     if(!strategy.empty()){
         float fold_prob = 0;
         vector<float> strategy_without_fold;
+        vector<float> evs_without_fold;
         float strategy_without_fold_sum = 0;
         for(int i = 0;i < strategy.size();i ++){
             GameActions one_action = strategy[i].first;
@@ -28,6 +30,7 @@ void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionV
             }else{
                 strategy_without_fold.push_back(strategy[i].second);
                 strategy_without_fold_sum += strategy[i].second;
+                evs_without_fold.push_back(evs[i]);
             }
         }
 
@@ -35,29 +38,9 @@ void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionV
             strategy_without_fold[i] = strategy_without_fold[i] / strategy_without_fold_sum;
         }
 
-
-
-// get range data - copied from paint_range - probably could need cleanup
+// get range data
         vector<pair<int,int>> card_cords;
-        if(tableStrategyModel == NULL
-                || tableStrategyModel->ui_p1_range.size() <= index.row()
-                || tableStrategyModel->ui_p1_range.size() <= index.column()
-                || tableStrategyModel->ui_p2_range.size() <= index.row()
-                || tableStrategyModel->ui_p2_range.size() <= index.column()
-                ){
-            return;
-        }
-//        if(0 == tableStrategyModel->current_player ){
-//            card_cords = tableStrategyModel->ui_p1_range[index.row()][index.column()];
-//        }else{
-//            card_cords = tableStrategyModel->ui_p2_range[index.row()][index.column()];
-//        }
         card_cords = tableStrategyModel->ui_strategy_table[index.row()][index.column()];
-
-        if(tableStrategyModel->p1_range.empty() || tableStrategyModel->p2_range.empty()){
-            return;
-        }
-
         float range_number = 0;
         if(!card_cords.empty()){
             for(auto one_cord:card_cords){
@@ -69,14 +52,14 @@ void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionV
                 }
             }
             range_number = range_number / card_cords.size();
-
             if(range_number < 0 || range_number > 1) throw runtime_error("range number incorrect in strategyitemdeletage");
         }
-
-// got range data
         float not_in_range = 1 - range_number;
-
         int niR_height = (int)(not_in_range * option.rect.height());
+//        if (withEVs) {
+//            niR_height += (int)(1 + option.rect.height() * 0.2);
+//        }
+// got range data
 
         int disable_height = (int)(fold_prob * (option.rect.height() - niR_height));
         int remain_height = option.rect.height() - niR_height - disable_height;
@@ -92,16 +75,27 @@ void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionV
         int bet_raise_num = 0;
         for(int i = 0;i < strategy.size();i ++){
             GameActions one_action = strategy[i].first;
+            float normalized_ev = withEVs ? normalization_tanh(this->qSolverJob->stack,evs_without_fold[i]) : 1.;
             QBrush brush(Qt::gray);
             if(one_action.getAction() != GameTreeNode::PokerActions::FOLD){
                 if(one_action.getAction() == GameTreeNode::PokerActions::CHECK
                         || one_action.getAction() == GameTreeNode::PokerActions::CALL){
-                    brush = QBrush(Qt::green);
+//                    brush = QBrush(Qt::green);
+                    int green = 255;
+                    int blue = max((int)(225 - normalized_ev * 175),55);
+                    int red = 55;
+                    brush = QBrush(QColor(red,green,blue));
                 }
                 else if(one_action.getAction() == GameTreeNode::PokerActions::BET
                         || one_action.getAction() == GameTreeNode::PokerActions::RAISE){
+//                    int color_base = max(128 - 32 * bet_raise_num - 1,0);
+//                    brush = QBrush(QColor(255,color_base,color_base));
                     int color_base = max(128 - 32 * bet_raise_num - 1,0);
-                    brush = QBrush(QColor(255,color_base,color_base));
+                    int blue = max((int)(255 - normalized_ev * (255 - color_base)), color_base);
+                    int red = color_base + min((int)(normalized_ev * (255-color_base)),255-color_base);;
+                    int green = color_base;
+                    brush = QBrush(QColor(red,green,blue));
+
                     bet_raise_num += 1;
                 }else{
                     brush = QBrush(Qt::blue);
@@ -189,7 +183,7 @@ void StrategyItemDelegate::paint_range(QPainter *painter, const QStyleOptionView
     doc.drawContents(painter, clip);
 }
 
-void StrategyItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+void StrategyItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, bool finish) const {
     auto options = option;
     initStyleOption(&options, index);
     const TableStrategyModel * tableStrategyModel = qobject_cast<const TableStrategyModel*>(index.model());
@@ -204,23 +198,27 @@ void StrategyItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewIt
 
         int red = max((int)(255 - normalized_ev * 255),0);
         int green = min((int)(normalized_ev * 255),255);
-        QBrush brush = QBrush(QColor(red,green,0));
+        int blue = min(red, green);
+
+        QBrush brush = QBrush(QColor(red,green,blue));
 
         int this_width = (int)((float(i + 1) / evs.size()) * options.rect.width()) - last_left;
 
         QRect rect(option.rect.left() + last_left, option.rect.top(),\
-             this_width , options.rect.height());
+             this_width , (int) (options.rect.height() * (finish ? 1.0 : 0.2)));
         painter->fillRect(rect, brush);
         last_left += this_width;
     }
-    QTextDocument doc;
-    doc.setHtml(options.text);
-    options.text = "";
-    //options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &option, painter);
+    if (finish) {
+        QTextDocument doc;
+        doc.setHtml(options.text);
+        options.text = "";
+        //options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &option, painter);
 
-    painter->translate(options.rect.left(), options.rect.top());
-    QRect clip(0, 0, options.rect.width(), options.rect.height());
-    doc.drawContents(painter, clip);
+        painter->translate(options.rect.left(), options.rect.top());
+        QRect clip(0, 0, options.rect.width(), options.rect.height());
+        doc.drawContents(painter, clip);
+    }
 }
 
 void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
@@ -241,7 +239,7 @@ void StrategyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
         this->paint_range(painter,option,index);
     }
     else if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::EV){
-        this->paint_strategy(painter,option,index);
+        this->paint_strategy(painter,option,index,true);
     }
     else if(this->detailWindowSetting->mode == DetailWindowSetting::DetailWindowMode::EV_ONLY){
         this->paint_evs(painter,option,index);

@@ -350,13 +350,7 @@ const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int
         vector<pair<int,int>> card_cords;
         const vector<vector<float>> *current_range;
         card_cords = ui_strategy_table[i][j];
-        if(0 == current_player ){
-            //card_cords = ui_p1_range[i][j];
-            current_range = & p1_range;
-        }else{
-            //card_cords = ui_p2_range[i][j];
-            current_range = & p2_range;
-        }
+        current_range = (0 == current_player ) ? & p1_range : & p2_range;
 
         if(p1_range.empty() || p2_range.empty()){
             return ret_strategy;
@@ -422,18 +416,17 @@ const vector<float> TableStrategyModel::get_ev_grid(int i,int j)const{
 
         vector<GameActions>& gameActions = actionNode->getActions();
 
-        vector<float> strategies;
+//        vector<float> strategies;
 
-        if(this->ui_strategy_table[i][j].size() > 0){
-            strategies = vector<float>(gameActions.size());
-            std::fill(strategies.begin(), strategies.end(), 0.);
-        }
+//        if(this->ui_strategy_table[i][j].size() > 0){
+//            strategies = vector<float>(gameActions.size());
+//            std::fill(strategies.begin(), strategies.end(), 0.);
+//        }
         for(std::pair<int,int> index:this->ui_strategy_table[i][j]){
             int index1 = index.first;
             int index2 = index.second;
             const vector<float>& one_strategy = this->current_strategy[index1][index2];
             const vector<float>& one_ev = this->current_evs[index1][index2];
-
             if(one_ev.size() != one_strategy.size()) return vector<float>();
 
             if(gameActions.size() != one_strategy.size()){
@@ -449,6 +442,61 @@ const vector<float> TableStrategyModel::get_ev_grid(int i,int j)const{
             ret_evs.push_back(one_ev_float);
         }
 
+        return ret_evs;
+    }else{
+        return ret_evs;
+    }
+}
+
+
+const vector<float> TableStrategyModel::get_strategies_evs(int i,int j)const{
+    vector<float> ret_evs;
+    if(this->treeItem == NULL || this->current_evs.empty())return ret_evs;
+
+    const vector<vector<float>> *current_range;
+    current_range = (0 == current_player ) ? & p1_range : & p2_range;
+    if(p1_range.empty() || p2_range.empty()){
+        return ret_evs;
+    }
+
+    shared_ptr<GameTreeNode> node = this->treeItem->m_treedata.lock();
+
+    if(node->getType() == GameTreeNode::GameTreeNode::ACTION){
+        shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(node);
+        vector<GameActions>& gameActions = actionNode->getActions();
+
+        vector<float> strategy_p;
+        if(this->ui_strategy_table[i][j].size() > 0){
+            ret_evs = vector<float>(gameActions.size());
+            std::fill(ret_evs.begin(), ret_evs.end(), 0.);
+            strategy_p = vector<float>(gameActions.size());
+            std::fill(strategy_p.begin(), strategy_p.end(), 0.);
+        }
+        float range = 0;
+        for(std::pair<int,int> index:this->ui_strategy_table[i][j]){
+            int index1 = index.first;
+            int index2 = index.second;
+            const vector<float>& one_strategy = this->current_strategy[index1][index2];
+            const vector<float>& one_ev = this->current_evs[index1][index2];
+            const float one_range = (*current_range)[index1][index2];
+            if(gameActions.size() != one_strategy.size() || one_ev.size() != one_strategy.size()){
+                cout << "index: " << index1 << " " << index2 << endl;
+                cout << "i,j: " << i << " " << j << endl;
+                cout << "size not match between one_ev, gameAction and one_stragegy: "
+                     << one_ev.size() << " " << gameActions.size() << " " << one_strategy.size() << endl;
+                throw runtime_error("size not match between one_ev, gameAction and one_stragegy");
+            }
+            for(int indi = 0;indi < ret_evs.size();indi ++){
+                ret_evs[indi] += one_strategy[indi] * one_ev[indi] * one_range;
+                strategy_p[indi] += one_strategy[indi] * one_range;
+            }
+            range += one_range;
+        }
+        for(int indi = 0;indi < ret_evs.size();indi ++){
+            if (strategy_p[indi] > 0. && range > 0.) {
+                ret_evs[indi] = ret_evs[indi] / strategy_p[indi];
+            }
+        }
         return ret_evs;
     }else{
         return ret_evs;

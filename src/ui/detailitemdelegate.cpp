@@ -276,7 +276,8 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
             int bet_raise_num = 0;
             for(int i = 0;i < strategy.size();i ++){
                 GameActions one_action = gameActions[i];
-                float normalized_ev = normalization_tanh(detailViewerModel->tableStrategyModel->get_solver()->stack,evs[i]);
+//                float normalized_ev = normalization_tanh(detailViewerModel->tableStrategyModel->get_solver()->stack * 0.5,evs[i]);
+                float normalized_ev = normalization_tanh(node->getPot() * 4,evs[i]);
                 QBrush brush(Qt::gray);
                 if(one_action.getAction() != GameTreeNode::PokerActions::FOLD){
                     if(one_action.getAction() == GameTreeNode::PokerActions::CHECK

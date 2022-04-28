@@ -346,7 +346,7 @@ const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int
 
         vector<float> strategies;
 
-// get range data - initally copied from paint_range - probably could need cleanup
+        // get range data - initally copied from paint_range - could probably be integrated in loops below for efficiancy
         vector<pair<int,int>> card_cords;
         const vector<vector<float>> *current_range;
         card_cords = ui_strategy_table[i][j];
@@ -367,9 +367,7 @@ const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int
         }
         else
             return ret_strategy;
-
-// got range data
-
+        // got range data
 
         if(this->ui_strategy_table[i][j].size() > 0){
             strategies = vector<float>(gameActions.size());
@@ -388,12 +386,13 @@ const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int
 
             if ( range_number > 0)
                 for(int indi = 0;indi < one_strategy.size();indi ++){
-                    strategies[indi] += (one_strategy[indi] * (*current_range)[index1][index2] / range_number / strategy_number); // is this correct?
+                    strategies[indi] += (one_strategy[indi] * (*current_range)[index1][index2]);
                 }
         }
 
         for(int indi = 0;indi < strategies.size();indi ++){
-            ret_strategy.push_back(std::pair<GameActions,float>(actionNode->getActions()[indi],strategies[indi]));
+            ret_strategy.push_back(std::pair<GameActions,float>(actionNode->getActions()[indi],
+                                                                strategies[indi] / range_number / strategy_number));
         }
 
         return ret_strategy;

@@ -57,7 +57,7 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
                 strategy_without_fold[i] = strategy_without_fold[i] / strategy_without_fold_sum;
             }
 
-// get range data - copied initially from paint_range - probably could need cleanup
+            // get range data - copied initially from paint_range
             float range_number;
             if(0 == detailViewerModel->tableStrategyModel->current_player){
                 range_number = detailViewerModel->tableStrategyModel->p1_range[card1][card2];
@@ -65,7 +65,7 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
                 range_number = detailViewerModel->tableStrategyModel->p2_range[card1][card2];
             }
             if(range_number < 0 || range_number > 1) throw runtime_error("range number incorrect in strategyitemdeletage");
-// got range data
+            // got range data
 
             float not_in_range = 1 - range_number;
             int niR_height = (int)(not_in_range * option.rect.height());
@@ -248,7 +248,7 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
                 strategy_without_fold[i] = strategy_without_fold[i] / strategy_without_fold_sum;
             }
 
-// get range data - copied initally from paint_range - probably could need cleanup
+            // get range data - copied initally from paint_range - probably could need cleanup
             float range_number;
             if(0 == detailViewerModel->tableStrategyModel->current_player){
                 range_number = detailViewerModel->tableStrategyModel->p1_range[card1][card2];
@@ -257,7 +257,7 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
             }
 
             if(range_number < 0 || range_number > 1) throw runtime_error("range number incorrect in strategyitemdeletage");
-// got range data
+            // got range data
 
             float not_in_range = 1 - range_number;
             int niR_height = (int)(not_in_range * option.rect.height());
@@ -276,13 +276,11 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
             int bet_raise_num = 0;
             for(int i = 0;i < strategy.size();i ++){
                 GameActions one_action = gameActions[i];
-//                float normalized_ev = normalization_tanh(detailViewerModel->tableStrategyModel->get_solver()->stack * 0.5,evs[i]);
-                float normalized_ev = normalization_tanh(node->getPot() * 4,evs[i]);
+                float normalized_ev = normalization_tanh(node->getPot() * 3,evs[i]);
                 QBrush brush(Qt::gray);
                 if(one_action.getAction() != GameTreeNode::PokerActions::FOLD){
                     if(one_action.getAction() == GameTreeNode::PokerActions::CHECK
                     || one_action.getAction() == GameTreeNode::PokerActions::CALL){
-//                        brush = QBrush(Qt::green);
                         int green = 255;
                         int blue = max((int)(225 - normalized_ev * 175),55);
                         int red = 55;
@@ -290,8 +288,6 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
                 }
                 else if(one_action.getAction() == GameTreeNode::PokerActions::BET
                 || one_action.getAction() == GameTreeNode::PokerActions::RAISE){
-//                     int color_base = max(128 - 32 * bet_raise_num - 1,0);
-//                     brush = QBrush(QColor(255,color_base,color_base));
                      int color_base = max(128 - 32 * bet_raise_num - 1,0);
                      int blue = max((int)(255 - normalized_ev * (255 - color_base)), color_base);
                      int red = color_base + min((int)(normalized_ev * (255-color_base)),255-color_base);;

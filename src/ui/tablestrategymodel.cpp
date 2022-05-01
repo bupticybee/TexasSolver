@@ -386,13 +386,13 @@ const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int
 
             if ( range_number > 0)
                 for(int indi = 0;indi < one_strategy.size();indi ++){
-                    strategies[indi] += (one_strategy[indi] * (*current_range)[index1][index2]);
+                    strategies[indi] += (one_strategy[indi] * (*current_range)[index1][index2] / range_number / strategy_number);
                 }
         }
 
         for(int indi = 0;indi < strategies.size();indi ++){
             ret_strategy.push_back(std::pair<GameActions,float>(actionNode->getActions()[indi],
-                                                                strategies[indi] / range_number / strategy_number));
+                                                                strategies[indi]));
         }
 
         return ret_strategy;

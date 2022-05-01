@@ -13,12 +13,12 @@ CommandLineTool::CommandLineTool(string mode,string resource_dir) {
     if(mode == "holdem"){
         ranks = "2,3,4,5,6,7,8,9,T,J,Q,K,A";
         compairer_file = this->resource_dir + "/compairer/card5_dic_sorted.txt";
-        compairer_file_bin = "./resources/compairer/card5_dic_sorted.bin";
+        compairer_file_bin = this->resource_dir + "/compairer/card5_dic_zipped.bin";
         lines = 2598961;
     }else if(mode == "shortdeck"){
         ranks = "6,7,8,9,T,J,Q,K,A";
         compairer_file = this->resource_dir + "/compairer/card5_dic_sorted_shortdeck.txt";
-        compairer_file_bin = "./resources/compairer/card5_dic_sorted_shortdeck.bin";
+        compairer_file_bin = this->resource_dir + "/compairer/card5_dic_zipped_shortdeck.bin";
         lines = 376993;
     }else{
         throw runtime_error(tfm::format("mode not recognized : ",mode));

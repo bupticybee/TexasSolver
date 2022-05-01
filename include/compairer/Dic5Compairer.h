@@ -14,12 +14,12 @@
 #include "include/tools/progressbar.h"
 
 struct FiveCardsStrength {
-    void convert(unordered_map<size_t, int>& strength_map);
+    void convert(unordered_map<uint64_t, int>& strength_map);
     bool load(const char* file_path);
     bool save(const char* file_path);
-    int operator[](size_t hash);
-    bool check(unordered_map<size_t, int>& strength_map);
-    unordered_map<size_t, int> flush_map, other_map;
+    int operator[](uint64_t hash);
+    bool check(unordered_map<uint64_t, int>& strength_map);
+    unordered_map<uint64_t, int> flush_map, other_map;
 };
 
 class Dic5Compairer:public Compairer{

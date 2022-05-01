@@ -50,7 +50,7 @@ void QSolverJob::loading(){
     //if(mode == "holdem"){
     ranks = "2,3,4,5,6,7,8,9,T,J,Q,K,A";
     compairer_file = this->resource_dir + "/compairer/card5_dic_sorted.txt";
-    compairer_file_bin = "./resources/compairer/card5_dic_sorted.bin";
+    compairer_file_bin = this->resource_dir + "/compairer/card5_dic_zipped.bin";
     //qDebug().noquote() << compairer_file_bin.c_str();
     lines = 2598961;
     this->ps_holdem = PokerSolver(ranks,suits,compairer_file,lines,compairer_file_bin);
@@ -59,7 +59,7 @@ void QSolverJob::loading(){
     //}else if(mode == "shortdeck"){
     ranks = "6,7,8,9,T,J,Q,K,A";
     compairer_file = this->resource_dir + "/compairer/card5_dic_sorted_shortdeck.txt";
-    compairer_file_bin = "./resources/compairer/card5_dic_sorted_shortdeck.bin";
+    compairer_file_bin = this->resource_dir + "/compairer/card5_dic_zipped_shortdeck.bin";
     lines = 376993;
     this->ps_shortdeck = PokerSolver(ranks,suits,compairer_file,lines,compairer_file_bin);
     qDebug().noquote() << tr("Loading finished. Good to go.");//.toStdString() << endl;

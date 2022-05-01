@@ -7,6 +7,9 @@
 #include <utility>
 #include <QFile>
 #include <QTextStream>
+#include <QDebug>
+#include "time.h"
+#include "unistd.h"
 
 #define SUIT_0_MASK   0x1111111111111
 #define SUIT_1_MASK   0x2222222222222
@@ -16,13 +19,13 @@
 #define BIT_SUM_1     0x3333333333333
 
 // 牌组合的rank频数
-size_t ranks_hash(size_t cards_hash) {
+uint64_t ranks_hash(uint64_t cards_hash) {
     cards_hash = (cards_hash & BIT_SUM_0) + ((cards_hash >> 1) & BIT_SUM_0);
     cards_hash = (cards_hash & BIT_SUM_1) + ((cards_hash >> 2) & BIT_SUM_1);
     return cards_hash;
 }
 // 牌组合是否为同花
-bool is_flush(size_t hash) {
+bool is_flush(uint64_t hash) {
     int cnt = (hash & SUIT_0_MASK) != 0;
     cnt += (hash & SUIT_1_MASK) != 0;
     if (cnt > 1) return false;
@@ -32,12 +35,12 @@ bool is_flush(size_t hash) {
     return cnt > 1 ? false : true;
 }
 
-void FiveCardsStrength::convert(unordered_map<size_t, int>& strength_map) {
+void FiveCardsStrength::convert(unordered_map<uint64_t, int>& strength_map) {
     flush_map.clear(); other_map.clear();
     auto it = strength_map.begin(), it_end = strength_map.end();
     for (; it != it_end; it++) {
-        size_t cards_hash = it->first;
-        size_t hash = ranks_hash(cards_hash);
+        uint64_t cards_hash = it->first;
+        uint64_t hash = ranks_hash(cards_hash);
         if (is_flush(cards_hash)) flush_map[cards_hash] = it->second;
         else {
             /*if (other_map.count(hash) && other_map[hash] != it->second) {
@@ -48,14 +51,19 @@ void FiveCardsStrength::convert(unordered_map<size_t, int>& strength_map) {
     }
 }
 bool FiveCardsStrength::load(const char* file_path) {
-    ifstream file(file_path, ios::binary);
-    if (!file) {
+    //ifstream file(file_path, ios::binary);
+    /*if (!file) {
         file.close();
         return false;
+    }*/
+
+    QFile file(QString::fromStdString(file_path));
+    if (!file.open(QIODevice::ReadOnly)){
+        throw runtime_error("unable to load compairer file");
     }
     flush_map.clear(); other_map.clear();
-    int size_key = sizeof(size_t), size_int = sizeof(int), val, cnt = 0;
-    size_t key = 0;
+    int size_key = sizeof(uint64_t), size_int = sizeof(int), val, cnt = 0;
+    uint64_t key = 0;
     char* p_key = (char*)&key, * p_val = (char*)&val, * p_cnt = (char*)&cnt;
     file.read(p_cnt, size_int);// 读取行数
     for (int i = 0; i < cnt; i++) {
@@ -75,13 +83,17 @@ bool FiveCardsStrength::load(const char* file_path) {
     return true;
 }
 bool FiveCardsStrength::save(const char* file_path) {
+    //qDebug() << "a";
+    //sleep(10);
+    //qDebug() << "b";
+    //file_path = "/Users/bytedance/Desktop/card5_dic_zipped_shortdeck.bin";
     ofstream file(file_path, ios::binary);
     if (!file) {
         file.close();
         return false;
     }
-    int size_key = sizeof(size_t), size_int = sizeof(int), val = flush_map.size();
-    size_t key = 0;
+    int size_key = sizeof(uint64_t), size_int = sizeof(int), val = flush_map.size();
+    uint64_t key = 0;
     char* p_key = (char*)&key, * p_val = (char*)&val;
     file.write(p_val, size_int);// 写入行数
     auto it = flush_map.begin(), it_end = flush_map.end();
@@ -101,17 +113,17 @@ bool FiveCardsStrength::save(const char* file_path) {
     file.close();
     return true;
 }
-int FiveCardsStrength::operator[](size_t hash) {
+int FiveCardsStrength::operator[](uint64_t hash) {
     auto it = flush_map.find(hash);
     if (it != flush_map.end()) return it->second;
     hash = ranks_hash(hash);
     return other_map.at(hash);
 }
-bool FiveCardsStrength::check(unordered_map<size_t, int>& strength_map) {
+bool FiveCardsStrength::check(unordered_map<uint64_t, int>& strength_map) {
     auto it = strength_map.begin(), it_end = strength_map.end();
     int cnt = 0;
     for (; it != it_end; it++, cnt++) {
-        size_t key = it->first;
+        uint64_t key = it->first;
         int val1 = it->second, val2 = operator[](key);
         if (val1 != val2) {
             printf("%zx,%zx:%d != %d\ncheck failed!\n", key, ranks_hash(key), val1, val2);
@@ -167,8 +179,10 @@ Dic5Compairer::Dic5Compairer(string dic_dir,int lines,string dic_dir_bin):Compai
     }
     //cout << endl;
     fcs.convert(this->cardslong2rank);
-    if(fcs.check(this->cardslong2rank)) fcs.save(dic_dir_bin.c_str());
-    else throw runtime_error("check consistency failed");
+    if(!fcs.check(this->cardslong2rank)){
+        //fcs.save(dic_dir_bin.c_str());
+        throw runtime_error("check consistency failed");
+    }
     this->cardslong2rank.clear();
 }
 

@@ -68,17 +68,19 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
             // got range data
 
             float not_in_range = 1 - range_number;
-            int niR_height = (int)(not_in_range * option.rect.height());
+            int niR_height = (int)(not_in_range * option.rect.height() * 0.975);
 
-            int disable_height = (int)(fold_prob * (option.rect.height()-niR_height));
+            int disable_height = (int)(0.5 + fold_prob * (option.rect.height()-niR_height));
             int remain_height = option.rect.height() - niR_height - disable_height;
 
             // draw background for flod
+        if ( disable_height > 0) {
             QRect rect(option.rect.left(), option.rect.top() + niR_height,\
                  option.rect.width(), disable_height);
             QBrush brush(QColor	(0,191,255));
             painter->fillRect(rect, brush);
-
+        }
+        if (remain_height > 0){
             int ind = 0;
             float last_prob = 0;
             int bet_raise_num = 0;
@@ -105,6 +107,7 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
                 QRect rect(option.rect.left() + delta_x, option.rect.top() + niR_height + disable_height,\
                  delta_width , remain_height);
                 painter->fillRect(rect, brush);
+            }
 
                 last_prob += strategy_without_fold[ind];
                 ind += 1;
@@ -260,17 +263,19 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
             // got range data
 
             float not_in_range = 1 - range_number;
-            int niR_height = (int)(not_in_range * option.rect.height());
+            int niR_height = (int)(not_in_range * option.rect.height() * 0.975);
 
-            int disable_height = (int)(fold_prob * (option.rect.height()-niR_height));
+            int disable_height = (int)(0.5 + fold_prob * (option.rect.height()-niR_height));
             int remain_height = option.rect.height() - niR_height - disable_height;
 
             // draw background for flod
+        if (disable_height > 0) {
             QRect rect(option.rect.left(), option.rect.top() + niR_height,\
                  option.rect.width(), disable_height);
             QBrush brush(QColor	(0,191,255));
             painter->fillRect(rect, brush);
-
+        }
+        if (remain_height > 0){
             int ind = 0;
             float last_prob = 0;
             int bet_raise_num = 0;
@@ -305,6 +310,7 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
                 QRect rect(option.rect.left() + delta_x, option.rect.top() + niR_height + disable_height,\
                  delta_width , remain_height);
                 painter->fillRect(rect, brush);
+            }
 
                 last_prob += strategy_without_fold[ind];
                 ind += 1;

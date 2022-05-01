@@ -58,19 +58,24 @@ void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionV
                 range_number = range_number / card_cords.size();
                 if(range_number < 0 || range_number > 1) throw runtime_error("range number incorrect in strategyitemdeletage");
             }
-            float not_in_range = 1 - range_number;
-            int niR_height = (int)(not_in_range * option.rect.height());
+            float not_in_range = (this->detailWindowSetting->grid_i == index.row()) &&
+                                   (this->detailWindowSetting->grid_j == index.column())
+                                    ? 0 : 1 - range_number;
+            int niR_height = (int)(not_in_range * option.rect.height() * 0.95);
             // got range data
 
-            int disable_height = (int)(fold_prob * (option.rect.height() - niR_height));
+            int disable_height = (int)(0.5+fold_prob * (option.rect.height() - niR_height));
             int remain_height = option.rect.height() - niR_height - disable_height;
 
             // draw background for flod
+        if (disable_height > 0) {
             QRect rect(option.rect.left(), option.rect.top() + niR_height,\
              option.rect.width(), disable_height);
             QBrush brush(QColor	(0,191,255));
             painter->fillRect(rect, brush);
+        }
 
+        if (remain_height > 0){
             int ind = 0;
             float last_prob = 0;
             int bet_raise_num = 0;
@@ -110,6 +115,7 @@ void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionV
                     ind += 1;
                 }
             }
+        }
         }
     }
     QTextDocument doc;

@@ -36,9 +36,10 @@ void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionV
                     evs_without_fold.push_back(evs[i]);
                 }
             }
-
-            for(int i = 0;i < strategy_without_fold.size();i ++){
-                strategy_without_fold[i] = strategy_without_fold[i] / strategy_without_fold_sum;
+            if(strategy_without_fold_sum > 0.){
+                for(int i = 0;i < strategy_without_fold.size();i ++){
+                    strategy_without_fold[i] = strategy_without_fold[i] / strategy_without_fold_sum;
+                }
             }
 
             // get range data

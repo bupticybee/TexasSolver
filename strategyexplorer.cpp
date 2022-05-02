@@ -226,6 +226,7 @@ void StrategyExplorer::onMouseMoveEvent(int i,int j){
     this->detailWindowSetting.grid_i = i;
     this->detailWindowSetting.grid_j = j;
     this->ui->detailView->viewport()->update();
+    this->ui->strategyTableView->viewport()->update();
 }
 
 void StrategyExplorer::on_strategyModeButtom_clicked()

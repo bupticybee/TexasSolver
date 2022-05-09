@@ -11,11 +11,11 @@ DiscountedCfrTrainable::DiscountedCfrTrainable(vector<PrivateCards> *privateCard
     this->action_number = action_node.getChildrens().size();
     this->card_number = privateCards->size();
 
-    this->evs = vector<half_float::half>(this->action_number * this->card_number, (half_float::half) 0.0);
-    this->r_plus = vector<half_float::half>(this->action_number * this->card_number, (half_float::half) 0.0);
-    this->r_plus_sum = vector<half_float::half>(this->card_number, (half_float::half) 0.0);
+    this->evs = vector<storage>(this->action_number * this->card_number, (storage) 0.0);
+    this->r_plus = vector<storage>(this->action_number * this->card_number, (storage) 0.0);
+    this->r_plus_sum = vector<storage>(this->card_number, (storage) 0.0);
 
-    this->cum_r_plus = vector<half_float::half>(this->action_number * this->card_number, (half_float::half) 0.0);
+    this->cum_r_plus = vector<storage>(this->action_number * this->card_number, (storage) 0.0);
     //this->cum_r_plus_sum = vector<float>(this->card_number);
 }
 
@@ -68,7 +68,7 @@ const vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
             for (int private_id = 0; private_id < this->card_number; private_id++) {
                 int index = action_id * this->card_number + private_id;
                 if(this->r_plus_sum[private_id] != 0) {
-                    current_strategy[index] = max(half_float::half(0.0),this->r_plus[index]) / this->r_plus_sum[private_id];
+                    current_strategy[index] = max(float(0.0),(float)this->r_plus[index]) / (float)this->r_plus_sum[private_id];
                 }else{
                     current_strategy[index] = 1.0 / (this->action_number);
                 }
@@ -96,6 +96,7 @@ void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int ite
     alpha_coef = alpha_coef / (1 + alpha_coef);
 
     //Arrays.fill(this.r_plus_sum,0);
+    vector<float> r_plus_sum = vector<float>(this->r_plus_sum.size());
     fill(r_plus_sum.begin(),r_plus_sum.end(),0);
     //fill(cum_r_plus_sum.begin(),cum_r_plus_sum.end(),0);
     for (int action_id = 0;action_id < action_number;action_id ++) {
@@ -104,27 +105,30 @@ void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int ite
             float one_reg = regrets[index];
 
             // 更新 R+
-            this->r_plus[index] = one_reg + this->r_plus[index];
-            if(this->r_plus[index] > 0){
-                this->r_plus[index] *= alpha_coef;
+            float this_r_plus_of_index = this->r_plus[index];
+            this_r_plus_of_index = one_reg + this_r_plus_of_index;
+            if(this_r_plus_of_index > 0){
+                this_r_plus_of_index *= alpha_coef;
             }else{
-                this->r_plus[index] *= beta;
+                this_r_plus_of_index *= beta;
             }
-
-            this->r_plus_sum[private_id] += max(half_float::half(0.0),this->r_plus[index]);
+            r_plus_sum[private_id] += max(float(0.0),this_r_plus_of_index);
 
             // 更新累计策略
             // this.cum_r_plus[index] += this.r_plus[index] * iteration_number;
             // this.cum_r_plus_sum[private_id] += this.cum_r_plus[index];
+
+            this->r_plus[index] = this_r_plus_of_index;
         }
     }
+    for(int i = 0;i < r_plus_sum.size();i ++) this->r_plus_sum[i] = r_plus_sum[i];
     vector<float> current_strategy = this->getcurrentStrategyNoCache();
     float strategy_coef = pow(((float)iteration_number / (iteration_number + 1)),gamma);
     for (int action_id = 0;action_id < action_number;action_id ++) {
         for(int private_id = 0;private_id < this->card_number;private_id ++) {
             int index = action_id * this->card_number + private_id;
-            this->cum_r_plus[index] *= this->theta;
-            this->cum_r_plus[index] += current_strategy[index] * strategy_coef;// * reach_probs[private_id];
+            this->cum_r_plus[index] = this->cum_r_plus[index] * this->theta +
+                current_strategy[index] * strategy_coef;// * reach_probs[private_id];
             //this->cum_r_plus_sum[private_id] += this->cum_r_plus[index] ;
         }
     }
@@ -162,7 +166,7 @@ json DiscountedCfrTrainable::dump_strategy(bool with_state) {
 
 json DiscountedCfrTrainable::dump_evs() {
     json evs;
-    const vector<half_float::half>& average_evs = this->evs;
+    const vector<storage>& average_evs = this->evs;
     vector<GameActions>& game_actions = action_node.getActions();
     vector<string> actions_str;
     for(GameActions& one_action:game_actions) {

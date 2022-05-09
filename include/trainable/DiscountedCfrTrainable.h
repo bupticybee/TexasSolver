@@ -13,19 +13,21 @@ using namespace std;
 
 class DiscountedCfrTrainable:public Trainable {
 private:
+    // typedef float storage;
+    typedef half_float::half storage;
     ActionNode& action_node;
     vector<PrivateCards>* privateCards;
     int action_number;
     int card_number;
-    vector<half_float::half> r_plus;
-    vector<half_float::half> evs;
+    vector<storage> r_plus;
+    vector<storage> evs;
     constexpr static float alpha = 1.5f;
     constexpr static float beta = 0.5f;
     constexpr static float gamma = 2;
     constexpr static float theta = 0.9f;
     // TODO 這裏能不能减肥
-    vector<half_float::half> r_plus_sum;
-    vector<half_float::half> cum_r_plus;
+    vector<storage> r_plus_sum;
+    vector<storage> cum_r_plus;
     //vector<float> cum_r_plus_sum;
     //vector<float> current_strategy;
     //vector<float> average_strategy;

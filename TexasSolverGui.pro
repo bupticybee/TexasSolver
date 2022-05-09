@@ -122,6 +122,7 @@ SOURCES += \
     settingeditor.cpp
 
 HEADERS += \
+    include/tools/half.h \
     mainwindow.h \
     include/Card.h \
     include/GameTree.h \

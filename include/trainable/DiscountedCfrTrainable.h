@@ -4,9 +4,11 @@
 
 #ifndef TEXASSOLVER_DISCOUNTEDCFRTRAINABLE_H
 #define TEXASSOLVER_DISCOUNTEDCFRTRAINABLE_H
+#include <include/tools/half.h>
 #include <include/nodes/ActionNode.h>
 #include <include/ranges/PrivateCards.h>
 #include "Trainable.h"
+
 using namespace std;
 
 class DiscountedCfrTrainable:public Trainable {
@@ -15,15 +17,15 @@ private:
     vector<PrivateCards>* privateCards;
     int action_number;
     int card_number;
-    vector<float> r_plus;
-    vector<float> evs;
+    vector<half_float::half> r_plus;
+    vector<half_float::half> evs;
     constexpr static float alpha = 1.5f;
     constexpr static float beta = 0.5f;
     constexpr static float gamma = 2;
     constexpr static float theta = 0.9f;
     // TODO 這裏能不能减肥
-    vector<float> r_plus_sum;
-    vector<float> cum_r_plus;
+    vector<half_float::half> r_plus_sum;
+    vector<half_float::half> cum_r_plus;
     //vector<float> cum_r_plus_sum;
     //vector<float> current_strategy;
     //vector<float> average_strategy;

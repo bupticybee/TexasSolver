@@ -189,7 +189,7 @@ json DiscountedCfrTrainable::dump_evs() {
     json retjson;
     retjson["actions"] = std::move(actions_str);
     retjson["evs"] = std::move(evs);
-    return retjson;
+    return std::move(retjson);
 }
 
 Trainable::TrainableType DiscountedCfrTrainable::get_type() {

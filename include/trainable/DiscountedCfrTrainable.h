@@ -4,7 +4,7 @@
 
 #ifndef TEXASSOLVER_DISCOUNTEDCFRTRAINABLE_H
 #define TEXASSOLVER_DISCOUNTEDCFRTRAINABLE_H
-#include <include/tools/half.h>
+#include <include/tools/half-1-12-0.h>
 #include <include/nodes/ActionNode.h>
 #include <include/ranges/PrivateCards.h>
 #include "Trainable.h"

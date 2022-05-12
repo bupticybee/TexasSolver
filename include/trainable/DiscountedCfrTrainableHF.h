@@ -2,8 +2,8 @@
 // Created by Xuefeng Huang on 2020/1/31.
 //
 
-#ifndef TEXASSOLVER_DiscountedCfrTrainable_H
-#define TEXASSOLVER_DiscountedCfrTrainable_H
+#ifndef TEXASSOLVER_DiscountedCfrTrainableHF_H
+#define TEXASSOLVER_DiscountedCfrTrainableHF_H
 #include <include/tools/half-1-12-0.h>
 #include <include/nodes/ActionNode.h>
 #include <include/ranges/PrivateCards.h>
@@ -13,12 +13,11 @@
 using namespace std;
 using half_float::half;
 
-class DiscountedCfrTrainable
-:public Trainable {
+class DiscountedCfrTrainableHF:public Trainable {
 private:
-    typedef float EvsStorage;
-    typedef float RplusStorage;
-    typedef float RplusSumStorage;
+    typedef half EvsStorage;
+    typedef half RplusStorage;
+    typedef half RplusSumStorage;
     typedef float CumRplusStorage;
     ActionNode& action_node;
     vector<PrivateCards>* privateCards;
@@ -37,8 +36,7 @@ private:
     //vector<float> current_strategy;
     //vector<float> average_strategy;
 public:
-    DiscountedCfrTrainable
-(vector<PrivateCards> *privateCards,
+    DiscountedCfrTrainableHF(vector<PrivateCards> *privateCards,
                            ActionNode &actionNode);
     bool isAllZeros(const vector<float>& input_array);
 
@@ -66,4 +64,4 @@ private:
 
 
 
-#endif //TEXASSOLVER_DiscountedCfrTrainable_H
+#endif //TEXASSOLVER_DiscountedCfrTrainableHF_H

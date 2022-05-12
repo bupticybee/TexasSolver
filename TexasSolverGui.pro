@@ -95,6 +95,7 @@ SOURCES += \
     src/tools/utils.cpp \
     src/trainable/CfrPlusTrainable.cpp \
     src/trainable/DiscountedCfrTrainable.cpp \
+    src/trainable/DiscountedCfrTrainableHF.cpp \
     src/trainable/Trainable.cpp \
     src/runtime/qsolverjob.cpp \
     qstextedit.cpp \
@@ -123,6 +124,7 @@ SOURCES += \
 
 HEADERS += \
     include/tools/half.h \
+    include/trainable/DiscountedCfrTrainableHF.h \
     mainwindow.h \
     include/Card.h \
     include/GameTree.h \

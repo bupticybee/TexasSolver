@@ -2,10 +2,10 @@
 // Created by Xuefeng Huang on 2020/1/31.
 //
 
-#include "include/trainable/DiscountedCfrTrainable.h"
+#include "include/trainable/DiscountedCfrTrainableHF.h"
 //#define DEBUG;
 
-DiscountedCfrTrainable::DiscountedCfrTrainable(vector<PrivateCards> *privateCards,
+DiscountedCfrTrainableHF::DiscountedCfrTrainableHF(vector<PrivateCards> *privateCards,
                                                ActionNode &actionNode) : action_node(actionNode) {
     this->privateCards = privateCards;
     this->action_number = action_node.getChildrens().size();
@@ -19,14 +19,14 @@ DiscountedCfrTrainable::DiscountedCfrTrainable(vector<PrivateCards> *privateCard
     //this->cum_r_plus_sum = vector<float>(this->card_number);
 }
 
-bool DiscountedCfrTrainable::isAllZeros(const vector<float>& input_array) {
+bool DiscountedCfrTrainableHF::isAllZeros(const vector<float>& input_array) {
     for(float i:input_array){
         if (i != 0)return false;
     }
     return true;
 }
 
-const vector<float> DiscountedCfrTrainable::getAverageStrategy() {
+const vector<float> DiscountedCfrTrainableHF::getAverageStrategy() {
     vector<float> average_strategy;
     average_strategy = vector<float>(this->action_number * this->card_number);
     for (int private_id = 0; private_id < this->card_number; private_id++) {
@@ -48,17 +48,17 @@ const vector<float> DiscountedCfrTrainable::getAverageStrategy() {
     return average_strategy;
 }
 
-const vector<float> DiscountedCfrTrainable::getcurrentStrategy() {
+const vector<float> DiscountedCfrTrainableHF::getcurrentStrategy() {
     return this->getcurrentStrategyNoCache();
 }
 
-void DiscountedCfrTrainable::copyStrategy(shared_ptr<Trainable> other_trainable){
-    shared_ptr<DiscountedCfrTrainable> trainable = dynamic_pointer_cast<DiscountedCfrTrainable>(other_trainable);
+void DiscountedCfrTrainableHF::copyStrategy(shared_ptr<Trainable> other_trainable){
+    shared_ptr<DiscountedCfrTrainableHF> trainable = dynamic_pointer_cast<DiscountedCfrTrainableHF>(other_trainable);
     this->r_plus.assign(trainable->r_plus.begin(),trainable->r_plus.end());
     this->cum_r_plus.assign(trainable->cum_r_plus.begin(),trainable->cum_r_plus.end());
 }
 
-const vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
+const vector<float> DiscountedCfrTrainableHF::getcurrentStrategyNoCache() {
     vector<float> current_strategy;
     current_strategy = vector<float>(this->action_number * this->card_number);
     if(this->r_plus_sum.empty()){
@@ -81,12 +81,12 @@ const vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
     return current_strategy;
 }
 
-void DiscountedCfrTrainable::setEv(const vector<float>& evs){
+void DiscountedCfrTrainableHF::setEv(const vector<float>& evs){
     if(evs.size() != this->evs.size()) throw runtime_error("size mismatch in discountcfrtrainable setEV");
     for(int i = 0;i < evs.size();i ++) if(evs[i] == evs[i])this->evs[i] = evs[i];
 }
 
-void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) {
+void DiscountedCfrTrainableHF::updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) {
 
 #ifdef DEBUG
     if(regrets.size() != this->action_number * this->card_number) throw runtime_error("length not match");
@@ -97,6 +97,7 @@ void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int ite
 
     //Arrays.fill(this.r_plus_sum,0);
     vector<float> r_plus_sum = vector<float>(this->r_plus_sum.size());
+    vector<float> r_plus = vector<float>(this->r_plus.size());
     fill(r_plus_sum.begin(),r_plus_sum.end(),0);
     //fill(cum_r_plus_sum.begin(),cum_r_plus_sum.end(),0);
     for (int action_id = 0;action_id < action_number;action_id ++) {
@@ -119,10 +120,31 @@ void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int ite
             // this.cum_r_plus_sum[private_id] += this.cum_r_plus[index];
 
             this->r_plus[index] = this_r_plus_of_index;
+            r_plus[index] = this_r_plus_of_index;
         }
     }
     for(int i = 0;i < r_plus_sum.size();i ++) this->r_plus_sum[i] = r_plus_sum[i];
-    vector<float> current_strategy = this->getcurrentStrategyNoCache();
+
+    // inline replacement with less conversion induced precision loss and overhead of
+    // vector<float> current_strategy = this->getcurrentStrategyNoCache();
+//*
+    vector<float> current_strategy = vector<float>(this->action_number * this->card_number);
+    for (int action_id = 0; action_id < action_number; action_id++) {
+        for (int private_id = 0; private_id < this->card_number; private_id++) {
+            int index = action_id * this->card_number + private_id;
+            if(r_plus_sum[private_id] != 0) {
+                current_strategy[index] = max(float(0.0), r_plus[index]) / r_plus_sum[private_id];
+            }else{
+                current_strategy[index] = 1.0 / (this->action_number);
+            }
+#ifdef DEBUG
+            if(this->r_plus[index] != this->r_plus[index]) throw runtime_error("nan found");
+#endif
+        }
+    }
+//*/
+    // end of inline replacement
+
     float strategy_coef = pow(((float)iteration_number / (iteration_number + 1)),gamma);
     for (int action_id = 0;action_id < action_number;action_id ++) {
         for(int private_id = 0;private_id < this->card_number;private_id ++) {
@@ -134,7 +156,7 @@ void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int ite
     }
 }
 
-json DiscountedCfrTrainable::dump_strategy(bool with_state) {
+json DiscountedCfrTrainableHF::dump_strategy(bool with_state) {
     if(with_state) throw runtime_error("state storage not implemented");
 
     json strategy;
@@ -164,7 +186,7 @@ json DiscountedCfrTrainable::dump_strategy(bool with_state) {
     return std::move(retjson);
 }
 
-json DiscountedCfrTrainable::dump_evs() {
+json DiscountedCfrTrainableHF::dump_evs() {
     json evs;
     const vector<EvsStorage>& average_evs = this->evs;
     vector<GameActions>& game_actions = action_node.getActions();
@@ -192,6 +214,6 @@ json DiscountedCfrTrainable::dump_evs() {
     return std::move(retjson);
 }
 
-Trainable::TrainableType DiscountedCfrTrainable::get_type() {
+Trainable::TrainableType DiscountedCfrTrainableHF::get_type() {
     return DISCOUNTED_CFR_TRAINABLE;
 }

@@ -17,8 +17,8 @@ class DiscountedCfrTrainableHF:public Trainable {
 private:
     typedef half EvsStorage;
     typedef half RplusStorage;
-    typedef half RplusSumStorage;
-    typedef float CumRplusStorage;
+//    typedef half RplusSumStorage;
+    typedef half CumRplusStorage;
     ActionNode& action_node;
     vector<PrivateCards>* privateCards;
     int action_number;
@@ -30,7 +30,7 @@ private:
     constexpr static float gamma = 2;
     constexpr static float theta = 0.9f;
     // TODO 這裏能不能减肥
-    vector<RplusSumStorage> r_plus_sum;
+//    vector<RplusSumStorage> r_plus_sum;
     vector<CumRplusStorage> cum_r_plus;
     //vector<float> cum_r_plus_sum;
     //vector<float> current_strategy;

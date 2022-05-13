@@ -13,7 +13,7 @@ DiscountedCfrTrainableHF::DiscountedCfrTrainableHF(vector<PrivateCards> *private
 
     this->evs = vector<EvsStorage>(this->action_number * this->card_number, (EvsStorage) 0.0);
     this->r_plus = vector<RplusStorage>(this->action_number * this->card_number, (RplusStorage) 0.0);
-    this->r_plus_sum = vector<RplusSumStorage>(this->card_number, (RplusSumStorage) 0.0);
+//    this->r_plus_sum = vector<RplusSumStorage>(this->card_number, (RplusSumStorage) 0.0);
 
     this->cum_r_plus = vector<CumRplusStorage>(this->action_number * this->card_number, (CumRplusStorage) 0.0);
     //this->cum_r_plus_sum = vector<float>(this->card_number);
@@ -61,14 +61,28 @@ void DiscountedCfrTrainableHF::copyStrategy(shared_ptr<Trainable> other_trainabl
 const vector<float> DiscountedCfrTrainableHF::getcurrentStrategyNoCache() {
     vector<float> current_strategy;
     current_strategy = vector<float>(this->action_number * this->card_number);
-    if(this->r_plus_sum.empty()){
-        fill(current_strategy.begin(),current_strategy.end(),1.0 / this->action_number);
-    }else {
+//    if(this->r_plus_sum.empty()){
+//        fill(current_strategy.begin(),current_strategy.end(),1.0 / this->action_number);
+//    }else {
+
+        // calculate r_plus_sum on the fly, store r_plus as floats locally
+        vector<float> r_plus_sum = vector<float>(this->r_plus.size());
+        vector<float> r_plus = vector<float>(this->r_plus.size());
+        fill(r_plus_sum.begin(),r_plus_sum.end(),0);
+        for (int action_id = 0;action_id < action_number;action_id ++) {
+            for(int private_id = 0;private_id < this->card_number;private_id ++){
+                int index = action_id * this->card_number + private_id;
+                float this_r_plus_of_index = this->r_plus[index];
+                r_plus_sum[private_id] += max(float(0.0),this_r_plus_of_index);
+                r_plus[index] = this_r_plus_of_index;
+            }
+        }
+
         for (int action_id = 0; action_id < action_number; action_id++) {
             for (int private_id = 0; private_id < this->card_number; private_id++) {
                 int index = action_id * this->card_number + private_id;
-                if(this->r_plus_sum[private_id] != 0) {
-                    current_strategy[index] = max(float(0.0),(float)this->r_plus[index]) / (float)this->r_plus_sum[private_id];
+                if(r_plus_sum[private_id] != 0) {
+                    current_strategy[index] = max(float(0.0),r_plus[index]) / r_plus_sum[private_id];
                 }else{
                     current_strategy[index] = 1.0 / (this->action_number);
                 }
@@ -77,7 +91,7 @@ const vector<float> DiscountedCfrTrainableHF::getcurrentStrategyNoCache() {
 #endif
             }
         }
-    }
+//    }
     return current_strategy;
 }
 
@@ -96,7 +110,7 @@ void DiscountedCfrTrainableHF::updateRegrets(const vector<float>& regrets, int i
     alpha_coef = alpha_coef / (1 + alpha_coef);
 
     //Arrays.fill(this.r_plus_sum,0);
-    vector<float> r_plus_sum = vector<float>(this->r_plus_sum.size());
+    vector<float> r_plus_sum = vector<float>(this->r_plus.size());
     vector<float> r_plus = vector<float>(this->r_plus.size());
     fill(r_plus_sum.begin(),r_plus_sum.end(),0);
     //fill(cum_r_plus_sum.begin(),cum_r_plus_sum.end(),0);
@@ -123,7 +137,7 @@ void DiscountedCfrTrainableHF::updateRegrets(const vector<float>& regrets, int i
             r_plus[index] = this_r_plus_of_index;
         }
     }
-    for(int i = 0;i < r_plus_sum.size();i ++) this->r_plus_sum[i] = r_plus_sum[i];
+//    for(int i = 0;i < r_plus_sum.size();i ++) this->r_plus_sum[i] = r_plus_sum[i];
 
     // inline replacement with less conversion induced precision loss and overhead of
     // vector<float> current_strategy = this->getcurrentStrategyNoCache();

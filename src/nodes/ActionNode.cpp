@@ -36,12 +36,12 @@ GameTreeNode::GameTreeNodeType ActionNode::getType() {
     return ACTION;
 }
 
-shared_ptr<Trainable> ActionNode::getTrainable(int i,bool create_on_site) {
+shared_ptr<Trainable> ActionNode::use_halffloats(int i,bool create_on_site, int use_halffloats) {
     if(i > this->trainables.size()){
         throw runtime_error(tfm::format("size unacceptable %s > %s ",i,this->trainables.size()));
     }
     if(this->trainables[i] == nullptr && create_on_site){
-        if(this->getRound() == GameTreeNode::RIVER)
+        if((this->getRound() + use_halffloats) > GameTreeNode::RIVER)
             this->trainables[i] = make_shared<DiscountedCfrTrainableHF>(player_privates,*this);
         else
             this->trainables[i] = make_shared<DiscountedCfrTrainable>(player_privates,*this);

@@ -46,6 +46,7 @@ public:
     float accuracy;
     int max_iteration=100;
     int use_isomorphism=1;
+    int use_halffloats=0;
     int print_interval=10;
     int dump_rounds = 2;
     shared_ptr<GameTreeBuildingSettings> gtbs;

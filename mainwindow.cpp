@@ -473,7 +473,7 @@ void MainWindow::on_buildTreeButtom_clicked()
     qSolverJob->mode = this->ui->mode_box->currentIndex() == 0 ? QSolverJob::Mode::HOLDEM:QSolverJob::Mode::SHORTDECK;
     qSolverJob->allin_threshold = this->ui->allinThresholdText->text().toFloat();
     qSolverJob->use_isomorphism = this->ui->useIsoCheck->isChecked();
-    qSolverJob->use_halffloats =  0; // this->ui->useHalfFloats_box->currentIndex();
+    qSolverJob->use_halffloats =  this->ui->useHalfFloats_box->currentIndex();
 
     StreetSetting gbs_flop_ip = StreetSetting(sizes_convert(ui->flop_ip_bet->text()),
                                               sizes_convert(ui->flop_ip_raise->text()),

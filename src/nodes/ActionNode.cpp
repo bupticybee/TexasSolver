@@ -36,7 +36,7 @@ GameTreeNode::GameTreeNodeType ActionNode::getType() {
     return ACTION;
 }
 
-shared_ptr<Trainable> ActionNode::use_halffloats(int i,bool create_on_site, int use_halffloats) {
+shared_ptr<Trainable> ActionNode::getTrainable(int i,bool create_on_site, int use_halffloats) {
     if(i > this->trainables.size()){
         throw runtime_error(tfm::format("size unacceptable %s > %s ",i,this->trainables.size()));
     }

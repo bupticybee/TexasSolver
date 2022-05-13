@@ -257,7 +257,7 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
         // 如果是别人做决定，那么就按照别人的策略加权算出一个 ev
         vector<float> total_payoffs = vector<float>(player_hands[player]);
         fill(total_payoffs.begin(),total_payoffs.end(),0);
-        shared_ptr<Trainable> trainable = node->use_halffloats(deal,true,this->use_halffloats);
+        shared_ptr<Trainable> trainable = node->getTrainable(deal,true,this->use_halffloats);
 #ifdef DEBUG
         if(trainable == nullptr){
             throw runtime_error("null trainable");

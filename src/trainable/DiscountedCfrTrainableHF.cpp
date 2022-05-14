@@ -28,13 +28,16 @@ const vector<float> DiscountedCfrTrainableHF::getAverageStrategy() {
         float r_plus_sum = 0;
         for (int action_id = 0; action_id < action_number; action_id++) {
             int index = action_id * this->card_number + private_id;
-            r_plus_sum += this->cum_r_plus[index];
+            average_strategy[index] = this->cum_r_plus[index];
+            r_plus_sum += cum_r_plus[index];
         }
 
         for (int action_id = 0; action_id < action_number; action_id++) {
             int index = action_id * this->card_number + private_id;
             if(r_plus_sum) {
-                average_strategy[index] = this->cum_r_plus[index] / r_plus_sum;
+                // we stored this->cum_r_plus[index] in average_strategy[index] above
+                // this is to void converting from half float twice
+                average_strategy[index] = average_strategy[index] / r_plus_sum;
             }else{
                 average_strategy[index] = 1.0 / this->action_number;
             }

@@ -590,8 +590,15 @@ void MainWindow::on_estimateMemoryButtom_clicked()
     if(this->ui->useIsoCheck->isChecked()){
         corh =iso_corh(this->ui->boardText->toPlainText());
     }
-    if(this->ui->useHalfFloats_box->currentIndex() != 0){
+    switch(this->ui->useHalfFloats_box->currentIndex()){
+    case 0:
+        break;
+    case 1:
+        corh *= 0.75;
+        break;
+    case 2:
         corh *= 0.5;
+        break;
     }
     float memory_mb = (float)memory_float / 1024 / 1024 * corh * 4 ;
     float memory_gb = (float)memory_float / 1024 / 1024 / 1024 * corh * 4;

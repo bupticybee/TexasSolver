@@ -7,6 +7,7 @@
 #include <utility>
 #include <include/trainable/DiscountedCfrTrainable.h>
 #include <include/trainable/DiscountedCfrTrainableHF.h>
+#include <include/trainable/DiscountedCfrTrainableSF.h>
 
 ActionNode::~ActionNode(){
     //cout << "ActionNode destroyed" << endl;
@@ -41,10 +42,17 @@ shared_ptr<Trainable> ActionNode::getTrainable(int i,bool create_on_site, int us
         throw runtime_error(tfm::format("size unacceptable %s > %s ",i,this->trainables.size()));
     }
     if(this->trainables[i] == nullptr && create_on_site){
-        if((this->getRound() + use_halffloats) > GameTreeNode::RIVER)
-            this->trainables[i] = make_shared<DiscountedCfrTrainableHF>(player_privates,*this);
-        else
+        switch ((this->getRound() == GameTreeNode::RIVER) ? use_halffloats : 0 ){
+        case 0:
             this->trainables[i] = make_shared<DiscountedCfrTrainable>(player_privates,*this);
+            break;
+        case 1:
+            this->trainables[i] = make_shared<DiscountedCfrTrainableSF>(player_privates,*this);
+            break;
+        case 2:
+            this->trainables[i] = make_shared<DiscountedCfrTrainableHF>(player_privates,*this);
+            break;
+        }
     }
     return this->trainables[i];
 }

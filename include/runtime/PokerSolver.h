@@ -43,6 +43,7 @@ public:
             int warmup,
             float accuracy,
             bool use_isomorphism,
+            int use_halffloats,
             int threads
             );
     void stop();

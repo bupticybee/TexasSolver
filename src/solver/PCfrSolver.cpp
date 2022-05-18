@@ -16,7 +16,7 @@ PCfrSolver::~PCfrSolver(){
 
 PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, vector<PrivateCards> range2,
                      vector<int> initial_board, shared_ptr<Compairer> compairer, Deck deck, int iteration_number, bool debug,
-                     int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int warmup,float accuracy,bool use_isomorphism,int num_threads) :Solver(tree){
+                     int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int warmup,float accuracy,bool use_isomorphism,int use_halffloats,int num_threads) :Solver(tree){
     this->initial_board = initial_board;
     this->initial_board_long = Card::boardInts2long(initial_board);
     this->logfile = logfile;
@@ -37,6 +37,7 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
 
     this->deck = deck;
     this->use_isomorphism = use_isomorphism;
+    this->use_halffloats = use_halffloats;
 
     this->rrm = RiverRangeManager(compairer);
     this->iteration_number = iteration_number;
@@ -424,7 +425,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
         trainable = node->getTrainable(deal);
     }
      */
-    trainable = node->getTrainable(deal);
+    trainable = node->getTrainable(deal,true,this->use_halffloats);
 
 #ifdef DEBUG
     if(trainable == nullptr){
@@ -531,7 +532,7 @@ PCfrSolver::actionUtility(int player, shared_ptr<ActionNode> node, const vector<
                 vector<int> deals = this->getAllAbstractionDeal(deal);
                 shared_ptr<Trainable> standard_trainable = nullptr;
                 for (int one_deal : deals) {
-                    shared_ptr<Trainable> one_trainable = node->getTrainable(one_deal);
+                    shared_ptr<Trainable> one_trainable = node->getTrainable(one_deal,true,this->use_halffloats);
                     if (standard_trainable == nullptr) {
                         one_trainable->updateRegrets(regrets, iter + 1, reach_probs);
                         standard_trainable = one_trainable;
@@ -774,7 +775,7 @@ void PCfrSolver::train() {
         this->findGameSpecificIsomorphisms();
     }
 
-    BestResponse br = BestResponse(player_privates,this->player_number,this->pcm,this->rrm,this->deck,this->debug,this->color_iso_offset,this->split_round,this->num_threads);
+    BestResponse br = BestResponse(player_privates,this->player_number,this->pcm,this->rrm,this->deck,this->debug,this->color_iso_offset,this->split_round,this->num_threads,this->use_halffloats);
 
     br.printExploitability(tree->getRoot(), 0, tree->getRoot()->getPot(), initial_board_long);
 
@@ -1055,7 +1056,7 @@ vector<vector<vector<float>>> PCfrSolver::get_strategy(shared_ptr<ActionNode> no
         }
         deal = new_deal;
     }
-    shared_ptr<Trainable> trainable = node->getTrainable(deal,true);
+    shared_ptr<Trainable> trainable = node->getTrainable(deal,true,this->use_halffloats);
     json retjson = trainable->dump_strategy(false);;
 
     for(vector<int> one_exchange:exchange_color_list){
@@ -1139,7 +1140,7 @@ vector<vector<vector<float>>> PCfrSolver::get_evs(shared_ptr<ActionNode> node,ve
         }
         deal = new_deal;
     }
-    shared_ptr<Trainable> trainable = node->getTrainable(deal,true);
+    shared_ptr<Trainable> trainable = node->getTrainable(deal,true,this->use_halffloats);
     json retjson = trainable->dump_evs();
 
     for(vector<int> one_exchange:exchange_color_list){

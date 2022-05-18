@@ -111,6 +111,7 @@ void QSolverJob::solving(){
             -1,
             this->accuracy,
             this->use_isomorphism,
+            this->use_halffloats,
             this->thread_number
         );
     }else if(this->mode == Mode::SHORTDECK){
@@ -125,6 +126,7 @@ void QSolverJob::solving(){
             -1,
             this->accuracy,
             this->use_isomorphism,
+            this->use_halffloats,
             this->thread_number
         );
     }

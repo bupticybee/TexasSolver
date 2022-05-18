@@ -89,6 +89,7 @@ public:
             int warmup,
             float accuracy,
             bool use_isomorphism,
+            int use_halffloats,
             int num_threads
     );
     ~PCfrSolver();
@@ -126,6 +127,7 @@ private:
     bool distributing_task;
     float accuracy;
     bool use_isomorphism;
+    int use_halffloats;
     bool nowstop = false;
 
     const vector<PrivateCards>& playerHands(int player);

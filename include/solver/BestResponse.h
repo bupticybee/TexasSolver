@@ -31,6 +31,7 @@ private:
     bool debug;
     vector<vector<float>> reach_probs;
     int nthreads;
+    int use_halffloats;
 public:
     BestResponse(
             vector<vector<PrivateCards>>& private_combos,
@@ -41,7 +42,8 @@ public:
             bool debug,
             int color_iso_offset[][4],
             GameTreeNode::GameRound split_round,
-            int nthreads = 1
+            int nthreads = 1,
+            int use_halffloats = 0
             );
     float printExploitability(shared_ptr<GameTreeNode> root, int iterationCount, float initial_pot, uint64_t initialBoard);
     float getBestReponseEv(shared_ptr<GameTreeNode> node, int player,vector<vector<float>> reach_probs, uint64_t initialBoard,int deal);

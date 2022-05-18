@@ -167,6 +167,7 @@ void CommandLineTool::processCommand(string input) {
                 -1,
                 this->accuracy,
                 this->use_isomorphism,
+                0, // TODO: enable half float option for command line tool
                 this->thread_number
         );
     }else if(command == "dump_result"){

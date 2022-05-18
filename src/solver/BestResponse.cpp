@@ -9,7 +9,7 @@
 //#define DEBUG;
 
 BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int player_number,
-                           PrivateCardsManager &pcm, RiverRangeManager &rrm, Deck &deck, bool debug,int color_iso_offset[][4],GameTreeNode::GameRound split_round,int nthreads)
+                           PrivateCardsManager &pcm, RiverRangeManager &rrm, Deck &deck, bool debug,int color_iso_offset[][4],GameTreeNode::GameRound split_round,int nthreads, int use_halffloats)
                            :rrm(rrm),pcm(pcm),private_combos(private_combos),deck(deck){
     this->player_number = player_number;
     this->debug = debug;
@@ -25,6 +25,7 @@ BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int pla
         player_hands[i] = private_combos[i].size();
     }
     this->nthreads = nthreads;
+    this->use_halffloats = use_halffloats;
     for(int i = 0;i < 52 * 52 * 2;i ++){
         for(int j = 0;j < 4;j ++){
             this->color_iso_offset[i][j] = color_iso_offset[i][j];
@@ -256,7 +257,7 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
         // 如果是别人做决定，那么就按照别人的策略加权算出一个 ev
         vector<float> total_payoffs = vector<float>(player_hands[player]);
         fill(total_payoffs.begin(),total_payoffs.end(),0);
-        shared_ptr<Trainable> trainable = node->getTrainable(deal);
+        shared_ptr<Trainable> trainable = node->getTrainable(deal,true,this->use_halffloats);
 #ifdef DEBUG
         if(trainable == nullptr){
             throw runtime_error("null trainable");

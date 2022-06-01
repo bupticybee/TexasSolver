@@ -683,7 +683,7 @@ vector<double> GameTree::get_possible_bets(shared_ptr<ActionNode> root, int play
         }
         possible_amounts = tmp_vector;
     }else{
-        float gap = rule.get_commit(player) - rule.get_commit(next_player);
+        float gap = rule.get_commit(next_player) - rule.get_commit(player);
         vector<double> tmp_vector;
         for(double val:possible_amounts){
             if(val >= gap * 2)tmp_vector.push_back(val);

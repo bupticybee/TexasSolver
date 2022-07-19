@@ -361,7 +361,7 @@ void MainWindow::on_export_params(){
     out << "\n";
     out << "set_max_iteration " << this->ui->iterationText->text().trimmed();
     out << "\n";
-    out << "set_print_interval" << this->ui->logIntervalText->text().trimmed();
+    out << "set_print_interval " << this->ui->logIntervalText->text().trimmed();
     out << "\n";
     if(this->ui->useIsoCheck->isChecked()){
         out << "set_use_isomorphism 1" << "\n";

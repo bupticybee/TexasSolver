@@ -12,16 +12,20 @@
 #include <string>
 
 EXPORT
-int api(string input_file, string resource_dir = "./resources", string mode = "holdem") {
-    if(mode != "holdem" && mode != "shortdeck")
-        throw runtime_error(tfm::format("mode %s error, not in ['holdem','shortdeck']",mode));
+int api(const char * input_file, const char * resource_dir = "./resources", const char * mode = "holdem") {
+    string input_file_ = input_file;
+    string resource_dir_ = resource_dir;
+    string mode_ = mode;
 
-    if(input_file.empty()) {
-        CommandLineTool clt = CommandLineTool(mode,resource_dir);
+    if(mode_ != "holdem" && mode_ != "shortdeck")
+        throw runtime_error(tfm::format("mode %s error, not in ['holdem','shortdeck']", mode_));
+
+    if(input_file_.empty()) {
+        CommandLineTool clt = CommandLineTool(mode_, resource_dir_);
         clt.startWorking();
     }else{
         cout << "EXEC FROM FILE" << endl;
-        CommandLineTool clt = CommandLineTool(mode,resource_dir);
-        clt.execFromFile(input_file);
+        CommandLineTool clt = CommandLineTool(mode_, resource_dir_);
+        clt.execFromFile(input_file_);
     }
 }

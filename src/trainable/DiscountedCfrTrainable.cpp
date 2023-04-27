@@ -108,7 +108,9 @@ void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int ite
             if(this->r_plus[index] > 0){
                 this->r_plus[index] *= alpha_coef;
             }else{
-                this->r_plus[index] *= beta;
+                auto beta_coef = pow(iteration_number, this->beta);
+                beta_coef = beta_coef / (1 + beta_coef);
+                this->r_plus[index] *= beta_coef;
             }
 
             this->r_plus_sum[private_id] += max(float(0.0),this->r_plus[index]);

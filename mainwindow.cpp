@@ -361,7 +361,7 @@ void MainWindow::on_export_params(){
     out << "\n";
     out << "set_max_iteration " << this->ui->iterationText->text().trimmed();
     out << "\n";
-    out << "set_print_interval" << this->ui->logIntervalText->text().trimmed();
+    out << "set_print_interval " << this->ui->logIntervalText->text().trimmed();
     out << "\n";
     if(this->ui->useIsoCheck->isChecked()){
         out << "set_use_isomorphism 1" << "\n";
@@ -473,6 +473,7 @@ void MainWindow::on_buildTreeButtom_clicked()
     qSolverJob->mode = this->ui->mode_box->currentIndex() == 0 ? QSolverJob::Mode::HOLDEM:QSolverJob::Mode::SHORTDECK;
     qSolverJob->allin_threshold = this->ui->allinThresholdText->text().toFloat();
     qSolverJob->use_isomorphism = this->ui->useIsoCheck->isChecked();
+    qSolverJob->use_halffloats =  this->ui->useHalfFloats_box->currentIndex();
 
     StreetSetting gbs_flop_ip = StreetSetting(sizes_convert(ui->flop_ip_bet->text()),
                                               sizes_convert(ui->flop_ip_raise->text()),
@@ -589,15 +590,27 @@ void MainWindow::on_estimateMemoryButtom_clicked()
     if(this->ui->useIsoCheck->isChecked()){
         corh =iso_corh(this->ui->boardText->toPlainText());
     }
+    switch(this->ui->useHalfFloats_box->currentIndex()){
+    case 0:
+        break;
+    case 1:
+        corh *= 0.75;
+        break;
+    case 2:
+        corh *= 0.5;
+        break;
+    }
     float memory_mb = (float)memory_float / 1024 / 1024 * corh * 4 ;
     float memory_gb = (float)memory_float / 1024 / 1024 / 1024 * corh * 4;
     QString message;
     if(memory_gb == 0){
         message = tr("Please build tree first.");
     }else if(memory_gb < 1){
-        message = tr("Estimated Memory Usage: ") + QString::number(memory_mb,'f',1) + tr(" Mb");
+        message = tr("Estimated Memory Usage: ") + QString::number(memory_mb,'f',0) + tr(" Mb") +
+                tr("\nRebuild tree to have changed optimization options take effect!");
     }else{
-        message = tr("Estimated Memory Usage: ") + QString::number(memory_gb,'f',2) + tr(" Gb");
+        message = tr("Estimated Memory Usage: ") + QString::number(memory_gb,'f',1) + tr(" Gb") +
+                tr("\nRebuild tree to have changed optimization options take effect!");
     }
     qDebug().noquote() << message;
     QMessageBox msgBox;

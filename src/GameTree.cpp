@@ -229,8 +229,23 @@ void GameTree::buildAction(shared_ptr<ActionNode> root,Rule rule,string last_act
                 else if (player == 1) nextrule.oop_commit += one_betting_size;
                 else runtime_error("unknown player");
                 shared_ptr<GameTreeNode> nextnode = make_shared<ActionNode>(vector<GameActions>(), vector<shared_ptr<GameTreeNode>>(),nextplayer,GameTreeNode::intToGameRound(rule.current_round),(double) rule.get_pot(),root);
+                // Calculate the raise size rather than amount being
+                // added to the pot. Do this by ascending the tree until
+                // reach a CHANCE node (or no parent) and extract the pot
+                // size from it. This can then be used to calculate raise
+                shared_ptr<GameTreeNode> roundroot = nextnode;
+                while(roundroot->getParent() && roundroot->getType() != GameTreeNode::GameTreeNodeType::CHANCE) {
+                    roundroot = roundroot->getParent();
+                }
+                double raiseto;
+                double commit = player == 0 ? nextrule.ip_commit : nextrule.oop_commit;
+                if(roundroot) {
+                    raiseto = commit - roundroot->getPot()/2;
+                } else {
+                    raiseto = one_betting_size;
+                }
                 this->__build(nextnode,nextrule,"raise",0,raise_times + 1);
-                actions.push_back(GameActions(GameTreeNode::PokerActions::RAISE,one_betting_size));
+                actions.push_back(GameActions(GameTreeNode::PokerActions::RAISE,raiseto));
                 childrens.push_back(nextnode);
             }
 
@@ -683,7 +698,7 @@ vector<double> GameTree::get_possible_bets(shared_ptr<ActionNode> root, int play
         }
         possible_amounts = tmp_vector;
     }else{
-        float gap = rule.get_commit(player) - rule.get_commit(next_player);
+        float gap = rule.get_commit(next_player) - rule.get_commit(player);
         vector<double> tmp_vector;
         for(double val:possible_amounts){
             if(val >= gap * 2)tmp_vector.push_back(val);

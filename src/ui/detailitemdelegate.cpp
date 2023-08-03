@@ -57,15 +57,30 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
                 strategy_without_fold[i] = strategy_without_fold[i] / strategy_without_fold_sum;
             }
 
-            int disable_height = (int)(fold_prob * option.rect.height());
-            int remain_height = option.rect.height() - disable_height;
+            // get range data - copied initially from paint_range
+            float range_number;
+            if(0 == detailViewerModel->tableStrategyModel->current_player){
+                range_number = detailViewerModel->tableStrategyModel->p1_range[card1][card2];
+            }else{
+                range_number = detailViewerModel->tableStrategyModel->p2_range[card1][card2];
+            }
+            if(range_number < 0 || range_number > 1) throw runtime_error("range number incorrect in strategyitemdeletage");
+            // got range data
+
+            float not_in_range = 1 - range_number;
+            int niR_height = (int)(not_in_range * option.rect.height() * 0.975);
+
+            int disable_height = (int)(0.5 + fold_prob * (option.rect.height()-niR_height));
+            int remain_height = option.rect.height() - niR_height - disable_height;
 
             // draw background for flod
-            QRect rect(option.rect.left(), option.rect.top(),\
+        if ( disable_height > 0) {
+            QRect rect(option.rect.left(), option.rect.top() + niR_height,\
                  option.rect.width(), disable_height);
             QBrush brush(QColor	(0,191,255));
             painter->fillRect(rect, brush);
-
+        }
+        if (remain_height > 0){
             int ind = 0;
             float last_prob = 0;
             int bet_raise_num = 0;
@@ -89,9 +104,10 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
                 int delta_x = (int)(option.rect.width() * last_prob);
                 int delta_width = (int)(option.rect.width() * (last_prob + strategy_without_fold[ind])) - (int)(option.rect.width() * last_prob);
 
-                QRect rect(option.rect.left() + delta_x, option.rect.top() + disable_height,\
+                QRect rect(option.rect.left() + delta_x, option.rect.top() + niR_height + disable_height,\
                  delta_width , remain_height);
                 painter->fillRect(rect, brush);
+            }
 
                 last_prob += strategy_without_fold[ind];
                 ind += 1;
@@ -213,11 +229,11 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
             shared_ptr<ActionNode> actionNode = dynamic_pointer_cast<ActionNode>(node);
             vector<GameActions>& gameActions = actionNode->getActions();
             vector<float> evs = detailViewerModel->tableStrategyModel->current_evs.empty()? vector<float>(gameActions.size(),-1.0):detailViewerModel->tableStrategyModel->current_evs[card1][card2] ;
+            if(gameActions.size() != evs.size())throw runtime_error("evs size mismatch in DetailItemItemDelegate paint");
 
             vector<float> strategy = detailViewerModel->tableStrategyModel->current_strategy[card1][card2];
+            if(gameActions.size() != strategy.size())throw runtime_error("strategy size mismatch in DetailItemItemDelegate paint");
 
-
-            if(gameActions.size() != strategy.size())throw runtime_error("size mismatch in DetailItemItemDelegate paint");
             float fold_prob = 0;
             vector<float> strategy_without_fold;
             float strategy_without_fold_sum = 0;
@@ -235,30 +251,54 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
                 strategy_without_fold[i] = strategy_without_fold[i] / strategy_without_fold_sum;
             }
 
-            int disable_height = (int)(fold_prob * option.rect.height());
-            int remain_height = option.rect.height() - disable_height;
+            // get range data - copied initally from paint_range - probably could need cleanup
+            float range_number;
+            if(0 == detailViewerModel->tableStrategyModel->current_player){
+                range_number = detailViewerModel->tableStrategyModel->p1_range[card1][card2];
+            }else{
+                range_number = detailViewerModel->tableStrategyModel->p2_range[card1][card2];
+            }
+
+            if(range_number < 0 || range_number > 1) throw runtime_error("range number incorrect in strategyitemdeletage");
+            // got range data
+
+            float not_in_range = 1 - range_number;
+            int niR_height = (int)(not_in_range * option.rect.height() * 0.975);
+
+            int disable_height = (int)(0.5 + fold_prob * (option.rect.height()-niR_height));
+            int remain_height = option.rect.height() - niR_height - disable_height;
 
             // draw background for flod
-            QRect rect(option.rect.left(), option.rect.top(),\
+        if (disable_height > 0) {
+            QRect rect(option.rect.left(), option.rect.top() + niR_height,\
                  option.rect.width(), disable_height);
             QBrush brush(QColor	(0,191,255));
             painter->fillRect(rect, brush);
-
+        }
+        if (remain_height > 0){
             int ind = 0;
             float last_prob = 0;
             int bet_raise_num = 0;
             for(int i = 0;i < strategy.size();i ++){
                 GameActions one_action = gameActions[i];
+                float normalized_ev = normalization_tanh(node->getPot() * 3,evs[i]);
                 QBrush brush(Qt::gray);
                 if(one_action.getAction() != GameTreeNode::PokerActions::FOLD){
-                if(one_action.getAction() == GameTreeNode::PokerActions::CHECK
-                || one_action.getAction() == GameTreeNode::PokerActions::CALL){
-                    brush = QBrush(Qt::green);
+                    if(one_action.getAction() == GameTreeNode::PokerActions::CHECK
+                    || one_action.getAction() == GameTreeNode::PokerActions::CALL){
+                        int green = 255;
+                        int blue = max((int)(225 - normalized_ev * 175),55);
+                        int red = 55;
+                        brush = QBrush(QColor(red,green,blue));
                 }
                 else if(one_action.getAction() == GameTreeNode::PokerActions::BET
                 || one_action.getAction() == GameTreeNode::PokerActions::RAISE){
-                    int color_base = max(128 - 32 * bet_raise_num - 1,0);
-                    brush = QBrush(QColor(255,color_base,color_base));
+                     int color_base = max(128 - 32 * bet_raise_num - 1,0);
+                     int blue = max((int)(255 - normalized_ev * (255 - color_base)), color_base);
+                     int red = color_base + min((int)(normalized_ev * (255-color_base)),255-color_base);;
+                     int green = color_base;
+                     brush = QBrush(QColor(red,green,blue));
+
                     bet_raise_num += 1;
                 }else{
                 brush = QBrush(Qt::blue);
@@ -267,16 +307,15 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
                 int delta_x = (int)(option.rect.width() * last_prob);
                 int delta_width = (int)(option.rect.width() * (last_prob + strategy_without_fold[ind])) - (int)(option.rect.width() * last_prob);
 
-                QRect rect(option.rect.left() + delta_x, option.rect.top() + disable_height,\
+                QRect rect(option.rect.left() + delta_x, option.rect.top() + niR_height + disable_height,\
                  delta_width , remain_height);
                 painter->fillRect(rect, brush);
+            }
 
                 last_prob += strategy_without_fold[ind];
                 ind += 1;
                 }
             }
-
-            if(gameActions.size() != evs.size())throw runtime_error("size mismatch in DetailItemItemDelegate paint");
 
             options.text = "";
             options.text += detailViewerModel->tableStrategyModel->cardint2card[card1].toFormattedHtml();
@@ -348,7 +387,8 @@ void DetailItemDelegate::paint_evs_only(QPainter *painter, const QStyleOptionVie
 
             int red = max((int)(255 - normalized_ev * 255),0);
             int green = min((int)(normalized_ev * 255),255);
-            QBrush brush = QBrush(QColor(red,green,0));
+            int blue = min(red, green);
+            QBrush brush = QBrush(QColor(red,green,blue));
 
             // draw background for flod
             QRect rect(option.rect.left(), option.rect.top(),

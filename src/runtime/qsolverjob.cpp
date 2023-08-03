@@ -44,21 +44,24 @@ void QSolverJob::loading(){
     string suits = "c,d,h,s";
     string ranks;
     this->resource_dir =  ":/resources";
-    string compairer_file;
+    string compairer_file, compairer_file_bin;
     int lines;
     qDebug().noquote() << tr("Loading holdem compairing file");//.toStdString() << endl;
     //if(mode == "holdem"){
     ranks = "2,3,4,5,6,7,8,9,T,J,Q,K,A";
     compairer_file = this->resource_dir + "/compairer/card5_dic_sorted.txt";
+    compairer_file_bin = this->resource_dir + "/compairer/card5_dic_zipped.bin";
+    //qDebug().noquote() << compairer_file_bin.c_str();
     lines = 2598961;
-    this->ps_holdem = PokerSolver(ranks,suits,compairer_file,lines);
+    this->ps_holdem = PokerSolver(ranks,suits,compairer_file,lines,compairer_file_bin);
 
     qDebug().noquote() << tr("Loading shortdeck compairing file");//.toStdString() << endl;
     //}else if(mode == "shortdeck"){
     ranks = "6,7,8,9,T,J,Q,K,A";
     compairer_file = this->resource_dir + "/compairer/card5_dic_sorted_shortdeck.txt";
+    compairer_file_bin = this->resource_dir + "/compairer/card5_dic_zipped_shortdeck.bin";
     lines = 376993;
-    this->ps_shortdeck = PokerSolver(ranks,suits,compairer_file,lines);
+    this->ps_shortdeck = PokerSolver(ranks,suits,compairer_file,lines,compairer_file_bin);
     qDebug().noquote() << tr("Loading finished. Good to go.");//.toStdString() << endl;
 }
 
@@ -108,6 +111,7 @@ void QSolverJob::solving(){
             -1,
             this->accuracy,
             this->use_isomorphism,
+            this->use_halffloats,
             this->thread_number
         );
     }else if(this->mode == Mode::SHORTDECK){
@@ -122,6 +126,7 @@ void QSolverJob::solving(){
             -1,
             this->accuracy,
             this->use_isomorphism,
+            this->use_halffloats,
             this->thread_number
         );
     }

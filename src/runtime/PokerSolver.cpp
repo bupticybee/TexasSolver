@@ -8,11 +8,11 @@ PokerSolver::PokerSolver() {
 
 }
 
-PokerSolver::PokerSolver(string ranks, string suits, string compairer_file,int compairer_file_lines) {
+PokerSolver::PokerSolver(string ranks, string suits, string compairer_file,int compairer_file_lines, string compairer_file_bin) {
     vector<string> ranks_vector = string_split(ranks,',');
     vector<string> suits_vector = string_split(suits,',');
     this->deck = Deck(ranks_vector,suits_vector);
-    this->compairer = make_shared<Dic5Compairer>(compairer_file,compairer_file_lines);
+    this->compairer = make_shared<Dic5Compairer>(compairer_file,compairer_file_lines,compairer_file_bin);
 }
 
 void PokerSolver::load_game_tree(string game_tree_file) {
@@ -89,7 +89,7 @@ long long PokerSolver::estimate_tree_memory(QString range1,QString range2,QStrin
 }
 
 void PokerSolver::train(string p1_range, string p2_range, string boards, string log_file, int iteration_number,
-                        int print_interval, string algorithm,int warmup,float accuracy,bool use_isomorphism,int threads) {
+                        int print_interval, string algorithm,int warmup,float accuracy,bool use_isomorphism, int use_halffloats, int threads) {
     string player1RangeStr = p1_range;
     string player2RangeStr = p2_range;
 
@@ -123,6 +123,7 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
             , warmup
             , accuracy
             , use_isomorphism
+            , use_halffloats
             , threads
     );
     this->solver->train();

@@ -37,6 +37,7 @@ public:
     const vector<pair<GameActions,float>> get_strategy(int i,int j) const;
     const vector<pair<GameActions,pair<float,float>>> get_total_strategy() const;
     const vector<float> get_ev_grid(int i,int j) const;
+    const vector<float> get_strategies_evs(int i,int j) const;
     vector<vector<vector<float>>> current_strategy; // cardint(52) * cardint(52) * strategy_type
     vector<vector<vector<float>>> current_evs; // cardint(52) * cardint(52) * strategy_type
     vector<vector<float>> p1_range; // cardint(52) * cardint(52)
@@ -48,6 +49,7 @@ public:
     map<int,Card> cardint2card;
     TreeItem * treeItem = NULL;// = static_cast<TreeItem*>(index.internalPointer());
     QSolverJob* get_solver(){return this->qSolverJob;};
+    int current_player;
 
 private:
     QSolverJob* qSolverJob;

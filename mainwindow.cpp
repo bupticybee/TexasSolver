@@ -13,11 +13,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     MainWindow::s_textEdit = this->get_logwindow();
-    connect(this->ui->actionjson, SIGNAL(triggered()), this, SLOT(on_save_json()));
-    connect(this->ui->actionSettings, SIGNAL(triggered()), this, SLOT(on_settings()));
-    connect(this->ui->actionimport, SIGNAL(triggered()), this, SLOT(on_import_params()));
-    connect(this->ui->actionexport, SIGNAL(triggered()), this, SLOT(on_export_params()));
-    connect(this->ui->actionclear_all, SIGNAL(triggered()), this, SLOT(on_clear_all()));
+    connect(this->ui->actionjson, &QAction::triggered, this, &MainWindow::on_actionjson_triggered);
+    connect(this->ui->actionSettings, &QAction::triggered, this, &MainWindow::on_actionSettings_triggered);
+    connect(this->ui->actionimport, &QAction::triggered, this, &MainWindow::on_actionimport_triggered);
+    connect(this->ui->actionexport, &QAction::triggered, this, &MainWindow::on_actionexport_triggered);
+    connect(this->ui->actionclear_all, &QAction::triggered, this, &MainWindow::on_actionclear_all_triggered);
     qSolverJob = new QSolverJob;
     qSolverJob->setContext(this->getLogArea());
     qSolverJob->current_mission = QSolverJob::MissionType::LOADING;
@@ -80,7 +80,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_save_json(){
+void MainWindow::on_actionjson_triggered(){
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                "output_strategy.json",
                                tr("Json file (*.json)"));
@@ -98,7 +98,7 @@ QString getParams(QString input,QString key){
     }
 }
 
-void MainWindow::on_clear_all(){
+void MainWindow::on_actionclear_all_triggered(){
     this->clear_all_params();
     this->ui->IpRangeTableView->update();
     this->ui->oopRangeTableView->update();
@@ -265,7 +265,7 @@ void MainWindow::import_from_file(QString fileName){
     this->update();
 }
 
-void MainWindow::on_import_params(){
+void MainWindow::on_actionimport_triggered(){
     QString fileName =  QFileDialog::getOpenFileName(
               this,
               tr("Open parameters file"),
@@ -278,7 +278,7 @@ void MainWindow::on_import_params(){
     this->ui->oopRangeTableView->setFocus();
 }
 
-void MainWindow::on_export_params(){
+void MainWindow::on_actionexport_triggered(){
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Parameters"),
                                "parameters/output_parameters.txt",
                                tr("Text file (*.txt)"));
@@ -400,7 +400,7 @@ void MainWindow::on_export_params(){
     msgBox.exec();
 }
 
-void MainWindow::on_settings(){
+void MainWindow::on_actionSettings_triggered(){
     this->settingEditor = new SettingEditor(this);
     settingEditor->setAttribute(Qt::WA_DeleteOnClose);
     settingEditor->show();
@@ -646,7 +646,7 @@ void MainWindow::item_clicked(const QModelIndex& index){
 
 void MainWindow::on_exportCurrentParameterButton_clicked()
 {
-    this->on_export_params();
+    this->on_actionexport_triggered();
 }
 
 void MainWindow::on_ipRangeText_textChanged()

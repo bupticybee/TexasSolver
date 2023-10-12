@@ -34,12 +34,12 @@ private slots:
     void on_buttomSolve_clicked();
     void on_clearLogButtom_clicked();
     void on_buildTreeButtom_clicked();
-    void on_save_json();
-    void on_import_params();
+    void on_actionjson_triggered();
+    void on_actionimport_triggered();
     void import_from_file(QString from);
-    void on_export_params();
-    void on_settings();
-    void on_clear_all();
+    void on_actionexport_triggered();
+    void on_actionSettings_triggered();
+    void on_actionclear_all_triggered();
     void on_ip_range(QString range_text);
     void on_copyButtom_clicked();
     void on_showResultButton_clicked();

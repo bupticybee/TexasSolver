@@ -90,7 +90,7 @@ const vector<float> DiscountedCfrTrainableHF::getcurrentStrategyNoCache() {
 
 void DiscountedCfrTrainableHF::setEv(const vector<float>& evs){
     if(evs.size() != this->evs.size()) throw runtime_error("size mismatch in discountcfrtrainable setEV");
-    for(int i = 0;i < evs.size();i ++) if(evs[i] == evs[i])this->evs[i] = evs[i];
+    for(std::size_t i = 0;i < evs.size();i ++) if(evs[i] == evs[i])this->evs[i] = evs[i];
 }
 
 void DiscountedCfrTrainableHF::updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) {
@@ -165,7 +165,7 @@ json DiscountedCfrTrainableHF::dump_strategy(bool with_state) {
         );
     }
 
-    for(int i = 0;i < this->privateCards->size();i ++){
+    for(std::size_t i = 0;i < this->privateCards->size();i ++){
         PrivateCards& one_private_card = (*this->privateCards)[i];
         vector<float> one_strategy(this->action_number);
 
@@ -193,7 +193,7 @@ json DiscountedCfrTrainableHF::dump_evs() {
         );
     }
 
-    for(int i = 0;i < this->privateCards->size();i ++){
+    for(std::size_t i = 0;i < this->privateCards->size();i ++){
         PrivateCards& one_private_card = (*this->privateCards)[i];
         vector<float> one_evs(this->action_number);
 

@@ -52,7 +52,7 @@ RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &preflo
     int index = 0;
     vector<RiverCombs> riverCombos = vector<RiverCombs>(count);
 
-    for (int hand = 0; hand < preflopCombos.size(); hand++)
+    for (std::size_t hand = 0; hand < preflopCombos.size(); hand++)
     {
         PrivateCards preflopCombo = preflopCombos[hand];
 

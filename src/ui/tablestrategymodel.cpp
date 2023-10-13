@@ -66,41 +66,41 @@ void TableStrategyModel::setupModelData()
     }
 
     this->ui_strategy_table = vector<vector<vector<pair<int,int>>>>(ranks.size());
-    for(int i = 0;i < ranks.size();i ++){
+    for(std::size_t i = 0;i < ranks.size();i ++){
         this->ui_strategy_table[i] = vector<vector<pair<int,int>>>(ranks.size());
-        for(int j = 0;j < ranks.size();j ++){
+        for(std::size_t j = 0;j < ranks.size();j ++){
             this->ui_strategy_table[i][j] = vector<pair<int,int>>();
         }
     }
 
     this->p1_range = vector<vector<float>>(52);
-    for(int i = 0;i < 52;i ++){
+    for(std::size_t i = 0;i < 52;i ++){
         this->p1_range[i] = vector<float>(52);
-        for(int j = 0;j < 52;j ++){
+        for(std::size_t j = 0;j < 52;j ++){
             this->p1_range[i][j] = 0;
         }
     }
 
     this->p2_range = vector<vector<float>>(52);
-    for(int i = 0;i < 52;i ++){
+    for(std::size_t i = 0;i < 52;i ++){
         this->p2_range[i] = vector<float>(52);
-        for(int j = 0;j < 52;j ++){
+        for(std::size_t j = 0;j < 52;j ++){
             this->p2_range[i][j] = 0;
         }
     }
 
     this->ui_p1_range = vector<vector<vector<pair<int,int>>>>(ranks.size());
-    for(int i = 0;i < ranks.size();i ++){
+    for(std::size_t i = 0;i < ranks.size();i ++){
         this->ui_p1_range[i] = vector<vector<pair<int,int>>>(ranks.size());
-        for(int j = 0;j < ranks.size();j ++){
+        for(std::size_t j = 0;j < ranks.size();j ++){
             this->ui_p1_range[i][j] = vector<pair<int,int>>();
         }
     }
 
     this->ui_p2_range = vector<vector<vector<pair<int,int>>>>(ranks.size());
-    for(int i = 0;i < ranks.size();i ++){
+    for(std::size_t i = 0;i < ranks.size();i ++){
         this->ui_p2_range[i] = vector<vector<pair<int,int>>>(ranks.size());
-        for(int j = 0;j < ranks.size();j ++){
+        for(std::size_t j = 0;j < ranks.size();j ++){
             this->ui_p2_range[i][j] = vector<pair<int,int>>();
         }
     }
@@ -247,15 +247,15 @@ void TableStrategyModel::updateStrategyData(){
                     vector<vector<vector<float>>> current_strategy = this->qSolverJob->get_solver()->get_solver()->get_strategy(iterActionNode,deal_cards);
 
                     int child_chosen = -1;
-                    for(int i = 0;i < iterActionNode->getChildrens().size();i ++){
+                    for(std::size_t i = 0;i < iterActionNode->getChildrens().size();i ++){
                         if(iterActionNode->getChildrens()[i] == last_node){
                             child_chosen = i;
                             break;
                         }
                     }
                     if(child_chosen == -1)throw runtime_error("no child chosen");
-                    for(int i = 0;i < 52;i ++){
-                        for(int j = 0;j < 52;j ++){
+                    for(std::size_t i = 0;i < 52;i ++){
+                        for(std::size_t j = 0;j < 52;j ++){
                             if(current_strategy[i][j].size() == 0)continue;
                             if(iterActionNode->getPlayer() == 0){ // p1, IP
                                 this->p1_range[i][j] *= current_strategy[i][j][child_chosen];
@@ -293,8 +293,8 @@ const vector<pair<GameActions,pair<float,float>>> TableStrategyModel::get_total_
         vector<float> avg_strategy(gameActions.size(),0.0);
         float sum_strategy = 0;
 
-        for(int index1 = 0;index1 < this->current_strategy.size() ;index1 ++){
-            for(int index2 = 0;index2 < this->current_strategy.size() ;index2 ++){
+        for(std::size_t index1 = 0;index1 < this->current_strategy.size() ;index1 ++){
+            for(std::size_t index2 = 0;index2 < this->current_strategy.size() ;index2 ++){
                 const vector<float>& one_strategy = this->current_strategy[index1][index2];
                 if(one_strategy.empty())continue;
 
@@ -302,7 +302,7 @@ const vector<pair<GameActions,pair<float,float>>> TableStrategyModel::get_total_
                 if(range.size() <= index1 || range[index1].size() < index2) throw runtime_error(" index error when get range in tablestrategymodel");
                 const float one_range = range[index1][index2];
 
-                for(int i = 0;i < one_strategy.size(); i ++ ){
+                for(std::size_t i = 0;i < one_strategy.size(); i ++ ){
                     float one_prob = one_strategy[i];
                     combos[i] += one_prob * one_range;
                     avg_strategy[i] += one_prob * one_range;
@@ -317,7 +317,7 @@ const vector<pair<GameActions,pair<float,float>>> TableStrategyModel::get_total_
             }
         }
 
-        for(int i = 0;i < gameActions.size(); i ++ ){
+        for(std::size_t i = 0;i < gameActions.size(); i ++ ){
             avg_strategy[i] = avg_strategy[i] / sum_strategy;
             pair<float,float> statics = pair<float,float>(combos[i],avg_strategy[i]);
             pair<GameActions,pair<float,float>> one_ret = pair<GameActions,pair<float,float>>(gameActions[i],statics);
@@ -358,7 +358,7 @@ const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int
 
         float range_number = 0;
         if(!card_cords.empty()){
-            for(int indi = 0;indi < card_cords.size();indi ++){
+            for(std::size_t indi = 0;indi < card_cords.size();indi ++){
                     range_number += (*current_range)[card_cords[indi].first][card_cords[indi].second];
             }
             range_number = range_number / card_cords.size();
@@ -385,12 +385,12 @@ const vector<pair<GameActions,float>> TableStrategyModel::get_strategy(int i,int
             }
 
             if ( range_number > 0)
-                for(int indi = 0;indi < one_strategy.size();indi ++){
+                for(std::size_t indi = 0;indi < one_strategy.size();indi ++){
                     strategies[indi] += (one_strategy[indi] * (*current_range)[index1][index2] / range_number / strategy_number);
                 }
         }
 
-        for(int indi = 0;indi < strategies.size();indi ++){
+        for(std::size_t indi = 0;indi < strategies.size();indi ++){
             ret_strategy.push_back(std::pair<GameActions,float>(actionNode->getActions()[indi],
                                                                 strategies[indi]));
         }
@@ -435,7 +435,7 @@ const vector<float> TableStrategyModel::get_ev_grid(int i,int j)const{
                 throw runtime_error("size not match between gameAction and stragegy");
             }
             float one_ev_float = 0;
-            for(int indi = 0;indi < one_strategy.size();indi ++){
+            for(std::size_t indi = 0;indi < one_strategy.size();indi ++){
                 one_ev_float += one_strategy[indi] * one_ev[indi];
             }
             ret_evs.push_back(one_ev_float);
@@ -485,13 +485,13 @@ const vector<float> TableStrategyModel::get_strategies_evs(int i,int j)const{
                      << one_ev.size() << " " << gameActions.size() << " " << one_strategy.size() << endl;
                 throw runtime_error("size not match between one_ev, gameAction and one_stragegy");
             }
-            for(int indi = 0;indi < ret_evs.size();indi ++){
+            for(std::size_t indi = 0;indi < ret_evs.size();indi ++){
                 ret_evs[indi] += one_strategy[indi] * one_ev[indi] * one_range;
                 strategy_p[indi] += one_strategy[indi] * one_range;
             }
             range += one_range;
         }
-        for(int indi = 0;indi < ret_evs.size();indi ++){
+        for(std::size_t indi = 0;indi < ret_evs.size();indi ++){
             if (strategy_p[indi] > 0. && range > 0.) {
                 ret_evs[indi] = ret_evs[indi] / strategy_p[indi];
             }

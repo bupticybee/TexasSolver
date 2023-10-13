@@ -83,7 +83,7 @@ const vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
 
 void DiscountedCfrTrainable::setEv(const vector<float>& evs){
     if(evs.size() != this->evs.size()) throw runtime_error("size mismatch in discountcfrtrainable setEV");
-    for(int i = 0;i < evs.size();i ++) if(evs[i] == evs[i])this->evs[i] = evs[i];
+    for(std::size_t i = 0;i < evs.size();i ++) if(evs[i] == evs[i])this->evs[i] = evs[i];
 }
 
 void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) {
@@ -143,12 +143,12 @@ json DiscountedCfrTrainable::dump_strategy(bool with_state) {
         );
     }
 
-    for(int i = 0;i < this->privateCards->size();i ++){
+    for(std::size_t i = 0;i < this->privateCards->size();i ++){
         PrivateCards& one_private_card = (*this->privateCards)[i];
         vector<float> one_strategy(this->action_number);
 
         for(int j = 0;j < this->action_number;j ++){
-            int strategy_index = j * this->privateCards->size() + i;
+            std::size_t strategy_index = j * this->privateCards->size() + i;
             one_strategy[j] = average_strategy[strategy_index];
         }
         strategy[tfm::format("%s",one_private_card.toString())] = one_strategy;
@@ -171,12 +171,12 @@ json DiscountedCfrTrainable::dump_evs() {
         );
     }
 
-    for(int i = 0;i < this->privateCards->size();i ++){
+    for(std::size_t i = 0;i < this->privateCards->size();i ++){
         PrivateCards& one_private_card = (*this->privateCards)[i];
         vector<float> one_evs(this->action_number);
 
         for(int j = 0;j < this->action_number;j ++){
-            int evs_index = j * this->privateCards->size() + i;
+            std::size_t evs_index = j * this->privateCards->size() + i;
             one_evs[j] = average_evs[evs_index];
         }
         evs[tfm::format("%s",one_private_card.toString())] = one_evs;

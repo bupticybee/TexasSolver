@@ -40,7 +40,7 @@ int RoughStrategyViewerModel::rowCount(const QModelIndex &parent) const
 
 QVariant RoughStrategyViewerModel::data(const QModelIndex &index, int role) const
 {
-    int col = index.column();
+    std::size_t col = index.column();
     if(col < this->tableStrategyModel->total_strategy.size()){
         pair<GameActions,pair<float,float>> one_strategy = this->tableStrategyModel->total_strategy[col];
         return QString::number(one_strategy.second.second);

@@ -43,10 +43,10 @@ vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vec
                 char rank2 = one_range.at(1);
 
                 vector<string> suits = Card::getSuits();
-                for(int i = 0;i < suits.size();i++){
+                for(std::size_t i = 0;i < suits.size();i++){
                     string one_suit = suits[i];
                     int begin_index = rank1 == rank2 ? i:0;
-                    for(int j = begin_index;j < suits.size();j++){
+                    for(std::size_t j = begin_index;j < suits.size();j++){
                         string another_suit = suits[j];
                         if(one_suit == another_suit){
                             continue;
@@ -70,10 +70,10 @@ vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vec
             char rank1 = one_range.at(0);
             char rank2 = one_range.at(1);
             vector<string> suits = Card::getSuits();
-            for(int i = 0;i < suits.size();i++){
+            for(std::size_t i = 0;i < suits.size();i++){
                 string one_suit = suits[i];
                 int begin_index = rank1 == rank2 ? i:0;
-                for(int j = begin_index;j < suits.size();j++){
+                for(std::size_t j = begin_index;j < suits.size();j++){
                     string another_suit = suits[j];
                     if(one_suit == another_suit && rank1 == rank2){
                         continue;
@@ -95,8 +95,8 @@ vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vec
     }
 
     // 排除初试range中重复的情况
-    for(int i = 0;i < private_cards.size();i ++){
-        for(int j = i + 1;j < private_cards.size();j ++) {
+    for(std::size_t i = 0;i < private_cards.size();i ++){
+        for(std::size_t j = i + 1;j < private_cards.size();j ++) {
             PrivateCards one_cards = private_cards[i];
             PrivateCards another_cards = private_cards[j];
             if (one_cards.card1 == another_cards.card1 && one_cards.card2 == another_cards.card2){
@@ -115,7 +115,7 @@ vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vec
     }
 
     vector<PrivateCards> private_cards_list(private_cards.size());
-    for(int i = 0;i < private_cards.size();i ++){
+    for(std::size_t i = 0;i < private_cards.size();i ++){
         private_cards_list[i] = private_cards[i];
         //System.out.print(String.format("[%s-%s]",Card.intCard2Str(private_cards_list[i].card1),Card.intCard2Str(private_cards_list[i].card2)));
     }

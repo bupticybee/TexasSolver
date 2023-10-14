@@ -20,7 +20,7 @@ PrivateCardsManager::PrivateCardsManager(vector<vector<PrivateCards>> private_ca
     // 用一个二维数组记录每个Private Combo的对应index,方便从一方的手牌找对方的同名卡牌的index
     for(int player_id = 0;player_id < player_number;player_id ++){
         vector<PrivateCards> privateCombos = private_cards[player_id];
-        for(int i = 0;i < privateCombos.size();i ++){
+        for(std::size_t i = 0;i < privateCombos.size();i ++){
             PrivateCards one_private_combo = privateCombos[i];
             this->card_player_index[one_private_combo.hashCode()][player_id] = i;
         }
@@ -66,7 +66,7 @@ void PrivateCardsManager::setRelativeProbs() {
         int oppo = 1 - player_id;
         float player_prob_sum = 0;
 
-        for(int i = 0;i < this->private_cards[player_id].size();i ++) {
+        for(std::size_t i = 0;i < this->private_cards[player_id].size();i ++) {
             float oppo_prob_sum = 0;
             PrivateCards* player_card = &this->private_cards[player_id][i];
             uint64_t player_long = Card::boardInts2long(player_card->get_hands());
@@ -89,7 +89,7 @@ void PrivateCardsManager::setRelativeProbs() {
             player_card->relative_prob = oppo_prob_sum * player_card->weight;
             player_prob_sum += player_card->relative_prob;
         }
-        for(int i = 0;i < this->private_cards[player_id].size();i ++) {
+        for(std::size_t i = 0;i < this->private_cards[player_id].size();i ++) {
             this->private_cards[player_id][i].relative_prob = this->private_cards[player_id][i].relative_prob / player_prob_sum;
             //player_card.relative_prob = player_card.relative_prob / player_prob_sum;
         }

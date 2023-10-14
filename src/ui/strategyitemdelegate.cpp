@@ -26,7 +26,7 @@ void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionV
             vector<float> strategy_without_fold;
             vector<float> evs_without_fold;
             float strategy_without_fold_sum = 0;
-            for(int i = 0;i < strategy.size();i ++){
+            for(std::size_t i = 0;i < strategy.size();i ++){
                 GameActions one_action = strategy[i].first;
                 if(one_action.getAction() == GameTreeNode::PokerActions::FOLD){
                     fold_prob = strategy[i].second;
@@ -37,7 +37,7 @@ void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionV
                 }
             }
             if(strategy_without_fold_sum > 0.){
-                for(int i = 0;i < strategy_without_fold.size();i ++){
+                for(std::size_t i = 0;i < strategy_without_fold.size();i ++){
                     strategy_without_fold[i] = strategy_without_fold[i] / strategy_without_fold_sum;
                 }
             }
@@ -79,7 +79,7 @@ void StrategyItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionV
             int ind = 0;
             float last_prob = 0;
             int bet_raise_num = 0;
-            for(int i = 0;i < strategy.size();i ++){
+            for(std::size_t i = 0;i < strategy.size();i ++){
                 GameActions one_action = strategy[i].first;
                 float normalized_ev = withEVs ? normalization_tanh(node->getPot() * 3, evs_without_fold[i]) : 1.;
                 QBrush brush(Qt::gray);
@@ -196,7 +196,7 @@ void StrategyItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewIt
     sort(evs.begin(), evs.end());
 
     int last_left = 0;
-    for(int i = 0;i < evs.size();i ++ ){
+    for(std::size_t i = 0;i < evs.size();i ++ ){
         float one_ev = evs[evs.size() - i - 1];
         float normalized_ev = normalization_tanh(this->qSolverJob->stack,one_ev);
         //options.text += QString("</br>%1").arg(QString::number(normalized_ev));

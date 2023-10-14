@@ -47,7 +47,7 @@ float BestResponse::printExploitability(shared_ptr<GameTreeNode> root, int itera
         if(reach_probs[player_id].empty()) {
             reach_probs[player_id] = vector<float>(private_combos[player_id].size());
         }
-        for (int hc = 0; hc < private_combos[player_id].size(); hc++)
+        for (std::size_t hc = 0; hc < private_combos[player_id].size(); hc++)
             reach_probs[player_id][hc] = private_combos[player_id][hc].weight;
     }
 
@@ -69,7 +69,7 @@ float BestResponse::getBestReponseEv(shared_ptr<GameTreeNode> node, int player, 
     vector<PrivateCards>& player_combo = this->private_combos[player];
     vector<PrivateCards>& oppo_combo = this->private_combos[1 - player];
 
-    for(int player_hand = 0;player_hand < player_combo.size();player_hand ++){
+    for(std::size_t player_hand = 0;player_hand < player_combo.size();player_hand ++){
         float one_payoff = private_cards_evs[player_hand];
         PrivateCards& one_player_hand = (player_combo)[player_hand];
         uint64_t private_long = one_player_hand.toBoardLong();
@@ -78,7 +78,7 @@ float BestResponse::getBestReponseEv(shared_ptr<GameTreeNode> node, int player, 
         }
         float oppo_sum = 0;
 
-        for(int oppo_hand = 0;oppo_hand < oppo_combo.size();oppo_hand ++){
+        for(std::size_t oppo_hand = 0;oppo_hand < oppo_combo.size();oppo_hand ++){
             PrivateCards& one_oppo_hand = (oppo_combo)[oppo_hand];
             uint64_t private_long_oppo = one_oppo_hand.toBoardLong();
             if(Card::boardsHasIntercept(private_long,private_long_oppo)
@@ -130,7 +130,7 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
     vector<vector<float>> results(node->getCards().size());
 
     #pragma omp parallel for
-    for(int card = 0;card < node->getCards().size();card ++) {
+    for(std::size_t card = 0;card < node->getCards().size();card ++) {
         shared_ptr<GameTreeNode> one_child = node->getChildren();
         Card one_card = node->getCards()[card];
         uint64_t card_long = Card::boardInt2long(one_card.getCardInt());
@@ -198,7 +198,7 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
         results[one_card.getNumberInDeckInt()] = child_utility;
     }
 
-    for(int card = 0;card < node->getCards().size();card ++) {
+    for(std::size_t card = 0;card < node->getCards().size();card ++) {
         Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
         vector<float> child_utility;
         int offset = this->color_iso_offset[deal][one_card->getCardInt() % 4];
@@ -220,7 +220,7 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
 #ifdef DEBUG
         if(child_utility.size() != chance_utility.size()) throw runtime_error("length not match3 ");
 #endif
-        for(int i = 0;i < child_utility.size();i ++)
+        for(std::size_t i = 0;i < child_utility.size();i ++)
             chance_utility[i] += (child_utility)[i];
     }
 
@@ -242,7 +242,7 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
                 my_exploitability.assign(node_ev.begin(),node_ev.end());
                 first_action_flag = false;
             }else {
-                for (int i = 0;i < node_ev.size();i ++) {
+                for (std::size_t i = 0;i < node_ev.size();i ++) {
                     my_exploitability[i] = max(my_exploitability[i],node_ev[i]);
                 }
             }
@@ -273,7 +273,7 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
 
         vector<vector<vector<float>>> best_respond_arr_new_reach_probs = vector<vector<vector<float>>>(node->getChildrens().size());
         // 构造reach probs矩阵
-        for(int action_ind = 0;action_ind < node->getChildrens().size();action_ind ++){
+        for(std::size_t action_ind = 0;action_ind < node->getChildrens().size();action_ind ++){
             if(best_respond_arr_new_reach_probs[action_ind].empty()){
                 best_respond_arr_new_reach_probs[action_ind] = vector<vector<float>>(this->player_number);
             }
@@ -314,7 +314,7 @@ BestResponse::actionBestResponse(shared_ptr<ActionNode> node, int player, const 
                 );
 #endif
 
-            for(int i = 0 ;i < total_payoffs.size();i ++){
+            for(std::size_t i = 0 ;i < total_payoffs.size();i ++){
                 total_payoffs[i] += action_payoffs[i];//  * node_strategy[i] 的动作实际上已经在递归的时候做过了，所以这里不需要乘
             }
         }
@@ -350,7 +350,7 @@ BestResponse::terminalBestReponse(shared_ptr<TerminalNode> node, int player, con
     float oppo_prob_sum = 0;
 
     const vector<float>& oppo_reach_prob = reach_probs[1 - player];
-    for(int oppo_hand = 0;oppo_hand < oppo_combs.size(); oppo_hand ++){
+    for(std::size_t oppo_hand = 0;oppo_hand < oppo_combs.size(); oppo_hand ++){
         const RiverCombs& one_hc = oppo_combs[oppo_hand];
         uint64_t one_hc_long  = Card::boardInts2long(one_hc.private_cards.get_hands());
 
@@ -365,7 +365,7 @@ BestResponse::terminalBestReponse(shared_ptr<TerminalNode> node, int player, con
     }
 
 
-    for(int player_hand = 0;player_hand < player_combs.size();player_hand ++) {
+    for(std::size_t player_hand = 0;player_hand < player_combs.size();player_hand ++) {
         const RiverCombs& player_hc = player_combs[player_hand];
         uint64_t player_hc_long = Card::boardInts2long(player_hc.private_cards.get_hands());
         if(Card::boardsHasIntercept(player_hc_long,board_long)){
@@ -413,12 +413,12 @@ BestResponse::showdownBestResponse(shared_ptr<ShowdownNode> node, int player,con
     // 计算胜利时的payoff
     float winsum = 0;
     vector<float> card_winsum(52);
-    for(int i = 0;i < card_winsum.size();i ++) card_winsum[i] = 0;
+    for(std::size_t i = 0;i < card_winsum.size();i ++) card_winsum[i] = 0;
 
-    int j = 0;
+    std::size_t j = 0;
     //if(player_combs.length != oppo_combs.length) throw new RuntimeException("");
 
-    for(int i = 0;i < player_combs.size();i ++){
+    for(std::size_t i = 0;i < player_combs.size();i ++){
         const RiverCombs& one_player_comb = player_combs[i];
         while (j < oppo_combs.size() && one_player_comb.rank < oppo_combs[j].rank){
             const RiverCombs& one_oppo_comb = oppo_combs[j];

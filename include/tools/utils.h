@@ -24,7 +24,7 @@ void exchange_color(vector<T>& value,vector<PrivateCards> range,int rank1,int ra
     if(value.empty())return;
     vector<int> self_ind = vector<int>(value.size());
     int privateint2ind[52 * 52 * 2] = {0};
-    for(int i = 0;i < range.size();i ++){
+    for(std::size_t i = 0;i < range.size();i ++){
         PrivateCards& pc = range[i];
         int card1 = pc.card1;
         int card2 = pc.card2;
@@ -49,9 +49,9 @@ void exchange_color(vector<T>& value,vector<PrivateCards> range,int rank1,int ra
         privateint2ind[card1 * 52 + card2] = i;
     }
 
-    for(int i = 0;i < range.size();i ++) {
+    for(std::size_t i = 0;i < range.size();i ++) {
         if(self_ind[i] == -1) continue;
-        int ind = privateint2ind[self_ind[i]];
+        std::size_t ind = privateint2ind[self_ind[i]];
         //cout << range[i].toString() << " ";
         //cout << range[ind].toString() << endl;
         if(ind != i){

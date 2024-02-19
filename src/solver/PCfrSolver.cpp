@@ -607,7 +607,7 @@ PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vec
     vector<float> card_winsum = vector<float> (52);//node->card_sum;
     fill(card_winsum.begin(),card_winsum.end(),0);
 
-    std::size_t j = 0;
+    int j = 0;
     for(std::size_t i = 0;i < player_combs.size();i ++){
         const RiverCombs& one_player_comb = player_combs[i];
         while (j < oppo_combs.size() && one_player_comb.rank < oppo_combs[j].rank){

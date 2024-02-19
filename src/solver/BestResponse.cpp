@@ -415,7 +415,7 @@ BestResponse::showdownBestResponse(shared_ptr<ShowdownNode> node, int player,con
     vector<float> card_winsum(52);
     for(std::size_t i = 0;i < card_winsum.size();i ++) card_winsum[i] = 0;
 
-    std::size_t j = 0;
+    int j = 0;
     //if(player_combs.length != oppo_combs.length) throw new RuntimeException("");
 
     for(std::size_t i = 0;i < player_combs.size();i ++){

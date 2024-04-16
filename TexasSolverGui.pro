@@ -85,6 +85,7 @@ SOURCES += \
     src/solver/CfrSolver.cpp \
     src/solver/PCfrSolver.cpp \
     src/solver/Solver.cpp \
+    src/solver/slice_cfr.cpp \
     src/tools/CommandLineTool.cpp \
     src/tools/GameTreeBuildingSettings.cpp \
     src/tools/lookup8.cpp \
@@ -137,6 +138,7 @@ HEADERS += \
     include/solver/Solver.h \
     include/solver/BestResponse.h \
     include/solver/CfrSolver.h \
+    include/solver/slice_cfr.h \
     include/tools/argparse.hpp \
     include/tools/CommandLineTool.h \
     include/tools/utils.h \

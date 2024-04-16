@@ -1,3 +1,4 @@
+#include <climits>
 #include "include/solver/slice_cfr.h"
 #include "include/ranges/RiverRangeManager.h"
 
@@ -428,7 +429,7 @@ size_t SliceCFR::init_player_node() {
     total += mtx_idx * sizeof(mutex);
     for(int i : dfs_idx_map) {
         if(i == -1) continue;
-        player_node[i].mtx = &mtx[(int)(player_node[i].mtx)];
+        player_node[i].mtx = &mtx[(size_t)(player_node[i].mtx)];
     }
     total += n_player_node * sizeof(Node);
     return total;

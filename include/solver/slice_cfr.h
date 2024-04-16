@@ -5,8 +5,8 @@
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
-#include "nodes/GameTreeNode.h"
-#include "solver/PCfrSolver.h"
+#include "include/nodes/GameTreeNode.h"
+#include "include/solver/PCfrSolver.h"
 #include <mutex>
 #include <utility>
 
@@ -102,7 +102,7 @@ public:
     vector<vector<vector<float>>> get_strategy(shared_ptr<ActionNode> node, vector<Card> cards);
     vector<vector<vector<float>>> get_evs(shared_ptr<ActionNode> node, vector<Card> cards);
 private:
-    atomic_bool stop_flag = false;
+    atomic_bool stop_flag {false};
     bool init_succ = false;
     int n_thread = 0;
     int thread_per_block = 32;

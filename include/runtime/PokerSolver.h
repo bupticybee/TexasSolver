@@ -12,7 +12,7 @@
 #include "include/solver/CfrSolver.h"
 #include "include/solver/PCfrSolver.h"
 #include "include/library.h"
-#include "solver/slice_cfr.h"
+#include "include/solver/slice_cfr.h"
 #include <QDebug>
 #include <QFile>
 using namespace std;

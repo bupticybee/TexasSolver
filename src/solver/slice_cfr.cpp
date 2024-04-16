@@ -1,5 +1,5 @@
-#include "solver/slice_cfr.h"
-#include "ranges/RiverRangeManager.h"
+#include "include/solver/slice_cfr.h"
+#include "include/ranges/RiverRangeManager.h"
 
 // 数组poss_card的索引[0,51]-->[1,52],8位二进制编码,最多选两个,占用高16位,低16位预留其他用途
 #define code_idx0(i) (((i)+1)<<24)

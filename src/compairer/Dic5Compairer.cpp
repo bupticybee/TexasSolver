@@ -9,7 +9,9 @@
 #include <QTextStream>
 #include <QDebug>
 #include "time.h"
+#ifndef _MSC_VER
 #include "unistd.h"
+#endif
 
 #define SUIT_0_MASK   0x1111111111111
 #define SUIT_1_MASK   0x2222222222222

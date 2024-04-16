@@ -135,10 +135,13 @@ void QSolverJob::solving(){
 
 long long QSolverJob::estimate_tree_memory(QString range1,QString range2,QString board){
     qDebug().noquote() << tr("Estimating tree memory..");//.toStdString() << endl;
+    string p1_range = range1.toStdString();
+    string p2_range = range2.toStdString();
+    string board_str = board.toStdString();
     if(this->mode == Mode::HOLDEM){
-        return ps_holdem.estimate_tree_memory(range1,range2,board);
+        return ps_holdem.estimate_tree_memory(p1_range, p1_range, board_str);
     }else if(this->mode == Mode::SHORTDECK){
-        return ps_shortdeck.estimate_tree_memory(range1,range2,board);
+        return ps_shortdeck.estimate_tree_memory(p1_range, p1_range, board_str);
     }
     return 0;
 }

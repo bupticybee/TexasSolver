@@ -64,4 +64,23 @@ void exchange_color(vector<T>& value,vector<PrivateCards> range,int rank1,int ra
     //throw runtime_error("exiting...here...");
 }
 
+#include <chrono>
+class Timer {
+public:
+    Timer() {
+        reset();
+    }
+    void reset() {
+        start = std::chrono::steady_clock::now();
+    }
+    int64_t ms() {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-start).count();
+    }
+    int64_t us() {
+        return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-start).count();
+    }
+private:
+    std::chrono::steady_clock::time_point start {};
+};
+
 #endif //BINDSOLVER_UTILS_H

@@ -4,7 +4,7 @@
 #include "include/tools/CommandLineTool.h"
 #include "include/tools/argparse.hpp"
 
-int main_backup(int argc,const char **argv) {
+int main(int argc,const char **argv) {
     ArgumentParser parser;
 
     parser.addArgument("-i", "--input_file", 1, true);

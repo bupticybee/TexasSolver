@@ -12,6 +12,7 @@
 #include "include/solver/CfrSolver.h"
 #include "include/solver/PCfrSolver.h"
 #include "include/library.h"
+#include "solver/slice_cfr.h"
 #include <QDebug>
 #include <QFile>
 using namespace std;
@@ -44,10 +45,11 @@ public:
             float accuracy,
             bool use_isomorphism,
             int use_halffloats,
-            int threads
+            int threads,
+            bool slice_cfr = false
             );
     void stop();
-    long long estimate_tree_memory(QString range1,QString range2,QString board);
+    long long estimate_tree_memory(string& p1_range, string& p2_range, string& board);
     vector<PrivateCards> player1Range;
     vector<PrivateCards> player2Range;
     void dump_strategy(QString dump_file,int dump_rounds);

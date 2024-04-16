@@ -64,7 +64,7 @@ SOURCES += \
     mainwindow.cpp \
     src/Deck.cpp \
     src/Card.cpp \
-    src/console.cpp \
+    # src/console.cpp \
     src/GameTree.cpp \
     src/library.cpp \
     src/compairer/Dic5Compairer.cpp \

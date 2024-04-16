@@ -92,6 +92,7 @@ void split(const string& s, char c,
 
 void CommandLineTool::processCommand(string input) {
     vector<string> contents;
+    if(input.empty() || input[0] == '#') return;
     split(input,' ',contents);
     if(contents.size() == 0) contents = {input};
     if(contents.size() > 2 || contents.size() < 1)throw runtime_error(tfm::format("command not valid: %s",input));
@@ -140,6 +141,8 @@ void CommandLineTool::processCommand(string input) {
                 sizes->push_back(stof(params[i]));
             }
         }
+    }else if(command == "set_raise_limit"){
+        this->raise_limit = stoi(paramstr);
     }else if(command == "set_accuracy"){
         this->accuracy = stof(paramstr);
     }else if(command == "set_allin_threshold"){
@@ -168,13 +171,29 @@ void CommandLineTool::processCommand(string input) {
                 this->accuracy,
                 this->use_isomorphism,
                 0, // TODO: enable half float option for command line tool
-                this->thread_number
+                this->thread_number,
+                slice_cfr
         );
     }else if(command == "dump_result"){
         string output_file = paramstr;
         this->ps.dump_strategy(QString::fromStdString(output_file),this->dump_rounds);
     }else if(command == "set_dump_rounds"){
         this->dump_rounds = stoi(paramstr);
+    }else if(command == "estimate_tree_memory"){
+        if(range_ip.empty() || range_oop.empty() || board.empty()) {
+            cout << "Please set range_ip, range_oop and board first." << endl;
+            return;
+        }
+        shared_ptr<GameTree> game_tree = ps.get_game_tree();
+        if(game_tree == nullptr) {
+            cout << "Please buld tree first." << endl;
+            return;
+        }
+        long long size = ps.estimate_tree_memory(range_ip, range_oop, board);
+        size *= sizeof(float);
+        cout << (float)size / (1024*1024) << " MB" << endl;
+    }else if(command == "set_slice_cfr"){
+        slice_cfr = stoi(paramstr);
     }else{
         cout << "command not recognized: " << command << endl;
     }

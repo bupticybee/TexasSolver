@@ -130,7 +130,7 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
     vector<vector<float>> results(node->getCards().size());
 
     #pragma omp parallel for
-    for(std::size_t card = 0;card < node->getCards().size();card ++) {
+    for(std::int64_t card = 0;card < node->getCards().size();card ++) {
         shared_ptr<GameTreeNode> one_child = node->getChildren();
         Card one_card = node->getCards()[card];
         uint64_t card_long = Card::boardInt2long(one_card.getCardInt());

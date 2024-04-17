@@ -48,7 +48,7 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
     pcm = PrivateCardsManager(private_cards,this->player_number,Card::boardInts2long(this->initial_board));
     this->debug = debug;
     this->print_interval = print_interval;
-    this->monteCarolAlg = monteCarolAlg;
+    //this->monteCarolAlg = MonteCarolAlg::PUBLIC;
     this->accuracy = accuracy;
     if(num_threads == -1){
         num_threads = omp_get_num_procs();
@@ -256,37 +256,10 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
     //fill(results.begin(),results.end(),nullptr);
 
     vector<float> multiplier;
-    if(iter <= this->warmup){
-        multiplier = vector<float>(card_num);
-        fill(multiplier.begin(), multiplier.end(), 0);
-        for (int card_base = 0; card_base < card_num / 4; card_base++) {
-            int cardr = std::rand() % 4;
-            int card_target = card_base * 4 + cardr;
-            int multiplier_num = 0;
-            for (int i = 0; i < 4; i++) {
-                int i_card = card_base * 4 + i;
-                if (i == cardr) {
-                    Card *one_card = const_cast<Card *>(&(node->getCards()[i_card]));
-                    uint64_t card_long = Card::boardInt2long(
-                            one_card->getCardInt());
-                    if (!Card::boardsHasIntercept(card_long, current_board)) {
-                        multiplier_num += 1;
-                    }
-                } else {
-                    Card *one_card = const_cast<Card *>(&(node->getCards()[i_card]));
-                    uint64_t card_long = Card::boardInt2long(
-                            one_card->getCardInt());
-                    if (!Card::boardsHasIntercept(card_long, current_board)) {
-                        multiplier_num += 1;
-                    }
-                }
-            }
-            multiplier[card_target] = multiplier_num;
-        }
-    }
 
     vector<int> valid_cards;
     valid_cards.reserve(node->getCards().size());
+
 
     for(int card = 0;card < node->getCards().size();card ++) {
         shared_ptr<GameTreeNode> one_child = node->getChildren();
@@ -298,6 +271,10 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         valid_cards.push_back(card);
     }
 
+    if(this->monteCarolAlg==MonteCarolAlg::PUBLIC) {
+        random_deal = random(0,valid_cards.size() + 1);
+    }
+
     #pragma omp parallel for schedule(static)
     for(int valid_ind = 0;valid_ind < valid_cards.size();valid_ind++) {
         int card = valid_cards[valid_ind];
@@ -306,9 +283,9 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         uint64_t card_long = Card::boardInt2long(one_card->getCardInt());//Card::boardCards2long(new Card[]{one_card});
 
         uint64_t new_board_long = current_board | card_long;
-        if (this->monteCarolAlg == MonteCarolAlg::PUBLIC) {
-            throw runtime_error("parallel solver don't support public monte carol");
-        }
+        //if (this->monteCarolAlg == MonteCarolAlg::PUBLIC) {
+        //    throw runtime_error("parallel solver don't support public monte carol");
+        //}
 
         //cout << "Card deal:" << one_card->toString() << endl;
 
@@ -354,6 +331,17 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         } else{
             throw runtime_error(tfm::format("deal out of range : %s ",deal));
         }
+
+        /*
+        if(this->monteCarolAlg == MonteCarolAlg::PUBLIC){
+                    if(valid_ind == random_deal){
+                        return this->cfr(player,one_child,reach_probs,iter,new_board_long,new_deal);
+                    }else{
+                        continue;
+                    }
+        }
+        */
+
         if(this->distributing_task && node->getRound() == this->split_round) {
             results[one_card->getNumberInDeckInt()] = vector<float>(this->ranges[player].size());
             //TaskParams taskParams = TaskParams();

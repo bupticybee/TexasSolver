@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 TRANSLATIONS =  lang_cn.ts\
                 lang_en.ts
 
+CONFIG += c++2a
 
 macx: {
 QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -lomp -I/usr/local/include

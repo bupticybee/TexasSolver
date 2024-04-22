@@ -8,6 +8,7 @@
 #include "include/nodes/GameTreeNode.h"
 #include "include/solver/PCfrSolver.h"
 #include <mutex>
+#include <atomic>
 #include <utility>
 
 using std::vector;

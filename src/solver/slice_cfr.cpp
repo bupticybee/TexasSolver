@@ -2,6 +2,9 @@
 #include "include/solver/slice_cfr.h"
 #include "include/ranges/RiverRangeManager.h"
 
+using std::memory_order_relaxed;
+using std::atomic_ref;
+
 // 数组poss_card的索引[0,51]-->[1,52],8位二进制编码,最多选两个,占用高16位,低16位预留其他用途
 #define code_idx0(i) (((i)+1)<<24)
 #define decode_idx0(x) (((x)>>24) - 1)
@@ -90,13 +93,14 @@ void best_cfv_up(Node *node, int n_hand) {
     int size = node->n_act * n_hand;
     int i = 0, h = 0;
     float *parent_cfv = node->parent_cfv, *cfv = node->data, val = 0;
-    mutex *mtx = node->mtx;
+    // mutex *mtx = node->mtx;
     for(h = 0; h < n_hand; h++) {
         val = cfv[h];// 第一个
         for(i = h+n_hand; i < size; i += n_hand) val = max(val, cfv[i]);
-        mtx->lock();
-        parent_cfv[h] += val;// 需要加锁
-        mtx->unlock();
+        // mtx->lock();
+        // parent_cfv[h] += val;// 需要加锁
+        // mtx->unlock();
+        atomic_ref(parent_cfv[h]).fetch_add(val, memory_order_relaxed);
     }
 }
 // 子节点cfv加权求和
@@ -105,7 +109,7 @@ void cfv_up(Node *node, int n_hand) {
     int i = 0, h = 0, sum_offset = size << 2;
     float *parent_cfv = node->parent_cfv, *cfv = node->data, val = 0;
     float *regret_sum = cfv + size;
-    mutex *mtx = node->mtx;
+    // mutex *mtx = node->mtx;
     for(h = 0; h < n_hand; h++) {
         val = 0;
         if(cfv[sum_offset+h] == 0) {
@@ -119,9 +123,10 @@ void cfv_up(Node *node, int n_hand) {
             val /= cfv[sum_offset+h];
         }
         // cfv[sum_offset+h] = val;
-        mtx->lock();
-        parent_cfv[h] += val;// 需要加锁
-        mtx->unlock();
+        // mtx->lock();
+        // parent_cfv[h] += val;// 需要加锁
+        // mtx->unlock();
+        atomic_ref(parent_cfv[h]).fetch_add(val, memory_order_relaxed);
         for(i = h; i < size; i += n_hand) regret_sum[i] += cfv[i] - val;// 更新regret_sum
         val = 0;
         for(i = h; i < size; i += n_hand) val += max(0.0f, regret_sum[i]);
@@ -375,7 +380,7 @@ SliceCFR::~SliceCFR() {
     }
 }
 
-void SliceCFR::set_cfv_and_offset(DFSNode &node, int player, float *&cfv, int &offset, mutex *&mtx) {
+void SliceCFR::set_cfv_and_offset(DFSNode &node, int player, float *&cfv, int &offset) {
     if(player == -1) player = node.player;// 向上连接同玩家节点
     int p_idx = node.parent_p0_idx, act_idx = node.parent_p0_act;// 向上连接P0
     if(player != P0) {// 向上连接P1
@@ -385,16 +390,16 @@ void SliceCFR::set_cfv_and_offset(DFSNode &node, int player, float *&cfv, int &o
     if(p_idx == -1) {
         cfv = root_cfv_ptr[player];
         offset = root_prob_ptr[player] - root_cfv_ptr[player];
-        mtx = (mutex *)player;
+        // mtx = (mutex *)player;
     }
     else {
         if(player != dfs_node[p_idx].player) throw runtime_error("player mismatch");
         cfv = player_node[dfs_idx_map[p_idx]].data + cfv_offset(hand_size[player], act_idx);
         offset = reach_prob_to_cfv(dfs_node[p_idx].n_act, hand_size[player]);
-        if(mtx_map[p_idx].empty()) mtx_map[p_idx] = vector<int>(dfs_node[p_idx].n_act, -1);
-        int &i = mtx_map[p_idx][act_idx];
-        if(i == -1) i = mtx_idx++;
-        mtx = (mutex *)i;
+        // if(mtx_map[p_idx].empty()) mtx_map[p_idx] = vector<int>(dfs_node[p_idx].n_act, -1);
+        // int &i = mtx_map[p_idx][act_idx];
+        // if(i == -1) i = mtx_idx++;
+        // mtx = (mutex *)i;
     }
 }
 
@@ -404,8 +409,8 @@ size_t SliceCFR::init_player_node() {
     player_node_ptr = player_node.data();
     dfs_idx_map = vector<int>(dfs_idx, -1);
     slice_offset = vector<vector<int>>(N_PLAYER);
-    mtx_map = vector<vector<int>>(dfs_idx);
-    mtx_idx = N_PLAYER;
+    // mtx_map = vector<vector<int>>(dfs_idx);
+    // mtx_idx = N_PLAYER;
     int mem_idx = 0;
     for(int i = 0; i < N_PLAYER; i++) {// 枚举player
         for(vector<int> &nodes : slice[i]) {// 枚举slice
@@ -414,7 +419,7 @@ size_t SliceCFR::init_player_node() {
                 DFSNode &node = dfs_node[idx];
                 Node &target = player_node[mem_idx];
                 target.n_act = node.n_act;
-                set_cfv_and_offset(node, -1, target.parent_cfv, target.parent_offset, target.mtx);
+                set_cfv_and_offset(node, -1, target.parent_cfv, target.parent_offset);
                 size = get_size(node.n_act, hand_size[node.player]) * sizeof(float);
                 target.data = (float *)malloc(size);
                 if(target.data == nullptr) throw runtime_error("malloc error");
@@ -424,13 +429,13 @@ size_t SliceCFR::init_player_node() {
         }
         slice_offset[i].push_back(mem_idx);
     }
-    mtx = vector<mutex>(mtx_idx);
-    printf("%d,%d,%d\n", sizeof(mutex), mtx_idx, mtx_idx * sizeof(mutex));
-    total += mtx_idx * sizeof(mutex);
-    for(int i : dfs_idx_map) {
-        if(i == -1) continue;
-        player_node[i].mtx = &mtx[(size_t)(player_node[i].mtx)];
-    }
+    // mtx = vector<mutex>(mtx_idx);
+    // printf("%d,%d,%d\n", sizeof(mutex), mtx_idx, mtx_idx * sizeof(mutex));
+    // total += mtx_idx * sizeof(mutex);
+    // for(int i : dfs_idx_map) {
+    //     if(i == -1) continue;
+    //     player_node[i].mtx = &mtx[(size_t)(player_node[i].mtx)];
+    // }
     total += n_player_node * sizeof(Node);
     return total;
 }

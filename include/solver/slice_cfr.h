@@ -46,7 +46,7 @@ struct Node {
     int n_act = 0;// 动作数
     int parent_offset = -1;// 本节点对应的父节点数据reach_prob的偏移量
     float *parent_cfv = nullptr;
-    mutex *mtx = nullptr;
+    // mutex *mtx = nullptr;
     float *data = nullptr;// cfv,regret_sum,strategy_sum,reach_prob,sum
 };
 struct LeafNode {
@@ -149,7 +149,7 @@ private:
     size_t init_memory(shared_ptr<Compairer> compairer);
     size_t init_player_node();
     size_t init_leaf_node();
-    void set_cfv_and_offset(DFSNode &node, int player, float *&cfv, int &offset, mutex *&mtx);
+    void set_cfv_and_offset(DFSNode &node, int player, float *&cfv, int &offset);
     void normalization();
     size_t init_strength_table(shared_ptr<Compairer> compairer);
     void dfs(shared_ptr<GameTreeNode> node, int parent_act=-1, int parent_dfs_idx=-1, int parent_p0_act=-1, int parent_p0_idx=-1, int parent_p1_act=-1, int parent_p1_idx=-1, int cnt0=0, int cnt1=0, int info=0);
@@ -166,10 +166,9 @@ private:
     vector<Node> player_node;
     Node *player_node_ptr = nullptr;
     int sd_offset = 0;
-    vector<float> cpu_cfv;
-    vector<mutex> mtx;
-    vector<vector<int>> mtx_map;
-    int mtx_idx = N_PLAYER;
+    // vector<mutex> mtx;
+    // vector<vector<int>> mtx_map;
+    // int mtx_idx = N_PLAYER;
     vector<vector<StrengthData>> strength;
     size_t _estimate_tree_size(shared_ptr<GameTreeNode> node);
     void _reach_prob(int player, bool best_cfv=false);

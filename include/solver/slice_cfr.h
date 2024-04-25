@@ -128,7 +128,7 @@ private:
     int *same_hand_ptr[N_PLAYER] {nullptr,nullptr};
     vector<vector<PrivateCards>> ranges;
     vector<DFSNode> dfs_node;
-    vector<int> dfs_idx_map;// dfs遍历的每个节点在cuda中的索引
+    vector<int> dfs_idx_map;// dfs遍历的每个节点在内存中的索引
     int node_cnt[N_TYPE];
     int n_leaf_node = 0;
     int n_player_node = 0;
@@ -176,6 +176,8 @@ private:
     void _rm(int player, bool best_cfv=false);
     void clear_data(int player);
     void clear_root_cfv();
+    json reConvertJson(const shared_ptr<GameTreeNode>& node, int depth, int max_depth, int &idx, int info);
+    vector<vector<float>> get_avg_strategy(int idx);
 };
 
 #endif // _SLICE_CFR_H_

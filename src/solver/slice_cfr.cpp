@@ -912,7 +912,7 @@ json SliceCFR::reConvertJson(const shared_ptr<GameTreeNode>& node, int depth, in
             size_t n_hand = hand_size[player];
             int *ptr = hand_card_ptr[player];
             for(size_t i = 0; i < n_hand; i++) {
-                stt[Card::intCard2Str(ptr[i+n_hand])+Card::intCard2Str(ptr[i])] = strategy[i];
+                stt[Card::intCard2Str(ptr[i+n_hand]+min_card)+Card::intCard2Str(ptr[i]+min_card)] = strategy[i];
             }
             ans["strategy"]["strategy"] = std::move(stt);
             

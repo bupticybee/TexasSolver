@@ -86,7 +86,7 @@ long long PokerSolver::estimate_tree_memory(string &p1_range, string &p2_range, 
 }
 
 void PokerSolver::train(string p1_range, string p2_range, string boards, string log_file, int iteration_number,
-                        int print_interval, string algorithm,int warmup,float accuracy,bool use_isomorphism, int use_halffloats, int threads, bool slice_cfr) {
+                        int print_interval, string algorithm,int warmup,float accuracy,bool use_isomorphism, int use_halffloats, int threads, int slice_cfr) {
     string player1RangeStr = p1_range;
     string player2RangeStr = p2_range;
 
@@ -105,31 +105,39 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
 
     string logfile_name = log_file;
     if(solver) solver.reset();// 释放内存
-    if(slice_cfr) {
-        solver = make_shared<SliceCFR>(game_tree, range1, range2, initialBoard, compairer, deck, iteration_number, print_interval, accuracy, threads);
+    try {
+        if(slice_cfr == 1) {
+            solver = make_shared<SliceCFR>(game_tree, range1, range2, initialBoard, compairer, deck, iteration_number, print_interval, accuracy, threads);
+        }
+        else if(slice_cfr == 2) {
+            solver = make_shared<CudaCFR>(game_tree, range1, range2, initialBoard, compairer, deck, iteration_number, print_interval, accuracy, threads);
+        }
+        else {
+            solver = make_shared<PCfrSolver>(
+                    game_tree
+                    , range1
+                    , range2
+                    , initialBoard
+                    , compairer
+                    , deck
+                    , iteration_number
+                    , false
+                    , print_interval
+                    , logfile_name
+                    , algorithm
+                    , Solver::MonteCarolAlg::NONE
+                    , warmup
+                    , accuracy
+                    , use_isomorphism
+                    , use_halffloats
+                    , threads
+            );
+        }
+        solver->train();
     }
-    else {
-        solver = make_shared<PCfrSolver>(
-                game_tree
-                , range1
-                , range2
-                , initialBoard
-                , compairer
-                , deck
-                , iteration_number
-                , false
-                , print_interval
-                , logfile_name
-                , algorithm
-                , Solver::MonteCarolAlg::NONE
-                , warmup
-                , accuracy
-                , use_isomorphism
-                , use_halffloats
-                , threads
-        );
+    catch(std::exception& e) {
+        std::cerr << e.what() << '\n';
     }
-    solver->train();
 }
 
 void PokerSolver::dump_strategy(QString dump_file,int dump_rounds) {

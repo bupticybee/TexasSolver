@@ -5,12 +5,6 @@
 using std::memory_order_relaxed;
 using std::atomic_ref;
 
-// 数组poss_card的索引[0,51]-->[1,52],8位二进制编码,最多选两个,占用高16位,低16位预留其他用途
-#define code_idx0(i) (((i)+1)<<24)
-#define decode_idx0(x) (((x)>>24) - 1)
-#define code_idx1(i) (((i)+1)<<16)
-#define decode_idx1(x) ((((x)>>16)&0xff) - 1)
-
 void print_array(int *arr, int n) {
     if(arr != nullptr && n > 0) {
         printf("%d", arr[0]);
@@ -102,6 +96,7 @@ void best_cfv_up(Node *node, int n_hand) {
         // mtx->unlock();
         atomic_ref(parent_cfv[h]).fetch_add(val, memory_order_relaxed);
     }
+    for(i = 0; i < size; i++) cfv[i] = 0;// 清零cfv
 }
 // 子节点cfv加权求和
 void cfv_up(Node *node, int n_hand) {
@@ -310,7 +305,7 @@ size_t SliceCFR::init_leaf_node() {
     printf("%zd,%zd,%zd,%zd\n", min_val[P0], max_val[P0], min_val[P1], max_val[P1]);
     
     ev[FOLD_TYPE].insert(ev[FOLD_TYPE].end(), ev[SHOWDOWN_TYPE].begin(), ev[SHOWDOWN_TYPE].end());
-    ev[FOLD_TYPE].clear();
+    ev[SHOWDOWN_TYPE].clear();
     ev_ptr = ev[FOLD_TYPE].data();
     size_t total = n_leaf_node * sizeof(LeafNode);
     total += (pre_leaf_node[P0].size() + pre_leaf_node[P1].size()) * sizeof(PreLeafNode);
@@ -343,7 +338,9 @@ SliceCFR::SliceCFR(
     if(this->n_thread == 0) this->n_thread = omp_get_num_procs();
     omp_set_num_threads(this->n_thread);
     // test_parallel_for(this->n_thread);
-    
+}
+
+void SliceCFR::init() {
     float unit = 1 << 20;
     size_t size = estimate_tree_size();
     printf("estimate memory:%f MB\n", size/unit);
@@ -369,7 +366,7 @@ SliceCFR::SliceCFR(
     assert(node_cnt[N_LEAF_TYPE+CHANCE_PLAYER] == chance_node.size());
 
     if(dfs_idx == 0 || dfs_node[0].n_act == 0) return;
-    size = init_memory(compairer);
+    size = init_memory();
     printf("%d nodes, total:%f MB\n", dfs_idx, size/unit);
     init_succ = true;
 }
@@ -440,7 +437,7 @@ size_t SliceCFR::init_player_node() {
     return total;
 }
 
-size_t SliceCFR::init_memory(shared_ptr<Compairer> compairer) {
+size_t SliceCFR::init_memory() {
     size_t total = 0;
     int n = root_prob.size();
     root_cfv = vector<float>(n<<1, 0);
@@ -453,11 +450,11 @@ size_t SliceCFR::init_memory(shared_ptr<Compairer> compairer) {
     
     total += init_player_node();
     total += init_leaf_node();
-    total += init_strength_table(compairer);
+    total += init_strength_table();
     return total;
 }
 
-size_t SliceCFR::init_strength_table(shared_ptr<Compairer> compairer) {
+size_t SliceCFR::init_strength_table() {
     int n = poss_card.size();
     vector<size_t> board_hash;
     if(init_round == RIVER_ROUND) board_hash.push_back(init_board);
@@ -736,6 +733,7 @@ void SliceCFR::clear_root_cfv() {
 }
 
 void SliceCFR::train() {
+    init();
     if(!init_succ) return;
     size_t start = timeSinceEpochMillisec(), total = 0;
     Timer timer;
@@ -849,6 +847,7 @@ vector<float> SliceCFR::exploitability() {
         printf("rm time:%zd\t%zd\n", t1, t2);
 #endif
     }
+    post_process();
     _reach_prob(P0, false);// 恢复P0的reach_prob,用于下一次迭代
     int m = 0, n = hand_size[P0];
     float ev0 = 0, ev1 = 0;

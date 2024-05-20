@@ -13,6 +13,7 @@
 #include "include/solver/PCfrSolver.h"
 #include "include/library.h"
 #include "include/solver/slice_cfr.h"
+#include "include/solver/cuda_cfr.h"
 #include <QDebug>
 #include <QFile>
 using namespace std;
@@ -46,7 +47,7 @@ public:
             bool use_isomorphism,
             int use_halffloats,
             int threads,
-            bool slice_cfr = false
+            int slice_cfr = 0
             );
     void stop();
     long long estimate_tree_memory(string& p1_range, string& p2_range, string& board);

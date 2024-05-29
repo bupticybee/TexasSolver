@@ -8,6 +8,7 @@
 
 class GameTreeBuildingSettings {
 public:
+    GameTreeBuildingSettings() {}
     GameTreeBuildingSettings(
             StreetSetting flop_ip,
             StreetSetting turn_ip,
@@ -21,7 +22,7 @@ public:
     StreetSetting flop_oop;
     StreetSetting turn_oop;
     StreetSetting river_oop;
-    StreetSetting& get_setting(string player,string round);
+    StreetSetting& get_setting(string &player, string &round);
 };
 
 #endif //BINDSOLVER_GAMETREEBUILDINGSETTINGS_H

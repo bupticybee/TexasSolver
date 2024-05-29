@@ -5,7 +5,7 @@
 #ifndef TEXASSOLVER_SOLVER_H
 #define TEXASSOLVER_SOLVER_H
 
-
+#include "include/tools/logger.h"
 #include <include/GameTree.h>
 
 class Solver {
@@ -15,7 +15,7 @@ public:
         PUBLIC
     };
     Solver();
-    Solver(shared_ptr<GameTree> tree);
+    Solver(shared_ptr<GameTree> tree, Logger *logger);
     shared_ptr<GameTree> getTree();
     virtual void train() = 0;
     virtual void stop() = 0;
@@ -23,6 +23,7 @@ public:
     virtual vector<vector<vector<float>>> get_strategy(shared_ptr<ActionNode> node,vector<Card> cards) = 0;
     virtual vector<vector<vector<float>>> get_evs(shared_ptr<ActionNode> node,vector<Card> cards) = 0;
     shared_ptr<GameTree> tree;
+    Logger *logger = nullptr;
 };
 
 

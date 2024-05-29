@@ -8,7 +8,7 @@ Solver::Solver() {
 
 }
 
-Solver::Solver(shared_ptr<GameTree> tree) {
+Solver::Solver(shared_ptr<GameTree> tree, Logger *logger):logger(logger) {
     this->tree = tree;
 }
 

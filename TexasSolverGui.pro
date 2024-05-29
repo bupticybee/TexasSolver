@@ -65,6 +65,7 @@ SOURCES += \
     mainwindow.cpp \
     src/Deck.cpp \
     src/Card.cpp \
+    src/card_format.cpp \
     # src/console.cpp \
     src/GameTree.cpp \
     src/library.cpp \
@@ -95,6 +96,7 @@ SOURCES += \
     src/tools/Rule.cpp \
     src/tools/StreetSetting.cpp \
     src/tools/utils.cpp \
+    src/tools/logger.cpp \
     src/trainable/CfrPlusTrainable.cpp \
     src/trainable/DiscountedCfrTrainable.cpp \
     src/trainable/DiscountedCfrTrainableHF.cpp \
@@ -131,6 +133,7 @@ HEADERS += \
     include/trainable/DiscountedCfrTrainableSF.h \
     mainwindow.h \
     include/Card.h \
+    include/card_format.h \
     include/GameTree.h \
     include/Deck.h \
     include/json.hpp \
@@ -167,6 +170,7 @@ HEADERS += \
     include/ranges/RiverCombs.h \
     include/ranges/RiverRangeManager.h \
     include/tools/tinyformat.h \
+    include/tools/logger.h \
     include/tools/qdebugstream.h \
     include/runtime/qsolverjob.h \
     qstextedit.h \

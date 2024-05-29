@@ -73,11 +73,17 @@ public:
     void reset() {
         start = std::chrono::steady_clock::now();
     }
-    int64_t ms() {
-        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-start).count();
+    int64_t ms(bool reset=false) {
+        std::chrono::steady_clock::time_point curr = std::chrono::steady_clock::now();
+        int64_t ans = std::chrono::duration_cast<std::chrono::milliseconds>(curr-start).count();
+        if(reset) start = curr;
+        return ans;
     }
-    int64_t us() {
-        return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-start).count();
+    int64_t us(bool reset=false) {
+        std::chrono::steady_clock::time_point curr = std::chrono::steady_clock::now();
+        int64_t ans = std::chrono::duration_cast<std::chrono::microseconds>(curr-start).count();
+        if(reset) start = curr;
+        return ans;
     }
 private:
     std::chrono::steady_clock::time_point start {};

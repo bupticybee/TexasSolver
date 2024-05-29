@@ -3,12 +3,35 @@
 //
 
 #include "include/runtime/PokerSolver.h"
+#ifdef USE_CUDA
+#include "include/solver/cuda_cfr.h"
+#endif
 
-PokerSolver::PokerSolver() {
-
+PokerSolver::PokerSolver(PokerMode mode, string &resource_dir) {
+    string suits = "c,d,h,s";
+    string ranks;
+    string compairer_file, compairer_file_bin;
+    int lines;
+    if(mode == PokerMode::HOLDEM){
+        ranks = "2,3,4,5,6,7,8,9,T,J,Q,K,A";
+        compairer_file = resource_dir + "/compairer/card5_dic_sorted.txt";
+        compairer_file_bin = resource_dir + "/compairer/card5_dic_zipped.bin";
+        lines = 2598961;
+    }else if(mode == PokerMode::SHORTDECK){
+        ranks = "6,7,8,9,T,J,Q,K,A";
+        compairer_file = resource_dir + "/compairer/card5_dic_sorted_shortdeck.txt";
+        compairer_file_bin = resource_dir + "/compairer/card5_dic_zipped_shortdeck.bin";
+        lines = 376993;
+    }else{
+        throw runtime_error(tfm::format("mode not recognized : ",mode));
+    }
+    init(ranks, suits, compairer_file, lines, compairer_file_bin);
 }
 
-PokerSolver::PokerSolver(string ranks, string suits, string compairer_file,int compairer_file_lines, string compairer_file_bin) {
+PokerSolver::PokerSolver(string &ranks, string &suits, string &compairer_file, int compairer_file_lines, string &compairer_file_bin) {
+    init(ranks, suits, compairer_file, compairer_file_lines, compairer_file_bin);
+}
+void PokerSolver::init(string &ranks, string &suits, string &compairer_file, int compairer_file_lines, string &compairer_file_bin) {
     vector<string> ranks_vector = string_split(ranks,',');
     vector<string> suits_vector = string_split(suits,',');
     this->deck = Deck(ranks_vector,suits_vector);
@@ -69,7 +92,8 @@ void PokerSolver::stop(){
 
 long long PokerSolver::estimate_tree_memory(string &p1_range, string &p2_range, string &board){
     if(this->game_tree == nullptr){
-        qDebug().noquote() << QObject::tr("Please buld tree first.");
+        // qDebug().noquote() << QObject::tr("Please buld tree first.");
+        logger->log("Please buld tree first.");
         return 0;
     }
     else{
@@ -85,8 +109,12 @@ long long PokerSolver::estimate_tree_memory(string &p1_range, string &p2_range, 
     }
 }
 
-void PokerSolver::train(string p1_range, string p2_range, string boards, string log_file, int iteration_number,
-                        int print_interval, string algorithm,int warmup,float accuracy,bool use_isomorphism, int use_halffloats, int threads, bool slice_cfr) {
+void PokerSolver::train(string &p1_range, string &p2_range, string &boards, /*string &log_file,*/ int iteration_number,
+                        int print_interval, string &algorithm,int warmup,float accuracy,bool use_isomorphism, int use_halffloats, int threads, int slice_cfr) {
+    if(game_tree == nullptr) {
+        logger->log("Please buld tree first.");
+        return;
+    }
     string player1RangeStr = p1_range;
     string player2RangeStr = p2_range;
 
@@ -103,50 +131,65 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
     this->player1Range = noDuplicateRange(range1,initial_board_long);
     this->player2Range = noDuplicateRange(range2,initial_board_long);
 
-    string logfile_name = log_file;
+    // string logfile_name = log_file;
     if(solver) solver.reset();// 释放内存
-    if(slice_cfr) {
-        solver = make_shared<SliceCFR>(game_tree, range1, range2, initialBoard, compairer, deck, iteration_number, print_interval, accuracy, threads);
+    try {
+        if(slice_cfr == 1) {
+            solver = make_shared<SliceCFR>(game_tree, range1, range2, initialBoard, compairer, deck, iteration_number, print_interval, accuracy, threads, logger);
+        }
+        else if(slice_cfr == 2) {
+#ifdef USE_CUDA
+            solver = make_shared<CudaCFR>(game_tree, range1, range2, initialBoard, compairer, deck, iteration_number, print_interval, accuracy, threads, logger);
+#else
+            logger->log("please set USE_CUDA ON in CMakeLists.txt and rebuild project");
+            return;
+#endif
+        }
+        else {
+            solver = make_shared<PCfrSolver>(
+                    game_tree
+                    , range1
+                    , range2
+                    , initialBoard
+                    , compairer
+                    , deck
+                    , iteration_number
+                    , false
+                    , print_interval
+                    , /*logfile_name*/logger
+                    , algorithm
+                    , Solver::MonteCarolAlg::NONE
+                    , warmup
+                    , accuracy
+                    , use_isomorphism
+                    , use_halffloats
+                    , threads
+            );
+        }
+        solver->train();
     }
-    else {
-        solver = make_shared<PCfrSolver>(
-                game_tree
-                , range1
-                , range2
-                , initialBoard
-                , compairer
-                , deck
-                , iteration_number
-                , false
-                , print_interval
-                , logfile_name
-                , algorithm
-                , Solver::MonteCarolAlg::NONE
-                , warmup
-                , accuracy
-                , use_isomorphism
-                , use_halffloats
-                , threads
-        );
+    catch(std::exception& e) {
+        std::cerr << e.what() << '\n';
     }
-    solver->train();
 }
 
-void PokerSolver::dump_strategy(QString dump_file,int dump_rounds) {
+void PokerSolver::dump_strategy(string &dump_file, int dump_rounds) {
     //locale &loc=locale::global(locale(locale(),"",LC_CTYPE));
     setlocale(LC_ALL,"");
 
     json dump_json = this->solver->dumps(false,dump_rounds);
     //QFile ofile( QString::fromStdString(dump_file));
     ofstream fileWriter;
-    fileWriter.open(dump_file.toLocal8Bit());
+    fileWriter.open(dump_file);
     if(!fileWriter.fail()){
         fileWriter << dump_json;
         fileWriter.flush();
         fileWriter.close();
-        qDebug().noquote() << QObject::tr("save success");
+        // qDebug().noquote() << QObject::tr("save success");
+        logger->log("save success");
     }else{
-        qDebug().noquote() << QObject::tr("save failed, file cannot be open");
+        // qDebug().noquote() << QObject::tr("save failed, file cannot be open");
+        logger->log("save failed, file cannot be open");
     }
     setlocale(LC_CTYPE, "C");
 }

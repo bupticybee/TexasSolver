@@ -43,6 +43,12 @@ using std::mutex;
 #define reach_prob_offset(n_act, n_hand, act_idx) (((n_act) * 3 + (act_idx)) * (n_hand))
 #define reach_prob_to_cfv(n_act, n_hand) ((n_act) * (n_hand) * 3)
 
+// 数组poss_card的索引[0,51]-->[1,52],8位二进制编码,最多选两个,占用高16位,低16位预留其他用途
+#define code_idx0(i) (((i)+1)<<24)
+#define decode_idx0(x) (((x)>>24) - 1)
+#define code_idx1(i) (((i)+1)<<16)
+#define decode_idx1(x) ((((x)>>16)&0xff) - 1)
+
 struct Node {
     int n_act = 0;// 动作数
     int parent_offset = -1;// 本节点对应的父节点数据reach_prob的偏移量
@@ -92,21 +98,21 @@ public:
         int train_step,
         int print_interval,
         float accuracy,
-        int n_thread
+        int n_thread,
+        Logger *logger
     );
-    ~SliceCFR();
-    size_t estimate_tree_size();
+    virtual ~SliceCFR();
+    virtual size_t estimate_tree_size();
     void train();
     vector<float> exploitability();
     void stop();
     json dumps(bool with_status, int depth);
     vector<vector<vector<float>>> get_strategy(shared_ptr<ActionNode> node, vector<Card> cards);
     vector<vector<vector<float>>> get_evs(shared_ptr<ActionNode> node, vector<Card> cards);
-private:
+protected:
     atomic_bool stop_flag {false};
     bool init_succ = false;
     int n_thread = 0;
-    int thread_per_block = 32;
     int steps = 0, interval = 0, n_card = N_CARD, min_card = 0;
     int init_round = 0;
     int dfs_idx = 0;// 先序遍历
@@ -141,22 +147,23 @@ private:
     vector<float> root_cfv, root_prob;// P0_cfv,P1_cfv,P0_prob,P1_prob
     float *root_prob_ptr[N_PLAYER] {nullptr,nullptr};
     float *root_cfv_ptr[N_PLAYER] {nullptr,nullptr};
-    shared_ptr<GameTree> tree = nullptr;
+    // shared_ptr<GameTree> tree = nullptr;
     Deck& deck;
+    void init();
     void init_hand_card(vector<PrivateCards> &range1, vector<PrivateCards> &range2);
     void init_hand_card(vector<PrivateCards> &range, vector<int> &cards, vector<float> &prob, size_t board, vector<PrivateCards> &out);
     void init_same_hand_idx();
     void init_min_card();
-    size_t init_memory(shared_ptr<Compairer> compairer);
+    virtual size_t init_memory();
     size_t init_player_node();
     size_t init_leaf_node();
     void set_cfv_and_offset(DFSNode &node, int player, float *&cfv, int &offset);
     void normalization();
-    size_t init_strength_table(shared_ptr<Compairer> compairer);
+    size_t init_strength_table();
     void dfs(shared_ptr<GameTreeNode> node, int parent_act=-1, int parent_dfs_idx=-1, int parent_p0_act=-1, int parent_p0_idx=-1, int parent_p1_act=-1, int parent_p1_idx=-1, int cnt0=0, int cnt1=0, int info=0);
     void init_poss_card(Deck& deck, size_t board);
-    void step(int iter, int player, bool best_cfv=false);
-    void leaf_cfv(int player);
+    virtual void step(int iter, int player, bool best_cfv=false);
+    virtual void leaf_cfv(int player);
     void fold_cfv(int player, float *cfv, float *opp_reach, int my_hand, int opp_hand, float val, size_t board);
     void sd_cfv(int player, float *cfv, float *opp_reach, int my_hand, int opp_hand, float val, int idx);
     void append_node_idx(int p_idx, int act_idx, int player, int cpu_node_idx);
@@ -172,12 +179,13 @@ private:
     // int mtx_idx = N_PLAYER;
     vector<vector<StrengthData>> strength;
     size_t _estimate_tree_size(shared_ptr<GameTreeNode> node);
-    void _reach_prob(int player, bool best_cfv=false);
-    void _rm(int player, bool best_cfv=false);
-    void clear_data(int player);
-    void clear_root_cfv();
+    virtual void _reach_prob(int player, bool best_cfv=false);
+    virtual void _rm(int player, bool best_cfv=false);
+    virtual void clear_data(int player);
+    virtual void clear_root_cfv();
+    virtual void post_process() {}
     json reConvertJson(const shared_ptr<GameTreeNode>& node, int depth, int max_depth, int &idx, int info);
-    vector<vector<float>> get_avg_strategy(int idx);
+    virtual vector<vector<float>> get_avg_strategy(int idx);
 };
 
 #endif // _SLICE_CFR_H_

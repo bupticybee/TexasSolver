@@ -98,7 +98,8 @@ public:
         int train_step,
         int print_interval,
         float accuracy,
-        int n_thread
+        int n_thread,
+        Logger *logger
     );
     virtual ~SliceCFR();
     virtual size_t estimate_tree_size();
@@ -146,7 +147,7 @@ protected:
     vector<float> root_cfv, root_prob;// P0_cfv,P1_cfv,P0_prob,P1_prob
     float *root_prob_ptr[N_PLAYER] {nullptr,nullptr};
     float *root_cfv_ptr[N_PLAYER] {nullptr,nullptr};
-    shared_ptr<GameTree> tree = nullptr;
+    // shared_ptr<GameTree> tree = nullptr;
     Deck& deck;
     void init();
     void init_hand_card(vector<PrivateCards> &range1, vector<PrivateCards> &range2);

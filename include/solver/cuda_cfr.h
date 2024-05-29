@@ -5,12 +5,12 @@
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
-#include "nodes/GameTreeNode.h"
-#include "solver/PCfrSolver.h"
+#include "include/nodes/GameTreeNode.h"
+#include "include/solver/PCfrSolver.h"
 #include <mutex>
 #include <utility>
 #include "cuda_runtime.h"
-#include "solver/slice_cfr.h"
+#include "include/solver/slice_cfr.h"
 
 #define LANE_SIZE 32
 
@@ -45,8 +45,9 @@ public:
         int train_step,
         int print_interval,
         float accuracy,
-        int n_thread
-    ):SliceCFR(tree, range1, range2, initial_board, compairer, deck, train_step, print_interval, accuracy, n_thread) {}
+        int n_thread,
+        Logger *logger
+    ):SliceCFR(tree, range1, range2, initial_board, compairer, deck, train_step, print_interval, accuracy, n_thread, logger) {}
     virtual ~CudaCFR();
     virtual size_t estimate_tree_size();
 protected:

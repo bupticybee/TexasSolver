@@ -287,8 +287,8 @@ size_t SliceCFR::init_leaf_node() {
         }
     }
     sd_offset = leaf_node_dfs[FOLD_TYPE].size();
-    printf("%zd,%zd\n", pre_leaf_node[P0].size(), pre_leaf_node[P1].size());
-    printf("%d,%d,%zd,%zd\n", n_leaf_node, node_idx, root_child_idx[P0].size(), root_child_idx[P1].size());
+    logger->log("%zd,%zd", pre_leaf_node[P0].size(), pre_leaf_node[P1].size());
+    logger->log("%d,%d,%zd,%zd", n_leaf_node, node_idx, root_child_idx[P0].size(), root_child_idx[P1].size());
     
     size_t max_val[N_PLAYER] = {0, 0}, min_val[N_PLAYER] = {INT_MAX, INT_MAX};
     for(int i = 0; i < N_PLAYER; i++) {
@@ -302,7 +302,7 @@ size_t SliceCFR::init_leaf_node() {
             min_val[i] = min(min_val[i], node.leaf_node_idx.size());
         }
     }
-    printf("%zd,%zd,%zd,%zd\n", min_val[P0], max_val[P0], min_val[P1], max_val[P1]);
+    logger->log("%zd,%zd,%zd,%zd", min_val[P0], max_val[P0], min_val[P1], max_val[P1]);
     
     ev[FOLD_TYPE].insert(ev[FOLD_TYPE].end(), ev[SHOWDOWN_TYPE].begin(), ev[SHOWDOWN_TYPE].end());
     ev[SHOWDOWN_TYPE].clear();
@@ -323,8 +323,9 @@ SliceCFR::SliceCFR(
     int train_step,
     int print_interval,
     float accuracy,
-    int n_thread
-):tree(tree), deck(deck), steps(train_step), interval(print_interval), n_thread(max(0,n_thread)), rrm(compairer) {
+    int n_thread,
+    Logger *logger
+):deck(deck), steps(train_step), interval(print_interval), n_thread(max(0,n_thread)), rrm(compairer), Solver(tree, logger) {
     init_board = Card::boardInts2long(initial_board);
     init_round = GameTreeNode::gameRound2int(tree->getRoot()->getRound());
     if(init_round < FLOP_ROUND) return;
@@ -343,7 +344,7 @@ SliceCFR::SliceCFR(
 void SliceCFR::init() {
     float unit = 1 << 20;
     size_t size = estimate_tree_size();
-    printf("estimate memory:%f MB\n", size/unit);
+    logger->log("estimate memory:%f MB", size/unit);
     
     leaf_node_dfs.resize(N_LEAF_TYPE);
     ev.resize(N_LEAF_TYPE);
@@ -367,7 +368,7 @@ void SliceCFR::init() {
 
     if(dfs_idx == 0 || dfs_node[0].n_act == 0) return;
     size = init_memory();
-    printf("%d nodes, total:%f MB\n", dfs_idx, size/unit);
+    logger->log("%d nodes, total:%f MB", dfs_idx, size/unit);
     init_succ = true;
 }
 
@@ -743,7 +744,7 @@ void SliceCFR::train() {
     // _rm(P1, false);
     // _reach_prob(P0, false);
     vector<float> res = exploitability();
-    printf("0:%f %f %f\n", res[0], res[1], (res[0]+res[1])/2);
+    logger->log("0:%f %f %f", res[0], res[1], (res[0]+res[1])/2);
     // 计算exploitability后,双方的rm和p0的reach_prob已经恢复
     pos_coef = neg_coef = coef = 0;
     double temp = 0;
@@ -763,9 +764,9 @@ void SliceCFR::train() {
             cnt = 0;
             res = exploitability();
             total = timeSinceEpochMillisec() - start;
-            printf("%d:%.3f,%.3fs\n", iter, timer.ms()/1000.0, total/1000.0);
+            logger->log("%d:%.3f,%.3fs", iter, timer.ms()/1000.0, total/1000.0);
             temp = (res[0] + res[1]) / 2;
-            printf("%d:%f %f %f\n", iter, res[0], res[1], temp);
+            logger->log("%d:%f %f %f", iter, res[0], res[1], temp);
             if(temp <= tol) break;
         }
         if(stop_flag) break;
@@ -773,8 +774,8 @@ void SliceCFR::train() {
     if(cnt) {
         res = exploitability();
         total = timeSinceEpochMillisec() - start;
-        printf("%d:%.3f,%.3fs\n", iter, timer.ms()/1000.0, total/1000.0);
-        printf("%d:%f %f %f\n", iter, res[0], res[1], (res[0]+res[1])/2);
+        logger->log("%d:%.3f,%.3fs", iter, timer.ms()/1000.0, total/1000.0);
+        logger->log("%d:%f %f %f", iter, res[0], res[1], (res[0]+res[1])/2);
     }
 }
 

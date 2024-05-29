@@ -20,7 +20,7 @@ public:
     QLogger(const char *path, const char *mode = "w", bool timestamp = false, int period = 10):Logger(false, path, mode, timestamp, true, period) {}
     virtual void log(const char *format, ...) {
         if(timestamp) log_time();
-        va_list args = nullptr;
+        va_list args;
         va_start(args, format);
         if(file) {
             vfprintf(file, format, args);
@@ -29,6 +29,10 @@ public:
                 fflush(file);
             }
             if(new_line) fprintf(file, "\n");
+#ifdef __GNUC__
+            va_end(args);
+            va_start(args, format);
+#endif
         }
         // qDebug().noquote() << QString::vasprintf(QObject::tr(format).toLocal8Bit(), args);
         qDebug().noquote() << QString::vasprintf(QObject::tr(format).toStdString().c_str(), args);

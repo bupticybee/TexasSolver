@@ -8,9 +8,13 @@ void get_localtime(char *buf, size_t n, const char *format) {
     // time(&now);
     int ms = duration_cast<milliseconds>(tp.time_since_epoch()).count() - now * 1000;
     tm tm_now;
+#ifdef _MSC_VER
     localtime_s(&tm_now, &now);
+#else
+    localtime_r(&now, &tm_now);
+#endif
     // strftime(buf, n, format, &tm_now);
-    sprintf_s(buf, n, format, tm_now.tm_year+1900, tm_now.tm_mon+1, tm_now.tm_mday,
+    snprintf(buf, n, format, tm_now.tm_year+1900, tm_now.tm_mon+1, tm_now.tm_mday,
             tm_now.tm_hour, tm_now.tm_min, tm_now.tm_sec, ms);
 }
 
@@ -22,7 +26,7 @@ string get_localtime() {
 
 void Logger::log(const char *format, ...) {
     if(timestamp) log_time();
-    va_list args = nullptr;
+    va_list args;
     va_start(args, format);
     if(file) {
         vfprintf(file, format, args);
@@ -31,6 +35,12 @@ void Logger::log(const char *format, ...) {
             fflush(file);
         }
         if(new_line) fprintf(file, "\n");
+#ifdef __GNUC__
+        if(cmd) {
+            va_end(args);
+            va_start(args, format);
+        }
+#endif
     }
     if(cmd) {
         vprintf(format, args);

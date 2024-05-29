@@ -13,7 +13,7 @@ string get_localtime();
 
 class Logger {
 public:
-    Logger(bool cmd, const char *path, const char *mode = "w", bool timestamp = false, bool new_line = true, int period = 10)
+    Logger(bool cmd, const char *path, const char *mode = "w+", bool timestamp = false, bool new_line = true, int period = 10)
         :cmd(cmd), timestamp(timestamp), new_line(new_line), period(period) {
         if(path) {
             file = fopen(path, mode);

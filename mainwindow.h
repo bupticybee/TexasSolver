@@ -17,7 +17,7 @@
 
 class QLogger : public Logger {
 public:
-    QLogger(const char *path, const char *mode = "w", bool timestamp = false, int period = 10):Logger(false, path, mode, timestamp, true, period) {}
+    QLogger(const char *path, const char *mode = "w+", bool timestamp = false, int period = 10):Logger(false, path, mode, timestamp, true, period) {}
     virtual void log(const char *format, ...) {
         if(timestamp) log_time();
         va_list args;

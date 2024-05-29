@@ -280,7 +280,7 @@ int cmd_api(string &input_file, string &resource_dir, string &mode, string &log_
         resource_dir = "./resources";
     }
     if(log_file.empty()) log_file = get_localtime() + ".txt";
-    Logger logger(true, log_file.c_str(), "w", true, true, 1);
+    Logger logger(true, log_file.c_str(), "w+", true, true, 1);
     PokerMode poker_mode = PokerMode::UNKNOWN;
     if(mode.empty() || mode == "holdem") poker_mode = PokerMode::HOLDEM;
     else if(mode == "shortdeck") poker_mode = PokerMode::SHORTDECK;

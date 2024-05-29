@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionimport, &QAction::triggered, this, &MainWindow::on_actionimport_triggered);
     connect(this->ui->actionexport, &QAction::triggered, this, &MainWindow::on_actionexport_triggered);
     connect(this->ui->actionclear_all, &QAction::triggered, this, &MainWindow::on_actionclear_all_triggered);
-    logger = new QLogger((get_localtime() + ".txt").c_str(), "w", false, 1);
+    logger = new QLogger((get_localtime() + ".txt").c_str(), "w+", false, 1);
     clt.logger = logger;
     qSolverJob = new QSolverJob;
     qSolverJob->clt = &clt;

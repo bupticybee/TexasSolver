@@ -32,7 +32,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: install dependencies
         run: |
-          sudo apt install -y qt5-default qtbase5-dev qt5-qmake build-essential wget cmake
+          sudo apt install -y qt5-default qtbase5-dev qt5-qmake qttools5-dev build-essential wget cmake
           
       # Runs a set of commands using the runners shell
       - name: make appimage

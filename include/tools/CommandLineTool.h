@@ -78,7 +78,7 @@ public:
     string board;
     string res_file;
     string algorithm = "discounted_cfr";
-    float accuracy;
+    float accuracy = 0.1;
     int max_iteration=100;
     bool use_isomorphism=0;
     int use_halffloats=0;

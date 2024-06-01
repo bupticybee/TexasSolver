@@ -26,6 +26,7 @@ const string& Card::getCard() {
     return this->card;
 }
 
+// rank * 4 + suit,[13,4]
 int Card::getCardInt() {
     return this->card_int;
 }
@@ -39,6 +40,7 @@ int Card::card2int(Card card) {
     return strCard2int(card.getCard());
 }
 
+// rank * 4 + suit,[13,4]
 int Card::strCard2int(const string &card) {
     char rank = card.at(0);
     char suit = card.at(1);

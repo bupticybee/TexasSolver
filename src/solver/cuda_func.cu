@@ -264,7 +264,7 @@ __global__ void cfv_kernel(Node *node, int size, int n_hand) {
     for(i = 0; i < size; i++) cfv[i] = 0;// 清零cfv
 }
 
-__global__ void updata_data_kernel(Node *node, int size, int n_hand, float pos_coef, float neg_coef, float coef) {
+__global__ void discount_data_kernel(Node *node, int size, int n_hand, float pos_coef, float neg_coef, float coef) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if(i >= size) return;
     node += i;

@@ -250,23 +250,23 @@ size_t CudaCFR::estimate_tree_size() {
     return size;
 }
 
-void CudaCFR::_reach_prob(int player, bool best_cfv) {
+void CudaCFR::_reach_prob(int player, bool avg_strategy) {
     vector<int>& offset = slice_offset[player];
     int n = offset.size() - 1, size = 0, block = 0, n_hand = hand_size[player];
     for(int i = 0; i < n; i++) {
         size = offset[i+1] - offset[i];
         block = block_size(size);
-        if(best_cfv) reach_prob_avg_kernel<<<block, LANE_SIZE>>>(dev_nodes+offset[i], size, n_hand);
+        if(avg_strategy) reach_prob_avg_kernel<<<block, LANE_SIZE>>>(dev_nodes+offset[i], size, n_hand);
         else reach_prob_kernel<<<block, LANE_SIZE>>>(dev_nodes+offset[i], size, n_hand);
         cudaDeviceSynchronize();
     }
 }
 
-void CudaCFR::_rm(int player, bool best_cfv) {
+void CudaCFR::_rm(int player, bool avg_strategy) {
     int size = node_cnt[N_LEAF_TYPE + player];
     int block = block_size(size);
     Node *node = dev_nodes + slice_offset[player][0];
-    if(best_cfv) rm_avg_kernel<<<block, LANE_SIZE>>>(node, size, hand_size[player]);
+    if(avg_strategy) rm_avg_kernel<<<block, LANE_SIZE>>>(node, size, hand_size[player]);
     else rm_kernel<<<block, LANE_SIZE>>>(node, size, hand_size[player]);
     cudaDeviceSynchronize();
 }
@@ -288,19 +288,19 @@ void CudaCFR::clear_root_cfv() {
     cudaDeviceSynchronize();
 }
 
-void CudaCFR::step(int iter, int player, bool best_cfv) {
+void CudaCFR::step(int iter, int player, int task) {
     Timer timer;
     int opp = 1 - player, my_hand = hand_size[player], size = 0, block = 0;
-    _reach_prob(opp, best_cfv);
+    _reach_prob(opp, task != CFR_TASK);
     size_t t1 = timer.ms(true);
 
     leaf_cfv(player);
     size_t t2 = timer.ms(true);
 
-    if(!best_cfv) {
+    if(task == CFR_TASK) {
         size = n_player_node;
         block = block_size(size);
-        updata_data_kernel<<<block, LANE_SIZE>>>(dev_nodes, size, my_hand, pos_coef, neg_coef, coef);
+        discount_data_kernel<<<block, LANE_SIZE>>>(dev_nodes, size, my_hand, pos_coef, neg_coef, coef);
         cudaDeviceSynchronize();
     }
     size_t t3 = timer.ms(true);
@@ -308,7 +308,7 @@ void CudaCFR::step(int iter, int player, bool best_cfv) {
     for(int i = offset.size()-2; i >= 0; i--) {
         size = offset[i+1] - offset[i];
         block = block_size(size);
-        if(best_cfv) best_cfv_kernel<<<block, LANE_SIZE>>>(dev_nodes+offset[i], size, my_hand);
+        if(task == EXP_TASK) best_cfv_kernel<<<block, LANE_SIZE>>>(dev_nodes+offset[i], size, my_hand);
         else cfv_kernel<<<block, LANE_SIZE>>>(dev_nodes+offset[i], size, my_hand);
         cudaDeviceSynchronize();
     }

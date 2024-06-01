@@ -66,14 +66,14 @@ protected:
     size_t init_leaf_node();
     void set_cfv_and_offset(DFSNode &node, int player, float *&cfv, int &offset);
     size_t init_strength_table();
-    virtual void step(int iter, int player, bool best_cfv=false);
+    virtual void step(int iter, int player, int task);
     virtual void leaf_cfv(int player);
     int block_size(int size) {// ceil
         return (size + LANE_SIZE - 1) / LANE_SIZE;
     }
     void clear_prob_sum(int len);
-    virtual void _reach_prob(int player, bool best_cfv=false);
-    virtual void _rm(int player, bool best_cfv=false);
+    virtual void _reach_prob(int player, bool avg_strategy);
+    virtual void _rm(int player, bool avg_strategy);
     virtual void clear_data(int player);
     virtual void clear_root_cfv();
     virtual void post_process();

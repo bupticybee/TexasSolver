@@ -129,13 +129,74 @@ void cfv_up(Node *node, int n_hand) {
     }
     for(i = 0; i < size; i++) cfv[i] = 0;// 清零cfv
 }
+// 只计算cfv
+void cfv_up_avg(Node *node, int n_hand) {
+    int n_act = node->n_act, size = n_act * n_hand;
+    int i = 0, h = 0, sum_offset = size << 2;
+    float *parent_cfv = node->parent_cfv, *cfv = node->data, val = 0;
+    float *strategy_sum = cfv + (size << 1);
+    // mutex *mtx = node->mtx;
+    for(h = 0; h < n_hand; h++) {
+        val = 0;
+        if(cfv[sum_offset+h] == 0) {
+            for(i = h; i < size; i += n_hand) val += cfv[i];
+            val /= n_act;// uniform strategy
+        }
+        else {
+            for(i = h; i < size; i += n_hand) {
+                val += cfv[i] * strategy_sum[i];
+            }
+            val /= cfv[sum_offset+h];
+        }
+        // cfv[sum_offset+h] = val;
+        // mtx->lock();
+        // parent_cfv[h] += val;// 需要加锁
+        // mtx->unlock();
+        atomic_ref(parent_cfv[h]).fetch_add(val, memory_order_relaxed);
+        // for(i = h; i < size; i += n_hand) regret_sum[i] += cfv[i] - val;// 更新regret_sum
+        // val = 0;
+        // for(i = h; i < size; i += n_hand) val += max(0.0f, regret_sum[i]);
+        // cfv[sum_offset+h] = val;// 求和
+    }
+    // for(i = 0; i < size; i++) cfv[i] = 0;// 清零cfv
+}
 // 在cfv_up前执行
-void updata_data(Node *node, int n_hand, float pos_coef, float neg_coef, float coef) {
+void discount_data(Node *node, int n_hand, float pos_coef, float neg_coef, float coef) {
     int size = node->n_act * n_hand, i = 0;
     float *regret_sum = node->data + size, *strategy_sum = regret_sum + size;
     for(i = 0; i < size; i++) {
         regret_sum[i] *= regret_sum[i] > 0 ? pos_coef : neg_coef;
         strategy_sum[i] = strategy_sum[i] * coef + strategy_sum[size+i];
+    }
+}
+
+void SliceCFR::cfv_to_ev() {
+    for(int i = 0; i < N_PLAYER; i++) {
+        vector<int>& offset = slice_offset[i];
+        #pragma omp parallel for
+        for(int j = offset[0]; j < offset.back(); j++) {
+            cfv_to_ev(player_node_ptr+j, i);
+        }
+    }
+}
+void SliceCFR::cfv_to_ev(Node *node, int player) {
+    float *opp_reach = node->opp_prob, *cfv = node->data;
+    size_t board = node->board;
+    vector<float> opp_prob_sum(n_card, 0);
+    float prob_sum = 0, temp = 0;
+    get_prob_sum(opp_prob_sum, prob_sum, 1-player, opp_reach, board);
+    int n_hand = hand_size[player], size = node->n_act * n_hand, h = 0, i = 0;
+    int *same_hand = same_hand_ptr[player], *my_card = hand_card_ptr[player];
+    size_t *my_hash = hand_hash_ptr[player];
+    for(h = 0; h < n_hand; h++) {
+        temp = same_hand[h] != -1 ? opp_reach[same_hand[h]] : 0;// 重复计算的部分
+        temp = prob_sum - opp_prob_sum[my_card[h]] - opp_prob_sum[my_card[h+n_hand]] + temp;
+        if((my_hash[h] & board) || temp == 0) {
+            for(i = h; i < size; i += n_hand) cfv[i] = 0;
+        }
+        else {
+            for(i = h; i < size; i += n_hand) cfv[i] /= temp;
+        }
     }
 }
 
@@ -164,7 +225,7 @@ void SliceCFR::leaf_cfv(int player) {
         for(int j : vec[i].leaf_node_idx) {
             LeafNode &node = leaf_node[j];
             if(j < sd_offset) {
-                fold_cfv(player, cfv, node.reach_prob[opp], my_hand, opp_hand, ev_ptr[j], node.info);
+                fold_cfv(player, cfv, node.reach_prob[opp], my_hand, ev_ptr[j], node.info);
             }
             else sd_cfv(player, cfv, node.reach_prob[opp], my_hand, opp_hand, ev_ptr[j], node.info);
         }
@@ -176,23 +237,29 @@ void SliceCFR::leaf_cfv(int player) {
     // printf("leaf_cfv:%zd ms\n", timer.ms());
 #endif
 }
-void SliceCFR::fold_cfv(int player, float *cfv, float *opp_reach, int my_hand, int opp_hand, float val, size_t board) {
+void SliceCFR::get_prob_sum(vector<float> &prob_sum, float &sum, int player, float *reach_prob, size_t board) {
+    float temp = 0;
+    int n_hand = hand_size[player], *hand_card = hand_card_ptr[player];
+    size_t *hand_hash = hand_hash_ptr[player];
+    for(int i = 0; i < n_hand; i++) {
+        if(hand_hash[i] & board) continue;// 对方手牌与公共牌冲突
+        temp = reach_prob[i];
+        prob_sum[hand_card[i]] += temp;// card1
+        prob_sum[hand_card[i+n_hand]] += temp;// card2
+        sum += temp;
+    }
+}
+void SliceCFR::fold_cfv(int player, float *cfv, float *opp_reach, int my_hand, float val, size_t board) {
 #ifdef TIME_LOG
     Timer timer;
 #endif
     if(player != P0) val = -val;
-    size_t *my_hash = hand_hash_ptr[player], *opp_hash = hand_hash_ptr[1-player];
-    int *my_card = hand_card_ptr[player], *opp_card = hand_card_ptr[1-player];
+    size_t *my_hash = hand_hash_ptr[player];
+    int *my_card = hand_card_ptr[player];
     int *same_hand = same_hand_ptr[player], i = 0;
     vector<float> opp_prob_sum(n_card, 0);
     float prob_sum = 0, temp = 0;
-    for(i = 0; i < opp_hand; i++) {
-        if(opp_hash[i] & board) continue;// 对方手牌与公共牌冲突
-        temp = opp_reach[i];
-        opp_prob_sum[opp_card[i]] += temp;// card1
-        opp_prob_sum[opp_card[i+opp_hand]] += temp;// card2
-        prob_sum += temp;
-    }
+    get_prob_sum(opp_prob_sum, prob_sum, 1-player, opp_reach, board);
     for(i = 0; i < my_hand; i++) {
         if(my_hash[i] & board) {
             // cfv[i] = 0;// 与公共牌冲突，cfv为0
@@ -281,7 +348,7 @@ size_t SliceCFR::init_leaf_node() {
             else {
                 if(j == -1) info = 0;
                 else if(k == -1) info = j;
-                else info = tril_idx(j, k);
+                else info = tril_idx(max(j, k), min(j, k));
             }
             leaf_node[node_idx++].info = info;
         }
@@ -414,18 +481,30 @@ size_t SliceCFR::init_player_node() {
         for(vector<int> &nodes : slice[i]) {// 枚举slice
             slice_offset[i].push_back(mem_idx);
             for(int idx : nodes) {// 枚举node
-                DFSNode &node = dfs_node[idx];
-                Node &target = player_node[mem_idx];
-                target.n_act = node.n_act;
-                set_cfv_and_offset(node, -1, target.parent_cfv, target.parent_offset);
-                size = get_size(node.n_act, hand_size[node.player]) * sizeof(float);
-                target.data = (float *)malloc(size);
-                if(target.data == nullptr) throw runtime_error("malloc error");
-                total += size;
                 dfs_idx_map[idx] = mem_idx++;
             }
         }
         slice_offset[i].push_back(mem_idx);
+    }
+    for(int idx = 0; idx < dfs_idx; idx++) {
+        if(dfs_idx_map[idx] == -1) continue;
+        DFSNode &node = dfs_node[idx];
+        if(node.player != P0 && node.player != P1) throw runtime_error("unknow player");
+        Node &target = player_node[dfs_idx_map[idx]];
+        target.n_act = node.n_act;
+        set_cfv_and_offset(node, -1, target.parent_cfv, target.parent_offset);
+        float *ptr = nullptr;
+        int offset = 0;
+        set_cfv_and_offset(node, 1-node.player, ptr, offset);
+        target.opp_prob = ptr + offset;
+        target.board = init_board;
+        int j = decode_idx0(node.info), k = decode_idx1(node.info);
+        if(j != -1) target.board |= 1LL << poss_card[j];
+        if(k != -1) target.board |= 1LL << poss_card[k];
+        size = get_size(node.n_act, hand_size[node.player]) * sizeof(float);
+        target.data = (float *)malloc(size);
+        if(target.data == nullptr) throw runtime_error("malloc error");
+        total += size;
     }
     // mtx = vector<mutex>(mtx_idx);
     // printf("%d,%d,%d\n", sizeof(mutex), mtx_idx, mtx_idx * sizeof(mutex));
@@ -614,6 +693,22 @@ void SliceCFR::dfs(shared_ptr<GameTreeNode> node, int parent_act, int parent_dfs
     int type = node->getType(), round = GameTreeNode::gameRound2int(node->getRound()), n_act = 0;
     if(type == GameTreeNode::ACTION) {
         shared_ptr<ActionNode> act_node = dynamic_pointer_cast<ActionNode>(node);
+        ActionNode *p = act_node.get();
+        int r_offset = round - init_round;
+        if(node_idx.find(p) == node_idx.end()) node_idx[p] = vector<int>(combination_num[r_offset], -1);
+        int j = decode_idx0(info), k = decode_idx1(info);
+        if(r_offset == 0) {
+            assert(j == -1 && k == -1);
+            node_idx[p][0] = curr_idx;
+        }
+        else if(r_offset == 1) {
+            assert(j != -1 && k == -1);
+            node_idx[p][poss_card[j]] = curr_idx;
+        }
+        else {
+            assert(r_offset == 2 && j != -1 && k != -1);
+            node_idx[p][poss_card[j]*N_CARD+poss_card[k]] = curr_idx;
+        }
         int player = act_node->getPlayer();
         vector<shared_ptr<GameTreeNode>> children = act_node->getChildrens();
         n_act = children.size();
@@ -638,13 +733,13 @@ void SliceCFR::dfs(shared_ptr<GameTreeNode> node, int parent_act, int parent_dfs
         this->chance_node.push_back(curr_idx);
         if(child_type == GameTreeNode::ACTION || child_type == GameTreeNode::SHOWDOWN) {// 需要发1张牌
             dfs_node.emplace_back(CHANCE_PLAYER, n_act, parent_act, info | round, parent_dfs_idx, parent_p0_act, parent_p0_idx, parent_p1_act, parent_p1_idx);
-            // 发牌信息编码,只有1张牌时,占用idx0,有2张牌时,索引较大的占用idx0,较小的占用idx1
+            // 发牌信息编码,只有1张牌时,占用idx0,有2张牌时,占用idx0,idx1
             int j = decode_idx0(info), new_info = 0;
             for(int i = 0, k = 0; i < n_act; i++, k++) {// 动作索引i,poss_card索引k
                 if(j == -1) new_info = code_idx0(k);// 第一次发牌
                 else {// 第二次发牌,最多发两次牌
                     if(k == j) k++;// 两次选的一样,则第二次改成下一个
-                    new_info = code_idx0(max(j,k)) | code_idx1(min(j,k));// idx0为较大值
+                    new_info = code_idx0(j) | code_idx1(k);
                 }
                 dfs(children, i, curr_idx, parent_p0_act, parent_p0_idx, parent_p1_act, parent_p1_idx, cnt0, cnt1, new_info);
             }
@@ -661,7 +756,7 @@ void SliceCFR::dfs(shared_ptr<GameTreeNode> node, int parent_act, int parent_dfs
                 for(int k = j+1; k < n_act; k++) {
                     ev[SHOWDOWN_TYPE].push_back(val);
                     leaf_node_dfs[SHOWDOWN_TYPE].push_back(dfs_idx++);
-                    info = code_idx0(k) | code_idx1(j);// idx0为较大值
+                    info = code_idx0(j) | code_idx1(k);
                     dfs_node.emplace_back(CHANCE_PLAYER, 0, i++, info, curr_idx, parent_p0_act, parent_p0_idx, parent_p1_act, parent_p1_idx);
                 }
             }
@@ -699,10 +794,10 @@ void SliceCFR::init_poss_card(Deck& deck, size_t board) {
     print_array(chance_den, N_ROUND);
 }
 
-void SliceCFR::_reach_prob(int player, bool best_cfv) {
+void SliceCFR::_reach_prob(int player, bool avg_strategy) {
     vector<int>& offset = slice_offset[player];
     int n = offset.size(), n_hand = hand_size[player];
-    node_func func = best_cfv ? reach_prob_avg : reach_prob;
+    node_func func = avg_strategy ? reach_prob_avg : reach_prob;
     for(int i = 1; i < n; i++) {
         #pragma omp parallel for
         for(int j = offset[i-1]; j < offset[i]; j++) {
@@ -710,8 +805,8 @@ void SliceCFR::_reach_prob(int player, bool best_cfv) {
         }
     }
 }
-void SliceCFR::_rm(int player, bool best_cfv) {
-    node_func func = best_cfv ? rm_avg : rm;
+void SliceCFR::_rm(int player, bool avg_strategy) {
+    node_func func = avg_strategy ? rm_avg : rm;
     int s = slice_offset[player][0], e = slice_offset[player].back(), n_hand = hand_size[player];
     #pragma omp parallel for
     for(int i = s; i < e; i++) {
@@ -733,59 +828,66 @@ void SliceCFR::clear_root_cfv() {
     memset(root_cfv_ptr[P0], 0, size);
 }
 
+bool SliceCFR::print_exploitability(int iter, Timer &timer) {
+    vector<float> res = exploitability();
+    logger->log("%d:%.3fs", iter, timer.ms()/1000.0);
+    float avg = (res[0] + res[1]) / 2;
+    logger->log("%d:%f %f %f", iter, res[0], res[1], avg);
+    return avg <= tol;
+}
+
 void SliceCFR::train() {
     init();
     if(!init_succ) return;
-    size_t start = timeSinceEpochMillisec(), total = 0;
     Timer timer;
     clear_data(P0);
     clear_data(P1);
     // _rm(P0, false);
     // _rm(P1, false);
     // _reach_prob(P0, false);
-    vector<float> res = exploitability();
-    logger->log("0:%f %f %f", res[0], res[1], (res[0]+res[1])/2);
+    print_exploitability(0, timer);
     // 计算exploitability后,双方的rm和p0的reach_prob已经恢复
-    pos_coef = neg_coef = coef = 0;
+    // pos_coef = neg_coef = coef = 0;
     double temp = 0;
-    int cnt = 0, iter = 1;
-    for(iter = 1; iter <= steps; iter++) {
-        clear_root_cfv();
-        for(int player = P0; player < N_PLAYER; player++) {
-            step(iter, player, false);
-        }
+    int cnt = 0, iter = 0;
+    while(iter < steps) {
         temp = pow(iter, alpha);
         pos_coef = temp / (temp + 1);
         temp = pow(iter, beta);
         neg_coef = temp / (temp + 1);
         // neg_coef = 0.5;
         coef = pow((float)iter/(iter+1), gamma);
+
+        clear_root_cfv();
+        for(int player = P0; player < N_PLAYER; player++) {
+            step(iter, player, CFR_TASK);
+        }
+        iter++;
         if((++cnt) == interval) {
             cnt = 0;
-            res = exploitability();
-            total = timeSinceEpochMillisec() - start;
-            logger->log("%d:%.3f,%.3fs", iter, timer.ms()/1000.0, total/1000.0);
-            temp = (res[0] + res[1]) / 2;
-            logger->log("%d:%f %f %f", iter, res[0], res[1], temp);
-            if(temp <= tol) break;
+            if(print_exploitability(iter, timer)) break;
         }
         if(stop_flag) break;
     }
     if(cnt) {
-        res = exploitability();
-        total = timeSinceEpochMillisec() - start;
-        logger->log("%d:%.3f,%.3fs", iter, timer.ms()/1000.0, total/1000.0);
-        logger->log("%d:%f %f %f", iter, res[0], res[1], (res[0]+res[1])/2);
+        print_exploitability(iter, timer);
     }
+    logger->log("collecting statics");
+    for(int player = P0; player < N_PLAYER; player++) {
+        _rm(1-player, true);
+        step(iter, player, CFV_TASK);
+    }
+    cfv_to_ev();
+    logger->log("statics collected");
 }
 
-// player到达概率已经计算好
-void SliceCFR::step(int iter, int player, bool best_cfv) {
+// 执行更新任务时,player到达概率需要提前计算好
+void SliceCFR::step(int iter, int player, int task) {
 #ifdef TIME_LOG
     size_t start = timeSinceEpochMillisec(), end = 0;
 #endif
     int opp = 1 - player, my_hand = hand_size[player];
-    _reach_prob(opp, best_cfv);
+    _reach_prob(opp, task != CFR_TASK);
 #ifdef TIME_LOG
     end = timeSinceEpochMillisec();
     size_t t1 = end - start;
@@ -800,10 +902,10 @@ void SliceCFR::step(int iter, int player, bool best_cfv) {
 #endif
 
     vector<int>& offset = slice_offset[player];
-    if(!best_cfv) {
+    if(task == CFR_TASK) {
         #pragma omp parallel for
         for(int j = offset[0]; j < offset.back(); j++) {
-            updata_data(player_node_ptr+j, my_hand, pos_coef, neg_coef, coef);
+            discount_data(player_node_ptr+j, my_hand, pos_coef, neg_coef, coef);
         }
     }
 #ifdef TIME_LOG
@@ -812,7 +914,12 @@ void SliceCFR::step(int iter, int player, bool best_cfv) {
     start = end;
 #endif
     
-    node_func func = best_cfv ? best_cfv_up : cfv_up;
+    node_func func;
+    switch(task) {
+        case EXP_TASK:{func = best_cfv_up;break;}
+        case CFV_TASK:{func = cfv_up_avg;break;}
+        default:func = cfv_up;
+    }
     for(int i = offset.size()-1; i > 0; i--) {
         #pragma omp parallel for
         for(int j = offset[i-1]; j < offset[i]; j++) {
@@ -838,7 +945,7 @@ vector<float> SliceCFR::exploitability() {
 #ifdef TIME_LOG
         size_t t1 = timeSinceEpochMillisec() - start;
 #endif
-        step(0, player, true);
+        step(0, player, EXP_TASK);
 #ifdef TIME_LOG
         start = timeSinceEpochMillisec();
 #endif
@@ -868,10 +975,48 @@ json SliceCFR::dumps(bool with_status, int depth) {// depth:max_round
     return std::move(ans);
 }
 vector<vector<vector<float>>> SliceCFR::get_strategy(shared_ptr<ActionNode> node, vector<Card> cards) {
-    return {};
+    vector<vector<vector<float>>> ans(N_CARD, vector<vector<float>>(N_CARD));
+    output_data(node.get(), cards, ans, false);
+    return std::move(ans);
 }
 vector<vector<vector<float>>> SliceCFR::get_evs(shared_ptr<ActionNode> node, vector<Card> cards) {
-    return {};
+    vector<vector<vector<float>>> ans(N_CARD, vector<vector<float>>(N_CARD));
+    output_data(node.get(), cards, ans, true);
+    return std::move(ans);
+}
+void SliceCFR::output_data(ActionNode *node, vector<Card> &cards, vector<vector<vector<float>>> &out, bool ev) {
+    int r_offset = GameTreeNode::gameRound2int(node->getRound()) - init_round;
+    if(cards.size() != r_offset || r_offset > 2) throw runtime_error("chance_cards error");
+    int idx = 0;
+    size_t board = init_board;
+    if(r_offset >= 1) {
+        idx = cards[0].getCardInt();
+        board |= 1LL << idx;
+    }
+    if(r_offset == 2) {
+        idx = idx * N_CARD + cards[1].getCardInt();
+        board |= 1LL << cards[1].getCardInt();
+    }
+    vector<vector<float>> data;
+    if(ev) data = get_ev(node_idx.at(node)[idx]);
+    else data = get_avg_strategy(node_idx.at(node)[idx]);
+    int player = node->getPlayer(), n_hand = hand_size[player], *card = hand_card_ptr[player];
+    size_t *ptr = hand_hash_ptr[player];
+    for(int h = 0; h < n_hand; h++) {
+        if(!cards_valid(ptr[h], board)) continue;
+        out[card[h]+min_card][card[h+n_hand]+min_card].swap(data[h]);
+    }
+}
+vector<vector<float>> SliceCFR::get_ev(int idx) {
+    Node &node = player_node[dfs_idx_map[idx]];
+    int n_hand = hand_size[dfs_node[idx].player], n_act = node.n_act;
+    int i = 0, h = 0, j = 0;
+    float *cfv = node.data;
+    vector<vector<float>> ev(n_hand, vector<float>(n_act));// [n_hand,n_act]
+    for(j = 0; j < n_act; j++) {
+        for(h = 0; h < n_hand; h++) ev[h][j] = cfv[i++];
+    }
+    return std::move(ev);
 }
 vector<vector<float>> SliceCFR::get_avg_strategy(int idx) {
     Node &node = player_node[dfs_idx_map[idx]];
@@ -889,7 +1034,7 @@ vector<vector<float>> SliceCFR::get_avg_strategy(int idx) {
             for(j = 0, i = h; j < n_act; j++, i += n_hand) strategy[h][j] = strategy_sum[i] / sum;
         }
     }
-    return strategy;
+    return std::move(strategy);
 }
 json SliceCFR::reConvertJson(const shared_ptr<GameTreeNode>& node, int depth, int max_depth, int &idx, int info) {
     int curr_idx = idx++;
@@ -939,7 +1084,6 @@ json SliceCFR::reConvertJson(const shared_ptr<GameTreeNode>& node, int depth, in
                 if(j == -1) new_info = code_idx0(k);// 第一次发牌
                 else {// 第二次发牌,最多发两次牌
                     if(k == j) k++;// 两次选的一样,则第二次改成下一个
-                    // new_info = code_idx0(max(j,k)) | code_idx1(min(j,k));// idx0为较大值
                 }
                 json child = reConvertJson(children, depth, max_depth, idx, new_info);
                 if(depth < max_depth) ans["dealcards"][Card::intCard2Str(poss_card[k])] = child;

@@ -34,7 +34,7 @@ using std::mutex;
 #define N_LEAF_TYPE          2
 
 #define N_TYPE 5
-#define N_TASK_SIZE 5
+
 #define two_card_hash(card1, card2) ((1LL<<(card1)) | (1LL<<(card2)))
 #define tril_idx(r, c) (((r)*((r)-1)>>1)+(c)) // r>c>=0
 
@@ -49,12 +49,18 @@ using std::mutex;
 #define code_idx1(i) (((i)+1)<<16)
 #define decode_idx1(x) ((((x)>>16)&0xff) - 1)
 
+#define EXP_TASK 0
+#define CFV_TASK 1
+#define CFR_TASK 2
+
 struct Node {
     int n_act = 0;// 动作数
     int parent_offset = -1;// 本节点对应的父节点数据reach_prob的偏移量
     float *parent_cfv = nullptr;
     // mutex *mtx = nullptr;
     float *data = nullptr;// cfv,regret_sum,strategy_sum,reach_prob,sum
+    float *opp_prob = nullptr;
+    size_t board = 0LL;
 };
 struct LeafNode {
     float *reach_prob[N_PLAYER] = {nullptr,nullptr};
@@ -116,6 +122,8 @@ protected:
     int steps = 0, interval = 0, n_card = N_CARD, min_card = 0;
     int init_round = 0;
     int dfs_idx = 0;// 先序遍历
+    unordered_map<ActionNode*, vector<int>> node_idx;
+    int combination_num[N_ROUND-1] {1,N_CARD,N_CARD*N_CARD};
     size_t init_board = 0;
     int hand_size[N_PLAYER];
     float norm = 1;// 根节点概率归一化系数
@@ -162,9 +170,9 @@ protected:
     size_t init_strength_table();
     void dfs(shared_ptr<GameTreeNode> node, int parent_act=-1, int parent_dfs_idx=-1, int parent_p0_act=-1, int parent_p0_idx=-1, int parent_p1_act=-1, int parent_p1_idx=-1, int cnt0=0, int cnt1=0, int info=0);
     void init_poss_card(Deck& deck, size_t board);
-    virtual void step(int iter, int player, bool best_cfv=false);
+    virtual void step(int iter, int player, int task);
     virtual void leaf_cfv(int player);
-    void fold_cfv(int player, float *cfv, float *opp_reach, int my_hand, int opp_hand, float val, size_t board);
+    void fold_cfv(int player, float *cfv, float *opp_reach, int my_hand, float val, size_t board);
     void sd_cfv(int player, float *cfv, float *opp_reach, int my_hand, int opp_hand, float val, int idx);
     void append_node_idx(int p_idx, int act_idx, int player, int cpu_node_idx);
     vector<vector<int>> pre_leaf_node_map;// [dfs_idx,act_idx]
@@ -179,13 +187,19 @@ protected:
     // int mtx_idx = N_PLAYER;
     vector<vector<StrengthData>> strength;
     size_t _estimate_tree_size(shared_ptr<GameTreeNode> node);
-    virtual void _reach_prob(int player, bool best_cfv=false);
-    virtual void _rm(int player, bool best_cfv=false);
+    virtual void _reach_prob(int player, bool avg_strategy);
+    virtual void _rm(int player, bool avg_strategy);
     virtual void clear_data(int player);
     virtual void clear_root_cfv();
     virtual void post_process() {}
     json reConvertJson(const shared_ptr<GameTreeNode>& node, int depth, int max_depth, int &idx, int info);
-    virtual vector<vector<float>> get_avg_strategy(int idx);
+    virtual vector<vector<float>> get_avg_strategy(int idx);// [n_hand,n_act]
+    virtual vector<vector<float>> get_ev(int idx);// [n_hand,n_act]
+    bool print_exploitability(int iter, Timer &timer);
+    void cfv_to_ev();
+    void cfv_to_ev(Node *node, int player);
+    void get_prob_sum(vector<float> &prob_sum, float &sum, int player, float *reach_prob, size_t board);
+    void output_data(ActionNode *node, vector<Card> &cards, vector<vector<vector<float>>> &out, bool ev);
 };
 
 #endif // _SLICE_CFR_H_

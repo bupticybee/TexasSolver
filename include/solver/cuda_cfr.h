@@ -78,6 +78,8 @@ protected:
     virtual void clear_root_cfv();
     virtual void post_process();
     virtual vector<vector<float>> get_avg_strategy(int idx);
+    virtual vector<vector<float>> get_ev(int idx);
+    virtual void cfv_to_ev();
 };
 
 #endif // _CUDA_CFR_H_

@@ -196,7 +196,7 @@ protected:
     virtual vector<vector<float>> get_avg_strategy(int idx);// [n_hand,n_act]
     virtual vector<vector<float>> get_ev(int idx);// [n_hand,n_act]
     bool print_exploitability(int iter, Timer &timer);
-    void cfv_to_ev();
+    virtual void cfv_to_ev();
     void cfv_to_ev(Node *node, int player);
     void get_prob_sum(vector<float> &prob_sum, float &sum, int player, float *reach_prob, size_t board);
     void output_data(ActionNode *node, vector<Card> &cards, vector<vector<vector<float>>> &out, bool ev);

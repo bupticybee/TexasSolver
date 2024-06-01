@@ -344,3 +344,7 @@ vector<vector<float>> CudaCFR::get_avg_strategy(int idx) {
     }
     return strategy;
 }
+vector<vector<float>> CudaCFR::get_ev(int idx) {
+    return {};
+}
+void CudaCFR::cfv_to_ev() {}

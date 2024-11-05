@@ -52,6 +52,9 @@ The compare image of their results is  [here](benchmark/benchmark_outputs/result
 
 [GNU AGPL v3](https://www.gnu.org/licenses/agpl-3.0.en.html)
 
+This software is licensed to person/business here: 
+ [licensed_list](licensed_list.txt)
+
 # Email
 
 icybee@yeah.net

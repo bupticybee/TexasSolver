@@ -13,6 +13,32 @@
 #include "settingeditor.h"
 #include "include/ui/rangeselectortablemodel.h"
 #include "include/ui/rangeselectortabledelegate.h"
+#include <qlineedit.h>
+
+class QLogger : public Logger {
+public:
+    QLogger(const char *path, const char *mode = "w+", bool timestamp = false, int period = 10):Logger(false, path, mode, timestamp, true, period) {}
+    virtual void log(const char *format, ...) {
+        if(timestamp) log_time();
+        va_list args;
+        va_start(args, format);
+        if(file) {
+            vfprintf(file, format, args);
+            if((++step) == period) {
+                step = 0;
+                fflush(file);
+            }
+            if(new_line) fprintf(file, "\n");
+#ifdef __GNUC__
+            va_end(args);
+            va_start(args, format);
+#endif
+        }
+        // qDebug().noquote() << QString::vasprintf(QObject::tr(format).toLocal8Bit(), args);
+        qDebug().noquote() << QString::vasprintf(QObject::tr(format).toStdString().c_str(), args);
+        va_end(args);
+    }
+};
 
 namespace Ui {
 class MainWindow;
@@ -60,8 +86,24 @@ private slots:
 
 private:
     void clear_all_params();
+    void get_tree_params();
+    void get_solver_params();
+    void show_tree_params();
+    void show_solver_params();
+    void set_bet_sizes(QLineEdit *edit, vector<float> *sizes) {
+        string s = edit->text().toStdString();
+        clt.set_bet_sizes(s, ' ', sizes);
+    }
+    void show_bet_sizes(QLineEdit *edit, vector<float> &sizes) {
+        string s;
+        join(sizes, ' ', s);
+        edit->setText(s.c_str());
+    }
+    void update_range_ui();
     Ui::MainWindow *ui = NULL;
     QSolverJob* qSolverJob = NULL;
+    CommandLineTool clt;
+    Logger *logger = nullptr;
     QFileSystemModel * qFileSystemModel = NULL;
     StrategyExplorer* strategyExplorer = NULL;
     RangeSelector* rangeSelector = NULL;

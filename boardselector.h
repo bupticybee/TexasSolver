@@ -18,7 +18,7 @@ class boardselector : public QDialog
     Q_OBJECT
 
 public:
-    explicit boardselector(QTextEdit* boardEdit,QSolverJob::Mode mode = QSolverJob::Mode::HOLDEM,QWidget *parent = 0);
+    explicit boardselector(QTextEdit* boardEdit,PokerMode mode = PokerMode::HOLDEM,QWidget *parent = 0);
     ~boardselector();
 
 private slots:
@@ -37,7 +37,7 @@ private slots:
 private:
     Ui::boardselector *ui;
     QTextEdit* boardEdit = NULL;
-    QSolverJob::Mode mode;
+    PokerMode mode;
     QStringList rank_list;
     BoardSelectorTableModel * boardSelectorTableModel = NULL;
     BoardSelectorTableDelegate * boardSelectorTableDelegate = NULL;

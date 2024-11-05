@@ -4,9 +4,9 @@
 
 #include <include/solver/BestResponse.h>
 #include "include/solver/PCfrSolver.h"
-#include <QtCore>
-#include <QObject>
-#include <QTranslator>
+// #include <QtCore>
+// #include <QObject>
+// #include <QTranslator>
 
 //#define DEBUG;
 
@@ -16,7 +16,7 @@ PCfrSolver::~PCfrSolver(){
 
 PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, vector<PrivateCards> range2,
                      vector<int> initial_board, shared_ptr<Compairer> compairer, Deck deck, int iteration_number, bool debug,
-                     int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int warmup,float accuracy,bool use_isomorphism,int use_halffloats,int num_threads) :Solver(tree){
+                     int print_interval, /*string logfile*/Logger *logger, string trainer, Solver::MonteCarolAlg monteCarolAlg,int warmup,float accuracy,bool use_isomorphism,int use_halffloats,int num_threads):Solver(tree, logger){
     this->initial_board = initial_board;
     this->initial_board_long = Card::boardInts2long(initial_board);
     this->logfile = logfile;
@@ -53,7 +53,8 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
     if(num_threads == -1){
         num_threads = omp_get_num_procs();
     }
-    qDebug().noquote() << QString::fromStdString(tfm::format(QObject::tr("Using %s threads").toStdString().c_str(),num_threads));
+    // qDebug().noquote() << QString::fromStdString(tfm::format(QObject::tr("Using %s threads").toStdString().c_str(),num_threads));
+    logger->log("Using %d threads", num_threads);
     this->num_threads = num_threads;
     this->distributing_task = false;
     omp_set_num_threads(this->num_threads);
@@ -299,7 +300,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
     }
 
     #pragma omp parallel for schedule(static)
-    for(std::size_t valid_ind = 0;valid_ind < valid_cards.size();valid_ind++) {
+    for(std::int64_t valid_ind = 0;valid_ind < valid_cards.size();valid_ind++) {
         int card = valid_cards[valid_ind];
         shared_ptr<GameTreeNode> one_child = node->getChildren();
         Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
@@ -776,7 +777,7 @@ void PCfrSolver::train() {
     }
 
     BestResponse br = BestResponse(player_privates,this->player_number,this->pcm,this->rrm,this->deck,this->debug,this->color_iso_offset,this->split_round,this->num_threads,this->use_halffloats);
-
+    br.logger = logger;
     br.printExploitability(tree->getRoot(), 0, tree->getRoot()->getPot(), initial_board_long);
 
     vector<vector<float>> reach_probs = this->getReachProbs();
@@ -802,9 +803,11 @@ void PCfrSolver::train() {
         if( (i % this->print_interval == 0 && i != 0 && i >= this->warmup) || this->nowstop) {
             endtime = timeSinceEpochMillisec();
             long time_ms = endtime - begintime;
-            qDebug().noquote() << "-------------------";
+            // qDebug().noquote() << "-------------------";
+            logger->log("-------------------");
             float expliotibility = br.printExploitability(tree->getRoot(), i + 1, tree->getRoot()->getPot(), initial_board_long);
-            qDebug().noquote() << QObject::tr("time used: ") << float(time_ms) / 1000 << QObject::tr(" second.");
+            // qDebug().noquote() << QObject::tr("time used: ") << float(time_ms) / 1000 << QObject::tr(" second.");
+            logger->log("time used: %f second.", float(time_ms) / 1000);
             if(!this->logfile.empty()){
                 json jo;
                 jo["iteration"] = i;
@@ -823,7 +826,8 @@ void PCfrSolver::train() {
         }
     }
 
-    qDebug().noquote() << QObject::tr("collecting statics");
+    // qDebug().noquote() << QObject::tr("collecting statics");
+    logger->log("collecting statics");
     this->collecting_statics = true;
     for(int player_id = 0;player_id < this->player_number;player_id ++) {
         this->round_deal = vector<int>{-1,-1,-1,-1};
@@ -838,8 +842,8 @@ void PCfrSolver::train() {
     }
     this->collecting_statics = false;
     this->statics_collected = true;
-    qDebug().noquote() << QObject::tr("statics collected");
-
+    // qDebug().noquote() << QObject::tr("statics collected");
+    logger->log("statics collected");
     if(!this->logfile.empty()) {
         fileWriter.flush();
         fileWriter.close();
@@ -935,14 +939,14 @@ void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strate
         shared_ptr<GameTreeNode> childerns = chanceNode->getChildren();
         vector<string> card_strs;
         for(Card card:cards)
-            card_strs.push_back(card.toString());
+            card_strs.push_back(card.getCard());
 
         json& dealcards = (*retval)["dealcards"];
         for(std::size_t i = 0;i < cards.size();i ++){
             vector<vector<int>> new_exchange_color_list(exchange_color_list);
             Card& one_card = const_cast<Card &>(cards[i]);
             vector<string> new_prefix(prefix);
-            new_prefix.push_back("Chance:" + one_card.toString());
+            new_prefix.push_back("Chance:" + one_card.getCard());
 
             std::size_t card = i;
 
@@ -984,7 +988,7 @@ void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strate
                 throw runtime_error("exchange color list shouldn't be exceed size 1 here");
             }
 
-            string one_card_str = one_card.toString();
+            string one_card_str = one_card.getCard();
             if(exchange_color_list.size() == 1) {
                 int rank1 = exchange_color_list[0][0];
                 int rank2 = exchange_color_list[0][1];

@@ -44,6 +44,8 @@ string GameActions::toString() {
     if(this->amount == -1) {
         return this->pokerActionToString(this->action);
     }else{
-        return this->pokerActionToString(this->action) + " " + to_string(amount);
+        ostringstream oss;
+        oss << amount;
+        return this->pokerActionToString(this->action) + " " + oss.str();
     }
 }

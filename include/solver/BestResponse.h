@@ -16,6 +16,7 @@
 #include <include/nodes/TerminalNode.h>
 #include <include/nodes/ShowdownNode.h>
 #include <include/tools/utils.h>
+#include "include/tools/logger.h"
 
 using namespace std;
 
@@ -47,7 +48,7 @@ public:
             );
     float printExploitability(shared_ptr<GameTreeNode> root, int iterationCount, float initial_pot, uint64_t initialBoard);
     float getBestReponseEv(shared_ptr<GameTreeNode> node, int player,vector<vector<float>> reach_probs, uint64_t initialBoard,int deal);
-
+    Logger *logger = nullptr;
 private:
     vector<float> bestResponse(shared_ptr<GameTreeNode> node, int player, const vector<vector<float>>& reach_probs, uint64_t board,int deal);
     vector<float> chanceBestReponse(shared_ptr<ChanceNode> node, int player, const vector<vector<float>>& reach_probs, uint64_t current_board,int deal);

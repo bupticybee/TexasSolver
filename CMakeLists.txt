@@ -4,6 +4,7 @@ project(TexasSolver LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp:llvm")
 
 # Automatically run Qt's MOC, UIC, and RCC pre-processors
 set(CMAKE_AUTOMOC ON)
@@ -14,7 +15,7 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt5 COMPONENTS Core Gui Widgets LinguistTools REQUIRED)
 
 # Find OpenMP for multi-threading support, matching the .pro file's configuration
-find_package(OpenMP)
+find_package(OpenMP REQUIRED)
 # --- Source File Definitions ---
 
 # Core library sources (shared between GUI and CLI)

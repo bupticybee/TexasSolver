@@ -5,19 +5,16 @@ project(TexasSolver LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_PREFIX_PATH "E:\\Qt\\6.9.2\\mingw_64\\")
-
 # Automatically run Qt's MOC, UIC, and RCC pre-processors
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 # Find Qt5 and its required components
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets LinguistTools REQUIRED)
 
 # Find OpenMP for multi-threading support, matching the .pro file's configuration
 find_package(OpenMP)
-
 # --- Source File Definitions ---
 
 # Core library sources (shared between GUI and CLI)

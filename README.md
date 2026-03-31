@@ -1,3 +1,6 @@
+:rotating_light: This project still works but a new GPU version is available here: [TexasSolverGPU]([[https://github.com/bupticybee/TexasSolver](https://bupticybee.github.io/texassolver_gpu_page/)](https://bupticybee.github.io/texassolver_gpu_page/)).
+
+
 # CPP Texas Solver
 
 [![release](https://img.shields.io/github/v/release/bupticybee/TexasSolver?style=flat-square)](https://github.com/bupticybee/TexasSolver/releases)

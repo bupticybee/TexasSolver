@@ -83,7 +83,7 @@ public:
             int iteration_number,
             bool debug,
             int print_interval,
-            string logfile,
+            /*string logfile*/Logger *logger,
             string trainer,
             Solver::MonteCarolAlg monteCarolAlg,
             int warmup,

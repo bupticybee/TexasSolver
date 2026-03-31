@@ -45,10 +45,10 @@ StrategyExplorer::StrategyExplorer(QWidget *parent,QSolverJob * qSolverJob) :
 
     Deck* deck = this->qSolverJob->get_solver()->get_deck();
     int index = 0;
-    QString board_qstring = QString::fromStdString(this->qSolverJob->board);
+    QString board_qstring = QString::fromStdString(this->qSolverJob->clt->board);
     for(Card one_card: deck->getCards()){
-        if(board_qstring.contains(QString::fromStdString(one_card.toString())))continue;
-        QString card_str_formatted = QString::fromStdString(one_card.toFormattedString());
+        if(board_qstring.contains(QString::fromStdString(one_card.getCard())))continue;
+        QString card_str_formatted = QString::fromStdString(toFormattedString(one_card));
         this->ui->turnCardBox->addItem(card_str_formatted);
         this->ui->riverCardBox->addItem(card_str_formatted);
 
@@ -120,7 +120,7 @@ void StrategyExplorer::item_expanded(const QModelIndex& index){
 }
 
 void StrategyExplorer::process_board(TreeItem* treeitem){
-    vector<string> board_str_arr = string_split(this->qSolverJob->board,',');
+    vector<string> board_str_arr = string_split(this->qSolverJob->clt->board,',');
     vector<Card> cards;
     for(string one_board_str:board_str_arr){
         cards.push_back(Card(one_board_str));
@@ -136,7 +136,7 @@ void StrategyExplorer::process_board(TreeItem* treeitem){
                 cards.push_back(Card(this->tableStrategyModel->getRiverCard()));
         }
     }
-    this->ui->boardLabel->setText(QString("<b>%1: </b>").arg(tr("board")) + Card::boardCards2html(cards));
+    this->ui->boardLabel->setText(QString("<b>%1: </b>").arg(tr("board")) + boardCards2html(cards));
 }
 
 void StrategyExplorer::process_treeclick(TreeItem* treeitem){

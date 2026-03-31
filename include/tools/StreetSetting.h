@@ -12,8 +12,9 @@ public:
     vector<float> bet_sizes;
     vector<float> raise_sizes;
     vector<float> donk_sizes;
-    bool allin;
+    bool allin = true;
 
+    StreetSetting() {}
     StreetSetting(vector<float> bet_sizes, vector<float> raise_sizes, vector<float> donk_sizes, bool allin);
 
 };

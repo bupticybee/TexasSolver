@@ -78,7 +78,7 @@ Combinations<T>::comb(unsigned long long n, unsigned long long k) {
     return r;
 }
 
-vector<string> string_split(string strin,char split);
+vector<string> string_split(string &strin, char split);
 uint64_t timeSinceEpochMillisec();
 int random(int min, int max);
 float normalization_tanh(float stack,float ev,float ratio=7);

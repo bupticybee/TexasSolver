@@ -800,7 +800,24 @@ void PCfrSolver::exchangeRange(json& strategy,int rank1,int rank2,shared_ptr<Act
     }
 }
 
-void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix,int deal,vector<vector<int>> exchange_color_list) {
+void PCfrSolver::filterColliding(json& strategy_block,uint64_t current_board_long) {
+    if(!strategy_block.contains("strategy")) return;
+    json& combo_map = strategy_block["strategy"];
+    if(!combo_map.is_object()) return;
+    vector<string> to_drop;
+    for(auto it = combo_map.begin();it != combo_map.end();++ it){
+        const string& combo = it.key();
+        if(combo.size() < 4) continue;
+        vector<string> hole{combo.substr(0,2),combo.substr(2,2)};
+        uint64_t hole_long = Card::boardCards2long(hole);
+        if(Card::boardsHasIntercept(hole_long,current_board_long)){
+            to_drop.push_back(combo);
+        }
+    }
+    for(const string& combo : to_drop) combo_map.erase(combo);
+}
+
+void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix,int deal,vector<vector<int>> exchange_color_list,uint64_t current_board_long) {
     if(depth >= max_depth) return;
     if(node->getType() == GameTreeNode::GameTreeNodeType::ACTION) {
         json* retval;
@@ -827,7 +844,7 @@ void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strate
             shared_ptr<GameTreeNode> one_child = one_node->getChildrens()[i];
             vector<string> new_prefix(prefix);
             new_prefix.push_back(one_action.toString());
-            this->reConvertJson(one_child,childrens,one_action.toString(),depth,max_depth,new_prefix,deal,exchange_color_list);
+            this->reConvertJson(one_child,childrens,one_action.toString(),depth,max_depth,new_prefix,deal,exchange_color_list,current_board_long);
         }
         if((*retval)["childrens"].empty()){
             (*retval).erase("childrens");
@@ -841,6 +858,7 @@ void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strate
                 this->exchangeRange((*retval)["strategy"]["strategy"],rank1,rank2,one_node);
 
             }
+            PCfrSolver::filterColliding((*retval)["strategy"],current_board_long);
         }
         (*retval)["node_type"] = "action_node";
 
@@ -921,7 +939,12 @@ void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strate
 
             }
 
-            this->reConvertJson(childerns,dealcards,one_card_str,depth + 1,max_depth,new_prefix,new_deal,new_exchange_color_list);
+            // Extend the board mask with the chance card actually written into the
+            // JSON (after color isomorphism). Subtrees rooted here will use this to
+            // drop combos that physically collide with the runout.
+            uint64_t child_board_long = current_board_long | Card::boardCards2long(vector<string>{one_card_str});
+
+            this->reConvertJson(childerns,dealcards,one_card_str,depth + 1,max_depth,new_prefix,new_deal,new_exchange_color_list,child_board_long);
         }
         if((*retval)["dealcards"].empty()){
             (*retval).erase("dealcards");
@@ -939,7 +962,7 @@ json PCfrSolver::dumps(bool with_status,int depth) {
         throw runtime_error("");
     }
     json retjson;
-    this->reConvertJson(this->tree->getRoot(),retjson,"",0,depth,vector<string>({"begin"}),0,vector<vector<int>>());
+    this->reConvertJson(this->tree->getRoot(),retjson,"",0,depth,vector<string>({"begin"}),0,vector<vector<int>>(),this->initial_board_long);
     return std::move(retjson);
 }
 

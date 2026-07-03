@@ -577,6 +577,55 @@ TEST(TestCase,test_poker_solver_bench){
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }
 
+TEST(TestCase,test_converter_exact_combo){
+    vector<int> initialBoard {
+            Card::strCard2int("Ah"),
+            Card::strCard2int("9h"),
+            Card::strCard2int("7c"),
+    };
+    // Exact suited combos (rank+suit,rank+suit) alongside a normal rank-class
+    // token, verifying only the requested suits are produced.
+    string range = "KhQh:1.0,KcQc:0.5,KK";
+    vector<PrivateCards> range_converted = PrivateRangeConverter::rangeStr2Cards(range,initialBoard);
+
+    bool found_KhQh = false, found_KcQc = false;
+    for(PrivateCards one_private_range:range_converted) {
+        string s = one_private_range.toString();
+        EXPECT_NE(s, "KdQd");
+        EXPECT_NE(s, "KsQs");
+        if(s == "KhQh" || s == "QhKh") {
+            found_KhQh = true;
+            EXPECT_EQ(one_private_range.weight, 1.0);
+        }else if(s == "KcQc" || s == "QcKc") {
+            found_KcQc = true;
+            EXPECT_EQ(one_private_range.weight, 0.5);
+        }
+    }
+    EXPECT_TRUE(found_KhQh);
+    EXPECT_TRUE(found_KcQc);
+}
+
+TEST(TestCase,test_converter_exact_combo_invalid){
+    vector<int> initialBoard {};
+    // Same card twice should be rejected, matching the existing "Xs is not
+    // a valid card desc" behavior for e.g. "AAs".
+    EXPECT_THROW(PrivateRangeConverter::rangeStr2Cards("AhAh", initialBoard), runtime_error);
+}
+
+TEST(TestCase,test_converter_exact_combo_dead_card){
+    vector<int> initialBoard {
+            Card::strCard2int("Ah"),
+    };
+    // A combo colliding with a board card should be silently dropped, same
+    // as the existing rank-class branches do via boardsHasIntercept.
+    string range = "AhKh:1.0,AdKd:1.0";
+    vector<PrivateCards> range_converted = PrivateRangeConverter::rangeStr2Cards(range,initialBoard);
+    EXPECT_EQ(range_converted.size(), 1);
+    if(!range_converted.empty()){
+        EXPECT_EQ(range_converted[0].toString(), "AdKd");
+    }
+}
+
  /*
 
 TEST(TestCase,test_build_tree_and_solve){

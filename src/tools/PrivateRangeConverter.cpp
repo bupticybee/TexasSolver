@@ -91,6 +91,20 @@ vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vec
                 }
             }
 
+        }else if(range_len == 4){
+            string card1_str = one_range.substr(0,2);
+            string card2_str = one_range.substr(2,2);
+            int card1 = Card::strCard2int(card1_str);
+            int card2 = Card::strCard2int(card2_str);
+            if(card1 == card2) throw runtime_error(fmt::format("{} is not a valid card desc",one_range));
+            if(Card::boardsHasIntercept(
+                    Card::boardInts2long(vector<int>{card1,card2}),
+                    Card::boardInts2long(initial_boards)
+            )){
+                continue;
+            }
+            this_card = PrivateCards(card1, card2, weight);
+            private_cards.push_back(this_card);
         }else throw runtime_error(fmt::format(" range str {} len not valid ",one_range));
     }
 

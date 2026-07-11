@@ -14,6 +14,7 @@
 #include "runtime/PokerSolver.h"
 #include "experimental/TCfrSolver.h"
 #include "tools/CommandLineTool.h"
+#include "tools/utils.h"
 //#include <boost/version.hpp>
 
 using namespace std;
@@ -577,6 +578,77 @@ TEST(TestCase,test_poker_solver_bench){
     //ps.dump_strategy("../resources/outputs/outputs_strategy.json");
 }
 
+// A minimal river-only tree (no further chance nodes, no bets offered --
+// just check/check to showdown) so these tests are self-contained and fast,
+// unlike test_poker_solver_bench which depends on a pre-built ../install/tree.km
+// fixture that isn't produced by the normal cmake build.
+static shared_ptr<PokerSolver> buildMinimalRiverSolver(){
+    string ranks = "A,K,Q,J,T,9,8,7,6,5,4,3,2";
+    string suits = "h,s,d,c";
+    shared_ptr<PokerSolver> ps = make_shared<PokerSolver>(ranks,suits,"../resources/compairer/card5_dic_sorted.txt",2598961);
+
+    float oop_commit = 5;
+    float ip_commit = 5;
+    int current_round = 3; // river: initial board already has 5 cards
+    int raise_limit = 4;
+    float small_blind = 0.5;
+    float big_blind = 1;
+    float stack = 100 + ip_commit;
+    float allin_threshold = 0.67;
+    StreetSetting empty = StreetSetting(vector<float>{},vector<float>{},vector<float>{},false);
+    GameTreeBuildingSettings gtbs = GameTreeBuildingSettings(empty,empty,empty,empty,empty,empty);
+    ps->build_game_tree(oop_commit,ip_commit,current_round,raise_limit,small_blind,big_blind,stack,gtbs,allin_threshold);
+    return ps;
+}
+
+TEST(TestCase,test_poker_solver_disables_isomorphism_for_exact_combo){
+    shared_ptr<PokerSolver> ps = buildMinimalRiverSolver();
+    string logfile_name = "../resources/outputs/outputs_log.txt";
+
+    // player1's range has an exact combo (KhQh) with no KcQc/KdQd/KsQs
+    // sibling -- isomorphism must be silently disabled for this solve even
+    // though use_isomorphism=true is requested below, or results would be
+    // corrupted the way test_exchange_color_corrupts_asymmetric_range shows.
+    ps->train(
+            "AA,KK,QQ,JJ,TT,KhQh:1.0",
+            "QQ,JJ,TT,99,88",
+            "Qs,Jh,2h,3d,9c",
+            logfile_name,
+            2,
+            10,
+            "discounted_cfr",
+            -1,
+            0.5,
+            true,
+            1
+    );
+
+    EXPECT_FALSE(ps->usedIsomorphism());
+}
+
+TEST(TestCase,test_poker_solver_keeps_isomorphism_without_exact_combo){
+    shared_ptr<PokerSolver> ps = buildMinimalRiverSolver();
+    string logfile_name = "../resources/outputs/outputs_log.txt";
+
+    // Plain rank-class ranges are suit-symmetric, so a requested
+    // use_isomorphism=true should be honored as-is.
+    ps->train(
+            "AA,KK,QQ,JJ,TT",
+            "QQ,JJ,TT,99,88",
+            "Qs,Jh,2h,3d,9c",
+            logfile_name,
+            2,
+            10,
+            "discounted_cfr",
+            -1,
+            0.5,
+            true,
+            1
+    );
+
+    EXPECT_TRUE(ps->usedIsomorphism());
+}
+
 TEST(TestCase,test_converter_exact_combo){
     vector<int> initialBoard {
             Card::strCard2int("Ah"),
@@ -623,6 +695,107 @@ TEST(TestCase,test_converter_exact_combo_dead_card){
     EXPECT_EQ(range_converted.size(), 1);
     if(!range_converted.empty()){
         EXPECT_EQ(range_converted[0].toString(), "AdKd");
+    }
+}
+
+TEST(TestCase,test_converter_exact_combo_flags_isomorphism_unsafe){
+    vector<int> initialBoard {
+            Card::strCard2int("Ah"),
+            Card::strCard2int("9h"),
+            Card::strCard2int("7c"),
+    };
+    // Rank-class tokens expand uniformly across all 4 suits, so they don't
+    // break the suit-symmetry that isomorphism relies on.
+    bool has_exact_combo = true;
+    PrivateRangeConverter::rangeStr2Cards("KK,AKs,AKo", initialBoard, &has_exact_combo);
+    EXPECT_FALSE(has_exact_combo);
+
+    // An exact suited combo only ever produces the one suit-pair requested,
+    // never its siblings in the other 3 suits -- this is the case that
+    // corrupts isomorphism (see test_exchange_color_corrupts_asymmetric_range).
+    has_exact_combo = false;
+    PrivateRangeConverter::rangeStr2Cards("KK,KhQh:1.0", initialBoard, &has_exact_combo);
+    EXPECT_TRUE(has_exact_combo);
+
+    // Flag should still be set even if the exact combo itself gets dropped
+    // for colliding with the board -- the caller already committed to an
+    // asymmetric range string regardless of what happens to survive.
+    has_exact_combo = false;
+    PrivateRangeConverter::rangeStr2Cards("KK,AhKh:1.0", initialBoard, &has_exact_combo);
+    EXPECT_TRUE(has_exact_combo);
+}
+
+// Demonstrates, against the real exchange_color() used by suit isomorphism
+// (src/solver/PCfrSolver.cpp, BestResponse.cpp), that it silently corrupts
+// results when a range contains an exact suited combo without its sibling
+// suits present -- confirming the concern raised in PR review
+// (github.com/bupticybee/TexasSolver/pull/227#issuecomment-4888657679).
+TEST(TestCase,test_exchange_color_corrupts_asymmetric_range){
+    vector<int> initialBoard {
+            Card::strCard2int("Ah"),
+            Card::strCard2int("9h"),
+            Card::strCard2int("7c"),
+    };
+
+    // Control: KhQh has its KcQc sibling present, so a hearts<->clubs color
+    // exchange is well-defined and should be a clean swap between the two.
+    {
+        string range = "2c3d,KhQh:1.0,KcQc:1.0";
+        vector<PrivateCards> combos = PrivateRangeConverter::rangeStr2Cards(range,initialBoard);
+        int i2c3d=-1,iKhQh=-1,iKcQc=-1;
+        for(int i=0;i<(int)combos.size();i++){
+            string s = combos[i].toString();
+            if(s=="3d2c"||s=="2c3d") i2c3d=i;
+            if(s=="KhQh"||s=="QhKh") iKhQh=i;
+            if(s=="KcQc"||s=="QcKc") iKcQc=i;
+        }
+        ASSERT_NE(i2c3d,-1); ASSERT_NE(iKhQh,-1); ASSERT_NE(iKcQc,-1);
+
+        vector<float> value(combos.size());
+        for(int i=0;i<(int)value.size();i++) value[i] = i+1;
+        vector<float> before = value;
+
+        int rank_clubs = 0, rank_hearts = 2; // Card::suitToInt: c=0,d=1,h=2,s=3
+        exchange_color(value,combos,rank_clubs,rank_hearts);
+
+        EXPECT_EQ(value[i2c3d], before[i2c3d]);
+        EXPECT_EQ(value[iKhQh], before[iKcQc]);
+        EXPECT_EQ(value[iKcQc], before[iKhQh]);
+    }
+
+    // Bug case: KhQh has NO KcQc sibling. There is nothing to swap with, so
+    // a hearts<->clubs exchange should be a no-op for this range. Instead,
+    // exchange_color's missing-entry lookup defaults to index 0 (privateint2ind
+    // is zero-initialized) and corrupts both KhQh and whatever unrelated hand
+    // sits at index 0.
+    {
+        string range = "2c3d,KhQh:1.0";
+        vector<PrivateCards> combos = PrivateRangeConverter::rangeStr2Cards(range,initialBoard);
+        int i2c3d=-1,iKhQh=-1;
+        for(int i=0;i<(int)combos.size();i++){
+            string s = combos[i].toString();
+            if(s=="3d2c"||s=="2c3d") i2c3d=i;
+            if(s=="KhQh"||s=="QhKh") iKhQh=i;
+        }
+        ASSERT_NE(i2c3d,-1); ASSERT_NE(iKhQh,-1);
+
+        vector<float> value(combos.size());
+        for(int i=0;i<(int)value.size();i++) value[i] = i+1;
+        vector<float> before = value;
+
+        int rank_clubs = 0, rank_hearts = 2;
+        exchange_color(value,combos,rank_clubs,rank_hearts);
+
+        // This documents the CURRENT (buggy) behavior of exchange_color on
+        // an asymmetric range: both values get corrupted rather than left
+        // alone. This is exactly why PokerSolver::train() must disable
+        // isomorphism whenever an exact combo is present (see
+        // test_poker_solver_disables_isomorphism_for_exact_combo above)
+        // instead of relying on exchange_color to handle it correctly.
+        EXPECT_NE(value[i2c3d], before[i2c3d]);
+        EXPECT_NE(value[iKhQh], before[iKhQh]);
+        EXPECT_EQ(value[i2c3d], before[iKhQh]);
+        EXPECT_EQ(value[iKhQh], before[i2c3d]);
     }
 }
 

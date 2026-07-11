@@ -4,7 +4,8 @@
 
 #include "tools/PrivateRangeConverter.h"
 
-vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vector<int> initial_boards) {
+vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vector<int> initial_boards, bool* has_exact_combo) {
+    if(has_exact_combo) *has_exact_combo = false;
     vector<string> range_list = string_split(range_str,',');
     vector<PrivateCards> private_cards;
 
@@ -97,6 +98,7 @@ vector<PrivateCards> PrivateRangeConverter::rangeStr2Cards(string range_str, vec
             int card1 = Card::strCard2int(card1_str);
             int card2 = Card::strCard2int(card2_str);
             if(card1 == card2) throw runtime_error(fmt::format("{} is not a valid card desc",one_range));
+            if(has_exact_combo) *has_exact_combo = true;
             if(Card::boardsHasIntercept(
                     Card::boardInts2long(vector<int>{card1,card2}),
                     Card::boardInts2long(initial_boards)

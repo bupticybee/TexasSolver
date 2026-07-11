@@ -58,8 +58,20 @@ void PokerSolver::train(string p1_range, string p2_range, string boards, string 
         initialBoard.push_back(Card::strCard2int(one_board_str));
     }
 
-    vector<PrivateCards> player1Range = PrivateRangeConverter::rangeStr2Cards(player1RangeStr,initialBoard);
-    vector<PrivateCards> player2Range = PrivateRangeConverter::rangeStr2Cards(player2RangeStr,initialBoard);
+    bool player1_has_exact_combo = false;
+    bool player2_has_exact_combo = false;
+    vector<PrivateCards> player1Range = PrivateRangeConverter::rangeStr2Cards(player1RangeStr,initialBoard,&player1_has_exact_combo);
+    vector<PrivateCards> player2Range = PrivateRangeConverter::rangeStr2Cards(player2RangeStr,initialBoard,&player2_has_exact_combo);
+
+    if(use_isomorphism && (player1_has_exact_combo || player2_has_exact_combo)){
+        cerr << "Warning: an exact suited combo (e.g. \"KhQh:1.0\") was found in a range; "
+             << "disabling suit isomorphism for this solve. Isomorphism assumes every rank-class "
+             << "is symmetric across all 4 suits, which an exact combo violates -- keeping it on "
+             << "would produce corrupted results." << endl;
+        use_isomorphism = false;
+    }
+    this->last_run_used_isomorphism = use_isomorphism;
+
     string logfile_name = log_file;
     this->solver = make_shared<PCfrSolver>(
             game_tree
@@ -93,4 +105,8 @@ void PokerSolver::dump_strategy(string dump_file,int dump_rounds) {
 
 const shared_ptr<GameTree> &PokerSolver::getGameTree() const {
     return game_tree;
+}
+
+bool PokerSolver::usedIsomorphism() const {
+    return last_run_used_isomorphism;
 }

@@ -49,8 +49,15 @@ private:
     Deck deck;
     shared_ptr<GameTree> game_tree;
     shared_ptr<Solver> solver;
+    bool last_run_used_isomorphism = false;
 public:
     const shared_ptr<GameTree> &getGameTree() const;
+    // Whether the most recent train() call actually used suit isomorphism.
+    // May be false even if use_isomorphism=true was requested: isomorphism
+    // assumes every rank-class is symmetric across all 4 suits, which an
+    // exact suited combo (e.g. "KhQh:1.0") violates, so train() silently
+    // disables it in that case rather than producing corrupted results.
+    bool usedIsomorphism() const;
 };
 
 

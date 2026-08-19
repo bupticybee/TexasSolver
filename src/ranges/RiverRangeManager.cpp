@@ -32,13 +32,14 @@ RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &preflo
 
     uint64_t key = board_long;
 
-    this->maplock->lock();
-    if (riverRanges->find(key) != riverRanges->end()) {
-        const vector<RiverCombs> &retval = (*riverRanges)[key];
-        this->maplock->unlock();
-        return retval;
+    // Reads and writes of the shared map must happen under the same lock.
+    {
+        std::lock_guard<std::mutex> guard(*this->maplock);
+        auto it = riverRanges->find(key);
+        if (it != riverRanges->end()) {
+            return it->second;
+        }
     }
-    this->maplock->unlock();
 
     int count = 0;
 
@@ -73,9 +74,10 @@ RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &preflo
         return lhs.rank > rhs.rank;
     });
 
-    this->maplock->lock();
-    (*riverRanges)[key] =  std::move(riverCombos);
-    this->maplock->unlock();
-
-    return (*riverRanges)[key];
+    // Two threads can miss on the same key. emplace keeps whichever vector was
+    // published first, so a late thread gets the existing object and never
+    // destroys a buffer a caller is still reading through.
+    std::lock_guard<std::mutex> guard(*this->maplock);
+    auto result = riverRanges->emplace(key, std::move(riverCombos));
+    return result.first->second;
 }

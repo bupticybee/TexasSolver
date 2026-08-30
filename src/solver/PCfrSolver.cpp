@@ -290,9 +290,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         valid_cards.push_back(card);
     }
 
-    #pragma omp parallel for schedule(static)
-    for(int valid_ind = 0;valid_ind < valid_cards.size();valid_ind++) {
-        int card = valid_cards[valid_ind];
+    auto process_valid_card = [&](int card) {
         shared_ptr<GameTreeNode> one_child = node->getChildren();
         Card *one_card = const_cast<Card *>(&(node->getCards()[card]));
         uint64_t card_long = Card::boardInt2long(one_card->getCardInt());//Card::boardCards2long(new Card[]{one_card});
@@ -353,6 +351,27 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
             vector<float> child_utility = this->cfr(player, one_child, new_reach_probs, iter, new_board_long, new_deal);
             results[one_card->getNumberInDeckInt()] = child_utility;
         }
+    };
+
+    // Below the cutoff, per-task overhead (measured ~2us/task) would exceed
+    // what a fresh parallel-for fork/join used to cost (~40us flat) for that
+    // few cards anyway -- run inline on the calling thread/task instead of
+    // spawning more tasks than the work justifies. Above it, fan out as
+    // tasks into the persistent team created once per top-level cfr() call
+    // in train(), instead of forking a brand-new team here every time.
+    if ((int) valid_cards.size() < this->chance_task_cutoff) {
+        for (int valid_ind = 0; valid_ind < valid_cards.size(); valid_ind++) {
+            process_valid_card(valid_cards[valid_ind]);
+        }
+    } else {
+        for (int valid_ind = 0; valid_ind < valid_cards.size(); valid_ind++) {
+            int card = valid_cards[valid_ind];
+            #pragma omp task firstprivate(card) shared(process_valid_card)
+            {
+                process_valid_card(card);
+            }
+        }
+        #pragma omp taskwait
     }
 
     for(int card = 0;card < node->getCards().size();card ++) {
@@ -736,13 +755,15 @@ void PCfrSolver::train() {
     for(int i = 0;i < this->iteration_number;i++){
         for(int player_id = 0;player_id < this->player_number;player_id ++) {
             this->round_deal = vector<int>{-1,-1,-1,-1};
-            //#pragma omp parallel
+            // One team for the whole traversal instead of one fork/join per
+            // chance node (see chanceUtility's #pragma omp task below) --
+            // this is what used to be 281K+ separate parallel-for regions
+            // per solve, now a single persistent region per top-level call.
+            #pragma omp parallel
             {
-                //#pragma omp single
+                #pragma omp single
                 {
-                    //this->distributing_task = true;
                     cfr(player_id, this->tree->getRoot(), reach_probs[1 - player_id], i, this->initial_board_long,0);
-                    //throw runtime_error("returning...");
                 }
             }
         }

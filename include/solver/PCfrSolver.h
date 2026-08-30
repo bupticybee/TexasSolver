@@ -119,6 +119,10 @@ private:
     bool distributing_task;
     float accuracy;
     bool use_isomorphism;
+    // Below this many valid cards, chanceUtility processes them inline
+    // instead of spawning omp tasks -- see chanceUtility for the measured
+    // overhead numbers behind this default.
+    int chance_task_cutoff = 10;
 
     const vector<PrivateCards>& playerHands(int player);
     vector<vector<float>> getReachProbs();

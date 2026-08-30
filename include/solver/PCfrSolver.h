@@ -131,6 +131,12 @@ private:
     vector<float> actionUtility(int player,shared_ptr<ActionNode> node,const vector<float>& reach_probs,int iter,uint64_t current_board,int deal);
     vector<float> terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<float>& reach_prob,int iter,uint64_t current_board,int deal);
     void findGameSpecificIsomorphisms();
+    // Single-threaded walk of the whole tree (mirrors chanceUtility's exact valid-card
+    // filter: boardsHasIntercept + color_iso_offset, and its deal-numbering) that visits
+    // every board this solve could ever reach and populates rrm's cache for both players
+    // before the parallel loop starts. Lets getRiverCombos skip its mutex entirely once
+    // rrm.freeze() is called -- see RiverRangeManager::freeze().
+    void prefetchRiverCombosCache(shared_ptr<GameTreeNode> node, uint64_t current_board, int deal);
     void purnTree();
     void exchangeRange(json& strategy,int rank1,int rank2,shared_ptr<ActionNode> one_node);
     void reConvertJson(const shared_ptr<GameTreeNode>& node,json& strategy,string key,int depth,int max_depth,vector<string> prefix,int deal,vector<vector<int>> exchange_color_list,uint64_t current_board_long);

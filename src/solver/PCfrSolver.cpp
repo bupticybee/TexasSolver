@@ -7,9 +7,19 @@
 
 //#define DEBUG;
 
+// One-off coarse profiling counters (see BENCHMARKS.md profiling section).
+// Single PCfrSolver instance per process, incremented from serial code only
+// (parallel_regions is bumped before the omp fork), so plain counters suffice.
+static uint64_t g_profile_setup_ms = 0;
+static uint64_t g_profile_prefetch_ms = 0;
+static uint64_t g_profile_cfr_ms = 0;
+static uint64_t g_profile_exploit_ms = 0;
+static long long g_profile_parallel_regions = 0;
+
 PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, vector<PrivateCards> range2,
                      vector<int> initial_board, shared_ptr<Compairer> compairer, Deck deck, int iteration_number, bool debug,
                      int print_interval, string logfile, string trainer, Solver::MonteCarolAlg monteCarolAlg,int warmup,float accuracy,bool use_isomorphism,int num_threads) :Solver(tree){
+    uint64_t __setup_start = timeSinceEpochMillisec();
     this->initial_board = initial_board;
     this->initial_board_long = Card::boardInts2long(initial_board);
     this->logfile = logfile;
@@ -61,6 +71,7 @@ PCfrSolver::PCfrSolver(shared_ptr<GameTree> tree, vector<PrivateCards> range1, v
         // do not use multithread in river, really not necessary
         this->split_round = GameTreeNode::GameRound::PREFLOP;
     }
+    g_profile_setup_ms += timeSinceEpochMillisec() - __setup_start;
 }
 
 const vector<PrivateCards> &PCfrSolver::playerHands(int player) {
@@ -290,6 +301,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         valid_cards.push_back(card);
     }
 
+    g_profile_parallel_regions++;
     #pragma omp parallel for schedule(static)
     for(int valid_ind = 0;valid_ind < valid_cards.size();valid_ind++) {
         int card = valid_cards[valid_ind];
@@ -709,6 +721,51 @@ void PCfrSolver::findGameSpecificIsomorphisms() {
     }
 }
 
+void PCfrSolver::prefetchRiverCombosCache(shared_ptr<GameTreeNode> node, uint64_t current_board, int deal) {
+    switch (node->getType()) {
+        case GameTreeNode::ACTION: {
+            shared_ptr<ActionNode> action_node = std::dynamic_pointer_cast<ActionNode>(node);
+            for (shared_ptr<GameTreeNode>& child : action_node->getChildrens()) {
+                prefetchRiverCombosCache(child, current_board, deal);
+            }
+            break;
+        }
+        case GameTreeNode::CHANCE: {
+            shared_ptr<ChanceNode> chance_node = std::dynamic_pointer_cast<ChanceNode>(node);
+            int card_num = chance_node->getCards().size();
+            shared_ptr<GameTreeNode> child = chance_node->getChildren();
+            // Mirrors chanceUtility's valid_cards filter exactly (warmup is always -1 in
+            // this console tool, so the iter/multiplier branch there never triggers and
+            // is intentionally omitted here).
+            for (int card = 0; card < card_num; card++) {
+                Card* one_card = const_cast<Card*>(&(chance_node->getCards()[card]));
+                uint64_t card_long = Card::boardInt2long(one_card->getCardInt());
+                if (Card::boardsHasIntercept(card_long, current_board)) continue;
+                if (this->color_iso_offset[deal][one_card->getCardInt() % 4] < 0) continue;
+                uint64_t new_board_long = current_board | card_long;
+                int new_deal;
+                if (deal == 0) {
+                    new_deal = card + 1;
+                } else {
+                    int origin_deal = deal - 1;
+                    new_deal = card_num * origin_deal + card;
+                    new_deal += (1 + card_num);
+                }
+                prefetchRiverCombosCache(child, new_board_long, new_deal);
+            }
+            break;
+        }
+        case GameTreeNode::SHOWDOWN:
+        case GameTreeNode::TERMINAL: {
+            this->rrm.getRiverCombos(0, this->ranges[0], current_board);
+            this->rrm.getRiverCombos(1, this->ranges[1], current_board);
+            break;
+        }
+        default:
+            throw runtime_error("node type unknown");
+    }
+}
+
 void PCfrSolver::purnTree() {
     // TODO how to purn the tree, use wramup to start training in memory-save mode, and switch to purn tree directly to both save memory and speedup
 }
@@ -719,12 +776,21 @@ void PCfrSolver::train() {
     player_privates[0] = pcm.getPreflopCards(0);
     player_privates[1] = pcm.getPreflopCards(1);
     if(this->use_isomorphism){
+        uint64_t __iso_start = timeSinceEpochMillisec();
         this->findGameSpecificIsomorphisms();
+        g_profile_setup_ms += timeSinceEpochMillisec() - __iso_start;
     }
 
+    uint64_t __prefetch_start = timeSinceEpochMillisec();
+    this->prefetchRiverCombosCache(this->tree->getRoot(), this->initial_board_long, 0);
+    this->rrm.freeze();
+    g_profile_prefetch_ms += timeSinceEpochMillisec() - __prefetch_start;
+
+    uint64_t __exploit_start = timeSinceEpochMillisec();
     BestResponse br = BestResponse(player_privates,this->player_number,this->pcm,this->rrm,this->deck,this->debug,this->color_iso_offset,this->split_round,this->num_threads);
 
     br.printExploitability(tree->getRoot(), 0, tree->getRoot()->getPot(), initial_board_long);
+    g_profile_exploit_ms += timeSinceEpochMillisec() - __exploit_start;
 
     vector<vector<float>> reach_probs = this->getReachProbs();
     ofstream fileWriter;
@@ -734,6 +800,7 @@ void PCfrSolver::train() {
     uint64_t endtime = timeSinceEpochMillisec();
 
     for(int i = 0;i < this->iteration_number;i++){
+        uint64_t __cfr_start = timeSinceEpochMillisec();
         for(int player_id = 0;player_id < this->player_number;player_id ++) {
             this->round_deal = vector<int>{-1,-1,-1,-1};
             //#pragma omp parallel
@@ -746,11 +813,14 @@ void PCfrSolver::train() {
                 }
             }
         }
+        g_profile_cfr_ms += timeSinceEpochMillisec() - __cfr_start;
         if(i % this->print_interval == 0 && i != 0 && i >= this->warmup) {
             endtime = timeSinceEpochMillisec();
             long time_ms = endtime - begintime;
             cout << ("-------------------") << endl;
+            uint64_t __exploit_iter_start = timeSinceEpochMillisec();
             float expliotibility = br.printExploitability(tree->getRoot(), i + 1, tree->getRoot()->getPot(), initial_board_long);
+            g_profile_exploit_ms += timeSinceEpochMillisec() - __exploit_iter_start;
             cout << "time used: " << float(time_ms) / 1000 << endl;
             if(!this->logfile.empty()){
                 json jo;
@@ -770,6 +840,10 @@ void PCfrSolver::train() {
         fileWriter.close();
     }
 
+    cout << fmt::format(
+            "PROFILE setup_ms={} prefetch_ms={} cfr_ms={} exploit_ms={} parallel_regions={}",
+            g_profile_setup_ms, g_profile_prefetch_ms, g_profile_cfr_ms, g_profile_exploit_ms, g_profile_parallel_regions
+    ) << endl;
 }
 
 void PCfrSolver::exchangeRange(json& strategy,int rank1,int rank2,shared_ptr<ActionNode> one_node){

@@ -13,6 +13,10 @@ RiverRangeManager::RiverRangeManager(shared_ptr<Compairer> handEvaluator) {
     this->maplock = std::make_shared<std::mutex>();
 }
 
+void RiverRangeManager::freeze() {
+    this->cache_frozen = true;
+}
+
 const vector<RiverCombs> &
 RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &riverCombos, const vector<int> &board) {
     uint64_t board_long = Card::boardInts2long(board);
@@ -31,6 +35,18 @@ RiverRangeManager::getRiverCombos(int player, const vector<PrivateCards> &preflo
         throw runtime_error(fmt::format("player {} not found",player));
 
     uint64_t key = board_long;
+
+    if (this->cache_frozen) {
+        // No writes can happen once frozen, so concurrent lock-free reads are safe.
+        auto it = riverRanges->find(key);
+        if (it != riverRanges->end()) {
+            return it->second;
+        }
+        throw runtime_error(fmt::format(
+                "RiverRangeManager cache miss for player {} board {} after freeze() -- "
+                "the prefetch pass did not cover every board this solve can reach",
+                player, board_long));
+    }
 
     // Reads and writes of the shared map must happen under the same lock.
     {

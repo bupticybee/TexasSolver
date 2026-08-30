@@ -4,6 +4,7 @@
 
 #include <solver/BestResponse.h>
 #include "solver/PCfrSolver.h"
+#include <array>
 
 //#define DEBUG;
 
@@ -567,7 +568,11 @@ PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vec
     vector<float> payoffs = vector<float>(player_private_cards.size());
 
     float winsum = 0;
-    vector<float> card_winsum = vector<float> (52);//node->card_sum;
+    // Always exactly 52 (one slot per card rank in the deck; the deck itself
+    // is always fixed at build time -- see GameTree::buildChance), never
+    // returned and never passed to a function taking vector<float>&, so this
+    // is safe as a plain stack array instead of a heap-allocated vector.
+    array<float, 52> card_winsum{};//node->card_sum;
     fill(card_winsum.begin(),card_winsum.end(),0);
 
     int j = 0;
@@ -588,7 +593,7 @@ PCfrSolver::showdownUtility(int player, shared_ptr<ShowdownNode> node, const vec
 
     // 计算失败时的payoff
     float losssum = 0;
-    vector<float>& card_losssum = card_winsum;
+    array<float, 52>& card_losssum = card_winsum;
     fill(card_losssum.begin(),card_losssum.end(),0);
 
     j = oppo_combs.size() - 1;
@@ -621,7 +626,9 @@ PCfrSolver::terminalUtility(int player, shared_ptr<TerminalNode> node, const vec
     vector<float> payoffs = vector<float>(this->playerHands(player).size());
 
     float oppo_sum = 0;
-    vector<float> oppo_card_sum = vector<float> (52);
+    // Same reasoning as showdownUtility::card_winsum: always exactly 52,
+    // purely local, safe as a stack array.
+    array<float, 52> oppo_card_sum{};
     fill(oppo_card_sum.begin(),oppo_card_sum.end(),0);
 
     for(int i = 0;i < oppo_hand.size();i ++){

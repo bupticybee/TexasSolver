@@ -28,7 +28,8 @@ void BoardSelectorTableDelegate::paint(QPainter *painter, const QStyleOptionView
     painter->fillRect(rect, brush);
 
     QTextDocument doc;
-    doc.setHtml(Card(options.text.toStdString()).toFormattedHtml());
+    Card card(options.text.toStdString());
+    doc.setHtml(toFormattedHtml(card));
 
     painter->translate(options.rect.left(), options.rect.top());
     QRect clip(0, 0, options.rect.width(), options.rect.height());

@@ -120,9 +120,9 @@ void TreeModel::reGenerateTreeItem(GameTreeNode::GameRound round,TreeItem* node_
 void TreeModel::setupModelData()
 {
     PokerSolver * solver;
-    if(this->qSolverJob->mode == QSolverJob::Mode::HOLDEM){
+    if(this->qSolverJob->mode == PokerMode::HOLDEM){
         solver = &(this->qSolverJob->ps_holdem);
-    }else if(this->qSolverJob->mode == QSolverJob::Mode::SHORTDECK){
+    }else if(this->qSolverJob->mode == PokerMode::SHORTDECK){
         solver = &(this->qSolverJob->ps_shortdeck);
     }else{
         throw runtime_error("holdem mode incorrect");

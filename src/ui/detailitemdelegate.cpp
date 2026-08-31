@@ -114,8 +114,8 @@ void DetailItemDelegate::paint_strategy(QPainter *painter, const QStyleOptionVie
                 }
             }
             options.text = "";
-            options.text += detailViewerModel->tableStrategyModel->cardint2card[card1].toFormattedHtml();
-            options.text += detailViewerModel->tableStrategyModel->cardint2card[card2].toFormattedHtml();
+            options.text += toFormattedHtml(detailViewerModel->tableStrategyModel->cardint2card[card1]);
+            options.text += toFormattedHtml(detailViewerModel->tableStrategyModel->cardint2card[card2]);
             options.text = "<h2 >" + options.text + "<\/h2>";
             for(std::size_t i = 0;i < strategy.size();i ++){
                 GameActions one_action = gameActions[i];
@@ -189,8 +189,8 @@ void DetailItemDelegate::paint_range(QPainter *painter, const QStyleOptionViewIt
             painter->fillRect(rect, brush);
 
             options.text = "";
-            options.text += detailViewerModel->tableStrategyModel->cardint2card[cord.first].toFormattedHtml();
-            options.text += detailViewerModel->tableStrategyModel->cardint2card[cord.second].toFormattedHtml();
+            options.text += toFormattedHtml(detailViewerModel->tableStrategyModel->cardint2card[cord.first]);
+            options.text += toFormattedHtml(detailViewerModel->tableStrategyModel->cardint2card[cord.second]);
             options.text = "<h2>" + options.text + "<\/h2>";
 
             options.text +=  QString(" <h2>%1<\/h2>").arg(QString::number(range_number,'f',3));
@@ -318,8 +318,8 @@ void DetailItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewItem
             }
 
             options.text = "";
-            options.text += detailViewerModel->tableStrategyModel->cardint2card[card1].toFormattedHtml();
-            options.text += detailViewerModel->tableStrategyModel->cardint2card[card2].toFormattedHtml();
+            options.text += toFormattedHtml(detailViewerModel->tableStrategyModel->cardint2card[card1]);
+            options.text += toFormattedHtml(detailViewerModel->tableStrategyModel->cardint2card[card2]);
             options.text = "<h2>" + options.text + "<\/h2>";
             for(std::size_t i = 0;i < evs.size();i ++){
                 GameActions one_action = gameActions[i];
@@ -378,7 +378,7 @@ void DetailItemDelegate::paint_evs_only(QPainter *painter, const QStyleOptionVie
         if(ind < evs.size() and ind < strategy_number)
         {
             float one_ev = evs[ind];
-            float normalized_ev = normalization_tanh(detailViewerModel->tableStrategyModel->get_solver()->stack,one_ev);
+            float normalized_ev = normalization_tanh(detailViewerModel->tableStrategyModel->get_solver()->clt->stack,one_ev);
             //options.text += QString("</br>%1").arg(QString::number(normalized_ev));
 
             pair<int,int> strategy_ui_table = detailViewerModel->tableStrategyModel->ui_strategy_table[this->detailWindowSetting->grid_i][this->detailWindowSetting->grid_j][ind];
@@ -396,8 +396,8 @@ void DetailItemDelegate::paint_evs_only(QPainter *painter, const QStyleOptionVie
             painter->fillRect(rect, brush);
 
             options.text = "";
-            options.text += detailViewerModel->tableStrategyModel->cardint2card[card1].toFormattedHtml();
-            options.text += detailViewerModel->tableStrategyModel->cardint2card[card2].toFormattedHtml();
+            options.text += toFormattedHtml(detailViewerModel->tableStrategyModel->cardint2card[card1]);
+            options.text += toFormattedHtml(detailViewerModel->tableStrategyModel->cardint2card[card2]);
             options.text = "<h2>" + options.text + "<\/h2>";
 
             options.text +=  QString(" <h2>%1<\/h2>").arg(QString::number(one_ev,'f',3));

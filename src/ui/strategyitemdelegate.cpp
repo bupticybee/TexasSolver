@@ -198,7 +198,7 @@ void StrategyItemDelegate::paint_evs(QPainter *painter, const QStyleOptionViewIt
     int last_left = 0;
     for(std::size_t i = 0;i < evs.size();i ++ ){
         float one_ev = evs[evs.size() - i - 1];
-        float normalized_ev = normalization_tanh(this->qSolverJob->stack,one_ev);
+        float normalized_ev = normalization_tanh(this->qSolverJob->clt->stack,one_ev);
         //options.text += QString("</br>%1").arg(QString::number(normalized_ev));
 
         int red = max((int)(255 - normalized_ev * 255),0);

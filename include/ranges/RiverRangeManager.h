@@ -18,6 +18,10 @@ public:
     RiverRangeManager(shared_ptr<Compairer> handEvaluator);
     const vector<RiverCombs>& getRiverCombos(int player, const vector<PrivateCards>& riverCombos, const vector<int>& board);
     const vector<RiverCombs>& getRiverCombos(int player, const vector<PrivateCards>& riverCombos, uint64_t board_long);
+    void clear() {
+        p1RiverRanges.clear();
+        p2RiverRanges.clear();
+    }
 private:
     unordered_map<uint64_t , vector<RiverCombs>> p1RiverRanges;
     unordered_map<uint64_t , vector<RiverCombs>> p2RiverRanges;

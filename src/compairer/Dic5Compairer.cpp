@@ -5,11 +5,13 @@
 #include "include/compairer/Dic5Compairer.h"
 
 #include <utility>
-#include <QFile>
-#include <QTextStream>
-#include <QDebug>
+// #include <QFile>
+// #include <QTextStream>
+// #include <QDebug>
 #include "time.h"
+#ifndef _MSC_VER
 #include "unistd.h"
+#endif
 
 #define SUIT_0_MASK   0x1111111111111
 #define SUIT_1_MASK   0x2222222222222
@@ -51,14 +53,14 @@ void FiveCardsStrength::convert(unordered_map<uint64_t, int>& strength_map) {
     }
 }
 bool FiveCardsStrength::load(const char* file_path) {
-    //ifstream file(file_path, ios::binary);
-    /*if (!file) {
+    ifstream file(file_path, ios::binary);
+    if (!file.is_open()) {
         file.close();
-        return false;
-    }*/
+        /*return false;
+    }
 
     QFile file(QString::fromStdString(file_path));
-    if (!file.open(QIODevice::ReadOnly)){
+    if (!file.open(QIODevice::ReadOnly)){*/
         throw runtime_error("unable to load compairer file");
     }
     flush_map.clear(); other_map.clear();
@@ -88,7 +90,7 @@ bool FiveCardsStrength::save(const char* file_path) {
     //qDebug() << "b";
     //file_path = "/Users/bytedance/Desktop/card5_dic_zipped_shortdeck.bin";
     ofstream file(file_path, ios::binary);
-    if (!file) {
+    if (!file.is_open()) {
         file.close();
         return false;
     }
@@ -136,17 +138,22 @@ bool FiveCardsStrength::check(unordered_map<uint64_t, int>& strength_map) {
 
 Dic5Compairer::Dic5Compairer(string dic_dir,int lines,string dic_dir_bin):Compairer(std::move(dic_dir),lines){
     if(fcs.load(dic_dir_bin.c_str())) return;
-    QFile infile(QString::fromStdString(this->dic_dir));
+    std::ifstream infile(this->dic_dir);
+    if(!infile.is_open()) {
+        throw runtime_error("unable to load compairer file");
+    }
+    /*QFile infile(QString::fromStdString(this->dic_dir));
     if (!infile.open(QIODevice::ReadOnly)){
         throw runtime_error("unable to load compairer file");
     }
     QTextStream in(&infile);
-    //progressbar bar(lines / 1000);
+    //progressbar bar(lines / 1000);*/
+    string line;
     int i = 0;
-    //while (std::getline(infile, line))
-    while (!in.atEnd())
+    while (std::getline(infile, line))
+    // while (!in.atEnd())
     {
-        string line = in.readLine().toStdString();
+        // string line = in.readLine().toStdString();
         vector<string> linesp = string_split(line,',');
         if(linesp.size() != 2){
            throw runtime_error(tfm::format("linesp not correct: %s",line));

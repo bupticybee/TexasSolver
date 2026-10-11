@@ -18,17 +18,21 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionimport, &QAction::triggered, this, &MainWindow::on_actionimport_triggered);
     connect(this->ui->actionexport, &QAction::triggered, this, &MainWindow::on_actionexport_triggered);
     connect(this->ui->actionclear_all, &QAction::triggered, this, &MainWindow::on_actionclear_all_triggered);
+    logger = new QLogger((get_localtime() + ".txt").c_str(), "w+", false, 1);
+    clt.logger = logger;
     qSolverJob = new QSolverJob;
+    qSolverJob->clt = &clt;
     qSolverJob->setContext(this->getLogArea());
+    qSolverJob->logger = logger;
     qSolverJob->current_mission = QSolverJob::MissionType::LOADING;
     qSolverJob->start();
     this->setWindowTitle(tr("TexasSolver"));
-
     // parameters tree view
     QStringList filters;
     filters << "*.txt";
     qFileSystemModel = new QFileSystemModel(this);
-    QDir filedir = QDir::current().filePath("parameters");
+    QDir filedir = QDir::current()/*.filePath("parameters")*/;
+    logger->log(filedir.absolutePath().toLocal8Bit());
     qFileSystemModel->setRootPath(filedir.path());
 #ifdef Q_OS_MAC
     filedir = QDir("");
@@ -63,6 +67,11 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->oopRangeTableView->verticalHeader()->setMinimumSectionSize(1);
     this->ui->oopRangeTableView->horizontalHeader()->setMinimumSectionSize(1);
     this->ui->tabWidget->hide();
+
+    show_tree_params();
+    show_solver_params();
+    this->update();
+    update_range_ui();
 }
 
 QSTextEdit * MainWindow::get_logwindow(){
@@ -78,6 +87,7 @@ MainWindow::~MainWindow()
     delete oop_delegate;
     delete oop_model;
     delete ui;
+    if(logger) delete logger;
 }
 
 void MainWindow::on_actionjson_triggered(){
@@ -85,7 +95,11 @@ void MainWindow::on_actionjson_triggered(){
                                "output_strategy.json",
                                tr("Json file (*.json)"));
     if(fileName.isNull())return;
-    this->qSolverJob->savefile = fileName;
+    QSettings setting("TexasSolver", "Setting");
+    setting.beginGroup("solver");
+    clt.dump_rounds = setting.value("dump_round").toInt();
+    clt.res_file = (const char*)fileName.toLocal8Bit();
+    // this->qSolverJob->savefile = fileName;
     qSolverJob->current_mission = QSolverJob::MissionType::SAVING;
     qSolverJob->start();
 }
@@ -100,10 +114,7 @@ QString getParams(QString input,QString key){
 
 void MainWindow::on_actionclear_all_triggered(){
     this->clear_all_params();
-    this->ui->IpRangeTableView->update();
-    this->ui->oopRangeTableView->update();
-    this->ui->IpRangeTableView->setFocus();
-    this->ui->oopRangeTableView->setFocus();
+    update_range_ui();
 }
 
 void MainWindow::clear_all_params(){
@@ -147,6 +158,7 @@ void MainWindow::import_from_file(QString fileName){
         qDebug().noquote() << tr("File selection invalid.");
         return;
     }
+    /*
     QFile file(fileName);
     if(!file.open(QIODevice::ReadOnly)){
         qDebug().noquote() << tr("File open failed.");
@@ -261,7 +273,10 @@ void MainWindow::import_from_file(QString fileName){
                 this->ui->useIsoCheck->setChecked(false);
             }
         }
-    }
+    }*/
+    clt.execFromFile(fileName.toLocal8Bit(), nullptr);
+    show_tree_params();
+    show_solver_params();
     this->update();
 }
 
@@ -272,6 +287,9 @@ void MainWindow::on_actionimport_triggered(){
               QDir::currentPath(),
               tr("Text files (*.txt)"));
     this->import_from_file(fileName);
+    update_range_ui();
+}
+void MainWindow::update_range_ui() {
     this->ui->IpRangeTableView->update();
     this->ui->oopRangeTableView->update();
     this->ui->IpRangeTableView->setFocus();
@@ -283,7 +301,8 @@ void MainWindow::on_actionexport_triggered(){
                                "parameters/output_parameters.txt",
                                tr("Text file (*.txt)"));
     if(fileName.isNull())return;
-    QString output_text = "";
+    clt.dump_setting(fileName.toLocal8Bit());
+    /*QString output_text = "";
     QTextStream out(&output_text);
     out << "set_pot " << this->ui->potText->text().trimmed();
     out << "\n";
@@ -398,6 +417,7 @@ void MainWindow::on_actionexport_triggered(){
     msgBox.setText(message);
     setlocale(LC_CTYPE, "C");
     msgBox.exec();
+    */
 }
 
 void MainWindow::on_actionSettings_triggered(){
@@ -412,10 +432,15 @@ void MainWindow::on_ip_range(QString range_text){
 
 void MainWindow::on_buttomSolve_clicked()
 {   
+    /*
     qSolverJob->max_iteration = ui->iterationText->text().toInt();
     qSolverJob->accuracy = ui->exploitabilityText->text().toFloat();
     qSolverJob->print_interval = ui->logIntervalText->text().toInt();
     qSolverJob->thread_number = ui->threadsText->text().toInt();
+    */
+    get_solver_params();
+    show_solver_params();
+    this->update();
     qSolverJob->current_mission = QSolverJob::MissionType::SOLVING;
     qSolverJob->start();
 }
@@ -451,6 +476,7 @@ vector<float> sizes_convert(QString input){
 
 void MainWindow::on_buildTreeButtom_clicked()
 {
+    /*
     qSolverJob->range_ip = this->ui->ipRangeText->toPlainText().toStdString();
     qSolverJob->range_oop = this->ui->oopRangeText->toPlainText().toStdString();
     qSolverJob->board = this->ui->boardText->toPlainText().toStdString();
@@ -470,7 +496,7 @@ void MainWindow::on_buildTreeButtom_clicked()
     qSolverJob->ip_commit = this->ui->potText->text().toFloat() / 2;
     qSolverJob->oop_commit = this->ui->potText->text().toFloat() / 2;
     qSolverJob->stack = this->ui->effectiveStackText->text().toFloat() + qSolverJob->ip_commit;
-    qSolverJob->mode = this->ui->mode_box->currentIndex() == 0 ? QSolverJob::Mode::HOLDEM:QSolverJob::Mode::SHORTDECK;
+    qSolverJob->mode = this->ui->mode_box->currentIndex() == 0 ? PokerMode::HOLDEM : PokerMode::SHORTDECK;
     qSolverJob->allin_threshold = this->ui->allinThresholdText->text().toFloat();
     qSolverJob->use_isomorphism = this->ui->useIsoCheck->isChecked();
     qSolverJob->use_halffloats =  this->ui->useHalfFloats_box->currentIndex();
@@ -508,8 +534,101 @@ void MainWindow::on_buildTreeButtom_clicked()
                                               );
 
     qSolverJob->gtbs = make_shared<GameTreeBuildingSettings>(gbs_flop_ip,gbs_turn_ip,gbs_river_ip,gbs_flop_oop,gbs_turn_oop,gbs_river_oop);
+    */
+    get_tree_params();
+    show_tree_params();
+    this->update();
+    this->ui->IpRangeTableView->update();
+    this->ui->oopRangeTableView->update();
     qSolverJob->current_mission = QSolverJob::MissionType::BUILDTREE;
     qSolverJob->start();
+}
+
+void MainWindow::get_tree_params() {
+    qSolverJob->mode = this->ui->mode_box->currentIndex() == 0 ? PokerMode::HOLDEM : PokerMode::SHORTDECK;
+    string val = this->ui->boardText->toPlainText().toStdString();
+    if(!clt.set_board(val)) {
+        qDebug().noquote() << tfm::format("Error : board %s not recognized", val).c_str();
+        return;
+    }
+    clt.range_ip = this->ui->ipRangeText->toPlainText().toStdString();
+    clt.range_oop = this->ui->oopRangeText->toPlainText().toStdString();
+    clt.raise_limit = this->ui->raiseLimitText->text().toInt();
+    clt.set_pot(this->ui->potText->text().toFloat());
+    clt.set_effective_stack(this->ui->effectiveStackText->text().toFloat());
+    clt.allin_threshold = this->ui->allinThresholdText->text().toFloat();
+    
+    set_bet_sizes(ui->flop_ip_bet, &clt.gtbs.flop_ip.bet_sizes);
+    set_bet_sizes(ui->flop_ip_raise, &clt.gtbs.flop_ip.raise_sizes);
+    clt.gtbs.flop_ip.allin = ui->flop_ip_allin->isChecked();
+    set_bet_sizes(ui->turn_ip_bet, &clt.gtbs.turn_ip.bet_sizes);
+    set_bet_sizes(ui->turn_ip_raise, &clt.gtbs.turn_ip.raise_sizes);
+    clt.gtbs.turn_ip.allin = ui->turn_ip_allin->isChecked();
+    set_bet_sizes(ui->river_ip_bet, &clt.gtbs.river_ip.bet_sizes);
+    set_bet_sizes(ui->river_ip_raise, &clt.gtbs.river_ip.raise_sizes);
+    clt.gtbs.river_ip.allin = ui->river_ip_allin->isChecked();
+
+    set_bet_sizes(ui->flop_oop_bet, &clt.gtbs.flop_oop.bet_sizes);
+    set_bet_sizes(ui->flop_oop_raise, &clt.gtbs.flop_oop.raise_sizes);
+    clt.gtbs.flop_oop.allin = ui->flop_oop_allin->isChecked();
+    set_bet_sizes(ui->turn_oop_bet, &clt.gtbs.turn_oop.bet_sizes);
+    set_bet_sizes(ui->turn_oop_raise, &clt.gtbs.turn_oop.raise_sizes);
+    set_bet_sizes(ui->turn_oop_donk, &clt.gtbs.turn_oop.donk_sizes);
+    clt.gtbs.turn_oop.allin = ui->turn_oop_allin->isChecked();
+    set_bet_sizes(ui->river_oop_bet, &clt.gtbs.river_oop.bet_sizes);
+    set_bet_sizes(ui->river_oop_raise, &clt.gtbs.river_oop.raise_sizes);
+    set_bet_sizes(ui->river_oop_donk, &clt.gtbs.river_oop.donk_sizes);
+    clt.gtbs.river_oop.allin = ui->river_oop_allin->isChecked();
+}
+
+void MainWindow::get_solver_params() {
+    clt.use_isomorphism = this->ui->useIsoCheck->isChecked();
+    clt.use_halffloats = this->ui->useHalfFloats_box->currentIndex();
+    clt.max_iteration = ui->iterationText->text().toInt();
+    clt.accuracy = ui->exploitabilityText->text().toFloat();
+    clt.print_interval = ui->logIntervalText->text().toInt();
+    clt.thread_num = ui->threadsText->text().toInt();
+}
+
+void MainWindow::show_tree_params() {
+    ui->boardText->setText(clt.board.c_str());
+    ui->ipRangeText->setText(clt.range_ip.c_str());
+    ui->oopRangeText->setText(clt.range_oop.c_str());
+    ui->raiseLimitText->setText(QString::number(clt.raise_limit));
+    ui->potText->setText(QString::number(clt.get_pot()));
+    ui->effectiveStackText->setText(QString::number(clt.get_effective_stack()));
+    ui->allinThresholdText->setText(QString::number(clt.allin_threshold));
+
+    show_bet_sizes(ui->flop_ip_bet, clt.gtbs.flop_ip.bet_sizes);
+    show_bet_sizes(ui->flop_ip_raise, clt.gtbs.flop_ip.raise_sizes);
+    ui->flop_ip_allin->setChecked(clt.gtbs.flop_ip.allin);
+    show_bet_sizes(ui->turn_ip_bet, clt.gtbs.turn_ip.bet_sizes);
+    show_bet_sizes(ui->turn_ip_raise, clt.gtbs.turn_ip.raise_sizes);
+    ui->turn_ip_allin->setChecked(clt.gtbs.turn_ip.allin);
+    show_bet_sizes(ui->river_ip_bet, clt.gtbs.river_ip.bet_sizes);
+    show_bet_sizes(ui->river_ip_raise, clt.gtbs.river_ip.raise_sizes);
+    ui->river_ip_allin->setChecked(clt.gtbs.river_ip.allin);
+
+    show_bet_sizes(ui->flop_oop_bet, clt.gtbs.flop_oop.bet_sizes);
+    show_bet_sizes(ui->flop_oop_raise, clt.gtbs.flop_oop.raise_sizes);
+    ui->flop_oop_allin->setChecked(clt.gtbs.flop_oop.allin);
+    show_bet_sizes(ui->turn_oop_bet, clt.gtbs.turn_oop.bet_sizes);
+    show_bet_sizes(ui->turn_oop_raise, clt.gtbs.turn_oop.raise_sizes);
+    show_bet_sizes(ui->turn_oop_donk, clt.gtbs.turn_oop.donk_sizes);
+    ui->turn_oop_allin->setChecked(clt.gtbs.turn_oop.allin);
+    show_bet_sizes(ui->river_oop_bet, clt.gtbs.river_oop.bet_sizes);
+    show_bet_sizes(ui->river_oop_raise, clt.gtbs.river_oop.raise_sizes);
+    show_bet_sizes(ui->river_oop_donk, clt.gtbs.river_oop.donk_sizes);
+    ui->river_oop_allin->setChecked(clt.gtbs.river_oop.allin);
+}
+
+void MainWindow::show_solver_params() {
+    ui->useIsoCheck->setChecked(clt.use_isomorphism);
+    ui->useHalfFloats_box->setCurrentIndex(clt.use_halffloats);
+    ui->iterationText->setText(QString::number(clt.max_iteration));
+    ui->exploitabilityText->setText(QString::number(clt.accuracy));
+    ui->logIntervalText->setText(QString::number(clt.print_interval));
+    ui->threadsText->setText(QString::number(clt.thread_num));
 }
 
 void MainWindow::on_copyButtom_clicked()
@@ -543,7 +662,7 @@ void MainWindow::on_stopSolvingButton_clicked()
 
 void MainWindow::on_ipRangeSelectButtom_clicked()
 {
-    QSolverJob::Mode mode = this->ui->mode_box->currentIndex() == 0 ? QSolverJob::Mode::HOLDEM:QSolverJob::Mode::SHORTDECK;
+    PokerMode mode = this->ui->mode_box->currentIndex() == 0 ? PokerMode::HOLDEM:PokerMode::SHORTDECK;
     this->rangeSelector = new RangeSelector(this->ui->ipRangeText,this,mode);
     rangeSelector->setAttribute(Qt::WA_DeleteOnClose);
     rangeSelector->show();
@@ -551,14 +670,15 @@ void MainWindow::on_ipRangeSelectButtom_clicked()
 
 void MainWindow::on_oopRangeSelectButtom_clicked()
 {
-    QSolverJob::Mode mode = this->ui->mode_box->currentIndex() == 0 ? QSolverJob::Mode::HOLDEM:QSolverJob::Mode::SHORTDECK;
+    PokerMode mode = this->ui->mode_box->currentIndex() == 0 ? PokerMode::HOLDEM:PokerMode::SHORTDECK;
     this->rangeSelector = new RangeSelector(this->ui->oopRangeText,this,mode);
     rangeSelector->setAttribute(Qt::WA_DeleteOnClose);
     rangeSelector->show();
 }
 
 float iso_corh(QString board){
-    vector<string> board_str_arr = string_split(board.toStdString(),',');
+    string board_str = board.toStdString();
+    vector<string> board_str_arr = string_split(board_str, ',');
     vector<Card> initialBoard;
     for(string one_board_str:board_str_arr){
         initialBoard.push_back(Card(one_board_str));
@@ -584,7 +704,7 @@ float iso_corh(QString board){
 
 void MainWindow::on_estimateMemoryButtom_clicked()
 {
-    long long memory_float = this->qSolverJob->estimate_tree_memory(this->ui->ipRangeText->toPlainText(),this->ui->oopRangeText->toPlainText(),this->ui->boardText->toPlainText());
+    long long memory_float = this->qSolverJob->estimate_tree_memory(clt.range_ip, clt.range_oop, clt.board);
     // float32 should take 4bytes
     float corh = 1;
     if(this->ui->useIsoCheck->isChecked()){
@@ -620,7 +740,7 @@ void MainWindow::on_estimateMemoryButtom_clicked()
 
 void MainWindow::on_selectBoardButton_clicked()
 {
-    QSolverJob::Mode mode = this->ui->mode_box->currentIndex() == 0 ? QSolverJob::Mode::HOLDEM:QSolverJob::Mode::SHORTDECK;
+    PokerMode mode = this->ui->mode_box->currentIndex() == 0 ? PokerMode::HOLDEM:PokerMode::SHORTDECK;
     this->boardSelector = new boardselector(this->ui->boardText,mode,this);
     boardSelector->setAttribute(Qt::WA_DeleteOnClose);
     boardSelector->show();
@@ -636,10 +756,7 @@ void MainWindow::item_clicked(const QModelIndex& index){
         QFileInfo fileinfo = QFileInfo(this->qFileSystemModel->filePath(index));
         if(fileinfo.suffix() == "txt"){
             this->import_from_file(this->qFileSystemModel->filePath(index));
-            this->ui->IpRangeTableView->update();
-            this->ui->oopRangeTableView->update();
-            this->ui->IpRangeTableView->setFocus();
-            this->ui->oopRangeTableView->setFocus();
+            update_range_ui();
         }
     }
 }

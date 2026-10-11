@@ -3,9 +3,9 @@
 //
 
 #include "include/solver/BestResponse.h"
-#include <QtCore>
-#include <QObject>
-#include <QTranslator>
+// #include <QtCore>
+// #include <QObject>
+// #include <QTranslator>
 //#define DEBUG;
 
 BestResponse::BestResponse(vector<vector<PrivateCards>> &private_combos, int player_number,
@@ -40,7 +40,8 @@ float BestResponse::printExploitability(shared_ptr<GameTreeNode> root, int itera
     if(this->reach_probs.empty())
         this->reach_probs = vector<vector<float>> (this->player_number);
 
-    qDebug().noquote() << QString::fromStdString(tfm::format(QObject::tr("Iter: %s").toStdString().c_str(),iterationCount));
+    // qDebug().noquote() << QString::fromStdString(tfm::format(QObject::tr("Iter: %s").toStdString().c_str(),iterationCount));
+    logger->log("Iter: %d", iterationCount);
     float exploitible = 0;
     // 构造双方初始reach probs(按照手牌weights)
     for (int player_id = 0; player_id < this->player_number; player_id++) {
@@ -54,10 +55,12 @@ float BestResponse::printExploitability(shared_ptr<GameTreeNode> root, int itera
     for (int player_id = 0; player_id < this->player_number; player_id++) {
         float player_exploitability = getBestReponseEv(root, player_id, reach_probs, initialBoard, 0);
         exploitible += player_exploitability;
-        qDebug().noquote() << (QString::fromStdString(tfm::format(QObject::tr("player %s exploitability %s").toStdString().c_str(), player_id, player_exploitability)));
+        // qDebug().noquote() << (QString::fromStdString(tfm::format(QObject::tr("player %s exploitability %s").toStdString().c_str(), player_id, player_exploitability)));
+        logger->log("player %d exploitability %f", player_id, player_exploitability);
     }
     float total_exploitability = exploitible / this->player_number / initial_pot * 100;
-    qDebug().noquote() << QString::fromStdString(tfm::format(QObject::tr("Total exploitability %s precent").toStdString().c_str(), total_exploitability));
+    // qDebug().noquote() << QString::fromStdString(tfm::format(QObject::tr("Total exploitability %s precent").toStdString().c_str(), total_exploitability));
+    logger->log("Total exploitability %f precent", total_exploitability);
     return total_exploitability;
 }
 
@@ -130,7 +133,7 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
     vector<vector<float>> results(node->getCards().size());
 
     #pragma omp parallel for
-    for(std::size_t card = 0;card < node->getCards().size();card ++) {
+    for(std::int64_t card = 0;card < node->getCards().size();card ++) {
         shared_ptr<GameTreeNode> one_child = node->getChildren();
         Card one_card = node->getCards()[card];
         uint64_t card_long = Card::boardInt2long(one_card.getCardInt());

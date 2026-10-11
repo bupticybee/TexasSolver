@@ -9,7 +9,6 @@
 #include <QTextStream>
 #include <QDebug>
 #include "time.h"
-#include "unistd.h"
 
 #define SUIT_0_MASK   0x1111111111111
 #define SUIT_1_MASK   0x2222222222222
@@ -287,4 +286,3 @@ int Dic5Compairer::get_rank(vector<int> private_hand, vector<int> public_board) 
 int Dic5Compairer::get_rank(uint64_t private_hand, uint64_t public_board) {
     return this->get_rank(Card::long2board(private_hand),Card::long2board(public_board));
 }
-

@@ -94,6 +94,11 @@ public:
     json dumps(bool with_status,int depth);
 private:
     vector<vector<PrivateCards>> ranges;
+    // Flat per-player hand data for the hot loops. same_hand[p][i] is hand i of p in the other range, or -1.
+    vector<uint64_t> hand_longs[2];
+    vector<int> hand_card1[2];
+    vector<int> hand_card2[2];
+    vector<int> same_hand[2];
     vector<PrivateCards> range1;
     vector<PrivateCards> range2;
     vector<int> initial_board;
@@ -124,12 +129,12 @@ private:
     vector<vector<float>> getReachProbs();
     static vector<PrivateCards> noDuplicateRange(const vector<PrivateCards>& private_range,uint64_t board_long);
     void setTrainable(shared_ptr<GameTreeNode> root);
-    vector<float> cfr(int player, shared_ptr<GameTreeNode> node, const vector<float>& reach_probs, int iter, uint64_t current_board,int deal);
+    vector<float> cfr(int player, GameTreeNode* node, const vector<float>& reach_probs, int iter, uint64_t current_board,int deal);
     vector<int> getAllAbstractionDeal(int deal);
-    vector<float> chanceUtility(int player,shared_ptr<ChanceNode> node,const vector<float>& reach_probs,int iter,uint64_t current_boardi,int deal);
-    vector<float> showdownUtility(int player,shared_ptr<ShowdownNode> node,const vector<float>& reach_probs,int iter,uint64_t current_board,int deal);
-    vector<float> actionUtility(int player,shared_ptr<ActionNode> node,const vector<float>& reach_probs,int iter,uint64_t current_board,int deal);
-    vector<float> terminalUtility(int player,shared_ptr<TerminalNode> node,const vector<float>& reach_prob,int iter,uint64_t current_board,int deal);
+    vector<float> chanceUtility(int player,ChanceNode* node,const vector<float>& reach_probs,int iter,uint64_t current_boardi,int deal);
+    vector<float> showdownUtility(int player,ShowdownNode* node,const vector<float>& reach_probs,int iter,uint64_t current_board,int deal);
+    vector<float> actionUtility(int player,ActionNode* node,const vector<float>& reach_probs,int iter,uint64_t current_board,int deal);
+    vector<float> terminalUtility(int player,TerminalNode* node,const vector<float>& reach_prob,int iter,uint64_t current_board,int deal);
     void findGameSpecificIsomorphisms();
     void purnTree();
     void exchangeRange(json& strategy,int rank1,int rank2,shared_ptr<ActionNode> one_node);

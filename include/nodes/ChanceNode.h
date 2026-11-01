@@ -14,6 +14,7 @@ public:
     ChanceNode(const shared_ptr<GameTreeNode> children, GameRound round, double pot, shared_ptr<GameTreeNode>parent, const vector<Card>& cards,bool donk=false);
     const vector<Card>& getCards();
     shared_ptr<GameTreeNode> getChildren();
+    GameTreeNode* getChildRaw() { return children.get(); }
     void setChildren(shared_ptr<GameTreeNode> children);
     int getPlayer();
     bool isDonk();

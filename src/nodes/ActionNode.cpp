@@ -41,6 +41,13 @@ shared_ptr<Trainable> ActionNode::getTrainable(int i,bool create_on_site) {
     return this->trainables[i];
 }
 
+Trainable* ActionNode::getTrainableRaw(int i) {
+    if(this->trainables[i] == nullptr){
+        this->trainables[i] = make_shared<DiscountedCfrTrainable>(player_privates,*this);
+    }
+    return this->trainables[i].get();
+}
+
 void ActionNode::setTrainable(vector<shared_ptr<Trainable>> trainables,vector<PrivateCards>* player_privates) {
     this->trainables = trainables;
     this->player_privates = player_privates;

@@ -290,7 +290,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
         valid_cards.push_back(card);
     }
 
-    #pragma omp parallel for schedule(static)
+    #pragma omp parallel for schedule(dynamic,1)
     for(int valid_ind = 0;valid_ind < valid_cards.size();valid_ind++) {
         int card = valid_cards[valid_ind];
         shared_ptr<GameTreeNode> one_child = node->getChildren();

@@ -11,12 +11,12 @@
 class RiverCombs {
 public:
     int rank;
-    PrivateCards private_cards;
     int reach_prob_index;
+    int card1;
+    int card2;
+    uint64_t hand_long;
     RiverCombs();
-    RiverCombs(vector<int> board,PrivateCards private_cards , int rank, int reach_prob_index);
-private:
-    vector<int> board;
+    RiverCombs(PrivateCards private_cards , int rank, int reach_prob_index);
 };
 
 

@@ -348,7 +348,7 @@ BestResponse::terminalBestReponse(shared_ptr<TerminalNode> node, int player, con
     const vector<float>& oppo_reach_prob = reach_probs[1 - player];
     for(int oppo_hand = 0;oppo_hand < oppo_combs.size(); oppo_hand ++){
         const RiverCombs& one_hc = oppo_combs[oppo_hand];
-        uint64_t one_hc_long  = Card::boardInts2long(one_hc.private_cards.get_hands());
+        uint64_t one_hc_long  = one_hc.hand_long;
 
         // 如果对手手牌和public card有重叠，那么这组牌不可能存在
         if(Card::boardsHasIntercept(one_hc_long,board_long)){
@@ -356,14 +356,14 @@ BestResponse::terminalBestReponse(shared_ptr<TerminalNode> node, int player, con
         }
 
         oppo_prob_sum += oppo_reach_prob[one_hc.reach_prob_index];
-        oppo_card_sum[one_hc.private_cards.card1] += oppo_reach_prob[one_hc.reach_prob_index];
-        oppo_card_sum[one_hc.private_cards.card2] += oppo_reach_prob[one_hc.reach_prob_index];
+        oppo_card_sum[one_hc.card1] += oppo_reach_prob[one_hc.reach_prob_index];
+        oppo_card_sum[one_hc.card2] += oppo_reach_prob[one_hc.reach_prob_index];
     }
 
 
     for(int player_hand = 0;player_hand < player_combs.size();player_hand ++) {
         const RiverCombs& player_hc = player_combs[player_hand];
-        uint64_t player_hc_long = Card::boardInts2long(player_hc.private_cards.get_hands());
+        uint64_t player_hc_long = player_hc.hand_long;
         if(Card::boardsHasIntercept(player_hc_long,board_long)){
             payoffs[player_hand] = 0;
         }else{
@@ -375,8 +375,8 @@ BestResponse::terminalBestReponse(shared_ptr<TerminalNode> node, int player, con
                 add_reach_prob = oppo_reach_prob[oppo_hand];
             }
             payoffs[player_hc.reach_prob_index] = (oppo_prob_sum
-                                                   - oppo_card_sum[player_hc.private_cards.card1]
-                                                   - oppo_card_sum[player_hc.private_cards.card2]
+                                                   - oppo_card_sum[player_hc.card1]
+                                                   - oppo_card_sum[player_hc.card2]
                                                    + add_reach_prob
                                                   ) * player_payoff;
         }
@@ -420,13 +420,13 @@ BestResponse::showdownBestResponse(shared_ptr<ShowdownNode> node, int player,con
             const RiverCombs& one_oppo_comb = oppo_combs[j];
             winsum += reach_probs[oppo][one_oppo_comb.reach_prob_index];
 
-            card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
-            card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
+            card_winsum[one_oppo_comb.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
+            card_winsum[one_oppo_comb.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             j ++;
         }
         payoffs[one_player_comb.reach_prob_index] = (winsum
-                                                     - card_winsum[one_player_comb.private_cards.card1]
-                                                     - card_winsum[one_player_comb.private_cards.card2]
+                                                     - card_winsum[one_player_comb.card1]
+                                                     - card_winsum[one_player_comb.card2]
                                                     ) * win_payoff;
     }
 
@@ -441,13 +441,13 @@ BestResponse::showdownBestResponse(shared_ptr<ShowdownNode> node, int player,con
             const RiverCombs& one_oppo_comb = oppo_combs[j];
             losssum += reach_probs[oppo][one_oppo_comb.reach_prob_index];
 
-            card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
-            card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
+            card_losssum[one_oppo_comb.card1] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
+            card_losssum[one_oppo_comb.card2] += reach_probs[oppo][one_oppo_comb.reach_prob_index];
             j --;
         }
         payoffs[one_player_comb.reach_prob_index] += (losssum
-                                                      - card_losssum[one_player_comb.private_cards.card1]
-                                                      - card_losssum[one_player_comb.private_cards.card2]
+                                                      - card_losssum[one_player_comb.card1]
+                                                      - card_losssum[one_player_comb.card2]
                                                      ) * lose_payoff;
     }
     if(this->debug) {

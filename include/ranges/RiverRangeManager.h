@@ -22,6 +22,7 @@ private:
     unordered_map<uint64_t , vector<RiverCombs>> p2RiverRanges;
     shared_ptr<Compairer> handEvaluator;
     shared_ptr<mutex> maplock;
+    uint64_t generation = 0;
 };
 
 

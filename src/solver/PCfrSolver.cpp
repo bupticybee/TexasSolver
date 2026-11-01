@@ -500,8 +500,7 @@ PCfrSolver::showdownUtility(int player, ShowdownNode* node, const vector<float> 
     vector<float> payoffs = vector<float>(player_private_cards.size());
 
     float winsum = 0;
-    vector<float> card_winsum = vector<float> (52);//node->card_sum;
-    fill(card_winsum.begin(),card_winsum.end(),0);
+    float card_winsum[52] = {0};
 
     int j = 0;
     for(int i = 0;i < player_combs.size();i ++){
@@ -509,20 +508,20 @@ PCfrSolver::showdownUtility(int player, ShowdownNode* node, const vector<float> 
         while (j < oppo_combs.size() && one_player_comb.rank < oppo_combs[j].rank){
             const RiverCombs& one_oppo_comb = oppo_combs[j];
             winsum += reach_probs[one_oppo_comb.reach_prob_index];
-            card_winsum[one_oppo_comb.private_cards.card1] += reach_probs[one_oppo_comb.reach_prob_index];
-            card_winsum[one_oppo_comb.private_cards.card2] += reach_probs[one_oppo_comb.reach_prob_index];
+            card_winsum[one_oppo_comb.card1] += reach_probs[one_oppo_comb.reach_prob_index];
+            card_winsum[one_oppo_comb.card2] += reach_probs[one_oppo_comb.reach_prob_index];
             j ++;
         }
         payoffs[one_player_comb.reach_prob_index] = (winsum
-                                                     - card_winsum[one_player_comb.private_cards.card1]
-                                                     - card_winsum[one_player_comb.private_cards.card2]
+                                                     - card_winsum[one_player_comb.card1]
+                                                     - card_winsum[one_player_comb.card2]
                                                     ) * win_payoff;
     }
 
     // 计算失败时的payoff
     float losssum = 0;
-    vector<float>& card_losssum = card_winsum;
-    fill(card_losssum.begin(),card_losssum.end(),0);
+    float (&card_losssum)[52] = card_winsum;
+    fill(card_losssum,card_losssum + 52,0);
 
     j = oppo_combs.size() - 1;
     for(int i = player_combs.size() - 1;i >= 0;i --){
@@ -530,13 +529,13 @@ PCfrSolver::showdownUtility(int player, ShowdownNode* node, const vector<float> 
         while (j >= 0 && one_player_comb.rank > oppo_combs[j].rank){
             const RiverCombs& one_oppo_comb = oppo_combs[j];
             losssum += reach_probs[one_oppo_comb.reach_prob_index];
-            card_losssum[one_oppo_comb.private_cards.card1] += reach_probs[one_oppo_comb.reach_prob_index];
-            card_losssum[one_oppo_comb.private_cards.card2] += reach_probs[one_oppo_comb.reach_prob_index];
+            card_losssum[one_oppo_comb.card1] += reach_probs[one_oppo_comb.reach_prob_index];
+            card_losssum[one_oppo_comb.card2] += reach_probs[one_oppo_comb.reach_prob_index];
             j --;
         }
         payoffs[one_player_comb.reach_prob_index] += (losssum
-                                                      - card_losssum[one_player_comb.private_cards.card1]
-                                                      - card_losssum[one_player_comb.private_cards.card2]
+                                                      - card_losssum[one_player_comb.card1]
+                                                      - card_losssum[one_player_comb.card2]
                                                      ) * lose_payoff;
     }
     return payoffs;

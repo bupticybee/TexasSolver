@@ -63,17 +63,16 @@ const vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
     if(this->r_plus_sum.empty()){
         fill(current_strategy.begin(),current_strategy.end(),1.0 / this->action_number);
     }else {
+        const int cards = this->card_number;
+        const float uniform = 1.0 / this->action_number;
+        const float* __restrict sum = this->r_plus_sum.data();
         for (int action_id = 0; action_id < action_number; action_id++) {
-            for (int private_id = 0; private_id < this->card_number; private_id++) {
-                int index = action_id * this->card_number + private_id;
-                if(this->r_plus_sum[private_id] != 0) {
-                    current_strategy[index] = max(float(0.0),this->r_plus[index]) / this->r_plus_sum[private_id];
-                }else{
-                    current_strategy[index] = 1.0 / (this->action_number);
-                }
-#ifdef DEBUG
-                if(this->r_plus[index] != this->r_plus[index]) throw runtime_error("nan found");
-#endif
+            const float* __restrict regret = this->r_plus.data() + action_id * cards;
+            float* __restrict out = current_strategy.data() + action_id * cards;
+            for (int private_id = 0; private_id < cards; private_id++) {
+                const float positive = regret[private_id] > 0 ? regret[private_id] : 0;
+                const float share = positive / sum[private_id];
+                out[private_id] = sum[private_id] != 0 ? share : uniform;
             }
         }
     }
@@ -81,46 +80,33 @@ const vector<float> DiscountedCfrTrainable::getcurrentStrategyNoCache() {
 }
 
 void DiscountedCfrTrainable::updateRegrets(const vector<float>& regrets, int iteration_number, const vector<float>& reach_probs) {
+    auto alpha_power = pow(iteration_number, this->alpha);
+    const double alpha_coef = alpha_power / (1 + alpha_power);
+    const float beta_coef = this->beta;
+    const int cards = this->card_number;
 
-#ifdef DEBUG
-    if(regrets.size() != this->action_number * this->card_number) throw runtime_error("length not match");
-#endif
-
-    auto alpha_coef = pow(iteration_number, this->alpha);
-    alpha_coef = alpha_coef / (1 + alpha_coef);
-
-    //Arrays.fill(this.r_plus_sum,0);
     fill(r_plus_sum.begin(),r_plus_sum.end(),0);
-    //fill(cum_r_plus_sum.begin(),cum_r_plus_sum.end(),0);
+    float* __restrict sum = this->r_plus_sum.data();
     for (int action_id = 0;action_id < action_number;action_id ++) {
-        for(int private_id = 0;private_id < this->card_number;private_id ++){
-            int index = action_id * this->card_number + private_id;
-            float one_reg = regrets[index];
-
+        const float* __restrict regret = regrets.data() + action_id * cards;
+        float* __restrict r_plus_action = this->r_plus.data() + action_id * cards;
+        for(int private_id = 0;private_id < cards;private_id ++){
             // 更新 R+
-            this->r_plus[index] = one_reg + this->r_plus[index];
-            if(this->r_plus[index] > 0){
-                this->r_plus[index] *= alpha_coef;
-            }else{
-                this->r_plus[index] *= beta;
-            }
-
-            this->r_plus_sum[private_id] += max(float(0.0),this->r_plus[index]);
-
-            // 更新累计策略
-            // this.cum_r_plus[index] += this.r_plus[index] * iteration_number;
-            // this.cum_r_plus_sum[private_id] += this.cum_r_plus[index];
+            const float updated = regret[private_id] + r_plus_action[private_id];
+            const float discounted = updated > 0 ? float(updated * alpha_coef) : updated * beta_coef;
+            r_plus_action[private_id] = discounted;
+            sum[private_id] += discounted > 0 ? discounted : 0;
         }
     }
     vector<float> current_strategy = this->getcurrentStrategyNoCache();
-    float strategy_coef = pow(((float)iteration_number / (iteration_number + 1)),gamma);
-    for (int action_id = 0;action_id < action_number;action_id ++) {
-        for(int private_id = 0;private_id < this->card_number;private_id ++) {
-            int index = action_id * this->card_number + private_id;
-            this->cum_r_plus[index] *= this->theta;
-            this->cum_r_plus[index] += current_strategy[index] * strategy_coef;// * reach_probs[private_id];
-            //this->cum_r_plus_sum[private_id] += this->cum_r_plus[index] ;
-        }
+    const float strategy_coef = pow(((float)iteration_number / (iteration_number + 1)),gamma);
+    const float theta_coef = this->theta;
+    const int total = this->action_number * cards;
+    const float* __restrict strategy = current_strategy.data();
+    float* __restrict cumulative = this->cum_r_plus.data();
+    for (int index = 0;index < total;index ++) {
+        const float decayed = cumulative[index] * theta_coef;
+        cumulative[index] = decayed + strategy[index] * strategy_coef;
     }
 }
 

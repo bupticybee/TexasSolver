@@ -680,7 +680,9 @@ void PCfrSolver::findGameSpecificIsomorphisms() {
         for(int j = 0;j < i;j ++){
             if(color_hash[i] == color_hash[j]){
                 this->color_iso_offset[0][i] = j - i;
-                continue;
+                // The first matching suit, not the last: the last may itself be mapped to an earlier suit, and then
+                // its deals are never solved, so this suit's deals were dropped at the chance node (#72).
+                break;
             }
         }
     }
@@ -702,7 +704,7 @@ void PCfrSolver::findGameSpecificIsomorphisms() {
             for (int j = 0; j < i; j++) {
                 if (color_hash[i] == color_hash[j]) {
                     this->color_iso_offset[deal + 1][i] = j - i;
-                    continue;
+                    break;
                 }
             }
         }

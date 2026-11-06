@@ -233,8 +233,8 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
 
     int card_num = node->getCards().size();
     if(card_num % 4 != 0) throw runtime_error("card num cannot round 4");
-    // 可能的发牌情况,2代表每个人的holecard是两张
-    int possible_deals = node->getCards().size() - Card::long2board(current_board).size() - 2;
+    // 可能的发牌情况,4代表双方各两张holecard (both players hold two cards each)
+    int possible_deals = node->getCards().size() - Card::long2board(current_board).size() - 4;
     int oppo = 1 - player;
 
     //vector<float> chance_utility(reach_probs[player].size());
@@ -244,7 +244,7 @@ PCfrSolver::chanceUtility(int player, shared_ptr<ChanceNode> node, const vector<
     int random_deal = 0;
     if(this->monteCarolAlg==MonteCarolAlg::PUBLIC) {
         if (this->round_deal[GameTreeNode::gameRound2int(node->getRound())] == -1) {
-            random_deal = random(1, possible_deals + 1 + 2);
+            random_deal = random(1, possible_deals + 1 + 4);
             this->round_deal[GameTreeNode::gameRound2int(node->getRound())] = random_deal;
         } else {
             random_deal = this->round_deal[GameTreeNode::gameRound2int(node->getRound())];

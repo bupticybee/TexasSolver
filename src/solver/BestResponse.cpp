@@ -118,8 +118,8 @@ BestResponse::chanceBestReponse(shared_ptr<ChanceNode> node, int player,const ve
     vector<Card>& cards = this->deck.getCards();
 
     int card_num = node->getCards().size();
-    // 可能的发牌情况,2代表每个人的holecard是两张
-    int possible_deals = node->getCards().size() - Card::long2board(current_board).size() - 2;
+    // 可能的发牌情况,4代表双方各两张holecard (both players hold two cards each)
+    int possible_deals = node->getCards().size() - Card::long2board(current_board).size() - 4;
 
     vector<float> chance_utility = vector<float>(reach_probs[player].size());
     fill(chance_utility.begin(),chance_utility.end(),0);

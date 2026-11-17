@@ -6,7 +6,7 @@
 
 
 
-vector<string> string_split(string strin,char split){
+vector<string> string_split(string &strin, char split){
     vector<string> retval;
     stringstream ss(strin);
     string token;

@@ -1,7 +1,7 @@
 ﻿#include "boardselector.h"
 #include "ui_boardselector.h"
 
-boardselector::boardselector(QTextEdit* boardEdit,QSolverJob::Mode mode,QWidget *parent) :
+boardselector::boardselector(QTextEdit* boardEdit,PokerMode mode,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::boardselector)
 {
@@ -11,9 +11,9 @@ boardselector::boardselector(QTextEdit* boardEdit,QSolverJob::Mode mode,QWidget 
     this->mode = mode;
 
     QString ranks;
-    if(mode == QSolverJob::Mode::HOLDEM){
+    if(mode == PokerMode::HOLDEM){
         ranks = "A,K,Q,J,T,9,8,7,6,5,4,3,2";
-    }else if(mode == QSolverJob::Mode::SHORTDECK){
+    }else if(mode == PokerMode::SHORTDECK){
         ranks = "A,K,Q,J,T,9,8,7,6";
     }else{
         throw runtime_error("mode not found in range selector");

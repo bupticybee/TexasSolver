@@ -12,6 +12,7 @@
 #include "include/ui/treeitem.h"
 #include "include/nodes/GameActions.h"
 #include <map>
+#include "include/card_format.h"
 
 class TableStrategyModel : public QAbstractItemModel
 {

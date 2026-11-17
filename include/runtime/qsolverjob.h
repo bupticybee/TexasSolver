@@ -16,11 +16,11 @@ class QSolverJob : public QThread
 private:
     QSTextEdit * textEdit;
 public:
-    enum Mode{
-        HOLDEM,
-        SHORTDECK
-    };
-    Mode mode = Mode::HOLDEM;
+    // enum Mode{
+    //     HOLDEM,
+    //     SHORTDECK
+    // };
+    PokerMode mode = PokerMode::HOLDEM;
 
     enum MissionType{
         LOADING,
@@ -31,6 +31,7 @@ public:
     MissionType current_mission = MissionType::LOADING;
     string resource_dir;
     PokerSolver ps_holdem,ps_shortdeck;
+    /*
     float oop_commit=5;
     float ip_commit=5;
     int current_round=1;
@@ -50,7 +51,9 @@ public:
     int print_interval=10;
     int dump_rounds = 2;
     shared_ptr<GameTreeBuildingSettings> gtbs;
-
+    */
+    CommandLineTool *clt = nullptr;
+    Logger *logger = nullptr;
     PokerSolver* get_solver();
     void run();
     void loading();
@@ -58,8 +61,8 @@ public:
     void stop();
     void saving();
     void build_tree();
-    long long estimate_tree_memory(QString range1,QString range2,QString board);
+    long long estimate_tree_memory(string &range1, string &range2, string &board);
     void setContext(QSTextEdit * textEdit);
-    QString savefile;
+    // QString savefile;
 };
 #endif // QSOLVERJOB_H

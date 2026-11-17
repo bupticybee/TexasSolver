@@ -1,15 +1,15 @@
 ﻿#include "rangeselector.h"
 #include "ui_rangeselector.h"
 
-RangeSelector::RangeSelector(QTextEdit* rangeEdit,QWidget *parent,QSolverJob::Mode mode) :
+RangeSelector::RangeSelector(QTextEdit* rangeEdit,QWidget *parent,PokerMode mode) :
     QDialog(parent),
     ui(new Ui::RangeSelector)
 {
 
     QString ranks;
-    if(mode == QSolverJob::Mode::HOLDEM){
+    if(mode == PokerMode::HOLDEM){
         ranks = "A,K,Q,J,T,9,8,7,6,5,4,3,2";
-    }else if(mode == QSolverJob::Mode::SHORTDECK){
+    }else if(mode == PokerMode::SHORTDECK){
         ranks = "A,K,Q,J,T,9,8,7,6";
     }else{
         throw runtime_error("mode not found in range selector");

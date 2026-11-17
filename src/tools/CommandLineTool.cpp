@@ -2,39 +2,24 @@
 // Created by bytedance on 7.6.21.
 //
 #include "include/tools/CommandLineTool.h"
-#include <QString>
+// #include <QString>
+#include <fstream>
+#include <unordered_set>
+#include <algorithm>
 
-CommandLineTool::CommandLineTool(string mode,string resource_dir) {
-    string suits = "c,d,h,s";
-    string ranks;
-    this->resource_dir = resource_dir;
-    string compairer_file,compairer_file_bin;
-    int lines;
-    if(mode == "holdem"){
-        ranks = "2,3,4,5,6,7,8,9,T,J,Q,K,A";
-        compairer_file = this->resource_dir + "/compairer/card5_dic_sorted.txt";
-        compairer_file_bin = this->resource_dir + "/compairer/card5_dic_zipped.bin";
-        lines = 2598961;
-    }else if(mode == "shortdeck"){
-        ranks = "6,7,8,9,T,J,Q,K,A";
-        compairer_file = this->resource_dir + "/compairer/card5_dic_sorted_shortdeck.txt";
-        compairer_file_bin = this->resource_dir + "/compairer/card5_dic_zipped_shortdeck.bin";
-        lines = 376993;
-    }else{
-        throw runtime_error(tfm::format("mode not recognized : ",mode));
-    }
-    string logfile_name = "../resources/outputs/outputs_log.txt";
-    this->ps = PokerSolver(ranks,suits,compairer_file,lines,compairer_file_bin);
+CommandLineTool::CommandLineTool() {
+    // string logfile_name = "../resources/outputs/outputs_log.txt";
+    // this->ps = PokerSolver(mode, resource_dir);
 
-    StreetSetting gbs_flop_ip = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
-    StreetSetting gbs_turn_ip = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
-    StreetSetting gbs_river_ip = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
+    // StreetSetting gbs_flop_ip = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
+    // StreetSetting gbs_turn_ip = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
+    // StreetSetting gbs_river_ip = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
 
-    StreetSetting gbs_flop_oop = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
-    StreetSetting gbs_turn_oop = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
-    StreetSetting gbs_river_oop = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
+    // StreetSetting gbs_flop_oop = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
+    // StreetSetting gbs_turn_oop = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
+    // StreetSetting gbs_river_oop = StreetSetting(vector<float>{},vector<float>{},vector<float>{},true);
 
-    this->gtbs = make_shared<GameTreeBuildingSettings>(gbs_flop_ip,gbs_turn_ip,gbs_river_ip,gbs_flop_oop,gbs_turn_oop,gbs_river_oop);
+    // this->gtbs = make_shared<GameTreeBuildingSettings>(gbs_flop_ip,gbs_turn_ip,gbs_river_ip,gbs_flop_oop,gbs_turn_oop,gbs_river_oop);
     //ps.build_game_tree(oop_commit,ip_commit,current_round,raise_limit,small_blind,big_blind,stack,*gtbs.get(),allin_threshold);
     //cout << "build tree finished" << endl;
     /*
@@ -56,98 +41,156 @@ CommandLineTool::CommandLineTool(string mode,string resource_dir) {
      */
 }
 
-void CommandLineTool::startWorking() {
+void CommandLineTool::startWorking(PokerSolver *ps) {
     string input_line;
     while(cin) {
         getline(cin, input_line);
-        this->processCommand(input_line);
+        this->processCommand(input_line, ps);
     };
 }
 
-void CommandLineTool::execFromFile(string input_file){
+void CommandLineTool::execFromFile(const char *input_file, PokerSolver *ps) {
     std::ifstream infile(input_file);
     std::string input_line;
     while (std::getline(infile, input_line))
     {
-        this->processCommand(input_line);
+        this->processCommand(input_line, ps);
     }
 
 }
 
-void split(const string& s, char c,
-           vector<string>& v) {
-    string::size_type i = 0;
-    string::size_type j = s.find(c);
-
-    while (j != string::npos) {
+void split(const string& s, char delimiter, vector<string>& v) {
+    size_t i = s.find_first_not_of(delimiter), j = 0;
+    while (i != string::npos) {
+        j = s.find_first_of(delimiter, i+1);
+        if(j == string::npos) j = s.size();
         v.push_back(s.substr(i, j-i));
-        i = ++j;
-        j = s.find(c, j);
-
-        if (j == string::npos)
-            v.push_back(s.substr(i, s.length()));
+        i = s.find_first_not_of(delimiter, j+1);
     }
 }
 
+template<class T>
+string tostring(T val) {
+    string s = to_string(val);
+    for(size_t i = s.size() - 1; i > 0; i--) {
+        if(s[i] == '0') s.pop_back();
+        else if(s[i] == '.') {
+            s.pop_back();
+            break;
+        }
+        else break;
+    }
+    return s;
+}
 
-void CommandLineTool::processCommand(string input) {
+template<class T>
+string tostring_oss(T val) {
+    ostringstream oss;
+    oss << val;
+    return oss.str();
+}
+
+void join(const vector<float> &vec, char delimiter, string &out) {
+    size_t n = vec.size();
+    if(n) out += tostring(vec[0]);
+    for(int i = 1; i < n; i++) {
+        out += delimiter;
+        out += tostring(vec[i]);
+    }
+}
+
+bool CommandLineTool::set_board(string &str) {
+    board = str;
+    vector<string> board_str_arr = string_split(board,',');
+    if(board_str_arr.size() == 3){
+        this->current_round = 1;
+    }else if(board_str_arr.size() == 4){
+        this->current_round = 2;
+    }else if(board_str_arr.size() == 5){
+        this->current_round = 3;
+    }else{
+        // throw runtime_error(tfm::format("board %s not recognized",this->board));
+        return false;
+    }
+    return true;
+}
+
+bool CommandLineTool::set_bet_sizes(string &str, char delimiter, vector<float> *sizes) {
+    vector<string> params;
+    split(str, delimiter, params);
+    int start = (sizes != nullptr ? 0 : 3);
+    if(params.size() < start) {
+        // throw runtime_error("param number error");
+        return false;
+    }
+    if(sizes == nullptr) {
+        // oop,turn,bet,30,70,100
+        StreetSetting& streetSetting = gtbs.get_setting(params[0], params[1]);
+        string &bet_type = params[2];
+        if(bet_type == "allin") {
+            if(params.size() == start) streetSetting.allin = true;
+            else streetSetting.allin = stoi(params[start]);
+        }
+        else if(bet_type == "bet") sizes = &(streetSetting.bet_sizes);
+        else if(bet_type == "raise") sizes = &(streetSetting.raise_sizes);
+        else if(bet_type == "donk") sizes = &(streetSetting.donk_sizes);
+        else return false;
+    }
+    if(sizes != nullptr) {
+        sizes->clear();
+        std::unordered_set<float> seen;
+        for(std::size_t i = start; i < params.size(); i++) {
+            float val = stof(params[i]);
+            if(seen.count(val)) continue;
+            sizes->push_back(val);
+            seen.insert(val);
+        }
+        std::sort(sizes->begin(), sizes->end());
+    }
+    return true;
+}
+
+// void show_bet_sizes(std::ofstream &out, const char *player, const char *round, const char *type, vector<float> &sizes) {
+//     string s;
+//     join(sizes, ',', s);
+//     out << "set_bet_sizes " << player << ',' << round << ',' << type;
+//     if(s.size()) out << ',' << s;
+//     out << endl;
+// }
+// void show_bet_sizes(std::ofstream &out, const char *player, const char *round, const char *type, bool allin) {
+//     out << "set_bet_sizes " << player << ',' << round << ',' << type << ',' << allin;
+// }
+
+void CommandLineTool::processCommand(string &input, PokerSolver *ps) {
     vector<string> contents;
+    if(input.empty() || input[0] == '#') return;
     split(input,' ',contents);
     if(contents.size() == 0) contents = {input};
     if(contents.size() > 2 || contents.size() < 1)throw runtime_error(tfm::format("command not valid: %s",input));
     string command = contents[0];
     string paramstr = contents.size() == 1 ? "" : contents[1];
     if(command == "set_pot"){
-        this->ip_commit = stof(paramstr) / 2;
-        this->oop_commit = stof(paramstr) / 2;
+        set_pot(stof(paramstr));
     }else if(command == "set_effective_stack"){
-        this->stack = stof(paramstr) + this->ip_commit;
+        set_effective_stack(stof(paramstr));
     }else if(command == "set_board"){
-        this->board = paramstr;
-        vector<string> board_str_arr = string_split(board,',');
-        if(board_str_arr.size() == 3){
-            this->current_round = 1;
-        }else if(board_str_arr.size() == 4){
-            this->current_round = 2;
-        }else if(board_str_arr.size() == 5){
-            this->current_round = 3;
-        }else{
-            throw runtime_error(tfm::format("board %s not recognized",this->board));
-        }
+        set_board(paramstr);
     }else if(command == "set_range_ip"){
         this->range_ip = paramstr;
     }else if(command == "set_range_oop"){
         this->range_oop = paramstr;
     }else if(command == "set_bet_sizes"){
-        vector<string> params;
-        split(paramstr,',',params);
-        if(params.size() < 3)throw runtime_error("param number error");
-        // oop,turn,bet,30,70,100
-        string player = params[0];
-        string round = params[1];
-        string bet_type = params[2];
-        StreetSetting& streetSetting = this->gtbs->get_setting(player,round);
-        vector<float>* sizes;
-        if(bet_type == "allin") streetSetting.allin = true;
-        else if(bet_type == "bet") sizes = &(streetSetting.bet_sizes);
-        else if(bet_type == "raise") sizes = &(streetSetting.raise_sizes);
-        else if(bet_type == "donk") sizes = &(streetSetting.donk_sizes);
-        else throw runtime_error("");
-
-        if(bet_type == "bet" || bet_type == "raise" || bet_type == "donk"){
-            sizes->clear();
-            for(std::size_t i = 3;i < params.size();i ++ ){
-                sizes->push_back(stof(params[i]));
-            }
-        }
+        set_bet_sizes(paramstr);
+    }else if(command == "set_raise_limit"){
+        this->raise_limit = stoi(paramstr);
     }else if(command == "set_accuracy"){
         this->accuracy = stof(paramstr);
     }else if(command == "set_allin_threshold"){
         this->allin_threshold = stof(paramstr);
     }else if(command == "set_thread_num"){
-        this->thread_number = stoi(paramstr);
+        this->thread_num = stoi(paramstr);
     }else if(command == "build_tree"){
-        this->ps.build_game_tree(oop_commit,ip_commit,current_round,raise_limit,small_blind,big_blind,stack,*gtbs.get(),allin_threshold);
+        build_tree(ps);
     }else if(command == "set_max_iteration"){
         this->max_iteration = stoi(paramstr);
     }else if(command == "set_use_isomorphism"){
@@ -155,27 +198,103 @@ void CommandLineTool::processCommand(string input) {
     }else if(command == "set_print_interval"){
         this->print_interval = stoi(paramstr);
     }else if(command == "start_solve"){
-        cout << "<<<START SOLVING>>>" << endl;
-        this->ps.train(
-                this->range_ip,
-                this->range_oop,
-                this->board,
-                "tmp_log.txt",
-                max_iteration,
-                this->print_interval,
-                "discounted_cfr",
-                -1,
-                this->accuracy,
-                this->use_isomorphism,
-                0, // TODO: enable half float option for command line tool
-                this->thread_number
-        );
+        start_solve(ps);
+    }else if(command == "dump_setting"){
+        dump_setting(paramstr.c_str());
     }else if(command == "dump_result"){
-        string output_file = paramstr;
-        this->ps.dump_strategy(QString::fromStdString(output_file),this->dump_rounds);
+        res_file = paramstr;
+        if(!ps) return;
+        ps->dump_strategy(res_file, this->dump_rounds);
     }else if(command == "set_dump_rounds"){
         this->dump_rounds = stoi(paramstr);
+    }else if(command == "estimate_tree_memory"){
+        if(!ps) return;
+        if(range_ip.empty() || range_oop.empty() || board.empty()) {
+            // cout << "Please set range_ip, range_oop and board first." << endl;
+            logger->log("Please set range_ip, range_oop and board first.");
+            return;
+        }
+        shared_ptr<GameTree> game_tree = ps->get_game_tree();
+        if(game_tree == nullptr) {
+            // cout << "Please buld tree first." << endl;
+            logger->log("Please buld tree first.");
+            return;
+        }
+        long long size = ps->estimate_tree_memory(range_ip, range_oop, board);
+        size *= sizeof(float);
+        // cout << (float)size / (1024*1024) << " MB" << endl;
+        logger->log("estimate_tree_memory: %f MB", (float)size / (1024*1024));
+    }else if(command == "set_slice_cfr"){
+        slice_cfr = stoi(paramstr);
     }else{
-        cout << "command not recognized: " << command << endl;
+        // cout << "command not recognized: " << command << endl;
+        logger->log("command not recognized: %s", command.c_str());
     }
+}
+
+void CommandLineTool::dump_setting(const char *file) {
+    static vector<string> player {"oop","ip"};
+    static vector<string> round {"flop","turn","river"};
+    static vector<string> type {"bet","raise","donk","allin"};
+    std::ofstream out(file);
+    out << "set_pot " << get_pot() << endl;
+    out << "set_effective_stack " << get_effective_stack() << endl;
+    out << "set_board " << board << endl;
+    out << "set_range_oop " << range_oop << endl;
+    out << "set_range_ip " << range_ip << endl;
+
+    for(size_t i = 0; i < player.size(); i++) {
+        for(size_t j = 0; j < round.size(); j++) {
+            for(size_t k = 0; k < type.size(); k++) {
+                if(k == 2 && (i == 1 || j == 0)) continue;// no donk:ip, oop flop
+                out << "set_bet_sizes " << player[i] << ',' << round[j] << ',' << type[k] << ',';
+                StreetSetting& st = gtbs.get_setting(player[i], round[j]);
+                if(k == 3) out << st.allin;
+                else {
+                    vector<float> &vec = (k == 0 ? st.bet_sizes : (k == 1 ? st.raise_sizes : st.donk_sizes));
+                    string str;
+                    join(vec, ',', str);
+                    out << str;
+                }
+                out << endl;
+            }
+        }
+    }
+    out << "set_allin_threshold " << allin_threshold << endl;
+    out << "set_raise_limit " << raise_limit << endl;
+    out << "build_tree" << endl;
+    out << "set_thread_num " << thread_num << endl;
+    out << "set_accuracy " << accuracy << endl;
+    out << "set_max_iteration " << max_iteration << endl;
+    out << "set_print_interval " << print_interval << endl;
+    out << "set_use_isomorphism " << use_isomorphism << endl;
+    out << "set_slice_cfr " << slice_cfr << endl;
+    out << "start_solve" << endl;
+    out << "set_dump_rounds " << dump_rounds << endl;
+    out << "dump_result " << res_file << endl;
+    out.close();
+}
+
+int cmd_api(string &input_file, string &resource_dir, string &mode, string &log_file) {
+    if(resource_dir.empty()){
+        resource_dir = "./resources";
+    }
+    if(log_file.empty()) log_file = get_localtime() + ".txt";
+    Logger logger(true, log_file.c_str(), "w+", true, true, 1);
+    PokerMode poker_mode = PokerMode::UNKNOWN;
+    if(mode.empty() || mode == "holdem") poker_mode = PokerMode::HOLDEM;
+    else if(mode == "shortdeck") poker_mode = PokerMode::SHORTDECK;
+    else throw runtime_error(tfm::format("mode %s error, not in ['holdem','shortdeck']", mode));
+    PokerSolver ps = PokerSolver(poker_mode, resource_dir);
+    CommandLineTool clt;
+    clt.logger = &logger;
+    ps.logger = &logger;
+    if(input_file.empty()) {
+        clt.startWorking(&ps);
+    }else{
+        // cout << "EXEC FROM FILE" << endl;
+        logger.log("EXEC FROM FILE");
+        clt.execFromFile(input_file.c_str(), &ps);
+    }
+    return 0;
 }

@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 TRANSLATIONS =  lang_cn.ts\
                 lang_en.ts
 
+CONFIG += c++2a
 
 macx: {
 QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -lomp -I/usr/local/include
@@ -64,7 +65,8 @@ SOURCES += \
     mainwindow.cpp \
     src/Deck.cpp \
     src/Card.cpp \
-    src/console.cpp \
+    src/card_format.cpp \
+    # src/console.cpp \
     src/GameTree.cpp \
     src/library.cpp \
     src/compairer/Dic5Compairer.cpp \
@@ -85,6 +87,7 @@ SOURCES += \
     src/solver/CfrSolver.cpp \
     src/solver/PCfrSolver.cpp \
     src/solver/Solver.cpp \
+    src/solver/slice_cfr.cpp \
     src/tools/CommandLineTool.cpp \
     src/tools/GameTreeBuildingSettings.cpp \
     src/tools/lookup8.cpp \
@@ -93,6 +96,7 @@ SOURCES += \
     src/tools/Rule.cpp \
     src/tools/StreetSetting.cpp \
     src/tools/utils.cpp \
+    src/tools/logger.cpp \
     src/trainable/CfrPlusTrainable.cpp \
     src/trainable/DiscountedCfrTrainable.cpp \
     src/trainable/DiscountedCfrTrainableHF.cpp \
@@ -129,6 +133,7 @@ HEADERS += \
     include/trainable/DiscountedCfrTrainableSF.h \
     mainwindow.h \
     include/Card.h \
+    include/card_format.h \
     include/GameTree.h \
     include/Deck.h \
     include/json.hpp \
@@ -137,6 +142,7 @@ HEADERS += \
     include/solver/Solver.h \
     include/solver/BestResponse.h \
     include/solver/CfrSolver.h \
+    include/solver/slice_cfr.h \
     include/tools/argparse.hpp \
     include/tools/CommandLineTool.h \
     include/tools/utils.h \
@@ -164,6 +170,7 @@ HEADERS += \
     include/ranges/RiverCombs.h \
     include/ranges/RiverRangeManager.h \
     include/tools/tinyformat.h \
+    include/tools/logger.h \
     include/tools/qdebugstream.h \
     include/runtime/qsolverjob.h \
     qstextedit.h \

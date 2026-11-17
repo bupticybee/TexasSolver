@@ -24,14 +24,14 @@ class RangeSelector : public QDialog
     Q_OBJECT
 
 public:
-    explicit RangeSelector(QTextEdit* rangeEdit,QWidget *parent = 0,QSolverJob::Mode mode = QSolverJob::Mode::HOLDEM);
+    explicit RangeSelector(QTextEdit* rangeEdit,QWidget *parent = 0,PokerMode mode = PokerMode::HOLDEM);
     ~RangeSelector();
 signals:
     void confirm_text(QString content);
 private:
     int max_val = 1000;
     float range_num = 1;
-    QSolverJob::Mode mode;
+    PokerMode mode;
     Ui::RangeSelector *ui;
     QStringList rank_list;
     RangeSelectorTableModel * rangeSelectorTableModel = NULL;

@@ -22,10 +22,11 @@ bool Card::empty(){
     else return false;
 }
 
-string Card::getCard() {
+const string& Card::getCard() {
     return this->card;
 }
 
+// rank * 4 + suit,[13,4]
 int Card::getCardInt() {
     return this->card_int;
 }
@@ -39,7 +40,8 @@ int Card::card2int(Card card) {
     return strCard2int(card.getCard());
 }
 
-int Card::strCard2int(string card) {
+// rank * 4 + suit,[13,4]
+int Card::strCard2int(const string &card) {
     char rank = card.at(0);
     char suit = card.at(1);
     if(card.length() != 2){
@@ -74,14 +76,14 @@ uint64_t Card::boardCards2long(vector<Card>& cards){
     return Card::boardInts2long(board_int);
 }
 
-QString Card::boardCards2html(vector<Card>& cards){
+/*QString Card::boardCards2html(vector<Card>& cards){
     QString ret_html = "";
     for(auto one_card:cards){
         if(one_card.empty())continue;
         ret_html += one_card.toFormattedHtml();
     }
     return ret_html;
-}
+}*/
 
 uint64_t Card::boardInt2long(int board){
     // 这里hard code了一副扑克牌是52张
@@ -217,7 +219,7 @@ vector<string> Card::getSuits(){
     return {"c","d","h","s"};
 }
 
-string Card::toString() {
+/*string Card::toString() {
     return this->card;
 }
 
@@ -241,4 +243,4 @@ QString Card::toFormattedHtml() {
     else if(qString.contains("s"))
         qString = qString.replace("s", QString::fromLocal8Bit("<span style=\"color:black;\">&#9824;<\/span>"));
     return qString;
-}
+}*/

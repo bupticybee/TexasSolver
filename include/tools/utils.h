@@ -14,6 +14,7 @@
 #include <nodes/ChanceNode.h>
 #include <nodes/TerminalNode.h>
 #include <nodes/ShowdownNode.h>
+#include <algorithm>
 
 template <typename T>
 void exchange_color(vector<T>& value,vector<PrivateCards> range,int rank1,int rank2){
@@ -23,7 +24,10 @@ void exchange_color(vector<T>& value,vector<PrivateCards> range,int rank1,int ra
 #endif
     if(value.empty())return;
     vector<int> self_ind = vector<int>(value.size());
-    int privateint2ind[52 * 52 * 2] = {0};
+    // -1: no combo in the range is the suit-swapped twin of this one (its twin holds a board card). Such a combo
+    // must keep its own value; a zero-filled table swapped it with the combo at index 0.
+    int privateint2ind[52 * 52 * 2];
+    std::fill(privateint2ind, privateint2ind + 52 * 52 * 2, -1);
     for(int i = 0;i < range.size();i ++){
         PrivateCards& pc = range[i];
         int card1 = pc.card1;
@@ -52,6 +56,7 @@ void exchange_color(vector<T>& value,vector<PrivateCards> range,int rank1,int ra
     for(int i = 0;i < range.size();i ++) {
         if(self_ind[i] == -1) continue;
         int ind = privateint2ind[self_ind[i]];
+        if(ind < 0) continue;
         //cout << range[i].toString() << " ";
         //cout << range[ind].toString() << endl;
         if(ind != i){

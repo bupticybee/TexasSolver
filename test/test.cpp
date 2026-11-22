@@ -608,7 +608,7 @@ TEST(TestCase,test_poker_solver_disables_isomorphism_for_exact_combo){
     // player1's range has an exact combo (KhQh) with no KcQc/KdQd/KsQs
     // sibling -- isomorphism must be silently disabled for this solve even
     // though use_isomorphism=true is requested below, or results would be
-    // corrupted the way test_exchange_color_corrupts_asymmetric_range shows.
+    // corrupted the way test_exchange_color_asymmetric_range shows.
     ps->train(
             "AA,KK,QQ,JJ,TT,KhQh:1.0",
             "QQ,JJ,TT,99,88",
@@ -712,7 +712,7 @@ TEST(TestCase,test_converter_exact_combo_flags_isomorphism_unsafe){
 
     // An exact suited combo only ever produces the one suit-pair requested,
     // never its siblings in the other 3 suits -- this is the case that
-    // corrupts isomorphism (see test_exchange_color_corrupts_asymmetric_range).
+    // corrupts isomorphism (see test_exchange_color_asymmetric_range).
     has_exact_combo = false;
     PrivateRangeConverter::rangeStr2Cards("KK,KhQh:1.0", initialBoard, &has_exact_combo);
     EXPECT_TRUE(has_exact_combo);
@@ -725,12 +725,11 @@ TEST(TestCase,test_converter_exact_combo_flags_isomorphism_unsafe){
     EXPECT_TRUE(has_exact_combo);
 }
 
-// Demonstrates, against the real exchange_color() used by suit isomorphism
-// (src/solver/PCfrSolver.cpp, BestResponse.cpp), that it silently corrupts
-// results when a range contains an exact suited combo without its sibling
-// suits present -- confirming the concern raised in PR review
-// (github.com/bupticybee/TexasSolver/pull/227#issuecomment-4888657679).
-TEST(TestCase,test_exchange_color_corrupts_asymmetric_range){
+// Checks the real exchange_color() used by suit isomorphism
+// (src/solver/PCfrSolver.cpp, BestResponse.cpp) on a range that contains an
+// exact suited combo without its sibling suits present, the concern raised in
+// PR review (github.com/bupticybee/TexasSolver/pull/227#issuecomment-4888657679).
+TEST(TestCase,test_exchange_color_asymmetric_range){
     vector<int> initialBoard {
             Card::strCard2int("Ah"),
             Card::strCard2int("9h"),
@@ -763,11 +762,10 @@ TEST(TestCase,test_exchange_color_corrupts_asymmetric_range){
         EXPECT_EQ(value[iKcQc], before[iKhQh]);
     }
 
-    // Bug case: KhQh has NO KcQc sibling. There is nothing to swap with, so
-    // a hearts<->clubs exchange should be a no-op for this range. Instead,
-    // exchange_color's missing-entry lookup defaults to index 0 (privateint2ind
-    // is zero-initialized) and corrupts both KhQh and whatever unrelated hand
-    // sits at index 0.
+    // KhQh has NO KcQc sibling. There is nothing to swap with, so a
+    // hearts<->clubs exchange must be a no-op for this range. (Before the
+    // fix, exchange_color's missing-entry lookup defaulted to index 0 and
+    // swapped KhQh with whatever unrelated hand sat at index 0.)
     {
         string range = "2c3d,KhQh:1.0";
         vector<PrivateCards> combos = PrivateRangeConverter::rangeStr2Cards(range,initialBoard);
@@ -786,17 +784,54 @@ TEST(TestCase,test_exchange_color_corrupts_asymmetric_range){
         int rank_clubs = 0, rank_hearts = 2;
         exchange_color(value,combos,rank_clubs,rank_hearts);
 
-        // This documents the CURRENT (buggy) behavior of exchange_color on
-        // an asymmetric range: both values get corrupted rather than left
-        // alone. This is exactly why PokerSolver::train() must disable
-        // isomorphism whenever an exact combo is present (see
-        // test_poker_solver_disables_isomorphism_for_exact_combo above)
-        // instead of relying on exchange_color to handle it correctly.
-        EXPECT_NE(value[i2c3d], before[i2c3d]);
-        EXPECT_NE(value[iKhQh], before[iKhQh]);
-        EXPECT_EQ(value[i2c3d], before[iKhQh]);
-        EXPECT_EQ(value[iKhQh], before[i2c3d]);
+        // Both values stay where they are. An asymmetric range still cannot
+        // use isomorphism (the copied subtree assumes both ranges are
+        // symmetric), so PokerSolver::train() keeps disabling it whenever an
+        // exact combo is present (see
+        // test_poker_solver_disables_isomorphism_for_exact_combo above).
+        EXPECT_EQ(value[i2c3d], before[i2c3d]);
+        EXPECT_EQ(value[iKhQh], before[iKhQh]);
     }
+}
+
+// The case suit isomorphism produces in a real solve with plain rank-class
+// ranges: flop Kh7d2c, turn Ks, so hearts and spades are exchanged for the
+// river cards. Every combo holding Ks has its twin holding Kh, a board card,
+// so that twin is not in the range. Such a combo must keep its own value, and
+// every combo with a twin must swap with that twin. Before the fix each
+// twinless combo was swapped with combo 0 (a live hand), so combo 0's river
+// values were lost on the mirrored river cards.
+TEST(TestCase,test_exchange_color_dealt_card_twin_on_board){
+    vector<int> initialBoard {
+            Card::strCard2int("Kh"),
+            Card::strCard2int("7d"),
+            Card::strCard2int("2c"),
+    };
+    vector<PrivateCards> combos = PrivateRangeConverter::rangeStr2Cards("AK,KQ,QJ,T9s",initialBoard);
+    vector<float> value(combos.size());
+    for(int i=0;i<(int)value.size();i++) value[i] = i+1;
+    vector<float> before = value;
+
+    int rank_hearts = 2, rank_spades = 3; // Card::suitToInt: c=0,d=1,h=2,s=3
+    exchange_color(value,combos,rank_hearts,rank_spades);
+
+    auto swap_hs = [&](int card){
+        if(card % 4 == rank_hearts) return card - rank_hearts + rank_spades;
+        if(card % 4 == rank_spades) return card - rank_spades + rank_hearts;
+        return card;
+    };
+    int twinless = 0;
+    for(int i=0;i<(int)combos.size();i++){
+        int t1 = swap_hs(combos[i].card1), t2 = swap_hs(combos[i].card2);
+        int twin = -1;
+        for(int j=0;j<(int)combos.size();j++){
+            int c1 = combos[j].card1, c2 = combos[j].card2;
+            if((c1 == t1 && c2 == t2) || (c1 == t2 && c2 == t1)) twin = j;
+        }
+        if(twin < 0) twinless ++;
+        EXPECT_EQ(value[i], twin < 0 ? before[i] : before[twin]) << combos[i].toString();
+    }
+    ASSERT_GT(twinless, 0); // the case under test is present (AsKx, KsQx)
 }
 
  /*

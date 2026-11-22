@@ -2,6 +2,8 @@
 // Created by Xuefeng Huang on 2020/1/28.
 //
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <GameTree.h>
 #include <ranges/PrivateCards.h>
 #include "gtest/gtest.h"
@@ -647,6 +649,38 @@ TEST(TestCase,test_poker_solver_keeps_isomorphism_without_exact_combo){
     );
 
     EXPECT_TRUE(ps->usedIsomorphism());
+}
+
+// A small flop tree (one bet size per street, no raises) solved for a few
+// iterations on one thread, so the strategy dump is deterministic.
+static string solveSmallFlop(string board, bool use_isomorphism, string dump_file){
+    // The console's deck order: isomorphism's suit offsets are applied to deck positions, so they need it.
+    string ranks = "2,3,4,5,6,7,8,9,T,J,Q,K,A";
+    string suits = "c,d,h,s";
+    PokerSolver ps = PokerSolver(ranks,suits,"../resources/compairer/card5_dic_sorted.txt",2598961);
+    StreetSetting bet = StreetSetting(vector<float>{50},vector<float>{},vector<float>{},false);
+    GameTreeBuildingSettings gtbs = GameTreeBuildingSettings(bet,bet,bet,bet,bet,bet);
+    ps.build_game_tree(5,5,1,1,0.5,1,5 + 20,gtbs,0.67);
+    ps.train("AA,KK,77,22,AK,KQs,QJs,T9s,65s","QQ,JJ,AQ,KJs,98s,A2s,76s",board,
+             "../resources/outputs/outputs_log.txt",4,10,"discounted_cfr",-1,0.0,use_isomorphism,1);
+    ps.dump_strategy(dump_file,2);
+    ifstream in(dump_file);
+    stringstream buf;
+    buf << in.rdbuf();
+    return buf.str();
+}
+
+// Isomorphism may only use suit symmetries the starting board already has.
+// A rainbow flop (Kh7d2c) has none, so with isomorphism on the solve must give
+// exactly the strategy it gives with isomorphism off. Before the fix a turn
+// card pairing a board rank in the empty suit (Ks, 7s, 2s) made two suits look
+// interchangeable for the river although the ranges reaching that turn are not
+// symmetric in them, and river values were copied between the two suits.
+TEST(TestCase,test_isomorphism_uses_only_starting_board_symmetries){
+    string on = solveSmallFlop("Kh,7d,2c",true,"../resources/outputs/iso_rainbow_on.json");
+    string off = solveSmallFlop("Kh,7d,2c",false,"../resources/outputs/iso_rainbow_off.json");
+    ASSERT_GT(off.size(), 1000u);
+    EXPECT_TRUE(on == off) << "isomorphism changed the strategy on a flop with no suit symmetry";
 }
 
 TEST(TestCase,test_converter_exact_combo){

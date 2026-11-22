@@ -686,6 +686,12 @@ void PCfrSolver::findGameSpecificIsomorphisms() {
             }
         }
     }
+    // After a dealt card, two suits only count as interchangeable if they already were on the starting board.
+    // Kh7d2c + 2s holds the same ranks in clubs and spades, but the flop was played with 2c out and 2s live, so the
+    // ranges that reach that turn are not symmetric in clubs and spades (club hands had a backdoor flush draw).
+    // Merging them copied river values between hands that do not face the same range.
+    uint16_t root_hash[4];
+    for(int i = 0;i < 4;i ++) root_hash[i] = color_hash[i];
     for(int deal = 0;deal < this->deck.getCards().size();deal ++) {
         uint16_t color_hash[4];
         for(int i = 0;i < 4;i ++)color_hash[i] = 0;
@@ -702,7 +708,7 @@ void PCfrSolver::findGameSpecificIsomorphisms() {
         for (int i = 0; i < 4; i++) {
             this->color_iso_offset[deal + 1][i] = 0;
             for (int j = 0; j < i; j++) {
-                if (color_hash[i] == color_hash[j]) {
+                if (color_hash[i] == color_hash[j] && root_hash[i] == root_hash[j]) {
                     this->color_iso_offset[deal + 1][i] = j - i;
                     break;
                 }

@@ -1,0 +1,20 @@
+set_pot 10
+set_effective_stack 20
+set_board Kh,7d,2c
+set_range_oop AA,KK,QQ,AK,KQ,77,22,T9s
+set_range_ip JJ,TT,AQ,KJ,A7s,98s,65s
+set_bet_sizes oop,flop,bet,50
+set_bet_sizes ip,flop,bet,50
+set_bet_sizes oop,turn,bet,50
+set_bet_sizes ip,turn,bet,50
+set_bet_sizes oop,river,bet,50
+set_bet_sizes ip,river,bet,50
+build_tree
+set_thread_num 1
+set_accuracy 0
+set_max_iteration 20
+set_print_interval 5
+set_use_isomorphism 1
+start_solve
+set_dump_rounds 2
+dump_result iso_board_symmetries_on.json
